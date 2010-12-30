@@ -1,5 +1,5 @@
 
-SeaJS is an open source framework that makes it easy to build web pages and applications.
+SeaJS is a JavaScript framework that makes it easy to build scalable web applications.
 
 ## Features
 
