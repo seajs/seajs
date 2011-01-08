@@ -12,6 +12,8 @@
                 outputencoding="${charset}">
             <path path="sea.js"/>
             <path path="loader.js"/>
+            <path path="loader-web.js"/>
+            <path path="loader-init.js"/>
         </concat>
     </target>
 

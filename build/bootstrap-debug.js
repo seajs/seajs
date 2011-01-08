@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.1.0
 MIT Licensed
-build time: Jan 8 19:21
+build time: Jan 8 23:50
 */
 
 /**
@@ -104,8 +104,110 @@ S.type = (function() {
   }
 })();
 
+
 /**
  * @fileoverview SeaJS Module Loader.
  * @author lifesinger@gmail.com (Frank Wang)
  */
 
+(function() {
+
+  var noop = function() {
+  };
+
+  var loader = S.ModuleLoader = {
+    baseUrl: '',
+    importModule: noop,
+    importingModule: null,
+    main: null
+  };
+
+  /**
+   * @constructor
+   */
+  loader.Module = function(id, uri) {
+    this.id = id;
+    this.uri = uri || getURI(id);
+
+    this.require = noop;
+    this.exports = {};
+  };
+
+  function getURI(id) {
+    return loader.baseUrl + id + '.js';
+  }
+
+  S.declare = function(factory) {
+    var module = loader.importingModule;
+    module.factory = factory;
+    factory.call(module, module.require, module.exports, module);
+  };
+
+})();
+
+/**
+ * @fileoverview The web part for SeaJS Module Loader.
+ * @author lifesinger@gmail.com (Frank Wang)
+ */
+
+(function(loader) {
+
+  function scriptOnload(node, callback) {
+    node.addEventListener('load', callback, false);
+  }
+  if (!document.createElement('script').addEventListener) {
+    scriptOnload = function(node, callback) {
+      var oldCallback = node.onreadystatechange;
+      node.onreadystatechange = function() {
+        var rs = node.readyState;
+        if (rs === 'loaded' || rs === 'complete') {
+          node.onreadystatechange = null;
+          oldCallback && oldCallback();
+          callback.call(this);
+        }
+      };
+    }
+  }
+
+  function getScript(url, success) {
+    var node = document.createElement('script');
+    var head = document.getElementsByTagName('head')[0];
+
+    node.src = url;
+    node.async = true;
+
+    scriptOnload(node, function() {
+      if (success) success.call(node);
+      head.removeChild(node);
+    });
+
+    head.insertBefore(node, head.firstChild);
+  }
+
+  var scripts = document.getElementsByTagName('script');
+  var loaderScript = scripts[scripts.length - 1];
+  var src = loaderScript.src;
+  var main = loaderScript.getAttribute('data-main');
+
+  // exports
+  loader.baseUrl = src.substring(0, src.lastIndexOf('/') + 1);
+  loader.importModule = getScript;
+  if (main) loader.main = new loader.Module(main);
+
+})(S.ModuleLoader);
+
+/**
+ * @fileoverview Init Module Loader.
+ * @author lifesinger@gmail.com (Frank Wang)
+ */
+
+(function(loader) {
+
+  var main = loader.main;
+
+  if (main) {
+    loader.importingModule = main;
+    loader.importModule(main.uri);
+  }
+
+})(S.ModuleLoader);

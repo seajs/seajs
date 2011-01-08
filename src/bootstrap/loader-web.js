@@ -31,7 +31,7 @@
     node.async = true;
 
     scriptOnload(node, function() {
-      if(success) success.call(node);
+      if (success) success.call(node);
       head.removeChild(node);
     });
 
