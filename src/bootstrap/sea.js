@@ -98,3 +98,4 @@ S.type = (function() {
         cls2type[Object.prototype.toString.call(o)] || 'object';
   }
 })();
+
