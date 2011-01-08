@@ -79,3 +79,23 @@ S.error = function(msg) {
 // Language Enhancements
 //==============================================================================
 
+
+/**
+ * Determine the internal JavaScript [[Class]] of an object.
+ */
+S.type = (function() {
+  var cls = ['Boolean', 'Number', 'String', 'Function', 'Array', 'Date',
+    'RegExp', 'Object'], cls2type = {};
+
+  for (var i = 0; i < cls.length; i++) {
+    var name = cls[i];
+    cls2type['[object ' + name + ']'] = name.toLowerCase();
+  }
+
+  return function(o) {
+    return o == null ?
+        String(o) :
+        cls2type[Object.prototype.toString.call(o)] || 'object';
+  }
+})();
+
