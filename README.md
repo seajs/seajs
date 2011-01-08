@@ -7,8 +7,7 @@ SeaJS is a javascript framework that makes it easy to build scalable web applica
 
 ## License
 
-SeaJS is available under either the terms of the [MIT license](https://github.com/tannhu/jsface/blob/master/MIT-LICENSE.txt)
-or the [GPL license version 2](http://www.gnu.org/licenses/gpl-2.0.txt).
+SeaJS is available under either the terms of the [MIT license](https://github.com/tannhu/jsface/blob/master/MIT-LICENSE.txt).
 
 ## Some more thing
 
