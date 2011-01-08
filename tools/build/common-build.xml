@@ -1,0 +1,137 @@
+<project name="common-build" basedir="." xmlns:ac="antlib:net.sf.antcontrib">
+    <description>Common Build File</description>
+
+    <dirname property="current.dir" file="${ant.file.common-build}"/>
+    <property name="root.dir" location="${current.dir}/../../"/>
+    <property name="build.module.dir" location="${root.dir}/build/${module.name}"/>
+    <property name="gcc.jar" location="${current.dir}/compiler.jar/"/>
+    <property name="yc.jar" location="${current.dir}/yuicompressor.jar"/>
+
+    <property name="version" value="0.1.0"/>
+    <property name="charset" value="utf-8"/>
+    <property name="copyright.files" value="*.css, *.js"/>
+
+    <!-- 用 gslint 检查 style -->
+    <target name="gjslint">
+        <exec executable="gjslint" failonerror="true">
+            <arg line="--strict *.js"/>
+        </exec>
+    </target>
+
+    <!-- 清空与复制等准备工作 -->
+    <target name="prepare">
+        <mkdir dir="${build.module.dir}"/>
+        <delete>
+            <fileset dir="${build.module.dir}" includes="*.css,*.js"/>
+        </delete>
+        <copy todir="${build.module.dir}">
+            <fileset dir="${module.dir}" includes="${module.files}"/>
+        </copy>
+    </target>
+
+    <!-- 压缩代码 -->
+    <target name="compress">
+        <!-- 备份 debug 版本 -->
+        <mkdir dir="${build.module.dir}/debug"/>
+        <copy todir="${build.module.dir}/debug">
+            <fileset dir="${build.module.dir}" includes="*-pkg.js"/>
+        </copy>
+
+        <!-- 去除 S.log 代码 -->
+        <replaceregexp match="^\s*S\.log\(.+$" replace="" flags="g" byline="true" encoding="${charset}">
+            <fileset dir="${build.module.dir}" includes="*-pkg.js"/>
+        </replaceregexp>
+
+        <!-- 用 YUICompressor 压缩 CSS -->
+        <apply executable="java" verbose="true" dest="${build.module.dir}">
+            <fileset dir="${build.module.dir}" includes="*.css"/>
+            <arg line="-jar"/>
+            <arg path="${yc.jar}"/>
+            <arg line="--charset ${charset}"/>
+            <srcfile/>
+            <arg line="-o"/>
+            <targetfile/>
+            <mapper type="regexp" from="^(.*)\.(css|js)$" to="\1-min.\2"/>
+        </apply>
+
+        <!-- 用 Google Closure Compiler 压缩 JS -->
+        <apply executable="java" verbose="true" dest="${build.module.dir}">
+            <fileset dir="${build.module.dir}" includes="*.js"/>
+            <arg line="-jar"/>
+            <arg path="${gcc.jar}"/>
+            <arg line="--compilation_level SIMPLE_OPTIMIZATIONS"/>
+            <arg line="--warning_level VERBOSE"/>
+            <arg line="--define S.DEBUG=false"/>
+            <arg line="--js"/>
+            <srcfile/>
+            <arg line="--js_output_file"/>
+            <targetfile/>
+            <mapper type="regexp" from="^(.*)\.(css|js)$" to="\1-min.\2"/>
+        </apply>
+
+        <!-- 还原 debug 版本 -->
+        <move todir="${build.module.dir}">
+            <fileset dir="${build.module.dir}/debug" includes="*-pkg.js"/>
+        </move>
+        <delete dir="${build.module.dir}/debug"/>
+    </target>
+
+    <!-- 对 JS 文件 ASCII 化 -->
+    <target name="native2ascii" depends="compress">
+        <mkdir dir="${build.module.dir}/ascii"/>
+        <move todir="${build.module.dir}/ascii">
+            <!-- 仅需对未压缩的 pkg 文件 ascii 化，min 文件在 gcc 阶段已 ascii 化 -->
+            <fileset dir="${build.module.dir}" includes="*-pkg.js"/>
+        </move>
+        <native2ascii encoding="${charset}"
+                      src="${build.module.dir}/ascii"
+                      dest="${build.module.dir}"
+                      includes="*.js"/>
+        <delete dir="${build.module.dir}/ascii"/>
+    </target>
+
+    <!-- 替换版本信息以及给文件加上版权信息 -->
+    <target name="copyright">
+        <tstamp>
+            <format property="stamp.time" pattern="MMM d HH:mm" locale="en,UK"/>
+            <format property="build.year" pattern="yyyy"/>
+        </tstamp>
+
+        <!-- 仅在版本发布时，打时间戳 -->
+        <condition property="build.time" value="${stamp.time}">
+            <matches string="${version}" pattern=".+\d$"/>
+        </condition>
+
+        <mkdir dir="${build.module.dir}/tmp"/>
+        <move todir="${build.module.dir}/tmp">
+            <fileset dir="${build.module.dir}" includes="${copyright.files}"/>
+        </move>
+
+        <ac:for param="file">
+            <path>
+                <fileset dir="${build.module.dir}/tmp" includes="${copyright.files}"/>
+            </path>
+            <sequential>
+                <concat destfile="@{file}.tmp" encoding="${charset}" outputencoding="${charset}">
+                    <header filtering="no" trimleading="yes">/*
+                        Copyright ${build.year}, SeaJS v${version}
+                        MIT Licensed
+                        build time: ${build.time}
+                        */
+                    </header>
+                    <fileset file="@{file}" />
+                </concat>
+                <replaceregexp match="@VERSION@" replace="${version}" flags="g" encoding="${charset}" byline="true" file="@{file}.tmp" />
+                <move file="@{file}.tmp" tofile="@{file}"/>
+            </sequential>
+        </ac:for>
+
+        <move todir="${build.module.dir}">
+            <fileset dir="${build.module.dir}/tmp" includes="${copyright.files}"/>
+        </move>
+        <delete dir="${build.module.dir}/tmp"/>
+    </target>
+    
+    <target name="common.build" depends="prepare,compress,native2ascii,copyright">
+    </target>
+</project>
