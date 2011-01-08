@@ -15,4 +15,4 @@ Usage
   2. build 目录下的 mod-debug.js, 是调试版本，@VERSION@ 已替换为真实值，中文已 ASCII 化，
      但 S.DEBUG 依旧为 true. 这样，当页面编码和脚本编码不一致时，也不会报错。
   3. build 目录下的 mod.js, 是压缩版本，@VERSION@ 等已替换为真实值，中文已 ASCII 化，
-     S.log 行已移除，S.DEBUG 为 false. 这是线上部署版本。
+     S.log 行已移除，S.DEBUG 为 false. 可直接部署到线上。
