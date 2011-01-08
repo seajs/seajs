@@ -2,19 +2,23 @@
     <description>Module Build File</description>
 
     <property name="module.name" value="bootstrap"/>
-    <property name="module.files" value="${module.name}-pkg.js"/>
+    <property name="module.files" value="*-pkg.js,*.css"/>
     <property name="module.dir" location="."/>
     <import file="../../tools/build/common-build.xml"/>
 
     <target name="concat">
-        <concat destfile="${module.name}-pkg.js" encoding="${charset}" outputencoding="${charset}">
+        <concat destfile="${module.name}-pkg.js"
+                encoding="${charset}"
+                outputencoding="${charset}">
             <path path="sea.js"/>
             <path path="loader.js"/>
         </concat>
     </target>
 
     <target name="clean">
-        <delete file="${module.name}-pkg.js"/>
+        <delete>
+            <fileset dir="${module.dir}" includes="*-pkg.js"/>
+        </delete>
     </target>
 
     <target name="build" depends="gjslint,concat,common.build,clean">

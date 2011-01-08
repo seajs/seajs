@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.1.0
 MIT Licensed
-build time: Jan 8 14:43
+build time: Jan 8 19:21
 */
 
 /**
@@ -103,7 +103,6 @@ S.type = (function() {
         cls2type[Object.prototype.toString.call(o)] || 'object';
   }
 })();
-
 
 /**
  * @fileoverview SeaJS Module Loader.
