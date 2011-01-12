@@ -28,9 +28,9 @@
 
   // init mainModDir and mainModId.
   var doc = document;
-  var scripts = document.getElementsByTagName('script');
+  var scripts = doc.getElementsByTagName('script');
   var loaderScript = scripts[scripts.length - 1];
-  var mainModDir = dirname(loaderScript.src);
+  var mainModDir = dirname(getScriptAbsSrc(loaderScript));
   var mainModId = loaderScript.getAttribute('data-main');
 
   function memoize(id, mod) {
@@ -192,25 +192,27 @@
 
   function getScript(url, success) {
     var node = doc.createElement('script');
-    node.src = url;
-    node.async = true;
 
     scriptOnload(node, function() {
       if (success) success.call(node);
 
-      for(var p in node) delete node[p];
+      try {
+        for (var p in node) delete node[p];
+      } catch(x) {
+      }
       head.removeChild(node);
     });
 
-    head.insertBefore(node, head.firstChild);
-    return node;
+    node.async = true;
+    node.src = url;
+    return head.insertBefore(node, head.firstChild);
   }
 
   function scriptOnload(node, callback) {
     node.addEventListener('load', callback, false);
   }
 
-  if (!document.createElement('script').addEventListener) {
+  if (!doc.createElement('script').addEventListener) {
     scriptOnload = function(node, callback) {
       var oldCallback = node.onreadystatechange;
       node.onreadystatechange = function() {
@@ -295,7 +297,14 @@
   function fullpath(id) {
     if (id === '' || id.indexOf('://') !== -1) return id;
     if (id.charAt(0) === '/') id = id.substring(1);
-    return realpath(mainModDir + '/' + id + '.js');
+    return realpath(mainModDir + '/' + id) + '.js';
+  }
+
+  function getScriptAbsSrc(node) {
+    return node.hasAttribute ?
+      node.src :
+      // IE6/7 see: http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+      node.getAttribute('src', 4);
   }
 
 //==============================================================================
