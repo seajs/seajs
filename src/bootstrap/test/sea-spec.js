@@ -7,7 +7,8 @@ describe('sea.js', function() {
       };
 
   it('should not deprive existed members in S.', function() {
-    expect(S['existed']).toBe(1);
+    expect(S['for_test_existed']).toBe(1);
+    delete S['for_test_existed'];
   });
 
   it('has basic information.', function() {
@@ -20,8 +21,8 @@ describe('sea.js', function() {
     expect(typeof S.log).toBe('function');
     expect(typeof S.error).toBe('function');
 
-    S.log('test log');
-    S.log('test warn', 'warn');
+    //S.log('test log');
+    //S.log('test warn', 'warn');
 
     try {
       S.error('test error');

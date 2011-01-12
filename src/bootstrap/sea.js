@@ -81,7 +81,7 @@ S.error = function(msg) {
 
 
 /**
- * Determine the internal JavaScript [[Class]] of an object.
+ * Determines the internal JavaScript [[Class]] of an object.
  */
 S.type = (function() {
   var cls = ['Boolean', 'Number', 'String', 'Function', 'Array', 'Date',
@@ -99,3 +99,29 @@ S.type = (function() {
   }
 })();
 
+
+/**
+ * Checks to if an object is string.
+ * @param {*} o
+ */
+S.isString = function(o) {
+  return S.type(o) === 'string';
+};
+
+
+/**
+ * Checks to if an object is function.
+ * @param {*} o
+ */
+S.isFunction = function(o) {
+  return S.type(o) === 'function';
+};
+
+
+/**
+ * Checks to if an object is array.
+ * @param {*} o
+ */
+S.isArray = Array.isArray ? Array.isArray : function(o) {
+  return S.type(o) === 'array';
+};
