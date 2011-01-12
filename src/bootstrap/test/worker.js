@@ -20,7 +20,7 @@ S.declare('test', [], function(require, exports) {
   };
 });
 
-S.provide(['program', 'math', 'increment'], function(require) {
+S.provide(['program'], function(require) {
   //try {
     require('program');
   //} catch (x) {

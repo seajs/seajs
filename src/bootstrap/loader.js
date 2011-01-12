@@ -16,10 +16,13 @@
   // 3. provided - The module info has been added to providedMods.
   // 4. required -  mod.exports is available.
 
-  // declared, but has not been provided.
+  // modules that are beening downloaded.
+  var loadingMods = {};
+
+  // the module that is declared, but has not been provided.
   var pendingMod = null;
 
-  // provided modules
+  // modules that have beed provided.
   // { uri: { id: string, dependencies: [], factory: function }, ... }
   var providedMods = {};
 
@@ -111,21 +114,36 @@
   /**
    * provide modules to the environment, and then fire callback.
    */
-  S.provide = function(ids, callback) {
+  S.provide = function(ids, callback, norequire) {
     ids = getUnmemoizedIds(ids);
-
-    if (ids.length === 0) {
-      callback && callback();
-      return;
-    }
+    if (ids.length === 0) return cb();
 
     var remain = ids.length;
     for (var i = 0, len = remain; i < len; i++) {
-      load(ids[i], function() {
-        if (--remain === 0) {
-          callback && callback(new Require());
-        }
-      });
+      (function(id) {
+
+        load(id, function() {
+          var deps = (getProvidedMod(id) || 0).dependencies || [];
+          deps = getUnmemoizedIds(deps);
+          var len = deps.length;
+
+          if (len) {
+            remain += len;
+            S.provide(deps, function() {
+              remain -= len;
+              if (remain === 0) cb();
+            }, true);
+          }
+
+          //S.log('id = ' + id + ' remain = ' + (remain - 1));
+          if (--remain === 0) cb();
+        });
+
+      })(ids[i]);
+    }
+    
+    function cb() {
+      callback && callback(norequire ? undefined : new Require());
     }
   };
 
@@ -159,14 +177,22 @@
   function load(id, callback) {
     // reset to avoid polluting by 'S.declare' without id in static script.
     pendingMod = null;
+    var url = fullpath(id);
 
-    getScript(fullpath(id), function() {
+    if (loadingMods[url]) {
+      scriptOnload(loadingMods[url], cb);
+    } else {
+      loadingMods[url] = getScript(fullpath(id), cb);
+    }
+
+    function cb() {
       if (pendingMod) {
         memoize(id, pendingMod);
         pendingMod = null;
       }
       if (callback) callback();
-    });
+      if(loadingMods.url) delete loadingMods.url;
+    }
   }
 
   var head = doc.getElementsByTagName('head')[0];
@@ -178,10 +204,13 @@
 
     scriptOnload(node, function() {
       if (success) success.call(node);
-      //head.removeChild(node);
+
+      for(var p in node) delete node.p;
+      head.removeChild(node);
     });
 
     head.insertBefore(node, head.firstChild);
+    return node;
   }
 
   function scriptOnload(node, callback) {
