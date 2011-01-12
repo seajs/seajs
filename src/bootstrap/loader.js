@@ -22,6 +22,14 @@
   // the module that is declared, but has not been provided.
   var pendingMod = null;
 
+  // in IE/8/7/6, if the script is in the cache, it actually executes *during*
+  // the DOM insertion of the script tag, so we can keep track of which script
+  // is being requested in case define() is called during the DOM insertion.
+  // see http://goo.gl/JHfFW
+  var oldIE = !+'\v1';
+  var pendingModOldIE = null;
+  var cacheTakenTime = 15;
+
   // modules that have beed provided.
   // { uri: { id: string, dependencies: [], factory: function }, ... }
   var providedMods = {};
@@ -157,6 +165,16 @@
     }
 
     var mod = { dependencies: deps, factory: factory };
+
+    // in oldIE, when fetching file from cache
+    if(!id && oldIE && pendingModOldIE) {
+      S.log(S.now() - pendingModOldIE.timestamp);
+      if(S.now() - pendingModOldIE.timestamp < cacheTakenTime) {
+        id = pendingModOldIE.id;
+      }
+      pendingModOldIE = null;
+    }
+
     if (id) {
       memoize(id, mod);
       // if a file contains multi declares, a declare without id is valid
@@ -175,7 +193,8 @@
     if (loadingMods[url]) {
       scriptOnload(loadingMods[url], cb);
     } else {
-      loadingMods[url] = getScript(fullpath(id), cb);
+      if(oldIE) pendingModOldIE = { id: id, timestamp: S.now() };
+      loadingMods[url] = getScript(url, cb);
     }
 
     function cb() {
@@ -218,16 +237,14 @@
   }
 
   if (!doc.createElement('script').addEventListener) {
+    // for IE8/7/6
     scriptOnload = function(node, callback) {
-      var oldCallback = node.onreadystatechange;
-      node.onreadystatechange = function() {
+      node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
         if (rs === 'loaded' || rs === 'complete') {
-          node.onreadystatechange = null;
-          if (oldCallback) oldCallback();
-          callback.call(this);
+          callback && callback.call(this);
         }
-      };
+      });
     }
   }
 
@@ -261,16 +278,6 @@
   function dirname(path) {
     var s = path.split('/').slice(0, -1).join('/');
     return s ? s : '.';
-  }
-
-  /**
-   * Extract the non-directory portion of a path.
-   * basename('a/b/c.js') ==> 'c.js'
-   * basename('a/b/c') ==> 'c'
-   * basename('a/b/') ==> ''
-   */
-  function basename(path) {
-    return path.split('/').slice(-1)[0];
   }
 
   /**

@@ -144,3 +144,12 @@ S.mix = function(target, source) {
   }
   return target;
 };
+
+
+/**
+ * @return {number} An integer value representing the number of milliseconds
+ *     between midnight, January 1, 1970 and the current time.
+ */
+S.now = Date.now || (function() {
+  return new Date().getTime();
+});
