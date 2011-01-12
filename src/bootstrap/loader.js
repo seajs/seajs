@@ -264,6 +264,16 @@
   }
 
   /**
+   * Extract the non-directory portion of a path.
+   * basename('a/b/c.js') ==> 'c.js'
+   * basename('a/b/c') ==> 'c'
+   * basename('a/b/') ==> ''
+   */
+  function basename(path) {
+    return path.split('/').slice(-1)[0];
+  }
+
+  /**
    * Canonicalize path.
    * realpath('a/b/c') ==> 'a/b/c'
    * realpath('a/b/../c') ==> 'a/c'
@@ -326,4 +336,5 @@
  * TODO:
  *  - S.using('something').as('sth')
  *  - auto generate dependencies when concating multi modules.
+ *  - timestamp for rebuild component
  */
