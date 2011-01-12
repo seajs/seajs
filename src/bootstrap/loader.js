@@ -196,8 +196,13 @@
     scriptOnload(node, function() {
       if (success) success.call(node);
 
+      // reduce memory leak
       try {
-        for (var p in node) delete node[p];
+        if (node.clearAttributes) {
+          node.clearAttributes();
+        } else {
+          for (var p in node) delete node[p];
+        }
       } catch (x) {
       }
       head.removeChild(node);
