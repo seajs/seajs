@@ -6,9 +6,9 @@
 
 (function() {
 
-//==============================================================================
-// Global Variables & Related Helpers
-//==============================================================================
+  //============================================================================
+  // Global Variables & Related Helpers
+  //============================================================================
 
   // module status：
   // 1. downloaded - The module file has been downloaded to the browser.
@@ -57,9 +57,9 @@
     return ret;
   }
 
-//==============================================================================
-// Requiring Members
-//==============================================================================
+  //============================================================================
+  // Requiring Members
+  //============================================================================
 
   function Require() {
 
@@ -96,13 +96,13 @@
   function execFactory(mod, factory) {
     var exports = {};
     var ret = factory.call(mod, new Require(), exports, mod);
-    if(ret) exports = ret;
+    if (ret) exports = ret;
     return exports;
   }
 
-//==============================================================================
-// Provisioning Members
-//==============================================================================
+  //============================================================================
+  // Provisioning Members
+  //============================================================================
 
   /**
    * provide modules to the environment, and then fire callback.
@@ -134,7 +134,7 @@
 
       })(ids[i]);
     }
-    
+
     function cb() {
       callback && callback(norequire ? undefined : new Require());
     }
@@ -184,7 +184,7 @@
         pendingMod = null;
       }
       if (callback) callback();
-      if(loadingMods.url) delete loadingMods.url;
+      if (loadingMods.url) delete loadingMods.url;
     }
   }
 
@@ -198,7 +198,7 @@
 
       try {
         for (var p in node) delete node[p];
-      } catch(x) {
+      } catch (x) {
       }
       head.removeChild(node);
     });
@@ -226,9 +226,9 @@
     }
   }
 
-//==============================================================================
-// MainModule Entrance
-//==============================================================================
+  //============================================================================
+  // MainModule Entrance
+  //============================================================================
 
   // provide main module to environment.
   if (mainModId) {
@@ -242,9 +242,9 @@
     if (dir) mainModDir = dir;
   }
 
-//==============================================================================
-// Static Helpers
-//==============================================================================
+  //============================================================================
+  // Static Helpers
+  //============================================================================
 
   /**
    * Extract the directory portion of a path.
@@ -269,7 +269,7 @@
     var old = path.split('/');
     var ret = [], part, i, len;
 
-    for (i = 0,len = old.length; i < len; i++) {
+    for (i = 0, len = old.length; i < len; i++) {
       part = old[i];
       if (part == '..') {
         if (ret.length === 0) {
@@ -301,15 +301,15 @@
   }
 
   function getScriptAbsSrc(node) {
-    return node.hasAttribute ?
-      node.src :
-      // IE6/7 see: http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-      node.getAttribute('src', 4);
+    return node.hasAttribute ? // non-IE6/7
+        node.src :
+        // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+        node.getAttribute('src', 4);
   }
 
-//==============================================================================
-// Public API
-//==============================================================================
+  //============================================================================
+  // Public API
+  //============================================================================
 
   S.declare = declare;
   S.provide = provide;

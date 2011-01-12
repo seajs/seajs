@@ -102,7 +102,8 @@ S.type = (function() {
 
 /**
  * Checks to if an object is string.
- * @param {*} o
+ * @param {*} o Variable to test.
+ * @return {boolean} Whether variable is a string.
  */
 S.isString = function(o) {
   return S.type(o) === 'string';
@@ -111,7 +112,8 @@ S.isString = function(o) {
 
 /**
  * Checks to if an object is function.
- * @param {*} o
+ * @param {*} o Variable to test.
+ * @return {boolean} Whether variable is a boolean.
  */
 S.isFunction = function(o) {
   return S.type(o) === 'function';
@@ -120,8 +122,25 @@ S.isFunction = function(o) {
 
 /**
  * Checks to if an object is array.
- * @param {*} o
+ * @param {*} o Variable to test.
+ * @return {boolean} Whether variable is an array.
  */
 S.isArray = Array.isArray ? Array.isArray : function(o) {
   return S.type(o) === 'array';
+};
+
+
+/**
+ * Copies all the members of a source object to a target object.
+ * @param {object} target Target.
+ * @param {object} source Source.
+ * @return {object} Target.
+ */
+S.mix = function(target, source) {
+  for (var x in source) {
+    if (source.hasOwnProperty(x)) {
+      target[x] = source[x];
+    }
+  }
+  return target;
 };
