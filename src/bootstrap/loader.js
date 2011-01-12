@@ -33,13 +33,6 @@
   var mainModDir = dirname(loaderScript.src);
   var mainModId = loaderScript.getAttribute('data-main');
 
-  // reset loader enviroment.
-  S.reset = function(dir) {
-    pendingMod = null;
-    providedMods = {};
-    if(dir) mainModDir = dir;
-  };
-
   function memoize(id, mod) {
     mod.id = id;
     providedMods[fullpath(id)] = mod;
@@ -114,7 +107,7 @@
   /**
    * provide modules to the environment, and then fire callback.
    */
-  S.provide = function(ids, callback, norequire) {
+  function provide(ids, callback, norequire) {
     ids = getUnmemoizedIds(ids);
     if (ids.length === 0) return cb();
 
@@ -129,7 +122,7 @@
 
           if (len) {
             remain += len;
-            S.provide(deps, function() {
+            provide(deps, function() {
               remain -= len;
               if (remain === 0) cb();
             }, true);
@@ -145,12 +138,12 @@
     function cb() {
       callback && callback(norequire ? undefined : new Require());
     }
-  };
+  }
 
   /**
    * declare a module to the environment.
    */
-  S.declare = function(id, deps, factory) {
+  function declare(id, deps, factory) {
     // overload arguments
     if (S.isArray(id)) {
       factory = deps;
@@ -172,10 +165,10 @@
     } else {
       pendingMod = mod;
     }
-  };
+  }
 
   function load(id, callback) {
-    // reset to avoid polluting by 'S.declare' without id in static script.
+    // reset to avoid polluting by declare without id in static script.
     pendingMod = null;
     var url = fullpath(id);
 
@@ -205,7 +198,7 @@
     scriptOnload(node, function() {
       if (success) success.call(node);
 
-      for(var p in node) delete node.p;
+      for(var p in node) delete node[p];
       head.removeChild(node);
     });
 
@@ -232,6 +225,22 @@
   }
 
 //==============================================================================
+// MainModule Entrance
+//==============================================================================
+
+  // provide main module to environment.
+  if (mainModId) {
+    provide([mainModId]);
+  }
+
+  // reset loader enviroment.
+  function reset(dir) {
+    pendingMod = null;
+    providedMods = {};
+    if (dir) mainModDir = dir;
+  }
+
+//==============================================================================
 // Static Helpers
 //==============================================================================
 
@@ -245,16 +254,6 @@
   function dirname(path) {
     var s = path.split('/').slice(0, -1).join('/');
     return s ? s : '.';
-  }
-
-  /**
-   * Extract the non-directory portion of a path.
-   * basename('a/b/c.js') ==> 'c.js'
-   * basename('a/b/c') ==> 'c'
-   * basename('a/b/') ==> ''
-   */
-  function basename(path) {
-    return path.split('/').slice(-1)[0];
   }
 
   /**
@@ -299,8 +298,18 @@
     return realpath(mainModDir + '/' + id + '.js');
   }
 
+//==============================================================================
+// Public API
+//==============================================================================
 
-  // for test
-  S.providedMods = providedMods;
+  S.declare = declare;
+  S.provide = provide;
+  S.reset = reset;
 
 })();
+
+/**
+ * TODO:
+ *  - S.using('something').as('sth')
+ *  - auto generate dependencies when concating multi modules.
+ */

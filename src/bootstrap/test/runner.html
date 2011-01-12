@@ -51,7 +51,7 @@
     var test = tests[currentTest++];
     if (test) {
       printHeader(test);
-      testFrame.src = 'worker.html?' + encodeURIComponent(test);
+      testFrame.src = 'test.html?' + encodeURIComponent(test);
     } else {
       printSummary();
     }
