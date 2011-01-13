@@ -39,6 +39,7 @@
 
   function memoize(id, mod) {
     mod.id = id;
+    mod.dependencies = canonicalize(mod.dependencies, id);
     providedMods[fullpath(id)] = mod;
   }
 
@@ -61,6 +62,34 @@
     return ret;
   }
 
+  // Turns each id to canonical id.
+  // canonicalize(['./b'], 'submodule/a') ==> ['submodule/b']
+  // canonicalize(['b'], 'submodule/a') ==> ['b']
+  // canonicalize(['b/../c']) ==> ['c']
+  function canonicalize(ids, refId) {
+    var ret;
+    var refDir = refId ? dirname(refId) + '/' : '';
+
+    if (S.isArray(ids)) {
+      var i = 0, len = ids.length;
+      for (ret = []; i < len; i++) {
+        ret.push(rel2abs(ids[i], refDir));
+      }
+    } else if (S.isString(ids)) {
+      ret = rel2abs(ids, refDir);
+    }
+
+    return ret;
+  }
+
+  // realid('./b', 'sub/') ==> 'sub/b'
+  // realid('../b', 'sub/') ==> 'b'
+  // realid('b', 'sub/') ==> 'b'
+  // realid('a/b/../c', 'sub/') ==> 'a/c'
+  function rel2abs(id, dir) {
+    return realpath((id.indexOf('.') === 0) ? (dir + id) : id);
+  }
+
   //============================================================================
   // Requiring Members
   //============================================================================
@@ -72,6 +101,7 @@
     sandbox = sandbox || { deps: [] };
 
     function require(id) {
+      id = canonicalize(id, sandbox.id);
       var mod = getProvidedMod(id);
 
       // avoid cyclic
@@ -129,7 +159,7 @@
    * @param {boolean=} norequire For inner use.
    */
   function provide(ids, callback, norequire) {
-    ids = getUnmemoizedIds(ids);
+    ids = getUnmemoizedIds(canonicalize(ids));
     if (ids.length === 0) return cb();
 
     var remain = ids.length;
@@ -188,7 +218,7 @@
       var script = getInteractiveScript();
       if (script) {
         id = url2id(script.src);
-        S.log(id + ' [derived from interactive script]');
+        //S.log(id + ' [derived from interactive script]');
       }
       // In IE6-8, if the script is in the cache, the "interactive" mode
       // sometimes does not work. The script code actually executes *during*
@@ -199,7 +229,7 @@
         var diff = S.now() - pendingModOldIE.timestamp;
         if (diff < cacheTakenTime) {
           id = pendingModOldIE.id;
-          S.log(id + ' [derived from pendingOldIE] diff = ' + diff);
+          //S.log(id + ' [derived from pendingOldIE] diff = ' + diff);
         }
         pendingModOldIE = null;
       }
@@ -217,7 +247,7 @@
     }
     else {
       pendingMod = mod;
-      S.log('[set pendingMod for onload event]');
+      //S.log('[set pendingMod for onload event]');
     }
   }
 
