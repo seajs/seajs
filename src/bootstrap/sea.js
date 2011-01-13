@@ -147,6 +147,39 @@ S.mix = function(target, source) {
 
 
 /**
+ * If the browser doesn't supply us with indexOf (I'm looking at you, MSIE),
+ * we need this function.
+ * @param {Array} array The Array to seach in.
+ * @param {*} item The item to search.
+ * @return {number} Return the position of the first occurrence of an
+ * item in an array, or -1 if the item is not included in the array.
+ */
+S.indexOf = Array.prototype.indexOf ?
+    function(array, item) {
+      return array.indexOf(item);
+    } :
+    function(array, item) {
+      for (var i = 0, l = array.length; i < l; i++) {
+        if (array[i] === item) {
+          return i;
+        }
+      }
+      return -1;
+    };
+
+
+/**
+ * Search for a specified value index within an array.
+ * @param {Array} array The Array to seach in.
+ * @param {*} item The item to search.
+ * @return {boolean} Whether the item is in the specific array.
+ */
+S.inArray = function(array, item) {
+  return S.indexOf(array, item) > -1;
+};
+
+
+/**
  * @return {number} An integer value representing the number of milliseconds
  *     between midnight, January 1, 1970 and the current time.
  */

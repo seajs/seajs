@@ -32,8 +32,7 @@
   var providedMods = {};
 
   // init mainModDir and mainModId.
-  var doc = document;
-  var scripts = doc.getElementsByTagName('script');
+  var scripts = document.getElementsByTagName('script');
   var loaderScript = scripts[scripts.length - 1];
   var mainModDir = dirname(getScriptAbsSrc(loaderScript));
   var mainModId = loaderScript.getAttribute('data-main');
@@ -66,18 +65,20 @@
   // Requiring Members
   //============================================================================
 
-  function Require() {
+  function Require(deps) {
+    deps = deps || [];
 
     function require(id) {
-      var mod = getProvidedMod(id);
-      if (!mod) {
+      var mod;
+
+      if (!S.inArray(deps, id) || !(mod = getProvidedMod(id))) {
         return S.error('Module ' + id + ' is not provided.');
       }
 
-      // initialize mod.exports
       if (!mod.exports) {
         mod.exports = getExports(mod);
       }
+
       return mod.exports;
     }
 
@@ -97,7 +98,13 @@
 
   function execFactory(mod, factory) {
     var exports = {};
-    var ret = factory.call(mod, new Require(), exports, mod);
+
+    var ret = factory.call(
+        mod,
+        new Require(mod.dependencies),
+        exports,
+        mod);
+
     if (ret) exports = ret;
     return exports;
   }
@@ -138,7 +145,7 @@
     }
 
     function cb() {
-      callback && callback(norequire ? undefined : new Require());
+      callback && callback(norequire ? undefined : new Require(ids));
     }
   }
 
@@ -163,7 +170,7 @@
     // a function call that is called while the script is executed, it could
     // query the script nodes and the one that is in "interactive" mode
     // indicates the current script. see http://goo.gl/JHfFW
-    if(!id && oldIE) {
+    if (!id && oldIE) {
       var script = getInteractiveScript();
       if (script) {
         id = url2id(script.src);
@@ -208,7 +215,7 @@
     if (loadingMods[url]) {
       scriptOnload(loadingMods[url], cb);
     } else {
-      if(oldIE) pendingModOldIE = { id: id, timestamp: S.now() };
+      if (oldIE) pendingModOldIE = { id: id, timestamp: S.now() };
       loadingMods[url] = getScript(url, cb);
     }
 
@@ -222,10 +229,10 @@
     }
   }
 
-  var head = doc.getElementsByTagName('head')[0];
+  var head = document.getElementsByTagName('head')[0];
 
   function getScript(url, success) {
-    var node = doc.createElement('script');
+    var node = document.createElement('script');
 
     scriptOnload(node, function() {
       if (success) success.call(node);

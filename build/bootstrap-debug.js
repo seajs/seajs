@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.1.0
 MIT Licensed
-build time: Jan 12 19:49
+build time: Jan 13 10:48
 */
 
 /**
@@ -150,6 +150,48 @@ S.mix = function(target, source) {
   return target;
 };
 
+
+/**
+ * If the browser doesn't supply us with indexOf (I'm looking at you, MSIE),
+ * we need this function.
+ * @param {Array} array The Array to seach in.
+ * @param {*} item The item to search.
+ * @return {number} Return the position of the first occurrence of an
+ * item in an array, or -1 if the item is not included in the array.
+ */
+S.indexOf = Array.prototype.indexOf ?
+    function(array, item) {
+      return array.indexOf(item);
+    } :
+    function(array, item) {
+      for (var i = 0, l = array.length; i < l; i++) {
+        if (array[i] === item) {
+          return i;
+        }
+      }
+      return -1;
+    };
+
+
+/**
+ * Search for a specified value index within an array.
+ * @param {Array} array The Array to seach in.
+ * @param {*} item The item to search.
+ * @return {boolean} Whether the item is in the specific array.
+ */
+S.inArray = function(array, item) {
+  return S.indexOf(array, item) > -1;
+};
+
+
+/**
+ * @return {number} An integer value representing the number of milliseconds
+ *     between midnight, January 1, 1970 and the current time.
+ */
+S.now = Date.now || (function() {
+  return new Date().getTime();
+});
+
 /**
  * @fileoverview A module loader focused on web.
  * @author lifesinger@gmail.com (Frank Wang)
@@ -173,13 +215,17 @@ S.mix = function(target, source) {
   // the module that is declared, but has not been provided.
   var pendingMod = null;
 
+  // for IE6-8
+  var oldIE = !+'\v1';
+  var pendingModOldIE = null;
+  var cacheTakenTime = 10;
+
   // modules that have beed provided.
   // { uri: { id: string, dependencies: [], factory: function }, ... }
   var providedMods = {};
 
   // init mainModDir and mainModId.
-  var doc = document;
-  var scripts = doc.getElementsByTagName('script');
+  var scripts = document.getElementsByTagName('script');
   var loaderScript = scripts[scripts.length - 1];
   var mainModDir = dirname(getScriptAbsSrc(loaderScript));
   var mainModId = loaderScript.getAttribute('data-main');
@@ -212,18 +258,20 @@ S.mix = function(target, source) {
   // Requiring Members
   //============================================================================
 
-  function Require() {
+  function Require(deps) {
+    deps = deps || [];
 
     function require(id) {
-      var mod = getProvidedMod(id);
-      if (!mod) {
+      var mod;
+
+      if (!S.inArray(deps, id) || !(mod = getProvidedMod(id))) {
         return S.error('Module ' + id + ' is not provided.');
       }
 
-      // initialize mod.exports
       if (!mod.exports) {
         mod.exports = getExports(mod);
       }
+
       return mod.exports;
     }
 
@@ -232,21 +280,24 @@ S.mix = function(target, source) {
 
   function getExports(mod) {
     var fn = mod.factory;
-    var exports = {};
+    var exports = fn;
 
     if (S.isFunction(fn)) {
       exports = execFactory(mod, fn);
     }
-    else if (S.type(fn) === 'object') {
-      exports = fn;
-    }
 
-    return exports;
+    return exports || {};
   }
 
   function execFactory(mod, factory) {
     var exports = {};
-    var ret = factory.call(mod, new Require(), exports, mod);
+
+    var ret = factory.call(
+        mod,
+        new Require(mod.dependencies),
+        exports,
+        mod);
+
     if (ret) exports = ret;
     return exports;
   }
@@ -287,7 +338,7 @@ S.mix = function(target, source) {
     }
 
     function cb() {
-      callback && callback(norequire ? undefined : new Require());
+      callback && callback(norequire ? undefined : new Require(ids));
     }
   }
 
@@ -307,14 +358,45 @@ S.mix = function(target, source) {
       id = '';
     }
 
+    // For non-IE6-8 browsers, the script onload event may not fire right
+    // after the the script is evaluated. Kris Zyp found for IE though that in
+    // a function call that is called while the script is executed, it could
+    // query the script nodes and the one that is in "interactive" mode
+    // indicates the current script. see http://goo.gl/JHfFW
+    if (!id && oldIE) {
+      var script = getInteractiveScript();
+      if (script) {
+        id = url2id(script.src);
+        S.log(id + ' [derived from interactive script]');
+      }
+      // In IE6-8, if the script is in the cache, the "interactive" mode
+      // sometimes does not work. The script code actually executes *during*
+      // the DOM insertion of the script tag, so we can keep track of which
+      // script is being requested in case declare() is called during the DOM
+      // insertion.
+      else if (pendingModOldIE) {
+        var diff = S.now() - pendingModOldIE.timestamp;
+        if (diff < cacheTakenTime) {
+          id = pendingModOldIE.id;
+          S.log(id + ' [derived from pendingOldIE] diff = ' + diff);
+        }
+        pendingModOldIE = null;
+      }
+      // If all the id-deriving above is failed, then falls back to using
+      // script onload to get the module id.
+    }
+
     var mod = { dependencies: deps, factory: factory };
+
     if (id) {
       memoize(id, mod);
       // if a file contains multi declares, a declare without id is valid
       // only when it is the last one.
       pendingMod = null;
-    } else {
+    }
+    else {
       pendingMod = mod;
+      S.log('[set pendingMod for onload event]');
     }
   }
 
@@ -326,7 +408,8 @@ S.mix = function(target, source) {
     if (loadingMods[url]) {
       scriptOnload(loadingMods[url], cb);
     } else {
-      loadingMods[url] = getScript(fullpath(id), cb);
+      if (oldIE) pendingModOldIE = { id: id, timestamp: S.now() };
+      loadingMods[url] = getScript(url, cb);
     }
 
     function cb() {
@@ -339,16 +422,21 @@ S.mix = function(target, source) {
     }
   }
 
-  var head = doc.getElementsByTagName('head')[0];
+  var head = document.getElementsByTagName('head')[0];
 
   function getScript(url, success) {
-    var node = doc.createElement('script');
+    var node = document.createElement('script');
 
     scriptOnload(node, function() {
       if (success) success.call(node);
 
+      // reduce memory leak
       try {
-        for (var p in node) delete node[p];
+        if (node.clearAttributes) {
+          node.clearAttributes();
+        } else {
+          for (var p in node) delete node[p];
+        }
       } catch (x) {
       }
       head.removeChild(node);
@@ -363,17 +451,14 @@ S.mix = function(target, source) {
     node.addEventListener('load', callback, false);
   }
 
-  if (!doc.createElement('script').addEventListener) {
+  if (oldIE) {
     scriptOnload = function(node, callback) {
-      var oldCallback = node.onreadystatechange;
-      node.onreadystatechange = function() {
+      node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
         if (rs === 'loaded' || rs === 'complete') {
-          node.onreadystatechange = null;
-          if (oldCallback) oldCallback();
-          callback.call(this);
+          callback && callback.call(this);
         }
-      };
+      });
     }
   }
 
@@ -407,6 +492,12 @@ S.mix = function(target, source) {
   function dirname(path) {
     var s = path.split('/').slice(0, -1).join('/');
     return s ? s : '.';
+  }
+
+  // url2id('http://path/main/a/b/c.js') ==> 'a/b/c'
+  function url2id(url) {
+    return url.replace(mainModDir + '/', '')
+              .replace('.js', '');
   }
 
   /**
@@ -458,6 +549,17 @@ S.mix = function(target, source) {
         node.getAttribute('src', 4);
   }
 
+  function getInteractiveScript() {
+    var scripts = head.getElementsByTagName('script');
+    var script, i = 0, len = scripts.length;
+    for (; i < len; i++) {
+      script = scripts[i];
+      if (script.readyState === 'interactive') {
+        return script;
+      }
+    }
+  }
+
   //============================================================================
   // Public API
   //============================================================================
@@ -472,4 +574,5 @@ S.mix = function(target, source) {
  * TODO:
  *  - S.using('something').as('sth')
  *  - auto generate dependencies when concating multi modules.
+ *  - timestamp for rebuild component
  */
