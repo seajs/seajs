@@ -58,17 +58,32 @@
         </apply>
 
         <!-- 用 Google Closure Compiler 压缩 JS -->
-        <apply executable="java" verbose="true" dir="${tmp.dir}">
+        <apply executable="java" verbose="true" dir="${tmp.dir}"
+               failonerror="true">
             <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
             <arg line="-jar"/>
             <arg path="${gcc.jar}"/>
             <arg line="--compilation_level SIMPLE_OPTIMIZATIONS"/>
+
+            <!-- http://code.google.com/p/closure-compiler/wiki/Warnings -->
             <arg line="--warning_level VERBOSE"/>
+            <arg line="--jscomp_error=checkTypes"/>
+            <arg line="--jscomp_off=fileoverviewTags"/>
+
             <arg line="--define S.DEBUG=false"/>
             <arg line="--js"/>
             <srcfile/>
             <arg line="--js_output_file ${filename}.js"/>
         </apply>
+
+        <!-- 将 "\u000b" 还原为 "\v", 使得 isIE876 的探测有效 -->
+        <replaceregexp match="\\u000b"
+                       replace="\\\\v"
+                       flags="g"
+                       encoding="${charset}">
+            <fileset dir="${tmp.dir}" includes="${filename}.js"/>
+        </replaceregexp>
+
         <delete>
             <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
         </delete>

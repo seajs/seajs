@@ -125,16 +125,16 @@ S.isFunction = function(o) {
  * @param {*} o Variable to test.
  * @return {boolean} Whether variable is an array.
  */
-S.isArray = Array.isArray ? Array.isArray : function(o) {
+S.isArray = Array.isArray ? Array['isArray'] : function(o) {
   return S.type(o) === 'array';
 };
 
 
 /**
  * Copies all the members of a source object to a target object.
- * @param {object} target Target.
- * @param {object} source Source.
- * @return {object} Target.
+ * @param {Object} target Target.
+ * @param {Object} source Source.
+ * @return {Object} Target.
  */
 S.mix = function(target, source) {
   for (var x in source) {

@@ -23,7 +23,7 @@
   var pendingMod = null;
 
   // for IE6-8
-  var oldIE = !+'\v1';
+  var isIE876 = !+'\v1';
   var pendingModOldIE = null;
   var cacheTakenTime = 10;
 
@@ -65,18 +65,28 @@
   // Requiring Members
   //============================================================================
 
-  function Require(deps) {
-    deps = deps || [];
+  /**
+   * @constructor
+   */
+  function Require(sandbox) {
+    sandbox = sandbox || { deps: [] };
 
     function require(id) {
       var mod;
 
-      if (!S.inArray(deps, id) || !(mod = getProvidedMod(id))) {
+      // avoid cyclic
+      if (contains(sandbox.deps.parent, id)) {
+        S.log('cyclic dependencies: id = ' + id, 'warn');
+        return;
+      }
+
+      // restrain to sandbox environment
+      if (!S.inArray(sandbox.deps, id) || !(mod = getProvidedMod(id))) {
         return S.error('Module ' + id + ' is not provided.');
       }
 
       if (!mod.exports) {
-        mod.exports = getExports(mod);
+        mod.exports = getExports(mod, sandbox);
       }
 
       return mod.exports;
@@ -85,28 +95,37 @@
     return require;
   }
 
-  function getExports(mod) {
+  function getExports(mod, sandbox) {
     var fn = mod.factory;
     var exports = fn;
 
     if (S.isFunction(fn)) {
-      exports = execFactory(mod, fn);
+      exports = execFactory(mod, fn, sandbox);
     }
 
     return exports || {};
   }
 
-  function execFactory(mod, factory) {
+  function execFactory(mod, factory, sandbox) {
     var exports = {};
+    var deps = mod.dependencies.concat();
+    deps.parent = sandbox.deps;
 
     var ret = factory.call(
         mod,
-        new Require(mod.dependencies),
+        new Require({ deps: deps }),
         exports,
         mod);
 
     if (ret) exports = ret;
     return exports;
+  }
+
+  function contains(deps, id) {
+    if (!deps || deps.length === 0) return false;
+    if (S.inArray(deps, id)) return true;
+    if (deps.parent) return contains(deps.parent, id);
+    return false;
   }
 
   //============================================================================
@@ -115,6 +134,9 @@
 
   /**
    * provide modules to the environment, and then fire callback.
+   * @param {Array.<string>} ids An array composed of module id.
+   * @param {function(*)=} callback The callback function.
+   * @param {boolean=} norequire For inner use.
    */
   function provide(ids, callback, norequire) {
     ids = getUnmemoizedIds(ids);
@@ -145,7 +167,9 @@
     }
 
     function cb() {
-      callback && callback(norequire ? undefined : new Require(ids));
+      if (callback) {
+        callback(norequire ? undefined : new Require({ deps: ids }));
+      }
     }
   }
 
@@ -170,7 +194,7 @@
     // a function call that is called while the script is executed, it could
     // query the script nodes and the one that is in "interactive" mode
     // indicates the current script. see http://goo.gl/JHfFW
-    if (!id && oldIE) {
+    if (!id && isIE876) {
       var script = getInteractiveScript();
       if (script) {
         id = url2id(script.src);
@@ -215,7 +239,7 @@
     if (loadingMods[url]) {
       scriptOnload(loadingMods[url], cb);
     } else {
-      if (oldIE) pendingModOldIE = { id: id, timestamp: S.now() };
+      if (isIE876) pendingModOldIE = { id: id, timestamp: S.now() };
       loadingMods[url] = getScript(url, cb);
     }
 
@@ -225,7 +249,7 @@
         pendingMod = null;
       }
       if (callback) callback();
-      if (loadingMods.url) delete loadingMods.url;
+      if (loadingMods[url]) delete loadingMods[url];
     }
   }
 
@@ -258,7 +282,7 @@
     node.addEventListener('load', callback, false);
   }
 
-  if (oldIE) {
+  if (isIE876) {
     scriptOnload = function(node, callback) {
       node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
