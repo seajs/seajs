@@ -72,21 +72,21 @@
     sandbox = sandbox || { deps: [] };
 
     function require(id) {
-      var mod;
+      var mod = getProvidedMod(id);
 
       // avoid cyclic
-      if (contains(sandbox.deps.parent, id)) {
+      if (isCyclic(sandbox, id)) {
         S.log('cyclic dependencies: id = ' + id, 'warn');
-        return;
+        return (mod || 0).exports;
       }
 
       // restrain to sandbox environment
-      if (!S.inArray(sandbox.deps, id) || !(mod = getProvidedMod(id))) {
+      if (!S.inArray(sandbox.deps, id) || !mod) {
         return S.error('Module ' + id + ' is not provided.');
       }
 
       if (!mod.exports) {
-        mod.exports = getExports(mod, sandbox);
+        setExports(mod, sandbox);
       }
 
       return mod.exports;
@@ -95,36 +95,26 @@
     return require;
   }
 
-  function getExports(mod, sandbox) {
-    var fn = mod.factory;
-    var exports = fn;
+  function setExports(mod, sandbox) {
+    var factory = mod.factory, ret;
 
-    if (S.isFunction(fn)) {
-      exports = execFactory(mod, fn, sandbox);
+    if (S.isFunction(factory)) {
+      ret = factory.call(
+          mod,
+          new Require({ id: mod.id, parent: sandbox, deps: mod.dependencies }),
+          (mod.exports = {}),
+          mod);
+
+      if (ret) mod.exports = ret;
     }
-
-    return exports || {};
+    else {
+      mod.exports = factory || {};
+    }
   }
 
-  function execFactory(mod, factory, sandbox) {
-    var exports = {};
-    var deps = mod.dependencies.concat();
-    deps.parent = sandbox.deps;
-
-    var ret = factory.call(
-        mod,
-        new Require({ deps: deps }),
-        exports,
-        mod);
-
-    if (ret) exports = ret;
-    return exports;
-  }
-
-  function contains(deps, id) {
-    if (!deps || deps.length === 0) return false;
-    if (S.inArray(deps, id)) return true;
-    if (deps.parent) return contains(deps.parent, id);
+  function isCyclic(sandbox, id) {
+    if (sandbox.id === id) return true;
+    if (sandbox.parent) return isCyclic(sandbox.parent, id);
     return false;
   }
 
@@ -403,6 +393,9 @@
 
 /**
  * TODO:
+ *  - more test
+ *  - compare with BravoJS, FlyScript, RequireJS, YY
+ *  - modules: lang, jquery
  *  - S.using('something').as('sth')
  *  - auto generate dependencies when concating multi modules.
  *  - timestamp for rebuild component
