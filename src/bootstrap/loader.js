@@ -22,13 +22,10 @@
   // the module that is declared, but has not been provided.
   var pendingMod = null;
 
-  // in IE/8/7/6, if the script is in the cache, it actually executes *during*
-  // the DOM insertion of the script tag, so we can keep track of which script
-  // is being requested in case define() is called during the DOM insertion.
-  // see http://goo.gl/JHfFW
+  // for IE6-8
   var oldIE = !+'\v1';
   var pendingModOldIE = null;
-  var cacheTakenTime = 15;
+  var cacheTakenTime = 10;
 
   // modules that have beed provided.
   // { uri: { id: string, dependencies: [], factory: function }, ... }
@@ -89,16 +86,13 @@
 
   function getExports(mod) {
     var fn = mod.factory;
-    var exports = {};
+    var exports = fn;
 
     if (S.isFunction(fn)) {
       exports = execFactory(mod, fn);
     }
-    else if (S.type(fn) === 'object') {
-      exports = fn;
-    }
 
-    return exports;
+    return exports || {};
   }
 
   function execFactory(mod, factory) {
@@ -164,24 +158,45 @@
       id = '';
     }
 
-    var mod = { dependencies: deps, factory: factory };
-
-    // in oldIE, when fetching file from cache
-    if(!id && oldIE && pendingModOldIE) {
-      S.log(S.now() - pendingModOldIE.timestamp);
-      if(S.now() - pendingModOldIE.timestamp < cacheTakenTime) {
-        id = pendingModOldIE.id;
+    // For non-IE6-8 browsers, the script onload event may not fire right
+    // after the the script is evaluated. Kris Zyp found for IE though that in
+    // a function call that is called while the script is executed, it could
+    // query the script nodes and the one that is in "interactive" mode
+    // indicates the current script. see http://goo.gl/JHfFW
+    if(!id && oldIE) {
+      var script = getInteractiveScript();
+      if (script) {
+        id = url2id(script.src);
+        S.log(id + ' [derived from interactive script]');
       }
-      pendingModOldIE = null;
+      // In IE6-8, if the script is in the cache, the "interactive" mode
+      // sometimes does not work. The script code actually executes *during*
+      // the DOM insertion of the script tag, so we can keep track of which
+      // script is being requested in case declare() is called during the DOM
+      // insertion.
+      else if (pendingModOldIE) {
+        var diff = S.now() - pendingModOldIE.timestamp;
+        if (diff < cacheTakenTime) {
+          id = pendingModOldIE.id;
+          S.log(id + ' [derived from pendingOldIE] diff = ' + diff);
+        }
+        pendingModOldIE = null;
+      }
+      // If all the id-deriving above is failed, then falls back to using
+      // script onload to get the module id.
     }
+
+    var mod = { dependencies: deps, factory: factory };
 
     if (id) {
       memoize(id, mod);
       // if a file contains multi declares, a declare without id is valid
       // only when it is the last one.
       pendingMod = null;
-    } else {
+    }
+    else {
       pendingMod = mod;
+      S.log('[set pendingMod for onload event]');
     }
   }
 
@@ -236,8 +251,7 @@
     node.addEventListener('load', callback, false);
   }
 
-  if (!doc.createElement('script').addEventListener) {
-    // for IE8/7/6
+  if (oldIE) {
     scriptOnload = function(node, callback) {
       node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
@@ -278,6 +292,12 @@
   function dirname(path) {
     var s = path.split('/').slice(0, -1).join('/');
     return s ? s : '.';
+  }
+
+  // url2id('http://path/main/a/b/c.js') ==> 'a/b/c'
+  function url2id(url) {
+    return url.replace(mainModDir + '/', '')
+              .replace('.js', '');
   }
 
   /**
@@ -327,6 +347,17 @@
         node.src :
         // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
         node.getAttribute('src', 4);
+  }
+
+  function getInteractiveScript() {
+    var scripts = head.getElementsByTagName('script');
+    var script, i = 0, len = scripts.length;
+    for (; i < len; i++) {
+      script = scripts[i];
+      if (script.readyState === 'interactive') {
+        return script;
+      }
+    }
   }
 
   //============================================================================
