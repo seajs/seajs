@@ -7,7 +7,7 @@
     <property name="gcc.jar" location="${current.dir}/compiler.jar"/>
     <property name="yc.jar" location="${current.dir}/yuicompressor.jar"/>
 
-    <property name="version" value="0.1.0"/>
+    <property name="version" value="0.2.0"/>
     <property name="charset" value="utf-8"/>
     <property name="copyright.files" value="*.css, *.js"/>
     <property name="filename" value="${module.name}"/>
@@ -38,8 +38,8 @@
                     to="\1-debug.\2"/>
         </copy>
 
-        <!-- 去除 S.log 代码 -->
-        <replaceregexp match="^\s*S\.log\(.+$"
+        <!-- 去除 console.log 等代码行 -->
+        <replaceregexp match="^\s*console\.[\w]+\(.+$"
                        replace=""
                        flags="g"
                        byline="true"
@@ -70,7 +70,7 @@
             <arg line="--jscomp_error=checkTypes"/>
             <arg line="--jscomp_off=fileoverviewTags"/>
 
-            <arg line="--define S.DEBUG=false"/>
+            <arg line="--define exports.DEBUG=false"/>
             <arg line="--js"/>
             <srcfile/>
             <arg line="--js_output_file ${filename}.js"/>

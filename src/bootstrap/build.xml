@@ -10,8 +10,9 @@
         <concat destfile="${module.name}-pkg.js"
                 encoding="${charset}"
                 outputencoding="${charset}">
-            <path path="sea.js"/>
-            <path path="loader.js"/>
+            <path path="module.js"/>
+            <path path="lang.js"/>
+            <path path="console.js"/>
         </concat>
     </target>
 
