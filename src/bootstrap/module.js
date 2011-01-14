@@ -598,9 +598,10 @@ module['version'] = '@VERSION@';
   // Public API
   //============================================================================
 
-  module.provide = provide;
-  module.declare = declare;
-  module.reset = reset;
+  module['provide'] = provide;
+  module['declare'] = declare;
+  module['reset'] = reset;
+
 
 })(module['_']);
 
