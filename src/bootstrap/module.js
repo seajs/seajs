@@ -10,7 +10,7 @@
 //==============================================================================
 
 /**
- * Base namespace for the framework. Checks to see 'module' is already defined
+ * Base namespace for the framework. Checks to see "module" is already defined
  * in the current scope before assigning to prevent depriving existed members.
  *
  * @const
@@ -171,9 +171,10 @@ module['version'] = '@VERSION@';
   var pendingMod = null;
 
   // For old IE
-  var isIE876 = !+'\v1';
+  // { id: string, timestamp: number }
   var pendingModOldIE = null;
   var cacheTakenTime = 10;
+  var isIE876 = !+'\v1';
 
   // Modules that have been provided.
   // { uri: { id: string, dependencies: [], factory: function }, ... }
@@ -223,11 +224,11 @@ module['version'] = '@VERSION@';
 
 
   //----------------------------------------------------------------------------
-  // Members for 'require'
+  // Members for "require"
   //----------------------------------------------------------------------------
 
   /**
-   * The factory of 'require' function.
+   * The factory of "require" function.
    * @constructor
    */
   function Require(sandbox) {
@@ -285,7 +286,7 @@ module['version'] = '@VERSION@';
 
 
   //----------------------------------------------------------------------------
-  // Members for 'declare' and 'provide'
+  // Members for "declare" and "provide"
   //----------------------------------------------------------------------------
 
   /**
@@ -373,7 +374,7 @@ module['version'] = '@VERSION@';
 
       }
 
-      // Resets to avoid puzzling the next 'declare'.
+      // Resets to avoid puzzling the next "declare".
       pendingModOldIE = null;
 
       // NOTE: If all the id-deriving methods above is failed, then falls back
@@ -382,12 +383,19 @@ module['version'] = '@VERSION@';
 
     var mod = { dependencies: deps, factory: factory };
     if (id) {
+      // Memoizes to providedMods immediately.
       memoize(id, mod);
-      // If a file contains multi declares, a declare without id is valid
-      // only when it is the last one.
+
+      // Resets to avoid polluting the context of onload event. An example:
+      // Step1. First executes a 'declare([], fn)' in html code. This 'declare'
+      // will set pendingMod = x.
+      // Step2. Then loads a script including a 'declare(id, [], fn)'. If
+      // pendingMod is not reset here, the cb in 'load' function will get wrong
+      // pendingMod from Step1.
       pendingMod = null;
     }
     else {
+      // Saves information for "real" work in the onload event.
       pendingMod = mod;
       //console.log('[set pendingMod for onload event]');
     }
@@ -400,11 +408,8 @@ module['version'] = '@VERSION@';
    * @param {function} callback The callback function.
    */
   function load(id, callback) {
-    // Resets pendingMod to avoid polluting by declare without id in static
-    // scripts.
-    pendingMod = null;
-
     var url = fullpath(id);
+
     if (loadingMods[url]) {
       scriptOnload(loadingMods[url], cb);
     } else {
@@ -415,10 +420,11 @@ module['version'] = '@VERSION@';
     function cb() {
       if (pendingMod) {
         memoize(id, pendingMod);
+        // Resets immediately.
         pendingMod = null;
       }
-      if (callback) callback();
       if (loadingMods[url]) delete loadingMods[url];
+      if (callback) callback();
     }
   }
 
@@ -501,11 +507,6 @@ module['version'] = '@VERSION@';
     return s ? s : '.';
   }
 
-  // url2id('http://path/main/a/b/c.js') ==> 'a/b/c'
-  function url2id(url) {
-    return url.replace(mainModDir + '/', '').replace(/\.js.*$/, '');
-  }
-
   /**
    * Canonicalize path.
    * realpath('a/b/c') ==> 'a/b/c'
@@ -578,6 +579,11 @@ module['version'] = '@VERSION@';
   // rel2abs('a/b/../c', 'sub/') ==> 'a/c'
   function rel2abs(id, dir) {
     return realpath((id.indexOf('.') === 0) ? (dir + id) : id);
+  }
+
+  // url2id('http://path/main/a/b/c.js') ==> 'a/b/c'
+  function url2id(url) {
+    return url.replace(mainModDir + '/', '').replace(/\.js.*$/, '');
   }
 
   function getScriptAbsoluteSrc(node) {
