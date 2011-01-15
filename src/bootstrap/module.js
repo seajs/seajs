@@ -246,7 +246,7 @@ module['version'] = '@VERSION@';
 
       // Checks cyclic dependencies.
       if (isCyclic(sandbox, id)) {
-        console.warn('Found cyclic dependencies: id = ', id);
+        //console.warn('Found cyclic dependencies: id = ', id);
         return mod.exports;
       }
 

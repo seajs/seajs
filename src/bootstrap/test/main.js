@@ -13,9 +13,9 @@ module.declare('test', [], function(require, exports) {
   exports.assert = function (guard, message) {
     if (typeof message === 'undefined') message = '';
     if (guard) {
-      exports.print('PASS ' + message, 'pass');
+      exports.print('[PASS] ' + message, 'pass');
     } else {
-      exports.print('FAIL ' + message, 'fail');
+      exports.print('[FAIL] ' + message, 'fail');
     }
   };
 });

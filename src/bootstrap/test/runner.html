@@ -21,18 +21,21 @@
 
     var tests = [
       'modules/math'
-      //,'modules/cyclic'
-      //,'modules/absolute'
-      //,'modules/relative'
+      ,'modules/cyclic'
+      ,'modules/absolute'
+      ,'modules/relative'
+      ,'modules/determinism'
     ];
 
     var reporter;
     var testFrame, currentTest = 0;
     var count = { pass: 0, fail: 0, error: 0 };
+    var summary;
 
     window.onload = function() {
       var container = document.getElementById('loader_container');
       reporter = document.getElementById('loader_reporter');
+      summary = document.getElementById('loader_summary');
 
       testFrame = document.createElement('iframe');
       testFrame.id = 'test-frame-' + (new Date()).getTime();
@@ -50,8 +53,7 @@
     }
 
     function printSummary() {
-      var div = document.getElementById('loader_summary');
-      div.innerHTML =
+      summary.innerHTML =
           'Passed: <span class="pass">' + count.pass + '<' + '/span> ' +
               'Failed: <span class="fail">' + count.fail + '<' + '/span> ' +
               'Errors: <span class="error">' + count.error + '<' + '/span>';
@@ -62,6 +64,7 @@
       if (test) {
         printHeader(test);
         testFrame.src = 'test.html?' + encodeURIComponent(test);
+        summary.innerHTML = 'Running ' + test + ' ...';
       } else {
         printSummary();
       }
@@ -72,6 +75,7 @@
       d.appendChild(document.createTextNode(txt));
       d.className = style;
       reporter.appendChild(d);
+      reporter.scrollTop = reporter.scrollHeight;
       if (style in count) count[style] += 1;
     }
   })();
@@ -90,6 +94,10 @@
 
   #loader_reporter {
     padding: 0 10px;
+    margin-bottom: 10px;
+    height: 600px;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
   }
 
   #loader_reporter h3 {
@@ -115,7 +123,7 @@
 
   #loader_summary {
     position: absolute;
-    left: 200px;
+    left: 300px;
     top: 8px;
     font: 15px Arial;
   }
@@ -127,8 +135,8 @@
 </style>
 <div id="loader_container">
   <div class="banner">
-    <div class="logo">Loader Unit Test</div>
-    <div id="loader_summary">Running...</div>
+    <div class="logo">Unit Testing for module.js</div>
+    <div id="loader_summary"></div>
   </div>
   <div id="loader_reporter"></div>
 </div>
