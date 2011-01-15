@@ -9,6 +9,7 @@
 // Baseline setup
 //==============================================================================
 
+
 /**
  * Base namespace for the framework. Checks to see "module" is already defined
  * in the current scope before assigning to prevent depriving existed members.
@@ -33,7 +34,7 @@ module['version'] = '@VERSION@';
 (function(_) {
 
   var cls = ['Boolean', 'Number', 'String', 'Function', 'Array', 'Date',
-      'RegExp', 'Object'], cls2type = {}, name, i = 0;
+    'RegExp', 'Object'], cls2type = {}, name, i = 0;
 
   while ((name = cls[i++])) {
     cls2type['[object ' + name + ']'] = name.toLowerCase();
@@ -113,17 +114,17 @@ module['version'] = '@VERSION@';
    *     item in an array, or -1 if the item is not included in the array.
    */
   _['indexOf'] = Array.prototype.indexOf ?
-      function(array, item) {
-       return array.indexOf(item);
-      } :
-      function(array, item) {
-       for (var i = 0, l = array.length; i < l; i++) {
-         if (array[i] === item) {
-           return i;
-         }
-       }
-       return -1;
-      };
+                 function(array, item) {
+                   return array.indexOf(item);
+                 } :
+                 function(array, item) {
+                   for (var i = 0, l = array.length; i < l; i++) {
+                     if (array[i] === item) {
+                       return i;
+                     }
+                   }
+                   return -1;
+                 };
 
 
   /**
@@ -151,7 +152,7 @@ module['version'] = '@VERSION@';
 //==============================================================================
 // Module environment
 //==============================================================================
-(function(_) {
+(function(global, _) {
 
   //----------------------------------------------------------------------------
   // Global variables and related helpers
@@ -241,12 +242,12 @@ module['version'] = '@VERSION@';
 
       // Restrains to sandbox environment.
       if (!_.inArray(sandbox.deps, id) || !(mod = getProvidedMod(id))) {
-        throw 'Module ' + id + ' is not provided.';
+        throw 'Invalid module id: ' + id;
       }
 
       // Checks cyclic dependencies.
       if (isCyclic(sandbox, id)) {
-        //console.warn('Found cyclic dependencies: id = ', id);
+        printCyclicStack(sandbox, id);
         return mod.exports;
       }
 
@@ -284,6 +285,17 @@ module['version'] = '@VERSION@';
     return false;
   }
 
+  function printCyclicStack(sandbox, id) {
+    if (global['console']) {
+      var stack = id;
+      while (sandbox) {
+        stack += ' <-- ' + sandbox.id;
+        sandbox = sandbox.parent;
+      }
+      console.warn('Found cyclic dependencies:', stack);
+    }
+  }
+
 
   //----------------------------------------------------------------------------
   // Members for "provide" and "declare"
@@ -292,7 +304,7 @@ module['version'] = '@VERSION@';
   /**
    * Provides modules to the environment, and then fire callback.
    * @param {Array.<string>} ids An array composed of module id.
-   * @param {function=} callback The callback function.
+   * @param {function(*)=} callback The callback function.
    * @param {boolean=} noRequire For inner use.
    */
   function provide(ids, callback, noRequire) {
@@ -325,7 +337,9 @@ module['version'] = '@VERSION@';
 
     function cb() {
       if (callback) {
-        callback(noRequire ? undefined : new Require({ deps: ids }));
+        callback(noRequire ?
+            undefined :
+            new Require({ id: 'provide([' + ids + '])', deps: ids }));
       }
     }
   }
@@ -335,7 +349,7 @@ module['version'] = '@VERSION@';
    * Declares a module.
    * @param {string=} id The module canonical id.
    * @param {Array.<string>} deps The module dependencies.
-   * @param {function|Object} factory The module factory function.
+   * @param {function()|Object} factory The module factory function.
    */
   function declare(id, deps, factory) {
     // Overloads arguments.
@@ -368,7 +382,7 @@ module['version'] = '@VERSION@';
           var diff = _.now() - pendingModOldIE.timestamp;
           if (diff < cacheTakenTime) {
             id = pendingModOldIE.id;
-            //console.log(id, '[derived from pendingOldIE] diff =', diff);
+            //console.log(id, '[derived from pendingOldIE]', diff);
           }
         }
 
@@ -405,7 +419,7 @@ module['version'] = '@VERSION@';
   /**
    * Downloads a module file.
    * @param {string} id The canonical module id.
-   * @param {function} callback The callback function.
+   * @param {function()} callback The callback function.
    */
   function load(id, callback) {
     var url = fullpath(id);
@@ -431,11 +445,11 @@ module['version'] = '@VERSION@';
 
   var head = document.getElementsByTagName('head')[0];
 
-  function getScript(url, success) {
+  function getScript(url, callback) {
     var node = document.createElement('script');
 
     scriptOnload(node, function() {
-      if (success) success.call(node);
+      if (callback) callback.call(node);
 
       // Reduces memory leak.
       try {
@@ -456,6 +470,11 @@ module['version'] = '@VERSION@';
 
   function scriptOnload(node, callback) {
     node.addEventListener('load', callback, false);
+
+    node.addEventListener('error', function() {
+      console.error('404 error:', node.src);
+      callback();
+    }, false);
   }
 
   if (isIE876) {
@@ -463,9 +482,11 @@ module['version'] = '@VERSION@';
       node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
         if (rs === 'loaded' || rs === 'complete') {
-          callback && callback.call(this);
+          callback();
         }
       });
+      // NOTE: In IE6-8, script node does not fire an "onerror" event when
+      // node.src is 404.
     }
   }
 
@@ -519,7 +540,7 @@ module['version'] = '@VERSION@';
     var old = path.split('/');
     var ret = [], part, i, len;
 
-    for (i = 0,len = old.length; i < len; i++) {
+    for (i = 0, len = old.length; i < len; i++) {
       part = old[i];
       if (part == '..') {
         if (ret.length === 0) {
@@ -563,8 +584,8 @@ module['version'] = '@VERSION@';
    * canonicalize(['./b'], 'submodule/a') ==> ['submodule/b']
    * canonicalize(['b'], 'submodule/a') ==> ['b']
    * canonicalize(['b/../c']) ==> ['c']
-   * @param {Array.<string>|string} ids
-   * @param {string=} refId
+   * @param {Array.<string>|string} ids The raw module ids.
+   * @param {string=} refId The reference module id.
    */
   function canonicalize(ids, refId) {
     var ret;
@@ -590,7 +611,7 @@ module['version'] = '@VERSION@';
   function getScriptAbsoluteSrc(node) {
     return node.hasAttribute ? // non-IE6/7
         node.src :
-      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+        // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
         node.getAttribute('src', 4);
   }
 
@@ -604,16 +625,17 @@ module['version'] = '@VERSION@';
   module['reset'] = reset;
 
 
-})(module['_']);
+})(this, module['_']);
 
 
 /**
  * TODO:
  *  - refactor to module.xx
- *  - gcc: advance optimization
+ *  - gcc: advance optimization & fix style
  *  - more test
  *  - performance optimization
  *  - compare with BravoJS, FlyScript, RequireJS, YY
+ *  - support packages
  *  - the relationship of SeaJS and KISSY
  *  - modules: lang, jquery
  *  - using('something').as('sth')

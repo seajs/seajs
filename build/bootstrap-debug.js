@@ -1,27 +1,27 @@
 /*
-Copyright 2011, SeaJS v0.1.0
+Copyright 2011, SeaJS v0.2.0
 MIT Licensed
-build time: Jan 13 15:49
+build time: Jan 15 23:19
 */
 
 /**
- * @fileoverview Bootstrap for SeaJS.
+ * @fileoverview A CommonJS modules environment, focused on web.
  * @author lifesinger@gmail.com (Frank Wang)
  */
 
 
+//==============================================================================
+// Baseline setup
+//==============================================================================
+
+
 /**
- * Base namespace for the framework. Checks to see S is already defined in the
- * current scope before assigning to prevent depriving existed members in S.
+ * Base namespace for the framework. Checks to see "module" is already defined
+ * in the current scope before assigning to prevent depriving existed members.
  *
  * @const
  */
-var S = S || {};
-
-
-//==============================================================================
-// Basic Information
-//==============================================================================
+var module = module || {};
 
 
 /**
@@ -30,208 +30,165 @@ var S = S || {};
  *
  * @const
  */
-S.version = '0.1.0';
-
-
-/**
- * Reference to the global context. In most cases this will be 'window'.
- */
-S.global = this;
+module['version'] = '0.2.0';
 
 
 //==============================================================================
-// Debug Helpers
+// The minimal language enhancement
 //==============================================================================
+(function(_) {
 
-
-/**
- * @define {boolean} DEBUG is provided as a convenience so that debugging code
- * that should not be included in a production js_binary can be easily stripped
- * by specifying --define S.DEBUG=false to the JSCompiler.
- */
-S.DEBUG = true;
-
-
-/**
- * Prints debug info. NOTICE: 'S.log(...)' lines will be automatically stripped
- * from *-min.js files when building.
- * @param {string} msg The message to log.
- * @param {string} cat The log category for the message such as "info", "warn",
- * "error", "time" etc. Default is "log".
- */
-S.log = function(msg, cat) {
-  if (S.DEBUG) {
-    var console = S.global['console'];
-    if (console && console['log']) {
-      console[cat && console[cat] ? cat : 'log'](msg);
-    }
-  }
-};
-
-
-/**
- * Throws error message.
- * @param {string} msg The exception message.
- */
-S.error = function(msg) {
-  if (S.DEBUG) {
-    throw msg;
-  }
-};
-
-
-//==============================================================================
-// Language Enhancements
-//==============================================================================
-
-
-/**
- * Determines the internal JavaScript [[Class]] of an object.
- */
-S.type = (function() {
   var cls = ['Boolean', 'Number', 'String', 'Function', 'Array', 'Date',
-    'RegExp', 'Object'], cls2type = {};
+    'RegExp', 'Object'], cls2type = {}, name, i = 0;
 
-  for (var i = 0; i < cls.length; i++) {
-    var name = cls[i];
+  while ((name = cls[i++])) {
     cls2type['[object ' + name + ']'] = name.toLowerCase();
   }
 
-  return function(o) {
-    return o == null ?
-        String(o) :
-        cls2type[Object.prototype.toString.call(o)] || 'object';
+  function type(value) {
+    return value == null ?
+        String(value) :
+        cls2type[Object.prototype.toString.call(value)] || 'object';
   }
-})();
 
 
-/**
- * Checks to if an object is string.
- * @param {*} o Variable to test.
- * @return {boolean} Whether variable is a string.
- */
-S.isString = function(o) {
-  return S.type(o) === 'string';
-};
+  /**
+   * Determines the internal JavaScript [[Class]] of an object.
+   * @param {*} value The value to get the type of.
+   * @return {string} The name of the type.
+   */
+  _['type'] = type;
 
 
-/**
- * Checks to if an object is function.
- * @param {*} o Variable to test.
- * @return {boolean} Whether variable is a boolean.
- */
-S.isFunction = function(o) {
-  return S.type(o) === 'function';
-};
+  /**
+   * Determines if the specified value is a boolean.
+   * @param {*} val Variable to test.
+   * @return {boolean} Whether variable is a boolean.
+   */
+  _['isBoolean'] = function(val) {
+    return type(val) === 'boolean';
+  };
 
 
-/**
- * Checks to if an object is array.
- * @param {*} o Variable to test.
- * @return {boolean} Whether variable is an array.
- */
-S.isArray = Array.isArray ? Array['isArray'] : function(o) {
-  return S.type(o) === 'array';
-};
+  /**
+   * Determines if the specified value is a number.
+   * @param {*} val Variable to test.
+   * @return {boolean} Whether variable is a number.
+   */
+  _['isNumber'] = function(val) {
+    return type(val) === 'number';
+  };
 
 
-/**
- * Copies all the members of a source object to a target object.
- * @param {Object} target Target.
- * @param {Object} source Source.
- * @return {Object} Target.
- */
-S.mix = function(target, source) {
-  for (var x in source) {
-    if (source.hasOwnProperty(x)) {
-      target[x] = source[x];
-    }
-  }
-  return target;
-};
+  /**
+   * Determines if the specified value is a string.
+   * @param {*} val Variable to test.
+   * @return {boolean} Whether variable is a string.
+   */
+  _['isString'] = function(val) {
+    return type(val) === 'string';
+  };
 
 
-/**
- * If the browser doesn't supply us with indexOf (I'm looking at you, MSIE),
- * we need this function.
- * @param {Array} array The Array to seach in.
- * @param {*} item The item to search.
- * @return {number} Return the position of the first occurrence of an
- * item in an array, or -1 if the item is not included in the array.
- */
-S.indexOf = Array.prototype.indexOf ?
-    function(array, item) {
-      return array.indexOf(item);
-    } :
-    function(array, item) {
-      for (var i = 0, l = array.length; i < l; i++) {
-        if (array[i] === item) {
-          return i;
-        }
-      }
-      return -1;
-    };
+  /**
+   * Determines if the specified value is a function.
+   * @param {*} val Variable to test.
+   * @return {boolean} Whether variable is a function.
+   */
+  _['isFunction'] = function(val) {
+    return type(val) === 'function';
+  };
 
 
-/**
- * Search for a specified value index within an array.
- * @param {Array} array The Array to seach in.
- * @param {*} item The item to search.
- * @return {boolean} Whether the item is in the specific array.
- */
-S.inArray = function(array, item) {
-  return S.indexOf(array, item) > -1;
-};
+  /**
+   * Determines if the specified value is a function.
+   * @param {*} val Variable to test.
+   * @return {boolean} Whether variable is an array.
+   */
+  _['isArray'] = Array['isArray'] ? Array['isArray'] : function(val) {
+    return type(val) === 'array';
+  };
 
 
-/**
- * @return {number} An integer value representing the number of milliseconds
- *     between midnight, January 1, 1970 and the current time.
- */
-S.now = Date.now || (function() {
-  return new Date().getTime();
-});
+  /**
+   * If the browser doesn't supply us with indexOf (I'm looking at you, MSIE),
+   * we need this function.
+   * @param {Array} array The Array to search in.
+   * @param {*} item The item to search.
+   * @return {number} Return the position of the first occurrence of an
+   *     item in an array, or -1 if the item is not included in the array.
+   */
+  _['indexOf'] = Array.prototype.indexOf ?
+                 function(array, item) {
+                   return array.indexOf(item);
+                 } :
+                 function(array, item) {
+                   for (var i = 0, l = array.length; i < l; i++) {
+                     if (array[i] === item) {
+                       return i;
+                     }
+                   }
+                   return -1;
+                 };
 
-/**
- * @fileoverview A module loader focused on web.
- * @author lifesinger@gmail.com (Frank Wang)
- */
 
-(function() {
+  /**
+   * Search for a specified value index within an array.
+   * @param {Array} array The Array to search in.
+   * @param {*} item The item to search.
+   * @return {boolean} Whether the item is in the specific array.
+   */
+  _['inArray'] = function(array, item) {
+    return _.indexOf(array, item) > -1;
+  };
 
-  //============================================================================
-  // Global Variables & Related Helpers
-  //============================================================================
 
-  // module status\uff1a
+  /**
+   * @return {number} An integer value representing the number of milliseconds
+   *     between midnight, January 1, 1970 and the current time.
+   */
+  _['now'] = Date.now || (function() {
+    return new Date().getTime();
+  });
+
+})((module['_'] = {}));
+
+
+//==============================================================================
+// Module environment
+//==============================================================================
+(function(global, _) {
+
+  //----------------------------------------------------------------------------
+  // Global variables and related helpers
+  //----------------------------------------------------------------------------
+
+  // Module status\uff1a
   // 1. downloaded - The module file has been downloaded to the browser.
   // 2. declared - The module declare function has been executed.
   // 3. provided - The module info has been added to providedMods.
   // 4. required -  mod.exports is available.
 
-  // modules that are beening downloaded.
+  // Modules that are being downloaded.
+  // { uri: scriptNode, ... }
   var loadingMods = {};
 
-  // the module that is declared, but has not been provided.
+  // The module that is declared, but has not been provided.
   var pendingMod = null;
 
-  // for IE6-8
-  var isIE876 = !+'\v1';
+  // For old IE
+  // { id: string, timestamp: number }
   var pendingModOldIE = null;
   var cacheTakenTime = 10;
+  var isIE876 = !+'\v1';
 
-  // modules that have beed provided.
+  // Modules that have been provided.
   // { uri: { id: string, dependencies: [], factory: function }, ... }
   var providedMods = {};
 
-  // init mainModDir and mainModId.
-  var scripts = document.getElementsByTagName('script');
-  var loaderScript = scripts[scripts.length - 1];
-  var mainModDir = dirname(getScriptAbsSrc(loaderScript));
-  var mainModId = loaderScript.getAttribute('data-main');
-
   function memoize(id, mod) {
     mod.id = id;
+    mod.dependencies = canonicalize(mod.dependencies, id);
     providedMods[fullpath(id)] = mod;
   }
 
@@ -254,30 +211,52 @@ S.now = Date.now || (function() {
     return ret;
   }
 
-  //============================================================================
-  // Requiring Members
-  //============================================================================
+  // Gets the directory of main module.
+  var scripts = document.getElementsByTagName('script');
+  var loaderScript = scripts[scripts.length - 1];
+  var mainModDir = dirname(getScriptAbsoluteSrc(loaderScript));
 
   /**
+   * Resets the environment.
+   * @param {string=} dir The directory of main module.
+   */
+  function reset(dir) {
+    loadingMods = {};
+    providedMods = {};
+    pendingMod = null;
+    pendingModOldIE = null;
+    if (dir) mainModDir = dir;
+  }
+
+
+  //----------------------------------------------------------------------------
+  // Members for "require"
+  //----------------------------------------------------------------------------
+
+  /**
+   * The factory of "require" function.
    * @constructor
    */
   function Require(sandbox) {
+    // { id: string, deps: [], parent: sandbox }
     sandbox = sandbox || { deps: [] };
 
     function require(id) {
-      var mod = getProvidedMod(id);
+      id = canonicalize(id, sandbox.id);
+      var mod;
 
-      // avoid cyclic
+      // Restrains to sandbox environment.
+      if (!_.inArray(sandbox.deps, id) || !(mod = getProvidedMod(id))) {
+        throw 'Invalid module id: ' + id;
+      }
+
+      // Checks cyclic dependencies.
       if (isCyclic(sandbox, id)) {
-        S.log('cyclic dependencies: id = ' + id, 'warn');
-        return (mod || 0).exports;
+        printCyclicStack(sandbox, id);
+        return mod.exports;
       }
 
-      // restrain to sandbox environment
-      if (!S.inArray(sandbox.deps, id) || !mod) {
-        return S.error('Module ' + id + ' is not provided.');
-      }
-
+      // Initializes module exports.
       if (!mod.exports) {
         setExports(mod, sandbox);
       }
@@ -291,7 +270,7 @@ S.now = Date.now || (function() {
   function setExports(mod, sandbox) {
     var factory = mod.factory, ret;
 
-    if (S.isFunction(factory)) {
+    if (_.isFunction(factory)) {
       ret = factory.call(
           mod,
           new Require({ id: mod.id, parent: sandbox, deps: mod.dependencies }),
@@ -311,38 +290,50 @@ S.now = Date.now || (function() {
     return false;
   }
 
-  //============================================================================
-  // Provisioning Members
-  //============================================================================
+  function printCyclicStack(sandbox, id) {
+    if (global['console']) {
+      var stack = id;
+      while (sandbox) {
+        stack += ' <-- ' + sandbox.id;
+        sandbox = sandbox.parent;
+      }
+      console.warn('Found cyclic dependencies:', stack);
+    }
+  }
+
+
+  //----------------------------------------------------------------------------
+  // Members for "provide" and "declare"
+  //----------------------------------------------------------------------------
 
   /**
-   * provide modules to the environment, and then fire callback.
+   * Provides modules to the environment, and then fire callback.
    * @param {Array.<string>} ids An array composed of module id.
    * @param {function(*)=} callback The callback function.
-   * @param {boolean=} norequire For inner use.
+   * @param {boolean=} noRequire For inner use.
    */
-  function provide(ids, callback, norequire) {
-    ids = getUnmemoizedIds(ids);
+  function provide(ids, callback, noRequire) {
+    ids = getUnmemoizedIds(canonicalize(ids));
     if (ids.length === 0) return cb();
 
-    var remain = ids.length;
-    for (var i = 0, len = remain; i < len; i++) {
+    for (var i = 0, len = ids.length, remain = len; i < len; i++) {
       (function(id) {
 
         load(id, function() {
           var deps = (getProvidedMod(id) || 0).dependencies || [];
-          deps = getUnmemoizedIds(deps);
           var len = deps.length;
 
           if (len) {
+            deps = getUnmemoizedIds(deps);
             remain += len;
+
             provide(deps, function() {
               remain -= len;
               if (remain === 0) cb();
             }, true);
           }
 
-          //S.log('id = ' + id + ' remain = ' + (remain - 1));
+          //console.log('id =', id, 'remain =', remain - 1);
           if (--remain === 0) cb();
         });
 
@@ -351,100 +342,121 @@ S.now = Date.now || (function() {
 
     function cb() {
       if (callback) {
-        callback(norequire ? undefined : new Require({ deps: ids }));
+        callback(noRequire ?
+            undefined :
+            new Require({ id: 'provide([' + ids + '])', deps: ids }));
       }
     }
   }
 
+
   /**
-   * declare a module to the environment.
+   * Declares a module.
+   * @param {string=} id The module canonical id.
+   * @param {Array.<string>} deps The module dependencies.
+   * @param {function()|Object} factory The module factory function.
    */
   function declare(id, deps, factory) {
-    // overload arguments
-    if (S.isArray(id)) {
+    // Overloads arguments.
+    if (_.isArray(id)) {
       factory = deps;
       deps = id;
       id = '';
     }
-    if (S.isFunction(id)) {
-      factory = id;
-      deps = [];
-      id = '';
-    }
 
-    // For non-IE6-8 browsers, the script onload event may not fire right
-    // after the the script is evaluated. Kris Zyp found for IE though that in
-    // a function call that is called while the script is executed, it could
-    // query the script nodes and the one that is in "interactive" mode
-    // indicates the current script. see http://goo.gl/JHfFW
-    if (!id && isIE876) {
-      var script = getInteractiveScript();
-      if (script) {
-        id = url2id(script.src);
-        S.log(id + ' [derived from interactive script]');
-      }
-      // In IE6-8, if the script is in the cache, the "interactive" mode
-      // sometimes does not work. The script code actually executes *during*
-      // the DOM insertion of the script tag, so we can keep track of which
-      // script is being requested in case declare() is called during the DOM
-      // insertion.
-      else if (pendingModOldIE) {
-        var diff = S.now() - pendingModOldIE.timestamp;
-        if (diff < cacheTakenTime) {
-          id = pendingModOldIE.id;
-          S.log(id + ' [derived from pendingOldIE] diff = ' + diff);
+    if (isIE876) {
+      if (!id) {
+
+        // For non-IE6-8 browsers, the script onload event may not fire right
+        // after the the script is evaluated. Kris Zyp found for IE though that
+        // in a function call that is called while the script is executed, it
+        // could query the script nodes and the one that is in "interactive"
+        // mode indicates the current script. Ref: http://goo.gl/JHfFW
+        var script = getInteractiveScript();
+        if (script) {
+          id = url2id(script.src);
+          //console.log(id, '[derived from interactive script]');
         }
-        pendingModOldIE = null;
+
+        // In IE6-8, if the script is in the cache, the "interactive" mode
+        // sometimes does not work. The script code actually executes *during*
+        // the DOM insertion of the script tag, so we can keep track of which
+        // script is being requested in case declare() is called during the DOM
+        // insertion.
+        else if (pendingModOldIE) {
+          var diff = _.now() - pendingModOldIE.timestamp;
+          if (diff < cacheTakenTime) {
+            id = pendingModOldIE.id;
+            //console.log(id, '[derived from pendingOldIE]', diff);
+          }
+        }
+
       }
-      // If all the id-deriving above is failed, then falls back to using
-      // script onload to get the module id.
+
+      // Resets to avoid puzzling the next "declare".
+      pendingModOldIE = null;
+
+      // NOTE: If all the id-deriving methods above is failed, then falls back
+      // to use onload event to get the module id.
     }
 
     var mod = { dependencies: deps, factory: factory };
-
     if (id) {
+      // Memoizes to providedMods immediately.
       memoize(id, mod);
-      // if a file contains multi declares, a declare without id is valid
-      // only when it is the last one.
+
+      // Resets to avoid polluting the context of onload event. An example:
+      // Step1. First executes a 'declare([], fn)' in html code. This 'declare'
+      // will set pendingMod = x.
+      // Step2. Then loads a script including a 'declare(id, [], fn)'. If
+      // pendingMod is not reset here, the cb in 'load' function will get wrong
+      // pendingMod from Step1.
       pendingMod = null;
     }
     else {
+      // Saves information for "real" work in the onload event.
       pendingMod = mod;
-      S.log('[set pendingMod for onload event]');
+      //console.log('[set pendingMod for onload event]');
     }
   }
 
+
+  /**
+   * Downloads a module file.
+   * @param {string} id The canonical module id.
+   * @param {function()} callback The callback function.
+   */
   function load(id, callback) {
-    // reset to avoid polluting by declare without id in static script.
-    pendingMod = null;
     var url = fullpath(id);
 
     if (loadingMods[url]) {
       scriptOnload(loadingMods[url], cb);
     } else {
-      if (isIE876) pendingModOldIE = { id: id, timestamp: S.now() };
+      if (isIE876) pendingModOldIE = { id: id, timestamp: _.now() };
       loadingMods[url] = getScript(url, cb);
     }
 
     function cb() {
       if (pendingMod) {
         memoize(id, pendingMod);
+        // Resets immediately.
         pendingMod = null;
       }
-      if (callback) callback();
       if (loadingMods[url]) delete loadingMods[url];
+      if (callback) callback();
     }
   }
 
+
   var head = document.getElementsByTagName('head')[0];
 
-  function getScript(url, success) {
+  function getScript(url, callback) {
     var node = document.createElement('script');
 
     scriptOnload(node, function() {
-      if (success) success.call(node);
+      if (callback) callback.call(node);
 
-      // reduce memory leak
+      // Reduces memory leak.
       try {
         if (node.clearAttributes) {
           node.clearAttributes();
@@ -463,6 +475,11 @@ S.now = Date.now || (function() {
 
   function scriptOnload(node, callback) {
     node.addEventListener('load', callback, false);
+
+    node.addEventListener('error', function() {
+      console.error('404 error:', node.src);
+      callback();
+    }, false);
   }
 
   if (isIE876) {
@@ -470,31 +487,39 @@ S.now = Date.now || (function() {
       node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
         if (rs === 'loaded' || rs === 'complete') {
-          callback && callback.call(this);
+          callback();
         }
       });
+      // NOTE: In IE6-8, script node does not fire an "onerror" event when
+      // node.src is 404.
     }
   }
 
-  //============================================================================
-  // MainModule Entrance
-  //============================================================================
 
-  // provide main module to environment.
-  if (mainModId) {
-    provide([mainModId]);
+  function getInteractiveScript() {
+    var scripts = head.getElementsByTagName('script');
+    var script, i = 0, len = scripts.length;
+
+    for (; i < len; i++) {
+      script = scripts[i];
+      if (script.readyState === 'interactive') {
+        return script;
+      }
+    }
   }
 
-  // reset loader enviroment.
-  function reset(dir) {
-    pendingMod = null;
-    providedMods = {};
-    if (dir) mainModDir = dir;
-  }
 
-  //============================================================================
-  // Static Helpers
-  //============================================================================
+  //----------------------------------------------------------------------------
+  // The main module entrance
+  //----------------------------------------------------------------------------
+
+  var mainModId = loaderScript.getAttribute('data-main');
+  if (mainModId) provide([mainModId]);
+
+
+  //----------------------------------------------------------------------------
+  // Static helpers
+  //----------------------------------------------------------------------------
 
   /**
    * Extract the directory portion of a path.
@@ -502,16 +527,11 @@ S.now = Date.now || (function() {
    * dirname('a/b/c') ==> 'a/b'
    * dirname('a/b/c/') ==> 'a/b/c'
    * dirname('d.js') ==> '.'
+   * http://jsperf.com/regex-vs-split
    */
   function dirname(path) {
     var s = path.split('/').slice(0, -1).join('/');
     return s ? s : '.';
-  }
-
-  // url2id('http://path/main/a/b/c.js') ==> 'a/b/c'
-  function url2id(url) {
-    return url.replace(mainModDir + '/', '')
-              .replace('.js', '');
   }
 
   /**
@@ -529,7 +549,7 @@ S.now = Date.now || (function() {
       part = old[i];
       if (part == '..') {
         if (ret.length === 0) {
-          S.error('Invalid module path: ' + path);
+          throw 'Invalid module path: ' + path;
         }
         ret.pop();
       } else if (part !== '.') {
@@ -556,40 +576,109 @@ S.now = Date.now || (function() {
     return realpath(mainModDir + '/' + id) + '.js';
   }
 
-  function getScriptAbsSrc(node) {
+  // rel2abs('./b', 'sub/') ==> 'sub/b'
+  // rel2abs('../b', 'sub/') ==> 'b'
+  // rel2abs('b', 'sub/') ==> 'b'
+  // rel2abs('a/b/../c', 'sub/') ==> 'a/c'
+  function rel2abs(id, dir) {
+    return realpath((id.indexOf('.') === 0) ? (dir + id) : id);
+  }
+
+  /**
+   * Turns id to canonical id.
+   * canonicalize(['./b'], 'submodule/a') ==> ['submodule/b']
+   * canonicalize(['b'], 'submodule/a') ==> ['b']
+   * canonicalize(['b/../c']) ==> ['c']
+   * @param {Array.<string>|string} ids The raw module ids.
+   * @param {string=} refId The reference module id.
+   */
+  function canonicalize(ids, refId) {
+    var ret;
+    var refDir = refId ? dirname(refId) + '/' : '';
+
+    if (_.isArray(ids)) {
+      var i = 0, len = ids.length;
+      for (ret = []; i < len; i++) {
+        ret.push(rel2abs(ids[i], refDir));
+      }
+    } else if (_.isString(ids)) {
+      ret = rel2abs(ids, refDir);
+    }
+
+    return ret;
+  }
+
+  // url2id('http://path/main/a/b/c.js') ==> 'a/b/c'
+  function url2id(url) {
+    return url.replace(mainModDir + '/', '').replace(/\.js.*$/, '');
+  }
+
+  function getScriptAbsoluteSrc(node) {
     return node.hasAttribute ? // non-IE6/7
         node.src :
         // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
         node.getAttribute('src', 4);
   }
 
-  function getInteractiveScript() {
-    var scripts = head.getElementsByTagName('script');
-    var script, i = 0, len = scripts.length;
-    for (; i < len; i++) {
-      script = scripts[i];
-      if (script.readyState === 'interactive') {
-        return script;
-      }
-    }
-  }
 
   //============================================================================
   // Public API
   //============================================================================
 
-  S.declare = declare;
-  S.provide = provide;
-  S.reset = reset;
+  module['provide'] = provide;
+  module['declare'] = declare;
+  module['reset'] = reset;
 
-})();
+
+})(this, module['_']);
+
 
 /**
  * TODO:
+ *  - refactor to module.xx
+ *  - gcc: advance optimization & fix style
  *  - more test
+ *  - performance optimization
  *  - compare with BravoJS, FlyScript, RequireJS, YY
+ *  - support packages
+ *  - the relationship of SeaJS and KISSY
  *  - modules: lang, jquery
- *  - S.using('something').as('sth')
- *  - auto generate dependencies when concating multi modules.
+ *  - using('something').as('sth')
+ *  - auto generate dependencies when combining multi modules.
  *  - timestamp for rebuild component
  */
+
+/**
+ * @fileoverview Language enhancement.
+ * @author lifesinger@gmail.com (Frank Wang)
+ */
+
+(function(_) {
+
+  module.declare('lang', [], function(require, exports) {
+
+    /**
+     * Copies all the members of a source object to a target object.
+     * @param {Object} target Target.
+     * @param {Object} source Source.
+     * @return {Object} Target.
+     */
+    exports.mix = function(target, source) {
+      for (var x in source) {
+        if (source.hasOwnProperty(x)) {
+          target[x] = source[x];
+        }
+      }
+      return target;
+    };
+
+
+    // Mixes in existed members in _.
+    exports.mix(exports, _);
+
+  });
+
+})(module['_']);
+
+// Makes module pure.
+delete module['_'];

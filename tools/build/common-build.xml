@@ -68,9 +68,9 @@
             <!-- http://code.google.com/p/closure-compiler/wiki/Warnings -->
             <arg line="--warning_level VERBOSE"/>
             <arg line="--jscomp_error=checkTypes"/>
+            <arg line="--jscomp_warning=missingProperties"/>
             <arg line="--jscomp_off=fileoverviewTags"/>
 
-            <arg line="--define exports.DEBUG=false"/>
             <arg line="--js"/>
             <srcfile/>
             <arg line="--js_output_file ${filename}.js"/>
