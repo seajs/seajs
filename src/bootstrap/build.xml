@@ -12,7 +12,6 @@
                 outputencoding="${charset}">
             <path path="module.js"/>
             <path path="lang.js"/>
-            <path path="console.js"/>
         </concat>
     </target>
 

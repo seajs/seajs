@@ -1,4 +1,4 @@
-S.declare(['test', 'increment'], function(require, exports) {
+module.declare(['test', 'increment'], function(require, exports) {
 
   var test = require('test');
   var inc = require('increment').increment;

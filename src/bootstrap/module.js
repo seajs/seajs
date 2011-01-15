@@ -286,7 +286,7 @@ module['version'] = '@VERSION@';
 
 
   //----------------------------------------------------------------------------
-  // Members for "declare" and "provide"
+  // Members for "provide" and "declare"
   //----------------------------------------------------------------------------
 
   /**
@@ -501,6 +501,7 @@ module['version'] = '@VERSION@';
    * dirname('a/b/c') ==> 'a/b'
    * dirname('a/b/c/') ==> 'a/b/c'
    * dirname('d.js') ==> '.'
+   * http://jsperf.com/regex-vs-split
    */
   function dirname(path) {
     var s = path.split('/').slice(0, -1).join('/');
@@ -549,6 +550,14 @@ module['version'] = '@VERSION@';
     return realpath(mainModDir + '/' + id) + '.js';
   }
 
+  // rel2abs('./b', 'sub/') ==> 'sub/b'
+  // rel2abs('../b', 'sub/') ==> 'b'
+  // rel2abs('b', 'sub/') ==> 'b'
+  // rel2abs('a/b/../c', 'sub/') ==> 'a/c'
+  function rel2abs(id, dir) {
+    return realpath((id.indexOf('.') === 0) ? (dir + id) : id);
+  }
+
   /**
    * Turns id to canonical id.
    * canonicalize(['./b'], 'submodule/a') ==> ['submodule/b']
@@ -571,14 +580,6 @@ module['version'] = '@VERSION@';
     }
 
     return ret;
-  }
-
-  // rel2abs('./b', 'sub/') ==> 'sub/b'
-  // rel2abs('../b', 'sub/') ==> 'b'
-  // rel2abs('b', 'sub/') ==> 'b'
-  // rel2abs('a/b/../c', 'sub/') ==> 'a/c'
-  function rel2abs(id, dir) {
-    return realpath((id.indexOf('.') === 0) ? (dir + id) : id);
   }
 
   // url2id('http://path/main/a/b/c.js') ==> 'a/b/c'

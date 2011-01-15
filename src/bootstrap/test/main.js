@@ -1,10 +1,10 @@
 
 // initialize module loader
 var path = location.href.split('/').slice(0, -1).join('/');
-S.reset(path + '/' + decodeURIComponent((location.search || '?').substring(1)));
+module.reset(path + '/' + decodeURIComponent((location.search || '?').substring(1)));
 
 // add 'test' module
-S.declare('test', [], function(require, exports) {
+module.declare('test', [], function(require, exports) {
 
   exports.print = function(txt, style) {
     sendMessage('printResults', txt, style);
@@ -20,7 +20,7 @@ S.declare('test', [], function(require, exports) {
   };
 });
 
-S.provide(['program'], function(require) {
+module.provide(['program'], function(require) {
   //try {
     require('program');
   //} catch (x) {

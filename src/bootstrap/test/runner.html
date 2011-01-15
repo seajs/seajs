@@ -7,80 +7,74 @@
 <script src="../../../tools/jasmine/jasmine.js"></script>
 <script src="../../../tools/jasmine/jasmine-html.js"></script>
 
-<script>
-  S = { for_test_existed: 1 };
-</script>
+<script src="../module.js"></script>
+<script src="../lang.js"></script>
 
-<script src="../sea.js"></script>
-<script src="../loader.js"></script>
-
-<script src="sea-spec.js"></script>
+<!--<script src="lang-spec.js"></script>-->
 
 </head>
 <body>
+
+<!-- test module.js -->
 <script>
-  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-  jasmine.getEnv().execute();
-</script>
+  (function() {
 
-<!-- test moudle loader -->
-<script>
+    var tests = [
+      'modules/math'
+      //,'modules/cyclic'
+      //,'modules/absolute'
+      //,'modules/relative'
+    ];
 
-  var tests = [
-    'modules/math'
-    ,'modules/cyclic'
-    ,'modules/absolute'
-    ,'modules/relative'
-  ];
+    var reporter;
+    var testFrame, currentTest = 0;
+    var count = { pass: 0, fail: 0, error: 0 };
 
-  var reporter;
-  var testFrame, currentTest = 0;
-  var count = { pass: 0, fail: 0, error: 0 };
+    window.onload = function() {
+      var container = document.getElementById('loader_container');
+      reporter = document.getElementById('loader_reporter');
 
-  window.onload = function() {
-    var container = document.getElementById('loader_container');
-    reporter = document.getElementById('loader_reporter');
+      testFrame = document.createElement('iframe');
+      testFrame.id = 'test-frame-' + (new Date()).getTime();
+      testFrame.src = 'about:blank';
+      container.appendChild(testFrame);
 
-    testFrame = document.createElement('iframe');
-    testFrame.id = 'test-frame-' + (new Date()).getTime();
-    testFrame.src = 'about:blank';
-    container.appendChild(testFrame);
+      // start first test
+      testNext();
+    };
 
-    // start first test
-    testNext();
-  };
-
-  function testNext() {
-    var test = tests[currentTest++];
-    if (test) {
-      printHeader(test);
-      testFrame.src = 'test.html?' + encodeURIComponent(test);
-    } else {
-      printSummary();
+    function printHeader(test) {
+      var h = document.createElement('h3');
+      h.appendChild(document.createTextNode(test));
+      reporter.appendChild(h);
     }
-  }
 
-  function printHeader(test) {
-    var h = document.createElement('h3');
-    h.appendChild(document.createTextNode(test));
-    reporter.appendChild(h);
-  }
+    function printSummary() {
+      var div = document.getElementById('loader_summary');
+      div.innerHTML =
+          'Passed: <span class="pass">' + count.pass + '<' + '/span> ' +
+              'Failed: <span class="fail">' + count.fail + '<' + '/span> ' +
+              'Errors: <span class="error">' + count.error + '<' + '/span>';
+    }
 
-  function printSummary() {
-    var div = document.getElementById('loader_summary');
-    div.innerHTML =
-      'Passed: <span class="pass">' + count.pass + '<' + '/span> ' +
-      'Failed: <span class="fail">' + count.fail + '<' + '/span> ' +
-      'Errors: <span class="error">' + count.error + '<' + '/span>';
-  }
+    window.testNext = function() {
+      var test = tests[currentTest++];
+      if (test) {
+        printHeader(test);
+        testFrame.src = 'test.html?' + encodeURIComponent(test);
+      } else {
+        printSummary();
+      }
+    };
 
-  function printResults(txt, style) {
-    var d = document.createElement('div');
-    d.appendChild(document.createTextNode(txt));
-    d.className = style;
-    reporter.appendChild(d);
-    if (style in count) count[style] += 1;
-  }
+    window.printResults = function(txt, style) {
+      var d = document.createElement('div');
+      d.appendChild(document.createTextNode(txt));
+      d.className = style;
+      reporter.appendChild(d);
+      if (style in count) count[style] += 1;
+    }
+  })();
 </script>
 <style>
   #loader_container {
@@ -138,5 +132,11 @@
   </div>
   <div id="loader_reporter"></div>
 </div>
+
+<script>
+  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+  jasmine.getEnv().execute();
+</script>
+
 </body>
 </html>
