@@ -29,7 +29,7 @@
 
   });
 
-})(module['_']);
+})(module._);
 
 // Makes module pure.
-delete module['_'];
+delete module._;

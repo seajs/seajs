@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.2.0
 MIT Licensed
-build time: Jan 15 23:19
+build time: Jan 15 23:42
 */
 
 /**
@@ -30,7 +30,7 @@ var module = module || {};
  *
  * @const
  */
-module['version'] = '0.2.0';
+module.seajs = '0.2.0';
 
 
 //==============================================================================
@@ -57,7 +57,7 @@ module['version'] = '0.2.0';
    * @param {*} value The value to get the type of.
    * @return {string} The name of the type.
    */
-  _['type'] = type;
+  _.type = type;
 
 
   /**
@@ -65,7 +65,7 @@ module['version'] = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is a boolean.
    */
-  _['isBoolean'] = function(val) {
+  _.isBoolean = function(val) {
     return type(val) === 'boolean';
   };
 
@@ -75,7 +75,7 @@ module['version'] = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is a number.
    */
-  _['isNumber'] = function(val) {
+  _.isNumber = function(val) {
     return type(val) === 'number';
   };
 
@@ -85,7 +85,7 @@ module['version'] = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is a string.
    */
-  _['isString'] = function(val) {
+  _.isString = function(val) {
     return type(val) === 'string';
   };
 
@@ -95,7 +95,7 @@ module['version'] = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is a function.
    */
-  _['isFunction'] = function(val) {
+  _.isFunction = function(val) {
     return type(val) === 'function';
   };
 
@@ -105,7 +105,7 @@ module['version'] = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is an array.
    */
-  _['isArray'] = Array['isArray'] ? Array['isArray'] : function(val) {
+  _.isArray = Array.isArray ? Array['isArray'] : function(val) {
     return type(val) === 'array';
   };
 
@@ -118,18 +118,18 @@ module['version'] = '0.2.0';
    * @return {number} Return the position of the first occurrence of an
    *     item in an array, or -1 if the item is not included in the array.
    */
-  _['indexOf'] = Array.prototype.indexOf ?
-                 function(array, item) {
-                   return array.indexOf(item);
-                 } :
-                 function(array, item) {
-                   for (var i = 0, l = array.length; i < l; i++) {
-                     if (array[i] === item) {
-                       return i;
-                     }
-                   }
-                   return -1;
-                 };
+  _.indexOf = Array.prototype.indexOf ?
+              function(array, item) {
+                return array.indexOf(item);
+              } :
+              function(array, item) {
+                for (var i = 0, l = array.length; i < l; i++) {
+                  if (array[i] === item) {
+                    return i;
+                  }
+                }
+                return -1;
+              };
 
 
   /**
@@ -138,7 +138,7 @@ module['version'] = '0.2.0';
    * @param {*} item The item to search.
    * @return {boolean} Whether the item is in the specific array.
    */
-  _['inArray'] = function(array, item) {
+  _.inArray = function(array, item) {
     return _.indexOf(array, item) > -1;
   };
 
@@ -147,11 +147,11 @@ module['version'] = '0.2.0';
    * @return {number} An integer value representing the number of milliseconds
    *     between midnight, January 1, 1970 and the current time.
    */
-  _['now'] = Date.now || (function() {
+  _.now = Date.now || (function() {
     return new Date().getTime();
   });
 
-})((module['_'] = {}));
+})((module._ = {}));
 
 
 //==============================================================================
@@ -625,12 +625,12 @@ module['version'] = '0.2.0';
   // Public API
   //============================================================================
 
-  module['provide'] = provide;
-  module['declare'] = declare;
-  module['reset'] = reset;
+  module.provide = provide;
+  module.declare = declare;
+  module.reset = reset;
 
 
-})(this, module['_']);
+})(this, module._);
 
 
 /**
@@ -678,7 +678,7 @@ module['version'] = '0.2.0';
 
   });
 
-})(module['_']);
+})(module._);
 
 // Makes module pure.
-delete module['_'];
+delete module._;

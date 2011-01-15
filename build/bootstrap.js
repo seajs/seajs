@@ -1,9 +1,9 @@
 /*
 Copyright 2011, SeaJS v0.2.0
 MIT Licensed
-build time: Jan 15 23:19
+build time: Jan 15 23:42
 */
-var module=module||{};module.version="0.2.0";
+var module=module||{};module.seajs="0.2.0";
 (function(h){function g(f){return f==null?String(f):l[Object.prototype.toString.call(f)]||"object"}for(var m=["Boolean","Number","String","Function","Array","Date","RegExp","Object"],l={},j,n=0;j=m[n++];)l["[object "+j+"]"]=j.toLowerCase();h.type=g;h.isBoolean=function(f){return g(f)==="boolean"};h.isNumber=function(f){return g(f)==="number"};h.isString=function(f){return g(f)==="string"};h.isFunction=function(f){return g(f)==="function"};h.isArray=Array.isArray?Array.isArray:function(f){return g(f)===
 "array"};h.indexOf=Array.prototype.indexOf?function(f,o){return f.indexOf(o)}:function(f,o){for(var p=0,u=f.length;p<u;p++)if(f[p]===o)return p;return-1};h.inArray=function(f,o){return h.indexOf(f,o)>-1};h.now=Date.now||function(){return(new Date).getTime()}})(module._={});
 (function(h,g){function m(a,b){b.id=a;b.dependencies=z(b.dependencies,a);v[w(a)]=b}function l(a){for(var b=[],d=0,c=a.length,e;d<c;d++){e=a[d];v[w(e)]||b.push(e)}return b}function j(a){a=a||{deps:[]};return function(b){b=z(b,a.id);var d;if(!g.inArray(a.deps,b)||!(d=v[w(b)]))throw"Invalid module id: "+b;if(n(a,b)){var c=a;if(h.console)for(b=b;c;){b+=" <-- "+c.id;c=c.parent}return d.exports}if(!d.exports){c=d;b=a;var e=c.factory;if(g.isFunction(e)){if(b=e.call(c,new j({id:c.id,parent:b,deps:c.dependencies}),
