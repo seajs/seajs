@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.2.0
 MIT Licensed
-build time: Jan 15 23:42
+build time: Jan 16 20:33
 */
 
 /**
@@ -140,6 +140,30 @@ module.seajs = '0.2.0';
    */
   _.inArray = function(array, item) {
     return _.indexOf(array, item) > -1;
+  };
+
+
+  /**
+   * Keep the identity function around for default iterators.
+   */
+  _.identity = function(value) {
+    return value;
+  };
+
+
+  /**
+   * Memoize an expensive function by storing its results.
+   */
+  _.memoize = function(func, hasher) {
+    var memo = {};
+    hasher = hasher || _.identity;
+
+    return function() {
+      var key = hasher.apply(this, arguments);
+      return Object.prototype.hasOwnProperty.call(memo, key) ?
+          memo[key] :
+          (memo[key] = func.apply(this, arguments));
+    };
   };
 
 
@@ -510,14 +534,6 @@ module.seajs = '0.2.0';
 
 
   //----------------------------------------------------------------------------
-  // The main module entrance
-  //----------------------------------------------------------------------------
-
-  var mainModId = loaderScript.getAttribute('data-main');
-  if (mainModId) provide([mainModId]);
-
-
-  //----------------------------------------------------------------------------
   // Static helpers
   //----------------------------------------------------------------------------
 
@@ -540,8 +556,9 @@ module.seajs = '0.2.0';
    * realpath('a/b/../c') ==> 'a/c'
    * realpath('a/b/./c') ==> '/a/b/c'
    * realpath('a/b/c/') ==> 'a/b/c/'
+   * http://jsperf.com/memoize
    */
-  function realpath(path) {
+  var realpath = _.memoize(function(path) {
     var old = path.split('/');
     var ret = [], part, i, len;
 
@@ -558,7 +575,7 @@ module.seajs = '0.2.0';
     }
 
     return ret.join('/');
-  }
+  });
 
   /**
    * Turn a module id to full path.
@@ -621,9 +638,17 @@ module.seajs = '0.2.0';
   }
 
 
-  //============================================================================
+  //----------------------------------------------------------------------------
+  // The main module entrance
+  //----------------------------------------------------------------------------
+
+  var mainModId = loaderScript.getAttribute('data-main');
+  if (mainModId) provide([mainModId]);
+
+
+  //----------------------------------------------------------------------------
   // Public API
-  //============================================================================
+  //----------------------------------------------------------------------------
 
   module.provide = provide;
   module.declare = declare;
@@ -635,10 +660,7 @@ module.seajs = '0.2.0';
 
 /**
  * TODO:
- *  - refactor to module.xx
- *  - gcc: advance optimization & fix style
- *  - more test
- *  - performance optimization
+ *  - lang test
  *  - compare with BravoJS, FlyScript, RequireJS, YY
  *  - support packages
  *  - the relationship of SeaJS and KISSY

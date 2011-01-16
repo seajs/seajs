@@ -139,6 +139,30 @@ module.seajs = '@VERSION@';
 
 
   /**
+   * Keep the identity function around for default iterators.
+   */
+  _.identity = function(value) {
+    return value;
+  };
+
+
+  /**
+   * Memoize an expensive function by storing its results.
+   */
+  _.memoize = function(func, hasher) {
+    var memo = {};
+    hasher = hasher || _.identity;
+
+    return function() {
+      var key = hasher.apply(this, arguments);
+      return Object.prototype.hasOwnProperty.call(memo, key) ?
+          memo[key] :
+          (memo[key] = func.apply(this, arguments));
+    };
+  };
+
+
+  /**
    * @return {number} An integer value representing the number of milliseconds
    *     between midnight, January 1, 1970 and the current time.
    */
@@ -505,14 +529,6 @@ module.seajs = '@VERSION@';
 
 
   //----------------------------------------------------------------------------
-  // The main module entrance
-  //----------------------------------------------------------------------------
-
-  var mainModId = loaderScript.getAttribute('data-main');
-  if (mainModId) provide([mainModId]);
-
-
-  //----------------------------------------------------------------------------
   // Static helpers
   //----------------------------------------------------------------------------
 
@@ -535,8 +551,9 @@ module.seajs = '@VERSION@';
    * realpath('a/b/../c') ==> 'a/c'
    * realpath('a/b/./c') ==> '/a/b/c'
    * realpath('a/b/c/') ==> 'a/b/c/'
+   * http://jsperf.com/memoize
    */
-  function realpath(path) {
+  var realpath = _.memoize(function(path) {
     var old = path.split('/');
     var ret = [], part, i, len;
 
@@ -553,7 +570,7 @@ module.seajs = '@VERSION@';
     }
 
     return ret.join('/');
-  }
+  });
 
   /**
    * Turn a module id to full path.
@@ -616,9 +633,17 @@ module.seajs = '@VERSION@';
   }
 
 
-  //============================================================================
+  //----------------------------------------------------------------------------
+  // The main module entrance
+  //----------------------------------------------------------------------------
+
+  var mainModId = loaderScript.getAttribute('data-main');
+  if (mainModId) provide([mainModId]);
+
+
+  //----------------------------------------------------------------------------
   // Public API
-  //============================================================================
+  //----------------------------------------------------------------------------
 
   module.provide = provide;
   module.declare = declare;
@@ -630,10 +655,7 @@ module.seajs = '@VERSION@';
 
 /**
  * TODO:
- *  - refactor to module.xx
- *  - gcc: advance optimization & fix style
- *  - more test
- *  - performance optimization
+ *  - lang test
  *  - compare with BravoJS, FlyScript, RequireJS, YY
  *  - support packages
  *  - the relationship of SeaJS and KISSY
