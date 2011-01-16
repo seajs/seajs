@@ -1,18 +1,8 @@
-/*
-Copyright 2011, SeaJS v0.2.0
-MIT Licensed
-build time: Jan 16 20:33
-*/
 
 /**
  * @fileoverview A CommonJS modules environment, focused on web.
  * @author lifesinger@gmail.com (Frank Wang)
  */
-
-
-//==============================================================================
-// Baseline setup
-//==============================================================================
 
 
 /**
@@ -30,54 +20,17 @@ var module = module || {};
  *
  * @const
  */
-module.seajs = '0.2.0';
+module.seajs = '@VERSION@';
 
 
-//==============================================================================
-// The minimal language enhancement
-//==============================================================================
-(function(_) {
+(function(global) {
 
-  var cls = ['Boolean', 'Number', 'String', 'Function', 'Array', 'Date',
-    'RegExp', 'Object'], cls2type = {}, name, i = 0;
+  //----------------------------------------------------------------------------
+  // The minimal language enhancement
+  //----------------------------------------------------------------------------
 
-  while ((name = cls[i++])) {
-    cls2type['[object ' + name + ']'] = name.toLowerCase();
-  }
-
-  function type(value) {
-    return value == null ?
-        String(value) :
-        cls2type[Object.prototype.toString.call(value)] || 'object';
-  }
-
-
-  /**
-   * Determines the internal JavaScript [[Class]] of an object.
-   * @param {*} value The value to get the type of.
-   * @return {string} The name of the type.
-   */
-  _.type = type;
-
-
-  /**
-   * Determines if the specified value is a boolean.
-   * @param {*} val Variable to test.
-   * @return {boolean} Whether variable is a boolean.
-   */
-  _.isBoolean = function(val) {
-    return type(val) === 'boolean';
-  };
-
-
-  /**
-   * Determines if the specified value is a number.
-   * @param {*} val Variable to test.
-   * @return {boolean} Whether variable is a number.
-   */
-  _.isNumber = function(val) {
-    return type(val) === 'number';
-  };
+  var toString = Object.prototype.toString;
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 
   /**
@@ -85,9 +38,9 @@ module.seajs = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is a string.
    */
-  _.isString = function(val) {
-    return type(val) === 'string';
-  };
+  function isString(val) {
+    return toString.call(val) === '[object String]';
+  }
 
 
   /**
@@ -95,9 +48,9 @@ module.seajs = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is a function.
    */
-  _.isFunction = function(val) {
-    return type(val) === 'function';
-  };
+  function isFunction(val) {
+    return toString.call(val) === '[object Function]';
+  }
 
 
   /**
@@ -105,8 +58,8 @@ module.seajs = '0.2.0';
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is an array.
    */
-  _.isArray = Array.isArray ? Array['isArray'] : function(val) {
-    return type(val) === 'array';
+  var isArray = Array.isArray ? Array['isArray'] : function(val) {
+    return toString.call(val) === '[object Array]';
   };
 
 
@@ -118,76 +71,34 @@ module.seajs = '0.2.0';
    * @return {number} Return the position of the first occurrence of an
    *     item in an array, or -1 if the item is not included in the array.
    */
-  _.indexOf = Array.prototype.indexOf ?
-              function(array, item) {
-                return array.indexOf(item);
-              } :
-              function(array, item) {
-                for (var i = 0, l = array.length; i < l; i++) {
-                  if (array[i] === item) {
-                    return i;
+  var indexOf = Array.prototype.indexOf ?
+                function(array, item) {
+                  return array.indexOf(item);
+                } :
+                function(array, item) {
+                  for (var i = 0, l = array.length; i < l; i++) {
+                    if (array[i] === item) {
+                      return i;
+                    }
                   }
-                }
-                return -1;
-              };
-
-
-  /**
-   * Search for a specified value index within an array.
-   * @param {Array} array The Array to search in.
-   * @param {*} item The item to search.
-   * @return {boolean} Whether the item is in the specific array.
-   */
-  _.inArray = function(array, item) {
-    return _.indexOf(array, item) > -1;
-  };
-
-
-  /**
-   * Keep the identity function around for default iterators.
-   */
-  _.identity = function(value) {
-    return value;
-  };
-
-
-  /**
-   * Memoize an expensive function by storing its results.
-   */
-  _.memoize = function(func, hasher) {
-    var memo = {};
-    hasher = hasher || _.identity;
-
-    return function() {
-      var key = hasher.apply(this, arguments);
-      return Object.prototype.hasOwnProperty.call(memo, key) ?
-          memo[key] :
-          (memo[key] = func.apply(this, arguments));
-    };
-  };
+                  return -1;
+                };
 
 
   /**
    * @return {number} An integer value representing the number of milliseconds
    *     between midnight, January 1, 1970 and the current time.
    */
-  _.now = Date.now || (function() {
+  var now = Date.now || (function() {
     return new Date().getTime();
   });
 
-})((module._ = {}));
-
-
-//==============================================================================
-// Module environment
-//==============================================================================
-(function(global, _) {
 
   //----------------------------------------------------------------------------
   // Global variables and related helpers
   //----------------------------------------------------------------------------
 
-  // Module status\uff1a
+  // Module status：
   // 1. downloaded - The module file has been downloaded to the browser.
   // 2. declared - The module declare function has been executed.
   // 3. provided - The module info has been added to providedMods.
@@ -270,7 +181,7 @@ module.seajs = '0.2.0';
       var mod;
 
       // Restrains to sandbox environment.
-      if (!_.inArray(sandbox.deps, id) || !(mod = getProvidedMod(id))) {
+      if (indexOf(sandbox.deps, id) === -1 || !(mod = getProvidedMod(id))) {
         throw 'Invalid module id: ' + id;
       }
 
@@ -294,7 +205,7 @@ module.seajs = '0.2.0';
   function setExports(mod, sandbox) {
     var factory = mod.factory, ret;
 
-    if (_.isFunction(factory)) {
+    if (isFunction(factory)) {
       ret = factory.call(
           mod,
           new Require({ id: mod.id, parent: sandbox, deps: mod.dependencies }),
@@ -382,7 +293,7 @@ module.seajs = '0.2.0';
    */
   function declare(id, deps, factory) {
     // Overloads arguments.
-    if (_.isArray(id)) {
+    if (isArray(id)) {
       factory = deps;
       deps = id;
       id = '';
@@ -408,7 +319,7 @@ module.seajs = '0.2.0';
         // script is being requested in case declare() is called during the DOM
         // insertion.
         else if (pendingModOldIE) {
-          var diff = _.now() - pendingModOldIE.timestamp;
+          var diff = now() - pendingModOldIE.timestamp;
           if (diff < cacheTakenTime) {
             id = pendingModOldIE.id;
             //console.log(id, '[derived from pendingOldIE]', diff);
@@ -456,7 +367,7 @@ module.seajs = '0.2.0';
     if (loadingMods[url]) {
       scriptOnload(loadingMods[url], cb);
     } else {
-      if (isIE876) pendingModOldIE = { id: id, timestamp: _.now() };
+      if (isIE876) pendingModOldIE = { id: id, timestamp: now() };
       loadingMods[url] = getScript(url, cb);
     }
 
@@ -550,6 +461,7 @@ module.seajs = '0.2.0';
     return s ? s : '.';
   }
 
+  var realpathCache = {};
   /**
    * Canonicalize path.
    * realpath('a/b/c') ==> 'a/b/c'
@@ -558,24 +470,29 @@ module.seajs = '0.2.0';
    * realpath('a/b/c/') ==> 'a/b/c/'
    * http://jsperf.com/memoize
    */
-  var realpath = _.memoize(function(path) {
-    var old = path.split('/');
-    var ret = [], part, i, len;
-
-    for (i = 0, len = old.length; i < len; i++) {
-      part = old[i];
-      if (part == '..') {
-        if (ret.length === 0) {
-          throw 'Invalid module path: ' + path;
-        }
-        ret.pop();
-      } else if (part !== '.') {
-        ret.push(part);
-      }
+  function realpath(path) {
+    if (hasOwnProperty.call(realpathCache, path)) {
+      return realpathCache[path];
     }
+    else {
+      var old = path.split('/');
+      var ret = [], part, i, len;
 
-    return ret.join('/');
-  });
+      for (i = 0, len = old.length; i < len; i++) {
+        part = old[i];
+        if (part == '..') {
+          if (ret.length === 0) {
+            throw 'Invalid module path: ' + path;
+          }
+          ret.pop();
+        } else if (part !== '.') {
+          ret.push(part);
+        }
+      }
+
+      return (realpathCache[path] = ret.join('/'));
+    }
+  }
 
   /**
    * Turn a module id to full path.
@@ -613,12 +530,12 @@ module.seajs = '0.2.0';
     var ret;
     var refDir = refId ? dirname(refId) + '/' : '';
 
-    if (_.isArray(ids)) {
+    if (isArray(ids)) {
       var i = 0, len = ids.length;
       for (ret = []; i < len; i++) {
         ret.push(rel2abs(ids[i], refDir));
       }
-    } else if (_.isString(ids)) {
+    } else if (isString(ids)) {
       ret = rel2abs(ids, refDir);
     }
 
@@ -655,7 +572,7 @@ module.seajs = '0.2.0';
   module.reset = reset;
 
 
-})(this, module._);
+})(this);
 
 
 /**
@@ -669,38 +586,3 @@ module.seajs = '0.2.0';
  *  - auto generate dependencies when combining multi modules.
  *  - timestamp for rebuild component
  */
-
-/**
- * @fileoverview Language enhancement.
- * @author lifesinger@gmail.com (Frank Wang)
- */
-
-(function(_) {
-
-  module.declare('lang', [], function(require, exports) {
-
-    /**
-     * Copies all the members of a source object to a target object.
-     * @param {Object} target Target.
-     * @param {Object} source Source.
-     * @return {Object} Target.
-     */
-    exports.mix = function(target, source) {
-      for (var x in source) {
-        if (source.hasOwnProperty(x)) {
-          target[x] = source[x];
-        }
-      }
-      return target;
-    };
-
-
-    // Mixes in existed members in _.
-    exports.mix(exports, _);
-
-  });
-
-})(module._);
-
-// Makes module pure.
-delete module._;

@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Test Runner</title>
+<link rel="stylesheet" href="../../../tools/jasmine/jasmine.css"/>
+<script src="../../../tools/jasmine/console.js"></script>
+
+<script src="../../../build/module.js"></script>
+
+<style>
+  #reporter {
+    padding: 0 10px;
+    border: 1px solid #ddd;
+  }
+
+  #reporter h3 {
+    font: bold 15px Arial;
+  }
+
+  .pass {
+    color: green;
+  }
+
+  .fail, .error {
+    color: red;
+  }
+
+  .banner {
+    position: relative;
+  }
+
+  .banner .logo {
+    float: none;
+  }
+
+  #summary {
+    position: absolute;
+    left: 300px;
+    top: 8px;
+    font: 15px Arial;
+  }
+
+  #summary span {
+    font-weight: bold;
+    padding-right: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="logo">Test Suite for underscore.js</div>
+  <div id="summary"></div>
+</div>
+<div id="reporter"></div>
+<script>
+
+  module.provide(['underscore'], function(require) {
+
+    var _ = require('underscore');
+    var reporter = document.getElementById('reporter');
+    var summary = document.getElementById('summary');
+    var n = 0;
+
+    for (var p in _) {
+      if (_.hasOwnProperty(p)) {
+        print('_.' + p);
+        n++;
+      }
+    }
+
+    summary.innerHTML = '_ has ' + n + ' members';
+
+    function print(msg) {
+      var p = document.createElement('P');
+      p.appendChild(document.createTextNode(msg));
+      reporter.appendChild(p);
+    }
+  });
+
+</script>
+</body>
+</html>

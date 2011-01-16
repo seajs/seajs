@@ -1,0 +1,33 @@
+<project name="underscore.build" default="build" basedir=".">
+  <description>Underscore Build File</description>
+
+  <property name="module.name" value="underscore"/>
+  <property name="module.files" value="*-pkg.js,*.css"/>
+  <property name="module.dir" location="."/>
+  <property name="gcc.checkTypes" value="warning"/>
+  <import file="../../tools/build/common-build.xml"/>
+
+  <target name="concat">
+    <concat destfile="${module.name}-pkg.js"
+            encoding="${charset}"
+            outputencoding="${charset}">
+      <header filtering="no" trimleading="yes">
+        var module=module||{};
+        module.declare('underscore', [], function(require, exports, module) {
+      </header>
+      <path path="underscore.js"/>
+      <footer filtering="no" trimleading="yes">
+        });
+      </footer>
+    </concat>
+  </target>
+
+  <target name="clean" depends="remove-var-module">
+    <delete>
+      <fileset dir="${module.dir}" includes="*-pkg.js"/>
+    </delete>
+  </target>
+
+  <target name="build" depends="concat,common.build,clean">
+  </target>
+</project>

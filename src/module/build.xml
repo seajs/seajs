@@ -1,0 +1,25 @@
+<project name="module.build" default="build" basedir=".">
+  <description>Module Build File</description>
+
+  <property name="module.name" value="module"/>
+  <property name="module.files" value="*-pkg.js,*.css"/>
+  <property name="module.dir" location="."/>
+  <import file="../../tools/build/common-build.xml"/>
+
+  <target name="concat">
+    <concat destfile="${module.name}-pkg.js"
+            encoding="${charset}"
+            outputencoding="${charset}">
+      <path path="module.js"/>
+    </concat>
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="${module.dir}" includes="*-pkg.js"/>
+    </delete>
+  </target>
+
+  <target name="build" depends="gjslint,concat,common.build,clean">
+  </target>
+</project>
