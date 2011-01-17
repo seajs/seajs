@@ -11,7 +11,7 @@
   <property name="charset" value="utf-8"/>
   <property name="copyright.files" value="*.css, *.js"/>
   <property name="filename" value="${module.name}"/>
-  <property name="gcc.checkTypes" value="error"/>
+  <property name="gcc.warning.level" value="VERBOSE"/>
 
   <!-- 用 gslint 检查 style -->
   <target name="gjslint">
@@ -58,6 +58,17 @@
       <arg line="-o ${filename}.css"/>
     </apply>
 
+    <!-- 调整 Google Closure Compiler 的配置信息 -->
+    <ac:if>
+      <equals arg1="${gcc.warning.level}" arg2="VERBOSE"/>
+      <ac:then>
+        <property name="gcc.checkTypes" value="error"/>
+      </ac:then>
+      <ac:else>
+        <property name="gcc.checkTypes" value="off"/>
+      </ac:else>
+    </ac:if>
+
     <!-- 用 Google Closure Compiler 压缩 JS -->
     <apply executable="java" verbose="true" dir="${tmp.dir}" failonerror="true">
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
@@ -66,7 +77,7 @@
       <arg line="--compilation_level SIMPLE_OPTIMIZATIONS"/>
 
       <!-- http://code.google.com/p/closure-compiler/wiki/Warnings -->
-      <arg line="--warning_level VERBOSE"/>
+      <arg line="--warning_level ${gcc.warning.level}"/>
       <arg line="--jscomp_${gcc.checkTypes}=checkTypes"/>
       <arg line="--jscomp_off=fileoverviewTags"/>
 

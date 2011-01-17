@@ -10,7 +10,7 @@
 
  modules
 ---------
- - underscore
+ - underscore test & underscore bug fix
  - jquery
  - cookie
 
@@ -19,3 +19,4 @@
 ----------
  - the relationship of SeaJS and KISSY
  - seajs/tools
+ - seajs.com

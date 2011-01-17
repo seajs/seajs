@@ -1,7 +1,7 @@
-<project name="underscore.build" default="build" basedir=".">
-  <description>Underscore Build File</description>
+<project name="jquery.build" default="build" basedir=".">
+  <description>jQuery Build File</description>
 
-  <property name="module.name" value="underscore"/>
+  <property name="module.name" value="jquery"/>
   <property name="module.files" value="*-pkg.js,*.css"/>
   <property name="module.dir" location="."/>
   <property name="gcc.warning.level" value="QUIET"/>
@@ -12,9 +12,9 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        module.declare('underscore', [], function(require, exports, module) {
+        module.declare('jquery', [], function(require, exports, module) {
       </header>
-      <path path="underscore.js"/>
+      <path path="jquery.js"/>
       <footer filtering="no" trimleading="yes">
         });
       </footer>

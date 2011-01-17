@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.3.0
 MIT Licensed
-build time: Jan 16 22:56
+build time: Jan 17 13:30
 */
 
 
@@ -579,16 +579,3 @@ module.seajs = '0.3.0';
 
 
 })(this);
-
-
-/**
- * TODO:
- *  - lang test
- *  - compare with BravoJS, FlyScript, RequireJS, YY
- *  - support packages
- *  - the relationship of SeaJS and KISSY
- *  - modules: lang, jquery
- *  - using('something').as('sth')
- *  - auto generate dependencies when combining multi modules.
- *  - timestamp for rebuild component
- */
