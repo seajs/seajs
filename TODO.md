@@ -10,7 +10,6 @@
 
  modules
 ---------
- - underscore test & underscore bug fix
  - jquery
  - cookie
 
