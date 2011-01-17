@@ -560,7 +560,9 @@ module.seajs = '@VERSION@';
   //----------------------------------------------------------------------------
 
   var mainModId = loaderScript.getAttribute('data-main');
-  if (mainModId) provide([mainModId]);
+  if (mainModId) provide([mainModId], function(require) {
+    require(mainModId);
+  });
 
 
   //----------------------------------------------------------------------------

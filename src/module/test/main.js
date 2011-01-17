@@ -1,4 +1,4 @@
-(function() {
+module.declare([], function() {
 
   // initialize module loader
   var path = location.href.split('/').slice(0, -1).join('/') + '/';
@@ -36,4 +36,4 @@
     if (p && p[msg]) p[msg](a1, a2);
   }
 
-})();
+});

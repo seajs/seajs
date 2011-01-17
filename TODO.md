@@ -10,7 +10,6 @@
 
  modules
 ---------
- - jquery
  - cookie
 
 

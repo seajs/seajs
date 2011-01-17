@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.3.0
 MIT Licensed
-build time: Jan 17 13:30
+build time: Jan 17 21:52
 */
 
 
@@ -566,7 +566,9 @@ module.seajs = '0.3.0';
   //----------------------------------------------------------------------------
 
   var mainModId = loaderScript.getAttribute('data-main');
-  if (mainModId) provide([mainModId]);
+  if (mainModId) provide([mainModId], function(require) {
+    require(mainModId);
+  });
 
 
   //----------------------------------------------------------------------------
