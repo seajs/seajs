@@ -1,6 +1,7 @@
 
  module.js
 -----------
+ - dirname performance
  - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
  - support packages
  - using('something').as('sth')
