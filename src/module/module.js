@@ -457,7 +457,7 @@ module.seajs = '@VERSION@';
    * http://jsperf.com/regex-vs-split
    */
   function dirname(path) {
-    var s = path.split('/').slice(0, -1).join('/');
+    var s = ('./' + path).replace(/(.*)?\/.*/, '$1').substring(2);
     return s ? s : '.';
   }
 
