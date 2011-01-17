@@ -16,6 +16,9 @@
       </header>
       <path path="jquery.js"/>
       <footer filtering="no" trimleading="yes">
+        module.exports = jQuery;
+        delete window.jQuery;
+        delete window.$;
         });
       </footer>
     </concat>

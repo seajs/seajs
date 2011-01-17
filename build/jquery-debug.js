@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.3.0
 MIT Licensed
-build time: Jan 17 13:31
+build time: Jan 17 14:23
 */
 
 
@@ -8075,4 +8075,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
 })(window);
 
+module.exports = jQuery;
+delete window.jQuery;
+delete window.$;
 });

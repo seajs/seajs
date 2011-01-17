@@ -51,27 +51,34 @@
 </head>
 <body>
 <div class="banner">
-  <div class="logo">Test for underscore.js</div>
+  <div class="logo">Test for jquery.js</div>
   <div id="summary"></div>
 </div>
 <div id="reporter"></div>
 <script>
 
-  module.provide(['underscore'], function(require) {
+  module.provide(['jquery'], function(require) {
 
-    var _ = require('underscore');
+    var $ = require('jquery');
     var reporter = document.getElementById('reporter');
     var summary = document.getElementById('summary');
-    var n = 0;
+    var n = 0, p;
 
-    for (var p in _) {
-      if (_.hasOwnProperty(p)) {
-        print('_.' + p);
+    for (p in $) {
+      if ($.hasOwnProperty(p)) {
+        print('$.' + p);
         n++;
       }
     }
 
-    summary.innerHTML = 'Underscore version: ' + _.VERSION + ' members: ' + n;
+    for (p in $.fn) {
+      if ($.hasOwnProperty(p)) {
+        print('$.fn.' + p);
+        n++;
+      }
+    }
+
+    summary.innerHTML = 'jQuery version: ' + $.fn.jquery + ' members: ' + n;
 
     function print(msg) {
       var p = document.createElement('P');
