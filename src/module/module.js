@@ -573,16 +573,3 @@ module.seajs = '@VERSION@';
 
 
 })(this);
-
-
-/**
- * TODO:
- *  - lang test
- *  - compare with BravoJS, FlyScript, RequireJS, YY
- *  - support packages
- *  - the relationship of SeaJS and KISSY
- *  - modules: lang, jquery
- *  - using('something').as('sth')
- *  - auto generate dependencies when combining multi modules.
- *  - timestamp for rebuild component
- */
