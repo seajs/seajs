@@ -1,9 +1,9 @@
 
 SeaJS is a javascript framework that makes it easy to build scalable web applications.
 
-## Features
+## Vision
 
-海纳百川，有容乃大。
+The sea can hold the water from thousands of rivers, it's big because of its capacity.
 
 ## License
 
