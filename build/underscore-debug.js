@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.3.0
+Copyright 2011, SeaJS v0.4.0dev
 MIT Licensed
-build time: Jan 18 10:03
+build time: ${build.time}
 */
 
 

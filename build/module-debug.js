@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.3.0
+Copyright 2011, SeaJS v0.4.0dev
 MIT Licensed
-build time: Jan 17 21:52
+build time: ${build.time}
 */
 
 
@@ -26,7 +26,7 @@ var module = module || {};
  *
  * @const
  */
-module.seajs = '0.3.0';
+module.seajs = '0.4.0dev';
 
 
 (function(global) {
@@ -463,7 +463,7 @@ module.seajs = '0.3.0';
    * http://jsperf.com/regex-vs-split
    */
   function dirname(path) {
-    var s = path.split('/').slice(0, -1).join('/');
+    var s = ('./' + path).replace(/(.*)?\/.*/, '$1').substring(2);
     return s ? s : '.';
   }
 

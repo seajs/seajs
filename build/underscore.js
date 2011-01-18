@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.3.0
+Copyright 2011, SeaJS v0.4.0dev
 MIT Licensed
-build time: Jan 18 10:03
+build time: ${build.time}
 */
 
 module.declare("underscore",[],function(K,L,q){(function(){var r=this,D=r._,n={},j=Array.prototype,o=Object.prototype,i=j.slice,E=j.unshift,F=o.toString,m=o.hasOwnProperty,t=j.forEach,u=j.map,v=j.reduce,w=j.reduceRight,x=j.filter,y=j.every,z=j.some,p=j.indexOf,A=j.lastIndexOf;o=Array.isArray;var G=Object.keys,c=function(a){return new l(a)};if(typeof q!=="undefined"&&q.exports){q.exports=c;c._=c}else r._=c;c.VERSION="1.1.4";var k=c.each=c.forEach=function(a,b,d){if(a!=null)if(t&&a.forEach===t)a.forEach(b,
