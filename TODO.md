@@ -1,9 +1,9 @@
 
  module.js
 -----------
- - dirname performance
  - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
- - support packages
+
+ - think real things, such as supporting packages
  - using('something').as('sth')
  - auto generate dependencies when combining multi modules
  - timestamp for rebuild component

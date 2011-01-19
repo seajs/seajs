@@ -16,9 +16,13 @@
       </header>
       <path path="jquery.js"/>
       <footer filtering="no" trimleading="yes">
-        module.exports = jQuery;
-        delete window.jQuery;
-        delete window.$;
+          module.exports = jQuery;
+          try {
+            delete window.jQuery;
+            delete window.$;
+          }catch(x) {
+            window.jQuery = window.$ = undefined;
+          }
         });
       </footer>
     </concat>

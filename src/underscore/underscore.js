@@ -389,11 +389,11 @@
     }
     step = arguments[2] || 1;
 
-    var range = [];
     var len = Math.max(Math.ceil((stop - start) / step), 0);
     var idx = 0;
+    var range = new Array(len);
 
-    while (idx < len) {
+    while(idx < len) {
       range[idx++] = start;
       start += step;
     }
@@ -501,7 +501,6 @@
   // Retrieve the names of an object's properties.
   // Delegates to **ECMAScript 5**'s native `Object.keys`
   _.keys = nativeKeys || function(obj) {
-    if (_.isArray(obj)) return _.range(0, obj.length);
     var keys = [];
     for (var key in obj) if (hasOwnProperty.call(obj, key)) keys[keys.length] = key;
     return keys;

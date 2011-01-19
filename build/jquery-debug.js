@@ -8076,6 +8076,10 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 })(window);
 
 module.exports = jQuery;
+try {
 delete window.jQuery;
 delete window.$;
+}catch(x) {
+window.jQuery = window.$ = undefined;
+}
 });

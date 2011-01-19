@@ -124,7 +124,7 @@ module.seajs = '0.4.0dev';
   var isIE876 = !+'\v1';
 
   // Modules that have been provided.
-  // { uri: { id: string, dependencies: [], factory: function }, ... }
+  // { uri: { id: str, dependencies: [], factory: fn, exports: obj }, ... }
   var providedMods = {};
 
   function memoize(id, mod) {
@@ -210,13 +210,14 @@ module.seajs = '0.4.0dev';
 
   function setExports(mod, sandbox) {
     var factory = mod.factory, ret;
+    delete mod.factory; // free
 
     if (isFunction(factory)) {
-      ret = factory.call(
-          mod,
+      ret = factory(
           new Require({ id: mod.id, parent: sandbox, deps: mod.dependencies }),
           (mod.exports = {}),
-          mod);
+          (mod.declare = declare, mod.provide = provide, mod)
+          );
 
       if (ret) mod.exports = ret;
     }
@@ -302,6 +303,11 @@ module.seajs = '0.4.0dev';
     if (isArray(id)) {
       factory = deps;
       deps = id;
+      id = '';
+    }
+    else if (isFunction(id)) {
+      factory = id;
+      deps = []; // Don't infer deps from factory.toString().
       id = '';
     }
 

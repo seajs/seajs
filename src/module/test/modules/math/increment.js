@@ -1,4 +1,4 @@
-module.declare(['math'], function(require, exports) {
+module.declare(['math'], function(require, exports, module) {
 
   var add = require('math').add;
 
