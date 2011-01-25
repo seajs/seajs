@@ -75,6 +75,7 @@ module.seajs = '@VERSION@';
                 };
 
 
+
   /**
    * @return {number} An integer value representing the number of milliseconds
    *     between midnight, January 1, 1970 and the current time.
@@ -258,7 +259,7 @@ module.seajs = '@VERSION@';
     }
 
     if (uri) {
-      if (id) uri = id2Uri('./' + id, uri, mod.prefix);
+      if (id) uri = id2Uri('./' + id, uri);
       memoize(uri, mod);
 
       // Resets to avoid polluting the context of onload event. An example:
@@ -296,7 +297,7 @@ module.seajs = '@VERSION@';
         for (; i < len; i++) {
           mod = pendingMods[i];
           id = mod.id;
-          if (id) k = id2Uri('./' + id, uri, mod.prefix);
+          if (id) k = id2Uri('./' + id, uri);
           memoize(k, mod);
         }
         pendingMods = [];
@@ -382,7 +383,7 @@ module.seajs = '@VERSION@';
 
   /**
    * The factory of "require" function.
-   * @param {object} sandbox The data related to "require" instance.
+   * @param {Object} sandbox The data related to "require" instance.
    */
   function createRequire(sandbox) {
     // sandbox: {
@@ -503,18 +504,23 @@ module.seajs = '@VERSION@';
           ret.push(part);
         }
       }
-
       return (realpathCache[path] = ret.join('/'));
     }
   }
 
 
-  var location = global['location'];
+  var pageUrl = global['location'].protocol + '//' + global['location'].host;
 
+  /**
+   * Converts id to uri.
+   * @param {string} id The module ids.
+   * @param {string=} refUri The referenced uri for relative id.
+   * @param {Object=} prefix The prefix cache.
+   */
   function id2Uri(id, refUri, prefix) {
-    var ret;
     if (prefix) id = parsePrefix(id, prefix);
     id = id.replace(/\.js(?:\W.*)?$/, '');
+    var ret;
 
     // absolute id
     if (id.indexOf('://') !== -1) {
@@ -526,7 +532,7 @@ module.seajs = '@VERSION@';
     }
     // root id
     else if (id.indexOf('/') === 0) {
-      ret = location.protocol + '//' + location.host + id;
+      ret = pageUrl + id;
     }
     // top-level id
     else {
@@ -554,7 +560,7 @@ module.seajs = '@VERSION@';
 
   function parsePrefix(id, prefix) {
     var p = id.indexOf('/');
-    if (prefix && p > 0) {
+    if (p > 0) {
       var key = id.substring(0, p);
       if (hasOwnProperty.call(prefix, key)) {
         id = prefix[key] + id.substring(p);

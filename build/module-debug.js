@@ -1,5 +1,5 @@
 /*
-Copyright 2011, SeaJS v0.4.0dev
+Copyright 2011, SeaJS v0.5.0dev
 MIT Licensed
 build time: ${build.time}
 */
@@ -26,7 +26,7 @@ var module = module || {};
  *
  * @const
  */
-module.seajs = '0.4.0dev';
+module.seajs = '0.5.0dev';
 
 
 (function(global) {
@@ -79,6 +79,7 @@ module.seajs = '0.4.0dev';
                   }
                   return -1;
                 };
+
 
 
   /**
@@ -264,7 +265,7 @@ module.seajs = '0.4.0dev';
     }
 
     if (uri) {
-      if (id) uri = id2Uri('./' + id, uri, mod.prefix);
+      if (id) uri = id2Uri('./' + id, uri);
       memoize(uri, mod);
 
       // Resets to avoid polluting the context of onload event. An example:
@@ -302,7 +303,7 @@ module.seajs = '0.4.0dev';
         for (; i < len; i++) {
           mod = pendingMods[i];
           id = mod.id;
-          if (id) k = id2Uri('./' + id, uri, mod.prefix);
+          if (id) k = id2Uri('./' + id, uri);
           memoize(k, mod);
         }
         pendingMods = [];
@@ -388,7 +389,7 @@ module.seajs = '0.4.0dev';
 
   /**
    * The factory of "require" function.
-   * @param {object} sandbox The data related to "require" instance.
+   * @param {Object} sandbox The data related to "require" instance.
    */
   function createRequire(sandbox) {
     // sandbox: {
@@ -509,18 +510,23 @@ module.seajs = '0.4.0dev';
           ret.push(part);
         }
       }
-
       return (realpathCache[path] = ret.join('/'));
     }
   }
 
 
-  var location = global['location'];
+  var pageUrl = global['location'].protocol + '//' + global['location'].host;
 
+  /**
+   * Converts id to uri.
+   * @param {string} id The module ids.
+   * @param {string=} refUri The referenced uri for relative id.
+   * @param {Object=} prefix The prefix cache.
+   */
   function id2Uri(id, refUri, prefix) {
-    var ret;
     if (prefix) id = parsePrefix(id, prefix);
     id = id.replace(/\.js(?:\W.*)?$/, '');
+    var ret;
 
     // absolute id
     if (id.indexOf('://') !== -1) {
@@ -532,7 +538,7 @@ module.seajs = '0.4.0dev';
     }
     // root id
     else if (id.indexOf('/') === 0) {
-      ret = location.protocol + '//' + location.host + id;
+      ret = pageUrl + id;
     }
     // top-level id
     else {
@@ -560,7 +566,7 @@ module.seajs = '0.4.0dev';
 
   function parsePrefix(id, prefix) {
     var p = id.indexOf('/');
-    if (prefix && p > 0) {
+    if (p > 0) {
       var key = id.substring(0, p);
       if (hasOwnProperty.call(prefix, key)) {
         id = prefix[key] + id.substring(p);

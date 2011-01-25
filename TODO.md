@@ -2,16 +2,12 @@
  module.js
 -----------
 
- - support prefix
+ - timestamp
  - answer swainet's questions
  - docs
 
  - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
-
- - think real things, such as supporting packages
- - using('something').as('sth')
- - auto generate dependencies when combining multi modules
- - timestamp for rebuild component
+ - auto generate id / dependencies when building and combining
 
 
  modules
