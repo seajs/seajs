@@ -113,12 +113,7 @@ module.seajs = '@VERSION@';
 
   function memoize(uri, mod) {
     mod.dependencies = ids2Uris(mod.dependencies, uri);
-    mod.uri = uri;
     providedMods[uri] = mod;
-  }
-
-  function getProvidedMod(uri) {
-    return providedMods[uri];
   }
 
   function getUnMemoized(uris) {
@@ -137,6 +132,7 @@ module.seajs = '@VERSION@';
   // The main module entrance
   //----------------------------------------------------------------------------
 
+  var head = document.getElementsByTagName('head')[0];
   var scripts = document.getElementsByTagName('script');
   var loaderScript = scripts[scripts.length - 1];
   var seajsDir = dirname(getScriptAbsoluteSrc(loaderScript));
@@ -172,14 +168,15 @@ module.seajs = '@VERSION@';
    * @param {boolean=} noRequire For inner use.
    */
   function provide(ids, callback, noRequire) {
-    var uris = getUnMemoized(ids2Uris(ids));
+    var originalUris = ids2Uris(ids);
+    var uris = getUnMemoized(originalUris);
     if (uris.length === 0) return cb();
 
     for (var i = 0, len = uris.length, remain = len; i < len; i++) {
       (function(uri) {
 
         fetch(uri, function() {
-          var deps = (getProvidedMod(uri) || 0).dependencies || [];
+          var deps = (providedMods[uri] || 0).dependencies || [];
           var len = deps.length;
 
           if (len) {
@@ -203,10 +200,7 @@ module.seajs = '@VERSION@';
         callback(noRequire ?
             undefined :
             createRequire({
-              module: {
-                id: 'provide([' + ids + '])',
-                dependencies: ids2Uris(ids)
-              }
+              deps: originalUris
             })
             );
       }
@@ -229,11 +223,11 @@ module.seajs = '@VERSION@';
     }
     else if (isFunction(id)) {
       factory = id;
-      deps = []; // Don't infer deps from factory.toString().
+      deps = parseDeps(factory.toString());
       id = '';
     }
 
-    var mod = { id: id, dependencies: deps, factory: factory };
+    var mod = { dependencies: deps, factory: factory };
     var uri;
 
     if (isOldIE) {
@@ -301,13 +295,12 @@ module.seajs = '@VERSION@';
     }
 
     function cb() {
-      var len = pendingMods.length, i = 0, id;
+      var len = pendingMods.length, i = 0, id, k = uri;
       if (len) {
         for (; i < len; i++) {
           id = pendingMods[i].id;
-          if (id) {
-            memoize(id2Uri('./' + id, uri), pendingMods[i]);
-          }
+          if (id) k = id2Uri('./' + id, uri);
+          memoize(k, pendingMods[i]);
         }
         pendingMods = [];
       }
@@ -317,8 +310,6 @@ module.seajs = '@VERSION@';
     }
   }
 
-
-  var head = document.getElementsByTagName('head')[0];
 
   function getScript(url, callback) {
     var node = document.createElement('script');
@@ -396,27 +387,33 @@ module.seajs = '@VERSION@';
    * @param {object} sandbox The data related to "require" instance.
    */
   function createRequire(sandbox) {
-    // sandbox: { module: module, parent: sandbox }
-    var currentMod = sandbox.module;
+    // sandbox: {
+    //   uri: '',
+    //   deps: [],
+    //   parent: sandbox
+    // }
 
     return function(id) {
-      var uri = id2Uri(id, currentMod.uri), mod;
+      var uri = id2Uri(id, sandbox.uri), mod;
 
       // Restrains to sandbox environment.
-      if (indexOf(currentMod.dependencies, uri) === -1
-          || !(mod = providedMods[uri])) {
+      if (indexOf(sandbox.deps, uri) === -1 || !(mod = providedMods[uri])) {
         throw 'Invalid module id: ' + id;
       }
 
       // Checks cyclic dependencies.
       if (isCyclic(sandbox, uri)) {
-        printCyclicStack(sandbox, id);
+        console.warn('Found cyclic dependencies:', id);
         return mod.exports;
       }
 
       // Initializes module exports.
       if (!mod.exports) {
-        setExports(mod, sandbox);
+        setExports(mod, {
+          uri: uri,
+          deps: mod.dependencies,
+          parent: sandbox
+        });
       }
 
       return mod.exports;
@@ -429,9 +426,9 @@ module.seajs = '@VERSION@';
 
     if (isFunction(factory)) {
       ret = factory(
-          createRequire({ module: mod, parent: sandbox }),
+          createRequire(sandbox),
           (mod.exports = {}),
-          (mod.declare = declare, mod.provide = provide, mod)
+          (mod.declare = declare, mod.load = load, mod)
           );
 
       if (ret) mod.exports = ret;
@@ -442,20 +439,19 @@ module.seajs = '@VERSION@';
   }
 
   function isCyclic(sandbox, uri) {
-    if (sandbox.module.uri === uri) return true;
+    if (sandbox.uri === uri) return true;
     if (sandbox.parent) return isCyclic(sandbox.parent, uri);
     return false;
   }
 
-  function printCyclicStack(sandbox, id) {
-    if (global['console']) {
-      var stack = id;
-      while (sandbox) {
-        stack += ' <-- ' + sandbox.module.id;
-        sandbox = sandbox.parent;
-      }
-      console.warn('Found cyclic dependencies:', stack);
+  function parseDeps(code) {
+    var pattern = /\brequire\s*\(\s*['"]?([^'"]*)/g;
+    var ret = [], match;
+
+    while ((match = pattern.exec(code))) {
+      ret.push(match[1]);
     }
+    return ret;
   }
 
 
@@ -514,6 +510,7 @@ module.seajs = '@VERSION@';
 
   function id2Uri(id, refUri) {
     var ret;
+    id = id.replace(/\.js(?:\W.*)?$/, '');
 
     // absolute id
     if (id.indexOf('://') !== -1) {
@@ -560,5 +557,6 @@ module.seajs = '@VERSION@';
   module.declare = declare;
   module.load = load;
 
+  module.providedMods = providedMods;
 
 })(this);
