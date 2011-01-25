@@ -138,7 +138,9 @@ module.seajs = '0.4.0dev';
   // The main module entrance
   //----------------------------------------------------------------------------
 
+  var location = global['location'];
   var head = document.getElementsByTagName('head')[0];
+
   var scripts = document.getElementsByTagName('script');
   var loaderScript = scripts[scripts.length - 1];
   var seajsDir = dirname(getScriptAbsoluteSrc(loaderScript));
@@ -513,8 +515,6 @@ module.seajs = '0.4.0dev';
     }
   }
 
-
-  var location = global['location'];
 
   function id2Uri(id, refUri) {
     var ret;
