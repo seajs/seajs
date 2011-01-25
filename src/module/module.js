@@ -133,21 +133,6 @@ module.seajs = '@VERSION@';
 
 
   //----------------------------------------------------------------------------
-  // The main module entrance
-  //----------------------------------------------------------------------------
-
-  var location = global['location'];
-  var head = document.getElementsByTagName('head')[0];
-
-  var scripts = document.getElementsByTagName('script');
-  var loaderScript = scripts[scripts.length - 1];
-  var seajsDir = dirname(getScriptAbsoluteSrc(loaderScript));
-
-  var mainModId = loaderScript.getAttribute('data-main');
-  if (mainModId) load([mainModId]);
-
-
-  //----------------------------------------------------------------------------
   // Provisioning: loads a module and gets it ready to be require()d.
   //----------------------------------------------------------------------------
 
@@ -322,6 +307,7 @@ module.seajs = '@VERSION@';
     }
   }
 
+  var head = document.getElementsByTagName('head')[0];
 
   function getScript(url, callback) {
     var node = document.createElement('script');
@@ -523,6 +509,8 @@ module.seajs = '@VERSION@';
   }
 
 
+  var location = global['location'];
+
   function id2Uri(id, refUri, prefix) {
     var ret;
     if (prefix) id = parsePrefix(id, prefix);
@@ -582,6 +570,18 @@ module.seajs = '@VERSION@';
         // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
         node.getAttribute('src', 4);
   }
+
+
+  //----------------------------------------------------------------------------
+  // The main module entrance
+  //----------------------------------------------------------------------------
+
+  var scripts = document.getElementsByTagName('script');
+  var loaderScript = scripts[scripts.length - 1];
+  var seajsDir = dirname(getScriptAbsoluteSrc(loaderScript));
+
+  var mainModId = loaderScript.getAttribute('data-main');
+  if (mainModId) load([mainModId]);
 
 
   //----------------------------------------------------------------------------
