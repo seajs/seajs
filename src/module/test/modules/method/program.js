@@ -1,8 +1,8 @@
-module.declare(['test', 'a'], function(require, exports) {
+module.declare(function(require, exports) {
 
-  var test = require('test');
+  var test = require('test/test');
 
-  var a = require('a');
+  var a = require('./a');
   test.assert(a.foo() === a, 'calling a module member.');
 
   var foo = a.foo;

@@ -1,6 +1,6 @@
-module.declare(['test'], function(require) {
+module.declare(function(require) {
 
-  var test = require('test');
+  var test = require('test/test');
 
   try {
     require('bogus');

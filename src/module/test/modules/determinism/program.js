@@ -1,7 +1,7 @@
-module.declare(['test', 'submodule/a'], function(require) {
+module.declare(function(require) {
 
-  var test = require('test');
-  require('submodule/a');
+  var test = require('test/test');
+  require('./submodule/a');
 
   test.print('DONE', 'info');
 

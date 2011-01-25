@@ -1,8 +1,8 @@
-module.declare(['test', 'hasOwnProperty', 'toString'], function(require) {
+module.declare(function(require) {
 
-  var hasOwnProperty = require('hasOwnProperty');
-  var toString = require('toString');
-  var test = require('test');
+  var hasOwnProperty = require('./hasOwnProperty');
+  var toString = require('./toString');
+  var test = require('test/test');
 
   test.print('DONE', 'info');
 

@@ -1,5 +1,5 @@
-module.declare(['c'], function(require, exports) {
+module.declare(function(require, exports) {
 
-  exports.foo = require('c').foo;
+  exports.foo = require('./c').foo;
 
 });

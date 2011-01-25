@@ -1,6 +1,6 @@
-module.declare(['test', 'a'], function (require) {
+module.declare(function (require) {
 
-  var test = require('test');
+  var test = require('test/test');
 
   var pass = false;
   try {

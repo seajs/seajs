@@ -1,7 +1,7 @@
-module.declare(['program'], function (require, exports) {
+module.declare(function (require, exports) {
 
   exports.program = function () {
-    return require('program');
+    return require('./program');
   };
 
 });

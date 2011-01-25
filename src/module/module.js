@@ -403,7 +403,7 @@ module.seajs = '@VERSION@';
 
       // Checks cyclic dependencies.
       if (isCyclic(sandbox, uri)) {
-        console.warn('Found cyclic dependencies:', id);
+        console.warn('Found cyclic dependencies:', uri);
         return mod.exports;
       }
 
@@ -445,11 +445,11 @@ module.seajs = '@VERSION@';
   }
 
   function parseDeps(code) {
-    var pattern = /\brequire\s*\(\s*['"]?([^'"]*)/g;
+    var pattern = /\brequire\s*\(\s*['"]?([^'")]*)/g;
     var ret = [], match;
 
     while ((match = pattern.exec(code))) {
-      ret.push(match[1]);
+      if (match[1]) ret.push(match[1]);
     }
     return ret;
   }

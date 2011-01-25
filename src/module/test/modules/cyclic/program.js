@@ -1,8 +1,8 @@
-module.declare(['test', 'a', 'b'], function(require) {
+module.declare(function(require) {
 
-  var test = require('test');
-  var a = require('a');
-  var b = require('b');
+  var test = require('test/test');
+  var a = require('./a');
+  var b = require('./b');
 
   test.assert(a.a, 'a exists.');
   test.assert(b.b, 'b exists.');

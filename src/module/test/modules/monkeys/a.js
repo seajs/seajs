@@ -1,5 +1,5 @@
-module.declare(['program'], function(require) {
+module.declare(function(require) {
 
-  require('program').monkey = 10;
+  require('./program').monkey = 10;
 
 });
