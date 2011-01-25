@@ -107,19 +107,23 @@ module.seajs = '0.4.0dev';
   // The modules that are declared, but has not been provided.
   var pendingMods = [];
 
-  // For old IE
+  // For old IE.
   // { id: string, timestamp: number }
   var pendingModOldIE = null;
   var cacheTakenTime = 10;
   var isOldIE = !+'\v1'; // IE6-8
+
+  // Cache for storing prefix.
+  var prefixCache = null;
 
   // Modules that have been provided.
   // { uri: { dependencies: [], factory: fn, exports: {} }, ... }
   var providedMods = {};
 
   function memoize(uri, mod) {
-    mod.dependencies = ids2Uris(mod.dependencies, uri);
+    mod.dependencies = ids2Uris(mod.dependencies, uri, mod.prefix);
     providedMods[uri] = mod;
+    delete mod.id;
   }
 
   function getUnMemoized(uris) {
@@ -235,8 +239,13 @@ module.seajs = '0.4.0dev';
       id = '';
     }
 
-    var mod = { dependencies: deps, factory: factory };
+    var mod = { id: id, dependencies: deps, factory: factory };
     var uri;
+
+    if (prefixCache) {
+      mod.prefix = prefixCache;
+      prefixCache = null;
+    }
 
     if (isOldIE) {
 
@@ -270,7 +279,7 @@ module.seajs = '0.4.0dev';
     }
 
     if (uri) {
-      if (id) uri = id2Uri('./' + id, uri);
+      if (id) uri = id2Uri('./' + id, uri, mod.prefix);
       memoize(uri, mod);
 
       // Resets to avoid polluting the context of onload event. An example:
@@ -303,12 +312,13 @@ module.seajs = '0.4.0dev';
     }
 
     function cb() {
-      var len = pendingMods.length, i = 0, id, k = uri;
+      var len = pendingMods.length, i = 0, id, k = uri, mod;
       if (len) {
         for (; i < len; i++) {
-          id = pendingMods[i].id;
-          if (id) k = id2Uri('./' + id, uri);
-          memoize(k, pendingMods[i]);
+          mod = pendingMods[i];
+          id = mod.id;
+          if (id) k = id2Uri('./' + id, uri, mod.prefix);
+          memoize(k, mod);
         }
         pendingMods = [];
       }
@@ -398,11 +408,13 @@ module.seajs = '0.4.0dev';
     // sandbox: {
     //   uri: '',
     //   deps: [],
+    //   prefix: {},
     //   parent: sandbox
     // }
 
     return function(id) {
-      var uri = id2Uri(id, sandbox.uri), mod;
+      var uri = id2Uri(id, sandbox.uri, sandbox.prefix);
+      var mod;
 
       // Restrains to sandbox environment.
       if (indexOf(sandbox.deps, uri) === -1 || !(mod = providedMods[uri])) {
@@ -420,6 +432,7 @@ module.seajs = '0.4.0dev';
         setExports(mod, {
           uri: uri,
           deps: mod.dependencies,
+          prefix: mod.prefix,
           parent: sandbox
         });
       }
@@ -516,8 +529,9 @@ module.seajs = '0.4.0dev';
   }
 
 
-  function id2Uri(id, refUri) {
+  function id2Uri(id, refUri, prefix) {
     var ret;
+    if (prefix) id = parsePrefix(id, prefix);
     id = id.replace(/\.js(?:\W.*)?$/, '');
 
     // absolute id
@@ -545,13 +559,26 @@ module.seajs = '0.4.0dev';
    * Converts ids to uris.
    * @param {Array.<string>} ids The module ids.
    * @param {string=} refUri The referenced uri for relative id.
+   * @param {Object=} prefix The prefix cache.
    */
-  function ids2Uris(ids, refUri) {
+  function ids2Uris(ids, refUri, prefix) {
     var uris = [];
     for (var i = 0, len = ids.length; i < len; i++) {
-      uris[i] = id2Uri(ids[i], refUri);
+      uris[i] = id2Uri(ids[i], refUri, prefix);
     }
     return uris;
+  }
+
+
+  function parsePrefix(id, prefix) {
+    var p = id.indexOf('/');
+    if (prefix && p > 0) {
+      var key = id.substring(0, p);
+      if (hasOwnProperty.call(prefix, key)) {
+        id = prefix[key] + id.substring(p);
+      }
+    }
+    return id;
   }
 
 
@@ -566,6 +593,15 @@ module.seajs = '0.4.0dev';
   //----------------------------------------------------------------------------
   // Public API
   //----------------------------------------------------------------------------
+
+  /**
+   * Sets prefix for shorthand.
+   */
+  module.prefix = function(key, val) {
+    prefixCache = prefixCache || {};
+    prefixCache[key] = val;
+    return this;
+  };
 
   module.declare = declare;
   module.load = load;
