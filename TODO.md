@@ -1,6 +1,12 @@
 
  module.js
 -----------
+
+ - inferred dependencies
+ - support prefix
+ - answer swainet's questions
+ - docs
+
  - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
 
  - think real things, such as supporting packages
