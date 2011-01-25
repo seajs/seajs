@@ -2,7 +2,6 @@
  module.js
 -----------
 
- - inferred dependencies
  - support prefix
  - answer swainet's questions
  - docs

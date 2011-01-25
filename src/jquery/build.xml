@@ -20,7 +20,7 @@
           try {
             delete window.jQuery;
             delete window.$;
-          }catch(x) {
+          } catch(x) {
             window.jQuery = window.$ = undefined;
           }
         });

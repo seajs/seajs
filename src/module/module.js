@@ -202,7 +202,7 @@ module.seajs = '@VERSION@';
             createRequire({
               deps: originalUris
             })
-            );
+        );
       }
     }
   }
@@ -262,7 +262,7 @@ module.seajs = '@VERSION@';
     }
 
     if (uri) {
-      if(id) uri = id2Uri('./' + id, uri);
+      if (id) uri = id2Uri('./' + id, uri);
       memoize(uri, mod);
 
       // Resets to avoid polluting the context of onload event. An example:
@@ -508,6 +508,8 @@ module.seajs = '@VERSION@';
   }
 
 
+  var location = global['location'];
+
   function id2Uri(id, refUri) {
     var ret;
     id = id.replace(/\.js(?:\W.*)?$/, '');
@@ -533,6 +535,11 @@ module.seajs = '@VERSION@';
   }
 
 
+  /**
+   * Converts ids to uris.
+   * @param {Array.<string>} ids The module ids.
+   * @param {string=} refUri The referenced uri for relative id.
+   */
   function ids2Uris(ids, refUri) {
     var uris = [];
     for (var i = 0, len = ids.length; i < len; i++) {
@@ -556,7 +563,5 @@ module.seajs = '@VERSION@';
 
   module.declare = declare;
   module.load = load;
-
-  module.providedMods = providedMods;
 
 })(this);
