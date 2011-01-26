@@ -143,9 +143,14 @@ module.seajs = '@VERSION@';
    */
   function load(ids, callback) {
     provide(ids, function(require) {
-      var args = [];
+      var args = [], arg;
       for (var i = 0, len = ids.length; i < len; i++) {
-        args[i] = require(ids[i]);
+        arg = require(ids[i]);
+        if (isArray(arg)) {
+          args = args.concat(arg);
+        } else {
+          args.push(arg);
+        }
       }
       callback && callback.apply(global, args);
     });
@@ -409,10 +414,20 @@ module.seajs = '@VERSION@';
     //   parent: sandbox
     // }
 
-    return function(id) {
+    function require(id) {
       var uri = id2Uri(id, sandbox.uri, sandbox.prefix);
       var deps = parsePackage(sandbox.deps);
       var mod;
+
+      // Handles package.
+      var uris = packageCache[uri];
+      if (uris) {
+        var ret = [];
+        for (var i = 0, len = uris.length; i < len; i++) {
+          ret[i] = require(uris[i]);
+        }
+        return ret;
+      }
 
       // Restrains to sandbox environment.
       if (indexOf(deps, uri) === -1 || !(mod = providedMods[uri])) {
@@ -436,7 +451,9 @@ module.seajs = '@VERSION@';
       }
 
       return mod.exports;
-    };
+    }
+
+    return require;
   }
 
   function setExports(mod, sandbox) {

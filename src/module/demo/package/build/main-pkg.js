@@ -1,13 +1,9 @@
-module.declare('program', ['test/test', './biz/increment'], function(require) {
+module.declare('main', ['./biz/increment'], function(require) {
 
-  var test = require('test/test');
-  var inc = require('./increment').increment;
-
-  test.assert(inc(1) === 2, 'The result of inc(1) is 2.');
-  test.print('DONE', 'info');
+  var inc = require('./biz/increment').increment;
+  document.body.innerHTML = 'inc(1) = ' + inc(1);
 
 });
-
 
 module
     .prefix('sci', '../lib/science')
