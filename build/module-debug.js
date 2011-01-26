@@ -241,7 +241,7 @@ module.seajs = '0.5.0dev';
       // mode indicates the current script. Ref: http://goo.gl/JHfFW
       var script = getInteractiveScript();
       if (script) {
-        uri = getScriptAbsoluteSrc(script);
+        uri = getScriptAbsoluteSrc(script).replace('.js', '');
       }
 
       // In IE6-8, if the script is in the cache, the "interactive" mode
@@ -264,8 +264,11 @@ module.seajs = '0.5.0dev';
     }
 
     if (uri) {
-      if (id) uri = id2Uri('./' + id, uri);
-      memoize(uri, mod);
+      var k = uri;
+      if (id && isPackage(uri)) {
+        k = handlePackage(id, uri);
+      }
+      memoize(k, mod);
 
       // Resets to avoid polluting the context of onload event. An example:
       // Step1. First executes a 'declare([], fn)' in html code. This 'declare'
@@ -303,14 +306,21 @@ module.seajs = '0.5.0dev';
     }
 
     function cb() {
-      var len = pendingMods.length, i = 0, id, k = uri, mod;
+      var len = pendingMods.length, i = 0, id;
+      var k = uri, mod, isPkg = isPackage(uri);
+
       if (len) {
         for (; i < len; i++) {
           mod = pendingMods[i];
+
           id = mod.id; delete mod.id;
-          if (id) k = id2Uri('./' + id, uri);
+          if (id && isPkg) {
+            k = handlePackage(id, uri);
+          }
+
           memoize(k, mod);
         }
+
         pendingMods = [];
       }
 
@@ -407,10 +417,11 @@ module.seajs = '0.5.0dev';
 
     return function(id) {
       var uri = id2Uri(id, sandbox.uri, sandbox.prefix);
+      var deps = parsePackage(sandbox.deps);
       var mod;
 
       // Restrains to sandbox environment.
-      if (indexOf(sandbox.deps, uri) === -1 || !(mod = providedMods[uri])) {
+      if (indexOf(deps, uri) === -1 || !(mod = providedMods[uri])) {
         throw 'Invalid module id: ' + id;
       }
 
@@ -464,6 +475,37 @@ module.seajs = '0.5.0dev';
 
     while ((match = pattern.exec(code))) {
       if (match[1]) ret.push(match[1]);
+    }
+    return ret;
+  }
+
+
+  //----------------------------------------------------------------------------
+  // Packages members
+  //----------------------------------------------------------------------------
+
+  var packageCache = {};
+
+  function isPackage(uri) {
+    return uri.indexOf('-pkg') !== -1;
+  }
+
+  function handlePackage(id, uri) {
+    var k = id2Uri('./' + id, uri);
+    packageCache[uri] = packageCache[uri] || [];
+    packageCache[uri].push(k);
+    return k;
+  }
+
+  function parsePackage(deps) {
+    var ret = [], dep, i = 0;
+
+    while ((dep = deps[i++])) {
+      if (packageCache[dep]) {
+        ret = ret.concat(packageCache[dep]);
+      } else {
+        ret.push(dep);
+      }
     }
     return ret;
   }
