@@ -5,7 +5,8 @@
  - answer swainet's questions
  - auto generate id / dependencies when building and combining
 
- - docs（参考 FlyScript 文档, data-main, prefix, 子模块, package, build 工具, jquery 插件）
+ - docs（参考 FlyScript 文档, data-main, prefix, 子模块, package,
+ build 工具, jquery 插件, 时间戳, module.load）
 
  - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
 
