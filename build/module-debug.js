@@ -124,7 +124,6 @@ module.seajs = '0.5.0dev';
   function memoize(uri, mod) {
     mod.dependencies = ids2Uris(mod.dependencies, uri, mod.prefix);
     providedMods[uri] = mod;
-    delete mod.id;
   }
 
   function getUnMemoized(uris) {
@@ -225,7 +224,7 @@ module.seajs = '0.5.0dev';
       id = '';
     }
 
-    var mod = { id: id, dependencies: deps, factory: factory };
+    var mod = { dependencies: deps, factory: factory };
     var uri;
 
     if (prefixCache) {
@@ -278,6 +277,7 @@ module.seajs = '0.5.0dev';
     }
     else {
       // Saves information for "real" work in the onload event.
+      mod.id = id;
       pendingMods.push(mod);
     }
   }
@@ -302,7 +302,7 @@ module.seajs = '0.5.0dev';
       if (len) {
         for (; i < len; i++) {
           mod = pendingMods[i];
-          id = mod.id;
+          id = mod.id; delete mod.id;
           if (id) k = id2Uri('./' + id, uri);
           memoize(k, mod);
         }
@@ -481,8 +481,6 @@ module.seajs = '0.5.0dev';
   }
 
 
-  var realpathCache = {};
-
   /**
    * Canonicalize path.
    * realpath('a/b/c') ==> 'a/b/c'
@@ -492,30 +490,26 @@ module.seajs = '0.5.0dev';
    * http://jsperf.com/memoize
    */
   function realpath(path) {
-    if (hasOwnProperty.call(realpathCache, path)) {
-      return realpathCache[path];
-    }
-    else {
-      var old = path.split('/');
-      var ret = [], part, i, len;
+    var old = path.split('/');
+    var ret = [], part, i, len;
 
-      for (i = 0, len = old.length; i < len; i++) {
-        part = old[i];
-        if (part == '..') {
-          if (ret.length === 0) {
-            throw 'Invalid module path: ' + path;
-          }
-          ret.pop();
-        } else if (part !== '.') {
-          ret.push(part);
+    for (i = 0, len = old.length; i < len; i++) {
+      part = old[i];
+      if (part == '..') {
+        if (ret.length === 0) {
+          throw 'Invalid module path: ' + path;
         }
+        ret.pop();
+      } else if (part !== '.') {
+        ret.push(part);
       }
-      return (realpathCache[path] = ret.join('/'));
     }
+    return ret.join('/');
   }
 
 
-  var pageUrl = global['location'].protocol + '//' + global['location'].host;
+  var location = global['location'];
+  var pageUrl = location.protocol + '//' + location.host + location.pathname;
 
   /**
    * Converts id to uri.
@@ -534,11 +528,11 @@ module.seajs = '0.5.0dev';
     }
     // relative id
     else if (id.indexOf('./') === 0 || id.indexOf('../') === 0) {
-      ret = realpath(dirname(refUri || seajsDir) + id);
+      ret = realpath(dirname(refUri || pageUrl) + id);
     }
     // root id
     else if (id.indexOf('/') === 0) {
-      ret = pageUrl + id;
+      ret = getHost(refUri || pageUrl) + id;
     }
     // top-level id
     else {
@@ -576,6 +570,11 @@ module.seajs = '0.5.0dev';
   }
 
 
+  function getHost(uri) {
+    return uri.replace(/^(\w+:\/\/[^/]+)\/?.*$/, '$1');
+  }
+
+
   function getScriptAbsoluteSrc(node) {
     return node.hasAttribute ? // non-IE6/7
         node.src :
@@ -593,7 +592,15 @@ module.seajs = '0.5.0dev';
   var seajsDir = dirname(getScriptAbsoluteSrc(loaderScript));
 
   var mainModId = loaderScript.getAttribute('data-main');
-  if (mainModId) load([mainModId]);
+  if (mainModId) {
+    // top-level id in "data-main" is relative to seajsHost.
+    if (mainModId.indexOf('://') === -1 &&
+        mainModId.indexOf('./') === -1 &&
+        mainModId.charAt(0) !== '/') {
+      mainModId = getHost(seajsDir) + '/' + mainModId;
+    }
+    load([mainModId]);
+  }
 
 
   //----------------------------------------------------------------------------

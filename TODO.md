@@ -4,10 +4,12 @@
 
  - timestamp
  - answer swainet's questions
- - docs
-
- - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
+ - combo
+ - pkg
  - auto generate id / dependencies when building and combining
+
+ - docs
+ - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
 
 
  modules
