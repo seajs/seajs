@@ -2,7 +2,6 @@
  module.js
 -----------
 
- - timestamp
  - answer swainet's questions
  - combo
  - pkg

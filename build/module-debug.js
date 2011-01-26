@@ -285,16 +285,21 @@ module.seajs = '0.5.0dev';
 
   /**
    * Fetches a module file.
-   * @param {string} uri The canonical module id.
+   * @param {string} uri The canonical module uri.
    * @param {function()} callback The callback function.
    */
   function fetch(uri, callback) {
 
     if (fetchingMods[uri]) {
       scriptOnload(fetchingMods[uri], cb);
-    } else {
-      if (isOldIE) pendingModOldIE = { uri: uri, timestamp: now() };
-      fetchingMods[uri] = getScript(uri, cb);
+    }
+    else {
+      if (isOldIE) {
+        pendingModOldIE = { uri: uri, timestamp: now() };
+      }
+      fetchingMods[uri] = getScript(
+          uri + '.js' + (queryCache[uri] || ''),
+          cb);
     }
 
     function cb() {
@@ -313,6 +318,7 @@ module.seajs = '0.5.0dev';
       if (callback) callback();
     }
   }
+
 
   var head = document.getElementsByTagName('head')[0];
 
@@ -519,7 +525,6 @@ module.seajs = '0.5.0dev';
    */
   function id2Uri(id, refUri, prefix) {
     if (prefix) id = parsePrefix(id, prefix);
-    id = id.replace(/\.js(?:\W.*)?$/, '');
     var ret;
 
     // absolute id
@@ -539,7 +544,7 @@ module.seajs = '0.5.0dev';
       ret = seajsDir + id;
     }
 
-    return ret + '.js';
+    return parseQuery(ret);
   }
 
 
@@ -567,6 +572,19 @@ module.seajs = '0.5.0dev';
       }
     }
     return id;
+  }
+
+
+  var queryCache = {};
+
+  function parseQuery(uri) {
+    var ret = uri;
+    var m = uri.match(/^([^?]+)(\?.*)$/);
+    if (m) {
+      ret = m[1];
+      queryCache[ret] = m[2];
+    }
+    return ret;
   }
 
 
