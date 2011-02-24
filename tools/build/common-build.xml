@@ -15,7 +15,7 @@
 
   <!-- 用 gslint 检查 style -->
   <target name="gjslint">
-    <exec executable="gjslint" failonerror="true">
+    <exec executable="gjslint" os="Mac" failonerror="true">
       <arg line="--strict *.js"/>
     </exec>
   </target>
