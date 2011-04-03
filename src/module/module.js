@@ -142,6 +142,10 @@ module.seajs = '@VERSION@';
    * @param {function(*)=} callback The callback function.
    */
   function load(ids, callback) {
+    if(isString(ids)) {
+      ids = [ids];
+    }
+
     provide(ids, function(require) {
       var args = [], arg;
       for (var i = 0, len = ids.length; i < len; i++) {

@@ -8,6 +8,7 @@
  - 支持 combo 形式的 package
  - JSONM onerror handle
  - auto generate id / dependencies when building and combining
+ - node.js support
 
  - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
  - answer swainet's questions

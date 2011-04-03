@@ -1,1 +1,77 @@
-It works!
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>SeaJS - 海纳百川，有容乃大。</title>
+<link rel="stylesheet" href="docs/assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+<h1>
+  <a href="./">SeaJS <span class="byline">海纳百川，有容乃大。</span></a>
+</h1>
+
+<ul id="menu">
+  <li><a href="docs/">文档</a></li>
+  <li><a href="docs/download.html">下载</a></li>
+  <li><a href="https://groups.google.com/group/seajs">帮助</a></li>
+</ul>
+
+<p>
+  SeaJS 是一个遵循 CommonJS 规范的模块加载框架，可用来轻松愉悦地加载任意 CommonJS 模块。下面是一段典型的初始化入口代码：
+</p>
+
+<pre>
+&lt;script src="seajs/module.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+
+  module.load('./init', function(init) {
+    init.something();
+  });
+
+&lt;/script&gt;
+</pre>
+
+<p>
+  SeaJS 支持的模块遵循包装式书写格式，可运行于 Web 浏览器以及 <a href="http://nodejs.org/">node.js</a> 等环境中。典型的模块写法如下：
+</p>
+
+<pre>
+module.declare(function(require, exports) {
+
+  // 获取依赖的模块：
+  var $ = require('jquery');
+
+  // 向外提供接口：
+  exports.someMethods = someFunction;
+
+});
+</pre>
+
+<p>
+  在 SeaJS 的世界里，一切皆是模块。任何模块都不会污染全局，依赖关系也只需遵守简单约定，无需冗长的配置。使用 SeaJS, 能让你更关注于编码的乐趣。
+</p>
+
+<p>
+  立刻体验 SeaJS 的奥妙，请点击 <a href="docs/download.html">下载</a> 。
+</p>
+
+<p>
+  了解 SeaJS 的更多优点和详细用法，请查看 <a href="docs/">文档</a> 和 <a href="https://groups.google.com/group/seajs">帮助</a> 。
+</p>
+
+<p>
+  想参与 SeaJS 的开发，请访问 <a
+    href="https://github.com/seajs/seajs">GitHub</a> .
+</p>
+
+<p class="copyright">
+  &copy; 2011 - seajs.com
+</p>
+</div>
+
+</body>
+</html>

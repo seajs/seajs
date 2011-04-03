@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<title>SeaJS - 海纳百川，有容乃大。</title>
+<link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+
+<div id="main">
+
+  <h1>
+    <a href="./">SeaJS <span class="byline">海纳百川，有容乃大。</span></a>
+  </h1>
+
+  <ul id="menu">
+    <li><a href="docs-commonjs">Documentation</a></li>
+    <li><a href="flyscript.js">Download</a></li>
+    <li><a href="http://groups.google.com/group/flyscript">Help</a></li>
+  </ul>
+  <p>
+    FlyScript is a CommonJS module loader for the web. It's designed to load
+    modules and get out of the way. Here's how it works:
+  </p>
+
+<pre>
+&lt;script src="flyscript.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+
+FlyScript.load("./main", function(main)
+{
+    main.doSomething();
+});
+
+&lt;/script&gt;
+</pre>
+
+  <p>
+    Don't know what a CommonJS module is? FlyScript loads wrapped modules.
+    They look something like this:
+  </p>
+
+<pre>
+module.declare(function(require) {
+
+    // Load dependencies like this:
+    var whateva = require("./whateva");
+
+    // Export symbols like this:
+    return {
+        flyscript: "rocks"
+    };
+
+});
+</pre>
+
+  <p>
+
+    Cool. You're ready to check out the <a
+      href="docs-commonjs">documentation</a>.
+  </p>
+
+  <p>
+    If you're into source code, you can check us out at <a
+      href="https://github.com/khs4473/FlyScript">GitHub</a>.
+  </p>
+</div>
+
+</body>
+</html>
