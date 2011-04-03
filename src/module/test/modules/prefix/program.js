@@ -1,6 +1,7 @@
 
 module
-    .prefix('github', 'http://seajs.github.com/seajs/src/module/test/modules/prefix/submodule')
+    .prefix('github',
+    'https://github.com/seajs/seajs/raw/master/src/module/test/modules/prefix/submodule')
     .prefix('sub', './submodule/sub')
     .declare(function(require) {
 

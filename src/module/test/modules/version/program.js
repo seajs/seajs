@@ -1,4 +1,4 @@
-module.declare(function (require, exports) {
+module.declare(function (require) {
 
   var a = require('./a?v=1.0');
   var a2 = require('./a?v=2.0');

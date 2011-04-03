@@ -464,7 +464,7 @@ module.seajs = '@VERSION@';
       ret = factory(
           createRequire(sandbox),
           (mod.exports = {}),
-          (mod.declare = declare, mod.load = load, mod)
+          (mod.load = load, mod)
           );
 
       if (ret) mod.exports = ret;

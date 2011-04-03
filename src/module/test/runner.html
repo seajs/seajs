@@ -28,8 +28,10 @@
       ,'modules/transitive'
       ,'modules/prefix'
       ,'modules/version'
+
+      ,'packages/math'
     ];
-    //tests = ['modules/math'];
+    //tests = ['packages/math'];
 
     var reporter;
     var testFrame, currentTest = 0;
@@ -37,9 +39,9 @@
     var summary;
 
     window.onload = function() {
-      var container = document.getElementById('loader_container');
-      reporter = document.getElementById('loader_reporter');
-      summary = document.getElementById('loader_summary');
+      var container = document.getElementById('loader-container');
+      reporter = document.getElementById('loader-reporter');
+      summary = document.getElementById('loader-summary');
 
       testFrame = document.createElement('iframe');
       testFrame.id = 'test-frame-' + (new Date()).getTime();
@@ -85,18 +87,18 @@
   })();
 </script>
 <style>
-  #loader_container {
+  #loader-container {
     margin: 0 5px;
   }
 
-  #loader_container iframe {
+  #loader-container iframe {
     top: 0;
     left: 0;
     position: absolute;
     visibility: hidden;
   }
 
-  #loader_reporter {
+  #loader-reporter {
     padding: 0 10px;
     margin-bottom: 10px;
     height: 600px;
@@ -104,47 +106,47 @@
     border: 1px solid #ddd;
   }
 
-  #loader_reporter h3 {
+  #loader-reporter h3 {
     font: bold 15px Arial;
   }
 
-  #loader_container .pass {
+  #loader-container .pass {
     color: green;
   }
 
-  #loader_container .fail,
-  #loader_container .error {
+  #loader-container .fail,
+  #loader-container .error {
     color: red;
   }
 
-  #loader_container .banner {
+  #loader-container .banner {
     position: relative;
     border: 1px solid #ddd;
     border-bottom: none;
   }
 
-  #loader_container .banner .logo {
+  #loader-container .banner .logo {
     float: none;
   }
 
-  #loader_summary {
+  #loader-summary {
     position: absolute;
     left: 300px;
     top: 8px;
     font: 15px Arial;
   }
 
-  #loader_summary span {
+  #loader-summary span {
     font-weight: bold;
     padding-right: 10px;
   }
 </style>
-<div id="loader_container">
+<div id="loader-container">
   <div class="banner">
     <div class="logo">Test Suite for module.js</div>
-    <div id="loader_summary"></div>
+    <div id="loader-summary"></div>
   </div>
-  <div id="loader_reporter"></div>
+  <div id="loader-reporter"></div>
 </div>
 </body>
 </html>
