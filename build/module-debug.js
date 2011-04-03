@@ -148,6 +148,10 @@ module.seajs = '0.5.0dev';
    * @param {function(*)=} callback The callback function.
    */
   function load(ids, callback) {
+    if(typeof ids === 'string') {
+      ids = [ids];
+    }
+
     provide(ids, function(require) {
       var args = [], arg;
       for (var i = 0, len = ids.length; i < len; i++) {

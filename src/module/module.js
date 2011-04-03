@@ -142,7 +142,7 @@ module.seajs = '@VERSION@';
    * @param {function(*)=} callback The callback function.
    */
   function load(ids, callback) {
-    if(isString(ids)) {
+    if(typeof ids === 'string') {
       ids = [ids];
     }
 

@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Hello, SeaJS!</title>
+<link rel="stylesheet" href="../assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <h1>
+    <a href="../">SeaJS <span class="byline">文档</span></a>
+  </h1>
+
+  <h2>你好，SeaJS!</h2>
+
+  <p>
+    向未知的宇宙文明，用地球语言说出一句“你好”，是人类的一个梦。在这里，我们来看看，如何给 SeaJS 打招呼：
+  </p>
+
+<pre>
+/*** File: index.html ***/
+&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"/&gt;
+&lt;title&gt;Hello, SeaJS!&lt;/title&gt;
+&lt;script src="module.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;script&gt;
+  module.load('./hello', function(hello) {
+
+    hello.sayHello();
+
+  });
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+  <p>
+    上面的页面代码中，通过 script 标签引入了 seajs 的 module.js 文件，然后通过
+    module.load 就可以加载任何模块了。hello 模块的文件内容为：
+  </p>
+
+<pre>
+/*** File: hello.js ***/
+module.declare(function(require, exports) {
+
+  exports.sayHello = function() {
+    alert('你好，SeaJS!');
+  };
+
+});
+</pre>
+
+  <p>
+    将 index.html, module.js 和 hello.js 放在同一目录，我们就学会给 SeaJS 打招呼了：
+    <a href="../../src/module/demo/hello-seajs/">在线演示</a> 。
+  </p>
+
+  <p>
+    注意：必须通过 Web 服务器访问才能正确加载，不支持本地文件直接打开。
+  </p>
+
+  <p class="copyright">
+    &copy; 2011 - seajs.com
+  </p>
+</div>
+
+</body>
+</html>

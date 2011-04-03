@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>SeaJS 模块环境</title>
+<link rel="stylesheet" href="../assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <h1>
+    <a href="../">SeaJS <span class="byline">文档</span></a>
+  </h1>
+
+  <h2>模块环境</h2>
+
+  <p>
+    在 SeaJS 里，推荐任何文件都写成模块形式：
+  </p>
+
+<pre>
+module.declare(function(require, exports, module) {
+  // The module code goes here
+});
+</pre>
+
+  <p>
+    在 module code 部分，可访问 SeaJS 框架提供的 require, exports 和 module 三个变量。
+  </p>
+
+
+  <h3>exports</h3>
+
+  <p>
+    任何模块，都可以通过 exports 向外提供接口：
+  </p>
+
+<pre>
+/*** File: a.js ***/
+module.declare(function(require, exports) {
+  // some code...
+  exports.name = 'a';
+  exports.doSomething = function() {
+    console.log('doing something');
+  };
+});
+</pre>
+
+  <p>除了给 exports 添加属性，还可以直接用 return 来提供接口：</p>
+
+<pre>
+/*** File: a.js ***/
+module.declare(function(require, exports) {
+  // some code...
+  return {
+    name: 'a'，
+    doSomething: function() {
+      console.log('doing something');
+    };
+  };
+});
+</pre>
+
+  <p>上面的方式，等同于下面的写法：</p>
+
+<pre>
+/*** File: a.js ***/
+module.declare(function(require, exports) {
+  // some code...
+  exports = {
+    name: 'a'，
+    doSomething: function() {
+      console.log('doing something');
+    };
+  };
+});
+</pre>
+
+  <p>如果 module code 里是纯接口，还可简化为：</p>
+
+<pre>
+/*** File: a.js ***/
+module.declare({
+  name: 'a'，
+  doSomething: function() {
+    console.log('doing something');
+  };
+});
+</pre>
+
+  <p>上面的写法特别适合 JSON 数据模块的定义。</p>
+
+
+  <h3>require</h3>
+
+  <p>
+    通过 require, 可获取到其他模块的接口：
+  </p>
+
+<pre>
+/*** File: b.js ***/
+module.declare(function(require) {
+  var a = require('./a');
+  console.log(a.name);
+  a.doSomething();
+});
+</pre>
+
+  <p>
+    require 接收 module identifier 作为参数，详细请参考：
+    <a href="module-identifier.html">module-identifier.html</a>
+  </p>
+
+  <p>
+    为了让模块在部署打包阶段能方便安全地进行静态分析，require 在代码中的写法，一定要遵守一些简单规则：
+    <a href="static-analysis.html#rules">static-analysis.html</a>
+  </p>
+
+
+  <h3>module</h3>
+
+  <p></p>
+
+  <p class="copyright">
+    &copy; 2011 - seajs.com
+  </p>
+</div>
+
+</body>
+</html>
