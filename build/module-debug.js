@@ -152,7 +152,7 @@ module.seajs = '0.5.0dev';
       ids = [ids];
     }
 
-    provide(ids, function(require) {
+    provide.call(this, ids, function(require) {
       var args = [], arg;
       for (var i = 0, len = ids.length; i < len; i++) {
         arg = require(ids[i]);
@@ -174,9 +174,13 @@ module.seajs = '0.5.0dev';
    * @param {boolean=} noRequire For inner use.
    */
   function provide(ids, callback, noRequire) {
-    var originalUris = ids2Uris(ids);
+    var that = this;
+    var originalUris = getUris(ids);
     var uris = getUnMemoized(originalUris);
-    if (uris.length === 0) return cb();
+
+    if (uris.length === 0) {
+      return cb();
+    }
 
     for (var i = 0, len = uris.length, remain = len; i < len; i++) {
       (function(uri) {
@@ -186,7 +190,7 @@ module.seajs = '0.5.0dev';
           var len = deps.length;
 
           if (len) {
-            deps = getUnMemoized(ids2Uris(deps));
+            deps = getUnMemoized(getUris(deps));
             remain += len;
 
             provide(deps, function() {
@@ -205,11 +209,22 @@ module.seajs = '0.5.0dev';
       if (callback) {
         callback(noRequire ?
             undefined :
-            createRequire({
+            createRequire.call(that, {
               deps: originalUris
             })
         );
       }
+    }
+
+    function getUris(ids) {
+      var refUrl;
+
+      // Call from module factory.
+      if(that !== global) {
+        refUrl = that.uri;
+      }
+
+      return ids2Uris(ids, refUrl);
     }
   }
 
@@ -424,6 +439,11 @@ module.seajs = '0.5.0dev';
     //   parent: sandbox
     // }
 
+    // Call from module factory.
+    if(this !== global) {
+      sandbox.uri = this.uri;
+    }
+
     function require(id) {
       var uri = id2Uri(id, sandbox.uri, sandbox.prefix);
       var deps = parsePackage(sandbox.deps);
@@ -470,12 +490,17 @@ module.seajs = '0.5.0dev';
     var factory = mod.factory, ret;
     delete mod.factory; // free
 
+    // Attaches members to mod.
+    //mod.dependencies
+    mod.uri = sandbox.uri;
+    mod.exports = {};
+    mod.load = load;
+
     if (isFunction(factory)) {
       ret = factory(
           createRequire(sandbox),
-          (mod.exports = {}),
-          (mod.load = load, mod)
-          );
+          mod.exports,
+          mod);
 
       if (ret) mod.exports = ret;
     }
@@ -674,11 +699,9 @@ module.seajs = '0.5.0dev';
 
   var mainModId = loaderScript.getAttribute('data-main');
   if (mainModId) {
-    // top-level id in "data-main" is relative to seajsHost.
-    if (mainModId.indexOf('://') === -1 &&
-        mainModId.indexOf('./') === -1 &&
-        mainModId.charAt(0) !== '/') {
-      mainModId = getHost(seajsDir) + '/' + mainModId;
+    // "~" id in "data-main" is relative to seajsHost.
+    if (mainModId.indexOf('~/') === 0) {
+      mainModId = getHost(seajsDir) + mainModId.substring(1);
     }
     load([mainModId]);
   }

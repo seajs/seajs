@@ -180,9 +180,14 @@ module.declare(function(require, exports, module) {
 /*** File: http://path/to/a.js ***/
 module.declare(function(require, exports, module) {
 
-  // Loads http://path/to/b.js
+  // 加载 http://path/to/b.js
   module.load('./b', function(b) {
     b.doSomething();
+  });
+
+  // 加载多个模块
+  module.load(['./c', './d'], function(c, d) {
+    // do something
   });
 
 });

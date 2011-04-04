@@ -693,11 +693,9 @@ module.seajs = '@VERSION@';
 
   var mainModId = loaderScript.getAttribute('data-main');
   if (mainModId) {
-    // top-level id in "data-main" is relative to seajsHost.
-    if (mainModId.indexOf('://') === -1 &&
-        mainModId.indexOf('./') === -1 &&
-        mainModId.charAt(0) !== '/') {
-      mainModId = getHost(seajsDir) + '/' + mainModId;
+    // "~" id in "data-main" is relative to seajsHost.
+    if (mainModId.indexOf('~/') === 0) {
+      mainModId = getHost(seajsDir) + mainModId.substring(1);
     }
     load([mainModId]);
   }

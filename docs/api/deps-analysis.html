@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>SeaJS 依赖分析</title>
+<link rel="stylesheet" href="../assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <h1>
+    <a href="../">SeaJS <span class="byline">文档</span></a>
+  </h1>
+
+  <h2>依赖分析</h2>
+
+  <p>
+    在 SeaJS 里，模块的依赖关系是通过分析源码来获取的。为了保证依赖分析的正确性，在书写模块代码时，要遵守以下规则：
+  </p>
+
+
+  <h3>1. 参数名必须是 require .</h3>
+
+<pre>
+// 错误!
+module.declare(function(req) {
+  // ...
+});
+
+// 正确!
+module.declare(function(require) {
+  // ...
+});
+</pre>
+
+
+  <h3>2. 不要对 require 进行任何修改。</h3>
+
+<pre>
+// 错误 - Renaming "require"!
+var req = require, mod = req("./mod");
+
+// 错误 - Redefining "require"!
+require = function() {};
+
+// 错误 - Redefining "require" as a function parameter!
+function F(require) {}
+
+// 错误 - Redefining "require" in a nested scope!
+function F() {
+    var require = function() {};
+}
+</pre>
+  
+
+  <h3>3. require 仅接收字符串字面量。</h3>
+
+<pre>
+// 错误!
+require(myModule);
+
+// 错误!
+require("my-" + "module");
+
+// 错误!
+require("MY-MODULE".toLowerCase());
+
+// 正确!
+require("my-module");
+</pre>
+
+
+  <p>
+    注：SeaJS 的以上规则和 FlyScript 一致：
+    <a href="http://flyscript.org/docs-static-analysis">Static Analysis</a>
+  </p>
+
+
+  <p class="next-page">
+    下一节：package 支持
+  </p>
+
+
+  <p class="copyright">
+    &copy; 2011 - 2022 seajs.com
+  </p>
+</div>
+
+</body>
+</html>

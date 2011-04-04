@@ -16,89 +16,136 @@
   <h2>模块标识</h2>
 
   <p>
-    SeaJS 会给运行环境提供一个全局的 module 对象，包含以下属性和方法：
-  </p>
-
-
-  <h3>module.seajs</h3>
-
-  <p>
-    字符串，表示 seajs 的版本信息，比如 "1.0.0" .
-  </p>
-
-
-  <h3>module.declare</h3>
-
-  <p>
-    在 SeaJS 里，任何模块，都通过 module.declare 来定义。
+    module.load 和 require 的第一个参数都是 module identifier. 为了便于讨论，假设存在以下文件：
   </p>
 
 <pre>
-module.declare(function(require, exports, module) {
-  // The module code goes here
-});
+/*** http://example.com/path/to/html/test.html ***/
+
+/*** http://cdn.com/path/to/seajs/module.js ***/
+/*** http://cdn.com/path/to/seajs/jquery.js ***/
+
+/*** http://cdn.com/path/to/js/init.js ***/
+/*** http://cdn.com/path/to/js/a.js ***/
+/*** http://cdn.com/path/to/js/b.js ***/
+/*** http://cdn.com/path/to/js/path/to/sub/c.js ***/
+
+/*** http://3rd.com/path/to/js/z.js ***/
+/*** http://3rd.com/path/to/js/b.js ***/
 </pre>
 
   <p>
-    require, exports, module 参数的含义，请参考：
-    <a href="module-environment.html">模块环境</a>
+    下面分析各种情况下的路径计算方式。
   </p>
 
 
-  <h3>module.prefix</h3>
+  <h3>Absolute Id</h3>
 
-  <p>当模块标识很长时，可以通过 prefix 来简写：</p>
+  <p>id 可以直接是 URL 格式：</p>
 
 <pre>
-module
-  .prefix('biz', 'path/to/biz')
-  .declare(function(require, exports, module) {
-    var a = require('biz/a');
-    // 等价于：var a = require('path/to/biz/a');
-});
+require('http://cdn.com/path/to/js/b');
+  // =&gt; http://cdn.com/path/to/js/b.js
 </pre>
 
-  <p>
-    注意：prefix 定义的前缀，仅在与之近邻的 declare 内有效。
-  </p>
 
-
-  <h3>module.load</h3>
+  <h3>Root Id</h3>
 
   <p>
-    全局的 module.load, 推荐仅用于加载初始入口模块。
+    Root Id 相对调用代码所在文件的路径来定位:
   </p>
 
 <pre>
-&lt;script src="seajs/module.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  module.load('path/to/init', function(init) {
-    init.somethingA(/* 可从页面传入配置 */);
-    init.somethingB(/* 可从页面传入配置 */);
+/*** a.js ***/
+require('/path/to/js/b');
+  // =&gt; http://cdn.com/path/to/js/b.js
+
+/*** z.js ***/
+require('/path/to/js/b');
+  // =&gt; http://3rd.com/path/to/js/b.js
+
+/*** a.js 的 module.declare 里 ***/
+module.load('/path/to/js/b');
+  // =&gt; http://cdn.com/path/to/js/b.js
+
+/*** test.html ***/
+module.load('/path/to/js/b');
+  // =&gt; http://example.com/path/to/js/b.js
+
+/*** test.html ***/
+&lt;script src="http://cdn.com/path/to/seajs/module.js"
+  data-main="/path/to/js/b" &gt;&lt;/script&gt;
+  // =&gt; http://example.com/path/to/js/b.js
+</pre>
+
+
+  <h3>Relative Id</h3>
+
+  <p>Relative Id 与 Root Id 的计算规则一致，相对调用代码所在文件的路径来定位：</p>
+<pre>
+/*** a.js ***/
+require('./b');
+  // =&gt; http://cdn.com/path/to/js/b.js
+
+/*** a.js 的 module.declare 里 ***/
+module.load('./b');
+  // =&gt; http://cdn.com/path/to/js/b.js
+
+/*** test.html ***/
+module.load('./b');
+  // =&gt; http://example.com/path/to/html/b.js
+
+/*** z.js ***/
+require('./b');
+  // =&gt; http://3rd.com/path/to/js/b.js
+</pre>
+
+
+  <h3>Top-level Id</h3>
+
+  <p>top-level id 始终指向 seajs 所在目录：</p>
+<pre>
+/*** a.js ***/
+require('jquery');
+  // =&gt; http://cdn.com/path/to/seajs/jquery.js
+
+/*** z.js ***/
+require('jquery');
+  // =&gt; http://cdn.com/path/to/seajs/jquery.js
+
+/*** test.html ***/
+module.load('jquery');
+  // =&gt; http://cdn.com/path/to/seajs/jquery.js
+</pre>
+
+  <p>注意：当有 module.prefix 时，需要先替换 prefix, 然后才能判定 id 是否 top-level:</p>
+
+<pre>
+  module
+    .prefix('sub', './path/to/sub')
+    .declare(function(require, exports, module) {
+      var c = require('sub/c');
+      // =&gt; http://cdn.com/path/to/js/path/to/sub/c.js
   });
-&lt;/script&gt;
 </pre>
 
-  <p>
-    当无需采用上面的方式从页面中获取初始化配置时，建议将所有代码都抽离到 init.js 中：
-  </p>
+
+  <h3>~ Id</h3>
+
+  <p>data-main 里的 id 解析规则和上面一致，除了以下特殊情况：</p>
 
 <pre>
-&lt;script src="seajs/module.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  module.load('path/to/init');
-&lt;/script&gt;
+/*** test.html ***/
+&lt;script src="http://cdn.com/path/to/seajs/module.js"
+  data-main="~/path/to/js/init" &gt;&lt;/script&gt;
+  // =&gt; http://cdn.com/path/to/js/init.js
 </pre>
 
-  <p>还可进一步简化为：</p>
+  <p>在 data-main 中，当 id 以 ~ 开头时，加载的模块路径与 seajs 的 host 相同。</p>
 
-<pre>
-&lt;script src="seajs/module.js" data-main="path/to/init" &gt;&lt;/script&gt;
-</pre>
 
-  
   <p class="next-page">
-    下一节：<a href="static-analysis.html">静态分析</a>
+    下一节：<a href="deps-analysis.html">依赖分析</a>
   </p>
 
 
