@@ -1,12 +1,6 @@
-/*
-Copyright 2011, SeaJS v0.4.0dev
-MIT Licensed
-build time: ${build.time}
-*/
-
 
 module.declare('underscore', [], function(require, exports, module) {
-//     Underscore.js 1.1.4
+//     Underscore.js 1.1.5
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
@@ -29,7 +23,7 @@ module.declare('underscore', [], function(require, exports, module) {
   var breaker = {};
 
   // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype, ObjProto = Object.prototype;
+  var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
 
   // Create quick reference variables for speed access to core prototypes.
   var slice            = ArrayProto.slice,
@@ -50,7 +44,8 @@ module.declare('underscore', [], function(require, exports, module) {
     nativeIndexOf      = ArrayProto.indexOf,
     nativeLastIndexOf  = ArrayProto.lastIndexOf,
     nativeIsArray      = Array.isArray,
-    nativeKeys         = Object.keys;
+    nativeKeys         = Object.keys,
+    nativeBind         = FuncProto.bind;
 
   // Create a safe reference to the Underscore object for use below.
   var _ = function(obj) { return new wrapper(obj); };
@@ -66,7 +61,7 @@ module.declare('underscore', [], function(require, exports, module) {
   }
 
   // Current version.
-  _.VERSION = '1.1.4';
+  _.VERSION = '1.1.5';
 
   // Collection Functions
   // --------------------
@@ -292,7 +287,7 @@ module.declare('underscore', [], function(require, exports, module) {
   // values in the array. Aliased as `head`. The **guard** check allows it to work
   // with `_.map`.
   _.first = _.head = function(array, n, guard) {
-    return n && !guard ? slice.call(array, 0, n) : array[0];
+    return (n != null) && !guard ? slice.call(array, 0, n) : array[0];
   };
 
   // Returns everything but the first entry of the array. Aliased as `tail`.
@@ -300,7 +295,7 @@ module.declare('underscore', [], function(require, exports, module) {
   // the rest of the values in the array from that index onward. The **guard**
   // check allows it to work with `_.map`.
   _.rest = _.tail = function(array, index, guard) {
-    return slice.call(array, _.isUndefined(index) || guard ? 1 : index);
+    return slice.call(array, (index == null) || guard ? 1 : index);
   };
 
   // Get the last element of an array.
@@ -414,10 +409,12 @@ module.declare('underscore', [], function(require, exports, module) {
 
   // Create a function bound to a given object (assigning `this`, and arguments,
   // optionally). Binding with arguments is also known as `curry`.
+  // Delegates to **ECMAScript 5**'s native `Function.bind` if available.
   _.bind = function(func, obj) {
+    if (nativeBind && func.bind === nativeBind) return func.bind.apply(func, slice.call(arguments, 1));
     var args = slice.call(arguments, 2);
     return function() {
-      return func.apply(obj || {}, args.concat(slice.call(arguments)));
+      return func.apply(obj, args.concat(slice.call(arguments)));
     };
   };
 
@@ -480,6 +477,17 @@ module.declare('underscore', [], function(require, exports, module) {
     return limit(func, wait, true);
   };
 
+  // Returns a function that will be executed at most one time, no matter how
+  // often you call it. Useful for lazy initialization.
+  _.once = function(func) {
+    var ran = false, memo;
+    return function() {
+      if (ran) return memo;
+      ran = true;
+      return memo = func.apply(this, arguments);
+    };
+  };
+
   // Returns the first function passed as an argument to the second,
   // allowing you to adjust arguments, run code before and after, and
   // conditionally execute the original function.
@@ -509,6 +517,7 @@ module.declare('underscore', [], function(require, exports, module) {
   // Retrieve the names of an object's properties.
   // Delegates to **ECMAScript 5**'s native `Object.keys`
   _.keys = nativeKeys || function(obj) {
+    if (obj !== Object(obj)) throw new TypeError('Invalid object');
     var keys = [];
     for (var key in obj) if (hasOwnProperty.call(obj, key)) keys[keys.length] = key;
     return keys;
@@ -529,6 +538,14 @@ module.declare('underscore', [], function(require, exports, module) {
   _.extend = function(obj) {
     each(slice.call(arguments, 1), function(source) {
       for (var prop in source) obj[prop] = source[prop];
+    });
+    return obj;
+  };
+
+  // Fill in a given object with default properties.
+  _.defaults = function(obj) {
+    each(slice.call(arguments, 1), function(source) {
+      for (var prop in source) if (obj[prop] == null) obj[prop] = source[prop];
     });
     return obj;
   };

@@ -1,5 +1,5 @@
 
-module.declare('jquery-debug', [], function(_) {
+module.declare('jquery', [], function(_) {
 /*!
  * jQuery JavaScript Library v1.5.2
  * http://jquery.com/

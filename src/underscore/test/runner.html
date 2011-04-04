@@ -57,9 +57,8 @@
 <div id="reporter"></div>
 <script>
 
-  module.provide(['underscore'], function(require) {
+  module.load('underscore', function(_) {
 
-    var _ = require('underscore');
     var reporter = document.getElementById('reporter');
     var summary = document.getElementById('summary');
     var n = 0;

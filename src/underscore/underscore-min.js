@@ -1,5 +1,3 @@
-
-module.declare('underscore', [], function(require, exports, module) {
 // Underscore.js 1.1.5
 // (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 // Underscore is freely distributable under the MIT license.
@@ -26,5 +24,3 @@ a.apply)};c.isString=function(a){return!!(a===""||a&&a.charCodeAt&&a.substr)};c.
 D;return this};c.identity=function(a){return a};c.times=function(a,b,d){for(var e=0;e<a;e++)b.call(d,e)};c.mixin=function(a){j(c.functions(a),function(b){I(b,c[b]=a[b])})};var J=0;c.uniqueId=function(a){var b=J++;return a?a+b:b};c.templateSettings={evaluate:/<%([\s\S]+?)%>/g,interpolate:/<%=([\s\S]+?)%>/g};c.template=function(a,b){var d=c.templateSettings;d="var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('"+a.replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(d.interpolate,
 function(e,f){return"',"+f.replace(/\\'/g,"'")+",'"}).replace(d.evaluate||null,function(e,f){return"');"+f.replace(/\\'/g,"'").replace(/[\r\n\t]/g," ")+"__p.push('"}).replace(/\r/g,"\\r").replace(/\n/g,"\\n").replace(/\t/g,"\\t")+"');}return __p.join('');";d=new Function("obj",d);return b?d(b):d};var l=function(a){this._wrapped=a};c.prototype=l.prototype;var r=function(a,b){return b?c(a).chain():a},I=function(a,b){l.prototype[a]=function(){var d=i.call(arguments);E.call(d,this._wrapped);return r(b.apply(c,
 d),this._chain)}};c.mixin(c);j(["pop","push","reverse","shift","sort","splice","unshift"],function(a){var b=k[a];l.prototype[a]=function(){b.apply(this._wrapped,arguments);return r(this._wrapped,this._chain)}});j(["concat","join","slice"],function(a){var b=k[a];l.prototype[a]=function(){return r(b.apply(this._wrapped,arguments),this._chain)}});l.prototype.chain=function(){this._chain=true;return this};l.prototype.value=function(){return this._wrapped}})();
-
-});
