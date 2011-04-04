@@ -114,16 +114,92 @@ module.declare(function(require) {
 
   <p>
     为了让模块在部署打包阶段能方便安全地进行静态分析，require 在代码中的写法，一定要遵守一些简单规则：
-    <a href="static-analysis.html#rules">static-analysis.html</a>
+    <a href="static-analysis.html">static-analysis.html</a>
   </p>
 
 
   <h3>module</h3>
 
-  <p></p>
+  <p>通过 module 参数，可访问当前模块的一些关联属性和方法。</p>
+
+  <h4>module.uri</h4>
+
+<pre>
+/*** File: http://path/to/a.js ***/
+module.declare(function(require, exports, module) {
+  console.log(module.uri); // "http://path/to/a"
+});
+</pre>
+
+  <p>
+    module.uri 里不包含文件后缀和时间戳等参数信息，这是只读属性，不要修改。
+  </p>
+
+
+  <h4>module.dependencies</h4>
+
+  <p>
+    dependencies 里存储了当前模块所依赖的模块 uri.
+  </p>
+
+<pre>
+module.declare(function(require, exports, module) {
+  var $ = require('jquery');
+  var a = require('./a');
+
+  console.log(module.dependencies);
+  // ["http://path/to/jquery", "http://path/to/a"]
+});
+</pre>
+
+  <p>
+    这也是只读属性，不要修改。
+  </p>
+  
+
+  <h4>module.exports</h4>
+
+  <p>
+    module.exports 和 exports 参数指向同一个对象：
+  </p>
+
+<pre>
+module.declare(function(require, exports, module) {
+  console.log(module.exports === exports); // true
+});
+</pre>
+
+
+  <h4>module.load</h4>
+
+  <p>
+    通过 module.load, 可以在需要时才下载部分模块。
+  </p>
+
+<pre>
+/*** File: http://path/to/a.js ***/
+module.declare(function(require, exports, module) {
+
+  // Loads http://path/to/b.js
+  module.load('./b', function(b) {
+    b.doSomething();
+  });
+
+});
+</pre>
+
+  <p>
+    注意：module 参数不可省略，否则 './b' 相对的是当前页面。
+  </p>
+
+
+  <p class="next-page">
+    下一节：<a href="global-environment.html">全局环境</a>
+  </p>
+
 
   <p class="copyright">
-    &copy; 2011 - seajs.com
+    &copy; 2011 - 2022 seajs.com
   </p>
 </div>
 

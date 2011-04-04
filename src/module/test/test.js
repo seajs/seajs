@@ -19,7 +19,9 @@ module.declare(function(require, exports) {
   };
 
   exports.next = function() {
-    sendMessage('testNext');
+    setTimeout(function() {
+      sendMessage('testNext');
+    }, 500); // 留 500ms 空隙，使得异步操作能有时间完成。
   };
 
 });

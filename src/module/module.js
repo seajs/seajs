@@ -146,7 +146,7 @@ module.seajs = '@VERSION@';
       ids = [ids];
     }
 
-    provide(ids, function(require) {
+    provide.call(this, ids, function(require) {
       var args = [], arg;
       for (var i = 0, len = ids.length; i < len; i++) {
         arg = require(ids[i]);
@@ -168,9 +168,13 @@ module.seajs = '@VERSION@';
    * @param {boolean=} noRequire For inner use.
    */
   function provide(ids, callback, noRequire) {
-    var originalUris = ids2Uris(ids);
+    var that = this;
+    var originalUris = getUris(ids);
     var uris = getUnMemoized(originalUris);
-    if (uris.length === 0) return cb();
+
+    if (uris.length === 0) {
+      return cb();
+    }
 
     for (var i = 0, len = uris.length, remain = len; i < len; i++) {
       (function(uri) {
@@ -180,7 +184,7 @@ module.seajs = '@VERSION@';
           var len = deps.length;
 
           if (len) {
-            deps = getUnMemoized(ids2Uris(deps));
+            deps = getUnMemoized(getUris(deps));
             remain += len;
 
             provide(deps, function() {
@@ -199,11 +203,22 @@ module.seajs = '@VERSION@';
       if (callback) {
         callback(noRequire ?
             undefined :
-            createRequire({
+            createRequire.call(that, {
               deps: originalUris
             })
         );
       }
+    }
+
+    function getUris(ids) {
+      var refUrl;
+
+      // Call from module factory.
+      if(that !== global) {
+        refUrl = that.uri;
+      }
+
+      return ids2Uris(ids, refUrl);
     }
   }
 
@@ -418,6 +433,11 @@ module.seajs = '@VERSION@';
     //   parent: sandbox
     // }
 
+    // Call from module factory.
+    if(this !== global) {
+      sandbox.uri = this.uri;
+    }
+
     function require(id) {
       var uri = id2Uri(id, sandbox.uri, sandbox.prefix);
       var deps = parsePackage(sandbox.deps);
@@ -464,12 +484,17 @@ module.seajs = '@VERSION@';
     var factory = mod.factory, ret;
     delete mod.factory; // free
 
+    // Attaches members to mod.
+    //mod.dependencies
+    mod.uri = sandbox.uri;
+    mod.exports = {};
+    mod.load = load;
+
     if (isFunction(factory)) {
       ret = factory(
           createRequire(sandbox),
-          (mod.exports = {}),
-          (mod.load = load, mod)
-          );
+          mod.exports,
+          mod);
 
       if (ret) mod.exports = ret;
     }

@@ -2,25 +2,23 @@
  module.js
 -----------
 
- - docs（参考 FlyScript 文档, data-main, prefix, 子模块, package,
-   build 工具, jquery 插件, 时间戳, module.load）
+ - module.load 是否可以内嵌？内嵌和全局两种情况下，是否需要保证功能一致？
+   比如 module.load('./a') 在全局和内嵌时，相对路径的确定。目前全局是相对页面，内嵌是相对
+   模块文件路径。
+ - module.declare 内嵌时的含义，是否需要支持？
+ - module.prefix 和 module.load 的关系？
+ - module.config, 让 timeout 等可配置，考虑是否有必要增加 globalPrefix.
+ - handle JSONP onerror
 
  - 支持 combo 形式的 package
- - JSONM onerror handle
- - auto generate id / dependencies when building and combining
+ - 子模块的最佳实践
+ - build 工具：auto generate id / dependencies when building
  - node.js support
-
- - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
- - answer swainet's questions
-
-
- modules
----------
- - cookie
 
 
   related
 ----------
- - the relationship of SeaJS and KISSY
+
+ - compare module.js with BravoJS, FlyScript, RequireJS, YY etc.
+ - 中文站实践 answer swainet's questions
  - seajs/tools
- - seajs.com
