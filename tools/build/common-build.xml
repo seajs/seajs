@@ -7,7 +7,7 @@
   <property name="gcc.jar" location="${current.dir}/compiler.jar"/>
   <property name="yc.jar" location="${current.dir}/yuicompressor.jar"/>
 
-  <property name="version" value="0.5.0dev"/>
+  <property name="version" value="0.8.0"/>
   <property name="charset" value="utf-8"/>
   <property name="copyright.files" value="*.css, *.js"/>
   <property name="filename" value="${module.name}"/>

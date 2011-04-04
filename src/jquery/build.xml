@@ -8,21 +8,15 @@
   <import file="../../tools/build/common-build.xml"/>
 
   <target name="concat">
-    <concat destfile="${module.name}-pkg.js"
+    <concat destfile="${module.name}-p.js"
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        module.declare('jquery', [], function(require, exports, module) {
+        module.declare('jquery', [], function(require, exports) {
+          var window = exports;
       </header>
       <path path="jquery.js"/>
       <footer filtering="no" trimleading="yes">
-          module.exports = jQuery;
-          try {
-            delete window.jQuery;
-            delete window.$;
-          } catch(x) {
-            window.jQuery = window.$ = undefined;
-          }
         });
       </footer>
     </concat>

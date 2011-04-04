@@ -1,10 +1,10 @@
 /*
-Copyright 2011, SeaJS v0.5.0dev
+Copyright 2011, SeaJS v0.8.0
 MIT Licensed
-build time: ${build.time}
+build time: Apr 4 13:23
 */
 
-var module=module||{};module.seajs="0.5.0dev";
+var module=module||{};module.seajs="0.8.0";
 (function(r){function D(a){for(var c=[],b=0,d=a.length,e;b<d;b++){e=a[b];n[e]||c.push(e)}return c}function v(a,c){if(typeof a==="string")a=[a];E.call(this,a,function(b){for(var d=[],e,f=0,j=a.length;f<j;f++){e=b(a[f]);if(F(e))d=d.concat(e);else d.push(e)}c&&c.apply(r,d)})}function E(a,c,b){function d(){if(c)c(b?undefined:G.call(f,{deps:j}))}function e(s){var k;if(f!==r)k=f.uri;return w(s,k)}var f=this,j=e(a);a=D(j);if(a.length===0)return d();for(var i=0,h=a.length,t=h;i<h;i++)(function(s){O(s,function(){var k=
 (n[s]||0).dependencies||[],x=k.length;if(x){k=D(e(k));t+=x;E(k,function(){t-=x;t===0&&d()},true)}--t===0&&d()})})(a[i])}function O(a,c){function b(){var d=o.length,e=0,f,j=a,i,h=a.indexOf("-pkg")!==-1;if(d){for(;e<d;e++){i=o[e];f=i.id;delete i.id;if(f&&h)j=H(f,a);f=j;i.dependencies=w(i.dependencies,f,i.prefix);n[f]=i}o=[]}p[a]&&delete p[a];c&&c()}if(p[a])y(p[a],b);else{if(z)q={uri:a,timestamp:I()};p[a]=P(a+".js"+(J[a]||""),b)}}function P(a,c){var b=document.createElement("script");y(b,function(){c&&
 c.call(b);try{if(b.clearAttributes)b.clearAttributes();else for(var d in b)delete b[d]}catch(e){}u.removeChild(b)});b.async=true;b.src=a;return u.insertBefore(b,u.firstChild)}function y(a,c){a.addEventListener("load",c,false);a.addEventListener("error",function(){c()},false)}function Q(){if(A&&A.readyState==="interactive")return A;for(var a=u.getElementsByTagName("script"),c,b=0,d=a.length;b<d;b++){c=a[b];if(c.readyState==="interactive")return c}return null}function G(a){function c(b){var d=B(b,a.uri,

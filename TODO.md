@@ -14,6 +14,7 @@
  - 子模块的最佳实践
  - build 工具：auto generate id / dependencies when building
  - node.js support
+ - seajs 包的版本管理策略
 
 
   related
