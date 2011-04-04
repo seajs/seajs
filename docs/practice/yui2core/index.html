@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Hello, YUI2!</title>
+<script src="../../../build/module.js"></script>
+</head>
+
+<body>
+<p id="out"></p>
+
+<script>
+  module.load('./yui2', function(YAHOO) {
+    var DOM = YAHOO.util.Dom;
+
+    DOM.get('out').innerHTML = 'Hello, YUI2!';
+  });
+</script>
+</body>
+</html>

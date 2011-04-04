@@ -1,0 +1,3 @@
+module.declare({
+  foo: 'd'
+});

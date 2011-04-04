@@ -34,6 +34,16 @@ module.seajs = '@VERSION@';
 
 
   /**
+   * Determines if the specified value is a string.
+   * @param {*} val Variable to test.
+   * @return {boolean} Whether variable is a string.
+   */
+  function isString(val) {
+    return toString.call(val) === '[object String]';
+  }
+
+
+  /**
    * Determines if the specified value is a function.
    * @param {*} val Variable to test.
    * @return {boolean} Whether variable is a function.
@@ -142,7 +152,7 @@ module.seajs = '@VERSION@';
    * @param {function(*)=} callback The callback function.
    */
   function load(ids, callback) {
-    if(typeof ids === 'string') {
+    if(isString(ids)) {
       ids = [ids];
     }
 
@@ -236,13 +246,15 @@ module.seajs = '@VERSION@';
       deps = id;
       id = '';
     }
-    else if (isFunction(id)) {
+    else if (!isString(id)) {
       factory = id;
-      deps = parseDeps(factory.toString());
+      if(isFunction(factory)) {
+        deps = parseDeps(factory.toString());
+      }
       id = '';
     }
 
-    var mod = { dependencies: deps, factory: factory };
+    var mod = { dependencies: deps || [], factory: factory };
     var uri;
 
     if (prefixCache) {

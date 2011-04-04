@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.8.0
 MIT Licensed
-build time: Apr 4 13:23
+build time: Apr 4 20:42
 */
 
 
@@ -37,6 +37,16 @@ module.seajs = '0.8.0';
 
   var toString = Object.prototype.toString;
   var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+  /**
+   * Determines if the specified value is a string.
+   * @param {*} val Variable to test.
+   * @return {boolean} Whether variable is a string.
+   */
+  function isString(val) {
+    return toString.call(val) === '[object String]';
+  }
 
 
   /**
@@ -148,7 +158,7 @@ module.seajs = '0.8.0';
    * @param {function(*)=} callback The callback function.
    */
   function load(ids, callback) {
-    if(typeof ids === 'string') {
+    if(isString(ids)) {
       ids = [ids];
     }
 
@@ -242,13 +252,15 @@ module.seajs = '0.8.0';
       deps = id;
       id = '';
     }
-    else if (isFunction(id)) {
+    else if (!isString(id)) {
       factory = id;
-      deps = parseDeps(factory.toString());
+      if(isFunction(factory)) {
+        deps = parseDeps(factory.toString());
+      }
       id = '';
     }
 
-    var mod = { dependencies: deps, factory: factory };
+    var mod = { dependencies: deps || [], factory: factory };
     var uri;
 
     if (prefixCache) {

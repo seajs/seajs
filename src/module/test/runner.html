@@ -30,10 +30,11 @@
       ,'modules/version'
       ,'modules/load'
       ,'modules/metadata'
+      ,'modules/exports'
 
       ,'packages/math'
     ];
-//    tests = ['modules/metadata'];
+    //tests = ['modules/exports'];
 
     var reporter;
     var testFrame, currentTest = 0;
@@ -88,6 +89,7 @@
     }
   })();
 </script>
+
 <style>
   #loader-container {
     margin: 0 5px;
@@ -103,7 +105,7 @@
   #loader-reporter {
     padding: 0 10px;
     margin-bottom: 10px;
-    height: 600px;
+    height: 360px;
     overflow-y: scroll;
     border: 1px solid #ddd;
   }
@@ -143,6 +145,7 @@
     padding-right: 10px;
   }
 </style>
+
 <div id="loader-container">
   <div class="banner">
     <div class="logo">Test Suite for module.js</div>
@@ -150,5 +153,6 @@
   </div>
   <div id="loader-reporter"></div>
 </div>
+
 </body>
 </html>

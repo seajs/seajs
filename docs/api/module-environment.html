@@ -62,21 +62,6 @@ module.declare(function(require, exports) {
 });
 </pre>
 
-  <p>上面的方式，等同于下面的写法：</p>
-
-<pre>
-/*** File: a.js ***/
-module.declare(function(require, exports) {
-  // some code...
-  exports = {
-    name: 'a'，
-    doSomething: function() {
-      console.log('doing something');
-    };
-  };
-});
-</pre>
-
   <p>如果 module code 里是纯接口，还可简化为：</p>
 
 <pre>

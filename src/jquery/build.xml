@@ -2,32 +2,44 @@
   <description>jQuery Build File</description>
 
   <property name="module.name" value="jquery"/>
-  <property name="module.files" value="*-pkg.js,*.css"/>
   <property name="module.dir" location="."/>
-  <property name="gcc.warning.level" value="QUIET"/>
+  <property name="build.dir" location="../../build"/>
   <import file="../../tools/build/common-build.xml"/>
 
   <target name="concat">
-    <concat destfile="${module.name}-p.js"
+    <concat destfile="${build.dir}/${module.name}-debug.js"
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        module.declare('jquery', [], function(require, exports) {
-          var window = exports;
+        module.declare('jquery', [], function(_) {
       </header>
       <path path="jquery.js"/>
       <footer filtering="no" trimleading="yes">
+          _ = $;
+          try { delete window.jQuery; delete window.$; }
+          catch(x) { window.jQuery = window.$ = undefined; }
+          return _;
+        });
+      </footer>
+    </concat>
+
+    <concat destfile="${build.dir}/${module.name}.js"
+            encoding="${charset}"
+            outputencoding="${charset}">
+      <header filtering="no" trimleading="yes">
+        module.declare('jquery', [], function(_) {
+      </header>
+      <path path="jquery-min.js"/>
+      <footer filtering="no" trimleading="yes">
+          _ = $;
+          try { delete window.jQuery; delete window.$; }
+          catch(x) { window.jQuery = window.$ = undefined; }
+          return _;
         });
       </footer>
     </concat>
   </target>
 
-  <target name="clean">
-    <delete>
-      <fileset dir="${module.dir}" includes="*-pkg.js"/>
-    </delete>
-  </target>
-
-  <target name="build" depends="concat,common.build,clean">
+  <target name="build" depends="concat">
   </target>
 </project>

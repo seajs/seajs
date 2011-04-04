@@ -1,11 +1,5 @@
-/*
-Copyright 2011, SeaJS v0.8.0
-MIT Licensed
-build time: Apr 4 13:23
-*/
 
-
-module.declare('jquery', [], function(require, exports, module) {
+module.declare('jquery-debug', [], function(_) {
 /*!
  * jQuery JavaScript Library v1.5.2
  * http://jquery.com/
@@ -8381,11 +8375,8 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 window.jQuery = window.$ = jQuery;
 })(window);
 
-module.exports = jQuery;
-try {
-delete window.jQuery;
-delete window.$;
-} catch(x) {
-window.jQuery = window.$ = undefined;
-}
+_ = $;
+try { delete window.jQuery; delete window.$; }
+catch(x) { window.jQuery = window.$ = undefined; }
+return _;
 });
