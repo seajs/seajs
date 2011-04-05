@@ -1,9 +1,15 @@
-html {
-  font: 16px/1.5 Arial;
+body {
+  font: 16px/1.5 verdana, tahoma, arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: normal;
+  font-size: 18px;
+  margin: 30px 0 10px 0;
 }
 
 h1 {
-  font: 40px Arial, sans-serif;
+  font: 40px georgia, "times new roman", times, serif;
   border-bottom: solid 1px #ccc;
   padding-bottom: 5px;
   margin: 0;
@@ -11,21 +17,19 @@ h1 {
 
 h1 a {
   text-decoration: none;
-  color: #000;
+  color: #333;
 }
 
-h1 span.byline {
+h1 .byline {
+  font: italic 18px verdana, tahoma, arial, sans-serif;
   margin: 3px 0;
-  font: italic 18px Arial, sans-serif;
   position: relative;
   top: 0;
   left: 5px;
 }
 
-h2 {
-  font: bold 18px Arial, sans-serif;
-  margin: 30px 0 10px 0;
-}
+h2 { font-size: 28px; }
+h3 { font-size: 22px; }
 
 #content {
   width: 700px;
@@ -39,6 +43,7 @@ h2 {
 }
 
 pre {
+  font-family: "Bitstream Vera Sans Mono", courier, monospace;
   background: #f6f6f6;
   padding: 10px;
   border-radius: 5px;
