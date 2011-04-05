@@ -15,6 +15,7 @@
  - build 工具：auto generate id / dependencies when building
  - node.js support
  - seajs 包的版本管理策略
+ - 完善文档
 
 
   related

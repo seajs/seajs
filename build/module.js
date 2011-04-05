@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.8.0
 MIT Licensed
-build time: Apr 5 07:12
+build time: Apr 5 09:26
 */
 
 var module=module||{};module.seajs="0.8.0";
