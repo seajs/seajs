@@ -1,5 +1,5 @@
 
-SeaJS is a javascript framework that makes it easy to build scalable web applications.
+SeaJS is a new kind of JavaScript Framework that makes it easy to build scalable web applications.
 
 
 ## Vision
