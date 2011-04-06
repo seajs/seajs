@@ -1,5 +1,5 @@
 body {
-  font: 18px/26px "Lucida Grande", Helvetica, Tahoma, Arial, sans-serif;
+  font: 18px/26px "Lucida Grande", Helvetica, "Microsoft YaHei", Arial, sans-serif;
 }
 
 h1, h2, h3, h4, h5 {
@@ -21,7 +21,7 @@ h1 a {
 }
 
 h1 .byline {
-  font: italic 18px "Lucida Grande", Helvetica, Tahoma, Arial, sans-serif;
+  font: italic 18px "Lucida Grande", Helvetica, "Microsoft YaHei", Arial, sans-serif;
   margin: 3px 0;
   position: relative;
   top: 0;
@@ -35,8 +35,7 @@ h3 { font-size: 22px; }
   width: 800px;
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 40px;
-  padding-top: 20px;
+  padding: 20px 0 40px;
   position: relative;
   top: 0;
   left: 0;
