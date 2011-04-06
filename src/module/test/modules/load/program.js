@@ -7,6 +7,8 @@ module.declare(function(require, exports, module) {
     test.assert(a.foo === 'a', 'test module.load from factory.');
     test.print('DONE', 'info');
 
-  });
+  })
+      .load('./b')
+      .load('./c.js');
 
 });

@@ -156,18 +156,34 @@ module.seajs = '@VERSION@';
       ids = [ids];
     }
 
+    // Allows load('./a.js') equals to load('./a')
+    for(var i = 0, len = ids.length; i < len; i++) {
+      ids[i] = ids[i].replace('.js', '');
+    }
+
     provide.call(this, ids, function(require) {
       var args = [], arg;
+
       for (var i = 0, len = ids.length; i < len; i++) {
-        arg = require(ids[i]);
-        if (isArray(arg)) {
-          args = args.concat(arg);
-        } else {
-          args.push(arg);
+        try {
+          arg = require(ids[i]);
+        } catch(ex) {
+          // Sets to null when id refers to invalid module.
+          arg = null;
+        }
+
+        if (callback) {
+          if (isArray(arg)) {
+            args = args.concat(arg);
+          } else {
+            args.push(arg);
+          }
+          callback.apply(global, args);
         }
       }
-      callback && callback.apply(global, args);
     });
+
+    return this;
   }
 
 
@@ -467,7 +483,7 @@ module.seajs = '@VERSION@';
 
       // Restrains to sandbox environment.
       if (indexOf(deps, uri) === -1 || !(mod = providedMods[uri])) {
-        throw 'Invalid module id: ' + id;
+        throw 'Invalid module: ' + id;
       }
 
       // Checks cyclic dependencies.

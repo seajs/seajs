@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.8.0
+Copyright 2011, SeaJS v0.9.0dev
 MIT Licensed
-build time: Apr 5 09:26
+build time: ${build.time}
 */
 
 
@@ -26,7 +26,7 @@ var module = module || {};
  *
  * @const
  */
-module.seajs = '0.8.0';
+module.seajs = '0.9.0dev';
 
 
 (function(global) {
@@ -162,18 +162,34 @@ module.seajs = '0.8.0';
       ids = [ids];
     }
 
+    // Allows load('./a.js') equals to load('./a')
+    for(var i = 0, len = ids.length; i < len; i++) {
+      ids[i] = ids[i].replace('.js', '');
+    }
+
     provide.call(this, ids, function(require) {
       var args = [], arg;
+
       for (var i = 0, len = ids.length; i < len; i++) {
-        arg = require(ids[i]);
-        if (isArray(arg)) {
-          args = args.concat(arg);
-        } else {
-          args.push(arg);
+        try {
+          arg = require(ids[i]);
+        } catch(ex) {
+          // Sets to null when id refers to invalid module.
+          arg = null;
+        }
+
+        if (callback) {
+          if (isArray(arg)) {
+            args = args.concat(arg);
+          } else {
+            args.push(arg);
+          }
+          callback.apply(global, args);
         }
       }
-      callback && callback.apply(global, args);
     });
+
+    return this;
   }
 
 
@@ -473,7 +489,7 @@ module.seajs = '0.8.0';
 
       // Restrains to sandbox environment.
       if (indexOf(deps, uri) === -1 || !(mod = providedMods[uri])) {
-        throw 'Invalid module id: ' + id;
+        throw 'Invalid module: ' + id;
       }
 
       // Checks cyclic dependencies.
