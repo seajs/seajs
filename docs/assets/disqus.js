@@ -15,9 +15,10 @@ module.declare(function(require, exports, module) {
 
     // configuration variables
     window.disqus_shortname = 'seajs';
-    window.disqus_developer = 0;
+    //window.disqus_developer = 1;
     window.disqus_identifier = location.pathname;
-    window.disqus_url = location.protocol + '//' + location.pathname;
+    window.disqus_url = location.protocol + '//' + location.host +
+        location.pathname;
 
     // load it
     module.load('http://' + disqus_shortname + '.disqus.com/embed.js');
