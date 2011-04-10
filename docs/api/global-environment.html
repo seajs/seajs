@@ -45,24 +45,6 @@ module.declare(function(require, exports, module) {
   </p>
 
 
-  <h3>module.prefix</h3>
-
-  <p>当模块标识很长时，可以通过 prefix 来简写：</p>
-
-<pre>
-module
-  .prefix('biz', 'path/to/biz')
-  .declare(function(require, exports, module) {
-    var a = require('biz/a');
-    // 等价于：var a = require('path/to/biz/a');
-});
-</pre>
-
-  <p>
-    注意：prefix 定义的前缀，仅在与之近邻的 declare 内有效。
-  </p>
-
-
   <h3>module.load</h3>
 
   <p>

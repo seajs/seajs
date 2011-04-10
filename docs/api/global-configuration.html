@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>全局配置 - SeaJS</title>
+<link rel="stylesheet" href="../assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <h1>
+    <a href="../">SeaJS <span class="byline">文档</span></a>
+  </h1>
+
+  <h2>全局配置</h2>
+
+  <p>
+   可以用 module.config 对 SeaJS 进行全局配置：
+  </p>
+
+<pre>
+module.config({
+  base: 'path/to/seajs/1.0.0/',
+  main: './init',
+  prefix: {
+    'biz': 'path/to/biz/'
+  }
+});
+</pre>
+
+  <ul>
+    <li>base - module.js 所在目录。默认会自动解析加载路径来获取。</li>
+    <li>main - 入口模块的 id .</li>
+    <li>prefix - 全局 prefix 设置。</li>
+  </ul>
+
+
+
+  <h3>prefix</h3>
+
+  <p>当模块标识很长时，可以通过 prefix 设置来简化 require 调用处的代码：</p>
+
+<pre>
+module.config({
+  prefix: {
+    'biz': 'path/to/biz'
+  }
+});
+
+module.declare(function(require, exports, module) {
+    var a = require('{biz}/a');
+    // 等价于：var a = require('path/to/biz/a');
+});
+</pre>
+
+
+  <p class="next-page">
+    下一节：<a href="seajs-bootstrap.html">载入方式</a>
+  </p>
+
+
+  <p id="copyright">
+    &copy; 2011 - 2022 seajs.com
+  </p>
+</div>
+
+<script src="../../build/module.js" data-main="../assets/init"></script>
+
+</body>
+</html>

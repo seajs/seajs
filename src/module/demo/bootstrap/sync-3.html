@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>iframe</title>
+</head>
+<body>
+
+<script src="../../../../build/module.js"></script>
+<script>
+  module
+      .config({
+        base: 'http://localhost/sub/sub/'
+      })
+      .load('init');
+</script>
+
+<p>静态 + config base + module.load</p>
+
+<pre>
+&lt;script src="path/to/module.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  module.config({
+    main: './init'
+  });
+&lt;/script&gt;
+</pre>
+
+
+<p id="out"></p>
+
+</body>
+</html>

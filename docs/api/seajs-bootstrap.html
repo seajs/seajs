@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>载入方式 - SeaJS</title>
+<link rel="stylesheet" href="../assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <h1>
+    <a href="../">SeaJS <span class="byline">文档</span></a>
+  </h1>
+
+  <h2>载入方式</h2>
+
+  <p>
+   在页面中，载入 SeaJS 的方式有以下几种：
+  </p>
+
+
+  <h3>1. 同步载入</h3>
+
+<pre>
+&lt;script src="path/to/seajs/module.js"&gt;&lt;/script&gt;
+</pre>
+
+  <p>可以和其他模块合并后载入：</p>
+
+<pre>
+&lt;script src="path/to/seajs/module-jquery.js"&gt;&lt;/script&gt;
+</pre>
+
+  <p>可以用 nginx combo 等服务自动合并：</p>
+
+<pre>
+&lt;script src="path/to/seajs/??module.js,jquery.js"&gt;&lt;/script&gt;
+</pre>
+
+  <p>注意：通过服务器自动 combo 时，最好手动指定 base 路径：</p>
+
+<pre>
+&lt;script src="path/to/??seajs/1.0.0/module.js,biz/xx/a.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  module.config({ 'base': 'path/to/seajs/1.0.0/' });
+  module.load('jquery');
+  // =&gt; path/to/seajs/1.0.0/jquery.js
+  // 如果不用 module.config 设置 base 值，module.load 加载的将是：
+  // =&gt; path/to/??seajs/1.0.0/module.js,biz/xx/jquery.js
+  // 显然是错误的，一定要小心。
+&lt;/script&gt;
+</pre>
+
+
+  <h3>2. 异步载入</h3>
+
+  <p>可以在页面中内嵌以下代码，来让 module.js 自身也异步载入：</p>
+
+<pre>
+&lt;script&gt;
+  // 其他代码
+
+  // seajs 的载入代码
+  ;(function(g,d,m,s,h,t) {
+    s = d.createElement('script');
+    s.id = 'seajs';
+    // s.setAttribute('data-main', './init');
+    s.src = 'path/to/module.js';
+    h = d.getElementsByTagName('head')[0];
+    h.insertBefore(s,h.firstChild);
+    if(!g[m]) {
+      g[m] = {
+        args: (t = [[],[],[]]),
+        config: function() { t[0].push(arguments); },
+        declare: function() { t[1].push(arguments); },
+        load: function() { t[2].push(arguments); }
+      };
+    }
+  })(window,document,'module');
+
+  // 下面立刻就可以使用 seajs 了：
+  module.config({
+    'base': 'path/to/seajs/1.0.0/'
+  });
+  module.load('./a', function(a) {
+   // do some cool things.
+  });
+&lt;/script&gt;
+</pre>
+
+
+  <h3>补充说明</h3>
+
+  <p>还可以通过 script 元素的 async 和 defer 属性来调整 seajs 的执行时机，但目前主流浏览器还未完全一致支持，因此建议暂时不要在加载 seajs 时添加这两个属性，除非你清楚自己在干什么。</p>
+
+
+  <p class="next-page">
+    下一节：<a href="deps-analysis.html">依赖分析</a>
+  </p>
+
+
+  <p id="copyright">
+    &copy; 2011 - 2022 seajs.com
+  </p>
+</div>
+
+<script src="../../build/module.js" data-main="../assets/init"></script>
+
+</body>
+</html>

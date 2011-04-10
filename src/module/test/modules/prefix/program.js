@@ -1,14 +1,17 @@
 
-module
-    .prefix('github',
-    'https://github.com/seajs/seajs/raw/master/src/module/test/modules/prefix/submodule')
-    .prefix('sub', './submodule/sub')
-    .declare(function(require) {
+module.config({
+  prefix: {
+    'sub': './submodule/sub',
+    'github': 'https://github.com/seajs/seajs/raw/master/src/module/test/modules/prefix/submodule'
+  }
+});
+
+module.declare(function(require) {
 
   var test = require('test/test');
   var a = require('./a');
-  //var b = require('github/b');
-  var c = require('sub/c');
+  //var b = require('{github}/b');
+  var c = require('{sub}/c');
   var d = require('test/modules/prefix/d');
 
   test.assert(a.foo == 'a', 'a.foo should equal to "a".');

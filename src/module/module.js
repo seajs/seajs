@@ -30,7 +30,6 @@ module.seajs = '@VERSION@';
   //----------------------------------------------------------------------------
 
   var toString = Object.prototype.toString;
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 
   /**
@@ -118,15 +117,12 @@ module.seajs = '@VERSION@';
   var cacheTakenTime = 10;
   var isOldIE = !+'\v1'; // IE6-8
 
-  // Cache for storing prefix.
-  var prefixCache = null;
-
   // Modules that have been provided.
   // { uri: { dependencies: [], factory: fn, exports: {} }, ... }
   var providedMods = {};
 
   function memoize(uri, mod) {
-    mod.dependencies = ids2Uris(mod.dependencies, uri, mod.prefix);
+    mod.dependencies = ids2Uris(mod.dependencies, uri);
     providedMods[uri] = mod;
   }
 
@@ -273,11 +269,6 @@ module.seajs = '@VERSION@';
     var mod = { dependencies: deps || [], factory: factory };
     var uri;
 
-    if (prefixCache) {
-      mod.prefix = prefixCache;
-      prefixCache = null;
-    }
-
     if (isOldIE) {
 
       // For non-IE6-8 browsers, the script onload event may not fire right
@@ -329,6 +320,8 @@ module.seajs = '@VERSION@';
       mod.id = id;
       pendingMods.push(mod);
     }
+
+    return this;
   }
 
 
@@ -457,7 +450,6 @@ module.seajs = '@VERSION@';
     // sandbox: {
     //   uri: '',
     //   deps: [],
-    //   prefix: {},
     //   parent: sandbox
     // }
 
@@ -467,7 +459,7 @@ module.seajs = '@VERSION@';
     }
 
     function require(id) {
-      var uri = id2Uri(id, sandbox.uri, sandbox.prefix);
+      var uri = id2Uri(id, sandbox.uri);
       var deps = parsePackage(sandbox.deps);
       var mod;
 
@@ -497,7 +489,6 @@ module.seajs = '@VERSION@';
         setExports(mod, {
           uri: uri,
           deps: mod.dependencies,
-          prefix: mod.prefix,
           parent: sandbox
         });
       }
@@ -631,11 +622,11 @@ module.seajs = '@VERSION@';
    * Converts id to uri.
    * @param {string} id The module ids.
    * @param {string=} refUri The referenced uri for relative id.
-   * @param {Object=} prefix The prefix cache.
    */
-  function id2Uri(id, refUri, prefix) {
-    if (prefix) id = parsePrefix(id, prefix);
+  function id2Uri(id, refUri) {
     var ret;
+
+    id = parsePrefix(id);
 
     // absolute id
     if (id.indexOf('://') !== -1) {
@@ -651,7 +642,7 @@ module.seajs = '@VERSION@';
     }
     // top-level id
     else {
-      ret = seajsDir + id;
+      ret = globalConfig.base + id;
     }
 
     return parseQuery(ret);
@@ -662,25 +653,31 @@ module.seajs = '@VERSION@';
    * Converts ids to uris.
    * @param {Array.<string>} ids The module ids.
    * @param {string=} refUri The referenced uri for relative id.
-   * @param {Object=} prefix The prefix cache.
    */
-  function ids2Uris(ids, refUri, prefix) {
+  function ids2Uris(ids, refUri) {
     var uris = [];
     for (var i = 0, len = ids.length; i < len; i++) {
-      uris[i] = id2Uri(ids[i], refUri, prefix);
+      uris[i] = id2Uri(ids[i], refUri);
     }
     return uris;
   }
 
 
-  function parsePrefix(id, prefix) {
-    var p = id.indexOf('/');
-    if (p > 0) {
-      var key = id.substring(0, p);
-      if (hasOwnProperty.call(prefix, key)) {
-        id = prefix[key] + id.substring(p);
+  function parsePrefix(id) {
+    var prefix = globalConfig['prefix'];
+
+    if (prefix) {
+      var p1 = id.indexOf('{');
+      var p2 = id.indexOf('}');
+
+      if (p1 === 0 && p2 > 1) {
+        var key = id.substring(1, p2);
+        if (prefix.hasOwnProperty(key)) {
+          id = prefix[key] + id.substring(p2 + 1);
+        }
       }
     }
+
     return id;
   }
 
@@ -712,18 +709,45 @@ module.seajs = '@VERSION@';
 
 
   //----------------------------------------------------------------------------
-  // The main module entrance
+  // The configurations & main module entrance
   //----------------------------------------------------------------------------
 
-  var scripts = document.getElementsByTagName('script');
-  var loaderScript = scripts[scripts.length - 1];
-  var seajsDir = dirname(getScriptAbsoluteSrc(loaderScript));
+  // The global configurations of SeaJS.
+  var globalConfig = {};
 
-  var mainModId = loaderScript.getAttribute('data-main');
+
+  /**
+   * Sets the global configurations of SeaJS.
+   * @param {Object} obj The config object.
+   */
+  function config(obj) {
+    for (var k in obj) {
+      globalConfig[k] = obj[k];
+    }
+
+    return this;
+  }
+
+
+  var seajsScript = document.getElementById('seajs');
+
+  if (!seajsScript) {
+    var scripts = document.getElementsByTagName('script');
+    seajsScript = scripts[scripts.length - 1];
+  }
+
+  if (!globalConfig.base) {
+    globalConfig.base = dirname(getScriptAbsoluteSrc(seajsScript));
+  }
+  if (!globalConfig.main) {
+    globalConfig.main = seajsScript.getAttribute('data-main');
+  }
+
+  var mainModId = globalConfig.main;
   if (mainModId) {
     // "~" id in "data-main" is relative to seajsHost.
     if (mainModId.indexOf('~/') === 0) {
-      mainModId = getHost(seajsDir) + mainModId.substring(1);
+      mainModId = getHost(globalConfig.base) + mainModId.substring(1);
     }
     load([mainModId]);
   }
@@ -733,16 +757,9 @@ module.seajs = '@VERSION@';
   // Public API
   //----------------------------------------------------------------------------
 
-  /**
-   * Sets prefix for shorthand.
-   */
-  module.prefix = function(key, val) {
-    prefixCache = prefixCache || {};
-    prefixCache[key] = val;
-    return this;
-  };
-
+  module.config = config;
   module.declare = declare;
   module.load = load;
+
 
 })(this);
