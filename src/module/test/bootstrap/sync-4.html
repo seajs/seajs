@@ -8,21 +8,27 @@
 
 <script src="../../../../build/module.js"></script>
 <script>
-  module
-      .config({
-        base: 'http://localhost/sub/sub/'
-      })
-      .load('init');
+module
+    .config({
+      prefix: {
+        'sub': './sub/sub'
+      }
+    })
+    .load('{sub}/init');
 </script>
 
-<p>静态 + config base + module.load</p>
+<p>静态 + config prefix + module.load</p>
 
 <pre>
 &lt;script src="path/to/module.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  module.config({
-    main: './init'
-  });
+module
+    .config({
+      prefix: {
+        'sub': './sub/sub'
+      }
+    })
+    .load('{sub}/init');
 &lt;/script&gt;
 </pre>
 
