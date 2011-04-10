@@ -761,5 +761,4 @@ module.seajs = '@VERSION@';
   module.declare = declare;
   module.load = load;
 
-
 })(this);
