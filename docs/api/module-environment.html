@@ -76,6 +76,22 @@ module.declare({
 
   <p>上面的写法特别适合 JSON 数据模块的定义。</p>
 
+  <p>特别注意，下面的写法是错误的：</p>
+<pre class="wrong">
+/*** File: a.js ***/
+module.declare(function(require, exports) {
+  // some code...
+  exports = { // WRONG!
+    name: 'a'，
+    doSomething: function() {
+      console.log('doing something');
+    };
+  };
+});
+</pre>
+
+  <p>请采用 return 或 module.exports 的方式返回。</p>
+
 
   <h3>require</h3>
 

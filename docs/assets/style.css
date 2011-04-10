@@ -49,6 +49,11 @@ pre {
   border: solid 1px #ddd;
 }
 
+pre.wrong {
+  background: #fff6f6;
+  border-color: #ffc6c6;
+}
+
 #menu {
   position: absolute;
   top: 10px;
