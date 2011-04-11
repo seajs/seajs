@@ -7,13 +7,13 @@
 <body>
 
 <p id="out"></p>
+<p id="out2"></p>
 
 <script>
 // seajs 的异步载入代码
 (function(g, d, m, s, h, t, a) {
   s = d.createElement('script');
   s.id = 'seajs';
-  s.setAttribute('data-main', './init');
   s.src = '../../../../build/module.js';
   h = d.getElementsByTagName('head')[0];
   h.insertBefore(s, h.firstChild);
@@ -28,17 +28,37 @@
 })(window, document, 'module');
 
 module.load('./init');
-
 </script>
 
-<p>动态 + module.load</p>
-
-<pre>
-&lt;script&gt;
+<script>
+// seajs 的异步载入代码
 (function(g, d, m, s, h, t, a) {
   s = d.createElement('script');
   s.id = 'seajs';
-  s.setAttribute('data-main', './init');
+  s.src = '../../../../build/module.js';
+  h = d.getElementsByTagName('head')[0];
+  h.insertBefore(s, h.firstChild);
+  if (!(t = g[m])) {
+    g[m] = t = {
+      args: (a = []),
+      config: function() { a.push(0, arguments); return t; },
+      load: function() { a.push(1, arguments); return t; },
+      declare: function() { a.push(2, arguments); return t; }
+    };
+  }
+})(window, document, 'module');
+
+module.load('./init2');
+</script>
+
+<p>加载多次：动态 + 动态</p>
+
+<pre>
+&lt;script&gt;
+// seajs 的异步载入代码
+(function(g, d, m, s, h, t, a) {
+  s = d.createElement('script');
+  s.id = 'seajs';
   s.src = '../../../../build/module.js';
   h = d.getElementsByTagName('head')[0];
   h.insertBefore(s, h.firstChild);
@@ -53,7 +73,27 @@ module.load('./init');
 })(window, document, 'module');
 
 module.load('./init');
+&lt;/script&gt;
 
+&lt;script&gt;
+// seajs 的异步载入代码
+(function(g, d, m, s, h, t, a) {
+  s = d.createElement('script');
+  s.id = 'seajs';
+  s.src = '../../../../build/module.js';
+  h = d.getElementsByTagName('head')[0];
+  h.insertBefore(s, h.firstChild);
+  if (!(t = g[m])) {
+    g[m] = t = {
+      args: (a = []),
+      config: function() { a.push(0, arguments); return t; },
+      load: function() { a.push(1, arguments); return t; },
+      declare: function() { a.push(2, arguments); return t; }
+    };
+  }
+})(window, document, 'module');
+
+module.load('./init2');
 &lt;/script&gt;
 </pre>
 

@@ -14,16 +14,22 @@
 var module = module || {};
 
 
-/**
- * The version of the framework. It will be replaced with major.minor.patch
- * when building.
- *
- * @const
- */
-module.seajs = '@VERSION@';
+(function(global, module) {
+
+  // If loads multiple times, the first one is always used.
+  if(module.seajs) {
+    return;
+  }
 
 
-(function(global) {
+  /**
+   * The version of the framework. It will be replaced with major.minor.patch
+   * when building.
+   *
+   * @const
+   */
+  module.seajs = '@VERSION@';
+
 
   //----------------------------------------------------------------------------
   // The minimal language enhancement
@@ -777,4 +783,4 @@ module.seajs = '@VERSION@';
     }
   })(module['args']);
 
-})(this);
+})(this, module);

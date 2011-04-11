@@ -20,16 +20,22 @@ build time: ${build.time}
 var module = module || {};
 
 
-/**
- * The version of the framework. It will be replaced with major.minor.patch
- * when building.
- *
- * @const
- */
-module.seajs = '0.9.0dev';
+(function(global, module) {
+
+  // If loads multiple times, the first one is always used.
+  if(module.seajs) {
+    return;
+  }
 
 
-(function(global) {
+  /**
+   * The version of the framework. It will be replaced with major.minor.patch
+   * when building.
+   *
+   * @const
+   */
+  module.seajs = '0.9.0dev';
+
 
   //----------------------------------------------------------------------------
   // The minimal language enhancement
@@ -783,4 +789,4 @@ module.seajs = '0.9.0dev';
     }
   })(module['args']);
 
-})(this);
+})(this, module);

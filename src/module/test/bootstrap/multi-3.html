@@ -7,13 +7,18 @@
 <body>
 
 <p id="out"></p>
+<p id="out2"></p>
+
+<script src="../../../../build/module.js"></script>
+<script>
+  module.load('./init');
+</script>
 
 <script>
 // seajs 的异步载入代码
 (function(g, d, m, s, h, t, a) {
   s = d.createElement('script');
   s.id = 'seajs';
-  s.setAttribute('data-main', './init');
   s.src = '../../../../build/module.js';
   h = d.getElementsByTagName('head')[0];
   h.insertBefore(s, h.firstChild);
@@ -26,16 +31,23 @@
     };
   }
 })(window, document, 'module');
+
+module.load('./init2');
 </script>
 
-<p>动态 + data-main</p>
+<p>加载多次：静态 + 动态</p>
 
 <pre>
+&lt;script src="path/to/module.js"&gt;&lt;/script&gt;
 &lt;script&gt;
+  module.load('./init');
+&lt;/script&gt;
+
+&lt;script&gt;
+// seajs 的异步载入代码
 (function(g, d, m, s, h, t, a) {
   s = d.createElement('script');
   s.id = 'seajs';
-  s.setAttribute('data-main', './init');
   s.src = '../../../../build/module.js';
   h = d.getElementsByTagName('head')[0];
   h.insertBefore(s, h.firstChild);
@@ -48,6 +60,8 @@
     };
   }
 })(window, document, 'module');
+
+module.load('./init2');
 &lt;/script&gt;
 </pre>
 

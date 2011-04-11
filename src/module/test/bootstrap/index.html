@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>SeaJS 的加载方式</title>
+<title>SeaJS 的载入方式</title>
 <style>
   iframe { width: 500px; height: 200px; border: 1px solid #666; }
 </style>
@@ -22,9 +22,15 @@
 <iframe src="inline-1.html" style="height: 150px"></iframe><br/>
 <iframe src="inline-2.html" style="height: 180px"></iframe><br/>
 
-<p>
-  和其他文件打包后的动态、静态、内嵌手工测试后无问题。
-</p>
+<iframe src="multi-1.html" style="height: 280px"></iframe><br/>
+<iframe src="multi-2.html" style="height: 280px"></iframe><br/>
+<iframe src="multi-3.html" style="height: 280px"></iframe><br/>
+
+<h3>备忘：</h3>
+<ol>
+  <li>和其他文件打包后的动态、静态、内嵌手工测试后无问题。</li>
+  <li>重复加载 seajs 时，生效的始终是第一个，这意味着只有第一个 data-main 有效。</li>
+</ol>
 
 </body>
 </html>

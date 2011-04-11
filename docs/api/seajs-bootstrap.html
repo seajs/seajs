@@ -43,12 +43,12 @@
 <pre>
 &lt;script src="path/to/??seajs/1.0.0/module.js,biz/xx/a.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  module.config({ 'base': 'path/to/seajs/1.0.0/' });
-  module.load('jquery');
-  // =&gt; path/to/seajs/1.0.0/jquery.js
-  // 如果不用 module.config 设置 base 值，module.load 加载的将是：
-  // =&gt; path/to/??seajs/1.0.0/module.js,biz/xx/jquery.js
-  // 显然是错误的，一定要小心。
+module.config({ 'base': 'path/to/seajs/1.0.0/' });
+module.load('jquery');
+// =&gt; path/to/seajs/1.0.0/jquery.js
+// 如果不用 module.config 设置 base 值，module.load 加载的将是：
+// =&gt; path/to/??seajs/1.0.0/module.js,biz/xx/jquery.js
+// 显然是错误的，一定要小心。
 &lt;/script&gt;
 </pre>
 
@@ -59,40 +59,46 @@
 
 <pre>
 &lt;script&gt;
-  // 其他代码
+// 其他代码
 
-  // seajs 的载入代码
-  ;(function(g,d,m,s,h,t) {
-    s = d.createElement('script');
-    s.id = 'seajs';
-    // s.setAttribute('data-main', './init');
-    s.src = 'path/to/module.js';
-    h = d.getElementsByTagName('head')[0];
-    h.insertBefore(s,h.firstChild);
-    if(!g[m]) {
-      g[m] = {
-        args: (t = [[],[],[]]),
-        config: function() { t[0].push(arguments); },
-        declare: function() { t[1].push(arguments); },
-        load: function() { t[2].push(arguments); }
-      };
-    }
-  })(window,document,'module');
+// seajs 的异步载入代码
+;(function(g, d, m, s, h, t, a) {
+  s = d.createElement('script');
+  s.id = 'seajs';
+  //s.setAttribute('data-main', './init');
+  s.src = 'path/to/module.js';
+  h = d.getElementsByTagName('head')[0];
+  h.insertBefore(s, h.firstChild);
+  if (!(t = g[m])) {
+    g[m] = t = {
+      args: (a = []),
+      config: function() { a.push(0, arguments); return t; },
+      load: function() { a.push(1, arguments); return t; },
+      declare: function() { a.push(2, arguments); return t; }
+    };
+  }
+})(window, document, 'module');
 
-  // 下面立刻就可以使用 seajs 了：
-  module.config({
-    'base': 'path/to/seajs/1.0.0/'
-  });
-  module.load('./a', function(a) {
-   // do some cool things.
-  });
+// 下面立刻就可以使用 seajs 了：
+module.config({
+  'base': 'path/to/seajs/1.0.0/'
+});
+module.load('./a', function(a) {
+ // do some cool things.
+});
 &lt;/script&gt;
 </pre>
 
 
   <h3>补充说明</h3>
 
-  <p>还可以通过 script 元素的 async 和 defer 属性来调整 seajs 的执行时机，但目前主流浏览器还未完全一致支持，因此建议暂时不要在加载 seajs 时添加这两个属性，除非你清楚自己在干什么。</p>
+  <p>
+    更多用法和测试页面：<a href="../../src/module/test/bootstrap/">bootstrap/index.html</a>
+  </p>
+
+  <p>
+    还可以通过 script 元素的 async 和 defer 属性来调整 seajs 的执行时机，但目前主流浏览器还未完全一致支持，因此建议暂时不要在加载 seajs 时添加这两个属性，除非你清楚自己在干什么。
+  </p>
 
 
   <p class="next-page">
