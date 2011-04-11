@@ -715,6 +715,15 @@ module.seajs = '0.9.0dev';
 
 
   //----------------------------------------------------------------------------
+  // Public API
+  //----------------------------------------------------------------------------
+
+  module.config = config;
+  module.declare = declare;
+  module.load = load;
+
+
+  //----------------------------------------------------------------------------
   // The configurations & main module entrance
   //----------------------------------------------------------------------------
 
@@ -759,13 +768,19 @@ module.seajs = '0.9.0dev';
   }
 
 
-  //----------------------------------------------------------------------------
-  // Public API
-  //----------------------------------------------------------------------------
-
-  module.config = config;
-  module.declare = declare;
-  module.load = load;
-
+  // Parses the pre-call of module.config/load/declare.
+  (function(args) {
+    if (args) {
+      var hash = {
+        0: 'config',
+        1: 'load',
+        2: 'declare'
+      };
+      for (var i = 0; i < args.length; i += 2) {
+        module[hash[args[i]]].apply(module, args[i + 1]);
+      }
+      delete module['args'];
+    }
+  })(module['args']);
 
 })(this);

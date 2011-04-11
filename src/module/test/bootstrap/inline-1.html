@@ -1,3 +1,12 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>iframe</title>
+</head>
+<body>
+
+<script data-main="./init">
 /*
 Copyright 2011, SeaJS v0.9.0dev
 MIT Licensed
@@ -15,3 +24,17 @@ F=Array.isArray?Array.isArray:function(a){return o.call(a)==="[object Array]"},Q
 i.protocol+"//"+i.host+i.pathname,J={};module.config=function(a){for(var c in a)k[c]=a[c];return this};module.declare=function(a,c,b){if(F(a)){b=c;c=a;a=""}else if(o.call(a)!=="[object String]"){b=a;if(o.call(b)==="[object Function]"){a=b.toString();c=/\brequire\s*\(\s*['"]?([^'")]*)/g;for(var d=[],f;f=c.exec(a);)f[1]&&d.push(f[1]);c=d}a=""}b={dependencies:c||[],factory:b};var e;if(A){if(c=P())e=(c.hasAttribute?c.src:c.getAttribute("src",4)).replace(".js","");else if(s)if(I()-s.timestamp<10)e=s.uri;
 s=null}if(e){c=e;if(a&&e.indexOf("-pkg")!==-1)c=H(a,e);e=c;b.dependencies=x(b.dependencies,e);n[e]=b;q=[]}else{b.id=a;q.push(b)}return this};module.load=w;var k={};i=document.getElementById("seajs");if(!i){i=document.getElementsByTagName("script");i=i[i.length-1]}if(!k.base)k.base=L(i.hasAttribute?i.src:i.getAttribute("src",4));if(!k.main)k.main=i.getAttribute("data-main");if(i=k.main){if(i.indexOf("~/")===0)i=k.base.replace(/^(\w+:\/\/[^/]+)\/?.*$/,"$1")+i.substring(1);w([i])}(function(a){if(a){for(var c=
 {0:"config",1:"load",2:"declare"},b=0;b<a.length;b+=2)module[c[a[b]]].apply(module,a[b+1]);delete module.args}})(module.args)})(this);
+</script>
+
+<p>内嵌 + data-main</p>
+
+<pre>
+&lt;script data-main="./init"&gt;
+/* 内嵌 module.js 的代码 */
+&lt;/script&gt;
+</pre>
+
+<p id="out"></p>
+
+</body>
+</html>

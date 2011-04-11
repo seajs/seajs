@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>iframe</title>
+</head>
+<body>
+
+<script>
+// seajs 的异步载入代码
+(function(g, d, m, s, h, t, a) {
+  s = d.createElement('script');
+  s.id = 'seajs';
+  s.setAttribute('data-main', './init');
+  s.src = '../../../../build/module.js';
+  h = d.getElementsByTagName('head')[0];
+  h.insertBefore(s, h.firstChild);
+  if (!(t = g[m])) {
+    g[m] = t = {
+      args: (a = []),
+      config: function() { a.push(0, arguments); return t; },
+      load: function() { a.push(1, arguments); return t; },
+      declare: function() { a.push(2, arguments); return t; }
+    };
+  }
+})(window, document, 'module');
+</script>
+
+<p>动态 + data-main</p>
+
+<pre>
+&lt;script&gt;
+(function(g, d, m, s, h, t, a) {
+  s = d.createElement('script');
+  s.id = 'seajs';
+  s.setAttribute('data-main', './init');
+  s.src = '../../../../build/module.js';
+  h = d.getElementsByTagName('head')[0];
+  h.insertBefore(s, h.firstChild);
+  if (!(t = g[m])) {
+    g[m] = t = {
+      args: (a = []),
+      config: function() { a.push(0, arguments); return t; },
+      load: function() { a.push(1, arguments); return t; },
+      declare: function() { a.push(2, arguments); return t; }
+    };
+  }
+})(window, document, 'module');
+&lt;/script&gt;
+</pre>
+
+
+<p id="out"></p>
+
+</body>
+</html>
