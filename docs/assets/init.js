@@ -5,5 +5,6 @@
 module.declare(function(require) {
 
   require('./disqus').init();
+  require('./highlight').init();
 
 });
