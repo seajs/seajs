@@ -10,7 +10,7 @@
 
   var head = document.getElementsByTagName('head')[0];
 
-  util.getScript = function(url, callback) {
+  util.getScript = function(url, callback, charset) {
     var node = document.createElement('script');
 
     scriptOnload(node, function() {
@@ -28,6 +28,7 @@
       head.removeChild(node);
     });
 
+    if(charset) node.setAttribute('charset', charset);
     node.async = true;
     node.src = url;
     return head.insertBefore(node, head.firstChild);

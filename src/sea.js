@@ -40,22 +40,15 @@ seajs._data = {
   config: {},
 
   /**
-   * Modules that are being downloaded.
-   * { uri: scriptNode, ... }
+   * Modules that have been memoize()d.
+   * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  fetchingMods: {},
+  memoizedMods: {},
 
   /**
    * The module that are define()d, but has not been memoize()d.
    */
-  pendingMod: null,
-
-  /**
-   * Modules that have been memoize()d.
-   * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
-   */
-  memoizedMods: {}
-
+  pendingMod: null
 };
 
 

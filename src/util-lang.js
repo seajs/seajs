@@ -36,9 +36,4 @@
         return -1;
       };
 
-
-  util.now = Date.now || (function() {
-    return new Date().getTime();
-  });
-
 })(seajs._util);

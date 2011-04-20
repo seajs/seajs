@@ -5,7 +5,12 @@
 
 (function(util, data, fn, global) {
 
-  var fetchingMods = data.fetchingMods;
+  /**
+   * Modules that are being downloaded.
+   * { uri: scriptNode, ... }
+   */
+  var fetchingMods = {};
+
   var memoizedMods = data.memoizedMods;
 
 
@@ -100,7 +105,11 @@
     if (fetchingMods[uri]) {
       util.scriptOnload(fetchingMods[uri], cb);
     } else {
-      fetchingMods[uri] = util.getScript(util.restoreUrlArgs(uri), cb);
+      fetchingMods[uri] = util.getScript(
+          util.restoreUrlArgs(uri),
+          cb,
+          data.config.charset
+          );
     }
 
     function cb() {

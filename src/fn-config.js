@@ -33,7 +33,6 @@ seajs._data.config.debug = true;
    *     'jquery': 'jquery-1.5.2',
    *     'cart': 'cart?t=20110419'
    *   },
-   *   timeout: 7000,
    *   charset: 'utf-8',
    *   debug: false,
    *   main: './init'
