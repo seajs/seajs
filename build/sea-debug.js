@@ -20,12 +20,10 @@ var seajs = seajs || {};
 
 
 /**
- * The version of the framework. It will be replaced with "major.minor.patch"
+ * @define {string} The version of the framework. It will be replaced
  * when building.
- *
- * @const
  */
-seajs.version = '0.9.0dev';
+seajs.version = 'major.minor.patch';
 
 
 // Module status\uff1a
@@ -46,22 +44,15 @@ seajs._data = {
   config: {},
 
   /**
-   * Modules that are being downloaded.
-   * { uri: scriptNode, ... }
+   * Modules that have been memoize()d.
+   * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  fetchingMods: {},
+  memoizedMods: {},
 
   /**
    * The module that are define()d, but has not been memoize()d.
    */
-  pendingMod: null,
-
-  /**
-   * Modules that have been memoize()d.
-   * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
-   */
-  memoizedMods: {}
-
+  pendingMod: null
 };
 
 
@@ -112,11 +103,6 @@ seajs._fn = {};
         }
         return -1;
       };
-
-
-  util.now = Date.now || (function() {
-    return new Date().getTime();
-  });
 
 })(seajs._util);
 
@@ -347,7 +333,7 @@ seajs._fn = {};
 
   var head = document.getElementsByTagName('head')[0];
 
-  util.getScript = function(url, callback) {
+  util.getScript = function(url, callback, charset) {
     var node = document.createElement('script');
 
     scriptOnload(node, function() {
@@ -365,6 +351,7 @@ seajs._fn = {};
       head.removeChild(node);
     });
 
+    if (charset) node.setAttribute('charset', charset);
     node.async = true;
     node.src = url;
     return head.insertBefore(node, head.firstChild);
@@ -430,7 +417,12 @@ seajs._fn = {};
 
 (function(util, data, fn, global) {
 
-  var fetchingMods = data.fetchingMods;
+  /**
+   * Modules that are being downloaded.
+   * { uri: scriptNode, ... }
+   */
+  var fetchingMods = {};
+
   var memoizedMods = data.memoizedMods;
 
 
@@ -525,7 +517,11 @@ seajs._fn = {};
     if (fetchingMods[uri]) {
       util.scriptOnload(fetchingMods[uri], cb);
     } else {
-      fetchingMods[uri] = util.getScript(util.restoreUrlArgs(uri), cb);
+      fetchingMods[uri] = util.getScript(
+          util.restoreUrlArgs(uri),
+          cb,
+          data.config.charset
+          );
     }
 
     function cb() {
@@ -744,7 +740,6 @@ seajs._data.config.debug = true;
    *     'jquery': 'jquery-1.5.2',
    *     'cart': 'cart?t=20110419'
    *   },
-   *   timeout: 7000,
    *   charset: 'utf-8',
    *   debug: false,
    *   main: './init'

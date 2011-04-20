@@ -1,4 +1,4 @@
-module.declare(function(require, exports) {
+define(function(require, exports) {
 
   function sendMessage(msg, a1, a2) {
     var p = window.parent;

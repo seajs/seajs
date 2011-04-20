@@ -28,7 +28,7 @@
       head.removeChild(node);
     });
 
-    if(charset) node.setAttribute('charset', charset);
+    if (charset) node.setAttribute('charset', charset);
     node.async = true;
     node.src = url;
     return head.insertBefore(node, head.firstChild);

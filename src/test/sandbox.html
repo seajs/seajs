@@ -3,9 +3,28 @@
 <head>
 <meta charset="utf-8" />
 <title>test</title>
-<script src="../../../tools/jasmine/console.js"></script>
+<script src="../../tools/jasmine/console.js"></script>
 
-<script src="../module.js" data-main="./main"></script>
+<script src="../sea.js"></script>
+
+<script src="../util-lang.js"></script>
+<script src="../util-helper.js"></script>
+<script src="../util-dom.js"></script>
+
+<script src="../fn-load.js"></script>
+<script src="../fn-define.js"></script>
+<script src="../fn-require.js"></script>
+
+<script src="../fn-config.js"></script>
+<script src="../fn-use.js"></script>
+
+<script src="../sea-api.js"></script>
+
+<script>
+
+  seajs.use('./main');
+
+</script>
 
 </head>
 <body>

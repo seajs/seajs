@@ -14,12 +14,10 @@ var seajs = seajs || {};
 
 
 /**
- * The version of the framework. It will be replaced with "major.minor.patch"
+ * @define {string} The version of the framework. It will be replaced
  * when building.
- *
- * @const
  */
-seajs.version = '@VERSION@';
+seajs.version = 'major.minor.patch';
 
 
 // Module status：

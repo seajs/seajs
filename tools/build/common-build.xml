@@ -15,7 +15,7 @@
 
   <!-- 用 gslint 检查 style -->
   <target name="gjslint">
-    <exec executable="gjslint" os="Mac" failonerror="true">
+    <exec executable="/usr/local/bin/gjslint" os="Mac OS X" failonerror="true" searchpath="true">
       <arg line="--strict *.js"/>
     </exec>
   </target>
@@ -81,6 +81,7 @@
       <arg line="--jscomp_${gcc.checkTypes}=checkTypes"/>
       <arg line="--jscomp_off=fileoverviewTags"/>
 
+      <arg line="--define='seajs.version=&quot;${version}&quot;'"/>
       <arg line="--define='seajs._data.config.debug=false'"/>
 
       <arg line="--js"/>
@@ -148,12 +149,6 @@
           </header>
           <fileset file="@{file}"/>
         </concat>
-        <replaceregexp match="@VERSION@"
-                       replace="${version}"
-                       flags="g"
-                       encoding="${charset}"
-                       byline="true"
-                       file="@{file}.tmp"/>
         <move file="@{file}.tmp" tofile="@{file}"/>
       </sequential>
     </ac:for>
