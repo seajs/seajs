@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8"/>
 <title>Hello, SeaJS!</title>
-<script src="../../../../build/module.js"></script>
+<script src="../../../build/sea.js"></script>
 </head>
 
 <body>
 <script>
 
-  module.load('./hello', function(hello) {
+  seajs.use('./hello', function(hello) {
 
     hello.sayHello();
 

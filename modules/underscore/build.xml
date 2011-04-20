@@ -1,8 +1,8 @@
-<project name="jquery.build" default="build" basedir=".">
-  <description>jQuery Build File</description>
+<project name="underscore.build" default="build" basedir="">
+  <description>Underscore Build File</description>
 
-  <property name="module.name" value="jquery"/>
-  <property name="module.dir" location="."/>
+  <property name="module.name" value="underscore"/>
+  <property name="module.dir" location=""/>
   <property name="build.dir" location="../../build"/>
   <import file="../../tools/build/common-build.xml"/>
 
@@ -11,14 +11,10 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        module.declare('jquery', [], function(_) {
+        define('underscore', [], function(require, exports, module) {
       </header>
-      <path path="jquery.js"/>
+      <path path="underscore.js"/>
       <footer filtering="no" trimleading="yes">
-          _ = $;
-          try { delete window.jQuery; delete window.$; }
-          catch(x) { window.jQuery = window.$ = undefined; }
-          return _;
         });
       </footer>
     </concat>
@@ -27,14 +23,10 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        module.declare('jquery', [], function(_) {
+        define('underscore', [], function(require, exports, module) {
       </header>
-      <path path="jquery-min.js"/>
+      <path path="underscore-min.js"/>
       <footer filtering="no" trimleading="yes">
-          _ = $;
-          try { delete window.jQuery; delete window.$; }
-          catch(x) { window.jQuery = window.$ = undefined; }
-          return _;
         });
       </footer>
     </concat>

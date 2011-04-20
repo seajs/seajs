@@ -81,6 +81,8 @@
       <arg line="--jscomp_${gcc.checkTypes}=checkTypes"/>
       <arg line="--jscomp_off=fileoverviewTags"/>
 
+      <arg line="--define='seajs._data.config.debug=false'"/>
+
       <arg line="--js"/>
       <srcfile/>
       <arg line="--js_output_file ${filename}.js"/>
@@ -97,15 +99,6 @@
     <delete>
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
     </delete>
-  </target>
-
-  <!-- 删除 "var module=module||{};" -->
-  <target name="remove-var-module">
-    <replace dir="${tmp.dir}/../" value="">
-      <include name="${filename}.js"/>
-      <include name="${filename}-debug.js"/>
-      <replacefilter token="var module=module||{};"/>
-    </replace>
   </target>
 
   <!-- 对 JS 文件 ASCII 化 -->

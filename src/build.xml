@@ -1,0 +1,41 @@
+<project name="seajs.build" default="build" basedir=".">
+  <description>SeaJS Build File</description>
+
+  <property name="module.name" value="sea"/>
+  <property name="module.files" value="*-pkg.js"/>
+  <property name="module.dir" location="."/>
+  <import file="../tools/build/common-build.xml"/>
+
+  <target name="concat">
+    <concat destfile="${module.name}-pkg.js"
+            encoding="${charset}"
+            outputencoding="${charset}">
+
+      <path path="sea.js"/>
+
+      <path path="util-lang.js"/>
+      <path path="util-helper.js"/>
+      <path path="util-dom.js"/>
+
+      <path path="fn-load.js"/>
+      <path path="fn-define.js"/>
+      <path path="fn-require.js"/>
+
+      <path path="fn-config.js"/>
+      <path path="fn-use.js"/>
+
+      <path path="sea-api.js"/>
+
+    </concat>
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="${module.dir}" includes="*-pkg.js"/>
+    </delete>
+  </target>
+
+  <target name="build" depends="gjslint,concat,common.build,clean">
+  </target>
+
+</project>

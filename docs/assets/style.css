@@ -47,6 +47,7 @@ pre {
   padding: 10px;
   border-radius: 5px;
   border: solid 1px #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 pre.wrong {
