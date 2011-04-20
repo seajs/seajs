@@ -1,4 +1,4 @@
-module.declare(function(require, exports) {
+define(function() {
 
   return {
     foo: 'c'

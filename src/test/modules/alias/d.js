@@ -1,6 +1,5 @@
 define(function(require, exports) {
 
-  exports.foo = function () {
-  };
+  exports.foo = 'd';
 
 });

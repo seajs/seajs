@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function(require, exports) {
 
   exports.add = function() {
     var sum = 0, i = 0, l = arguments.length;

@@ -1,3 +1,3 @@
-module.declare({
+define({
   foo: 'd'
 });

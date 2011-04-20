@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function(require, exports) {
 
   var add = require('./math').add;
 

@@ -23,7 +23,14 @@
       // Restrains to sandbox environment.
       if (util.indexOf(sandbox.deps, uri) === -1 ||
           !(mod = data.memoizedMods[uri])) {
-        throw 'Invalid module: ' + id;
+
+        console.error('Invalid module:', uri);
+
+        // Just return null when:
+        //  1. the module file is 404.
+        //  2. the module file is not written in valid module format.
+        //  3. other error cases.
+        return null;
       }
 
       // Checks cyclic dependencies.
@@ -60,6 +67,7 @@
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {
+      checkPotentialErrors(factory);
       ret = factory(createRequire(sandbox), mod.exports, mod);
       if (ret) {
         mod.exports = ret;
@@ -79,6 +87,12 @@
     return false;
   }
 
+  function checkPotentialErrors(factory) {
+    if (data.config.debug &&
+        factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
+      throw 'Invalid setter: exports = ...';
+    }
+  }
 
   fn.createRequire = createRequire;
 

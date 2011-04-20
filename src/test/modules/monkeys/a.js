@@ -1,4 +1,4 @@
-module.declare(function(require) {
+define(function(require) {
 
   require('./program').monkey = 10;
 

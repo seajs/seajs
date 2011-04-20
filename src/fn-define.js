@@ -27,8 +27,6 @@
       id = '';
     }
 
-    checkPotentialErrors(factory.toString());
-
     var mod = { id: id, dependencies: deps || [], factory: factory };
     var uri;
 
@@ -54,13 +52,6 @@
     }
 
   };
-
-
-  function checkPotentialErrors(code) {
-    if (code.search(/\sexports\s*=\s*\w/) !== -1) {
-      throw 'Invalid code: exports = ...';
-    }
-  }
 
 
   function parseDependencies(code) {

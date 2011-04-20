@@ -1,4 +1,4 @@
-module.declare(function(require, exports) {
+define(function(require) {
 
   var test = require('test/test');
 

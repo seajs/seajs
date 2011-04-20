@@ -93,26 +93,34 @@
 
 
   /**
+   * Checks id is absolute path.
+   */
+  function isAbsolute(id) {
+    return (id.indexOf('://') !== -1);
+  }
+
+
+  /**
    * Parses alias in the module id.
    */
   function parseAlias(id) {
-    var alias = config['alias'];
+    if (isAbsolute(id)) return id;
 
+    var alias = config['alias'];
     if (alias) {
       var parts = id.split('/');
       var len = parts.length;
       var i = 0;
 
-      while (i++ < len) {
+      while (i < len) {
         var val = alias[parts[i]];
         if (val) {
           parts[i] = val;
         }
+        i++;
       }
-
       id = parts.join('/');
     }
-
     return id;
   }
 
@@ -140,7 +148,7 @@
     var ret;
 
     // absolute id
-    if (id.indexOf('://') !== -1) {
+    if (isAbsolute(id)) {
       ret = id;
     }
     // relative id

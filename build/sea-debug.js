@@ -200,26 +200,34 @@ seajs._fn = {};
 
 
   /**
+   * Checks id is absolute path.
+   */
+  function isAbsolute(id) {
+    return (id.indexOf('://') !== -1);
+  }
+
+
+  /**
    * Parses alias in the module id.
    */
   function parseAlias(id) {
-    var alias = config['alias'];
+    if (isAbsolute(id)) return id;
 
+    var alias = config['alias'];
     if (alias) {
       var parts = id.split('/');
       var len = parts.length;
       var i = 0;
 
-      while (i++ < len) {
+      while (i < len) {
         var val = alias[parts[i]];
         if (val) {
           parts[i] = val;
         }
+        i++;
       }
-
       id = parts.join('/');
     }
-
     return id;
   }
 
@@ -247,7 +255,7 @@ seajs._fn = {};
     var ret;
 
     // absolute id
-    if (id.indexOf('://') !== -1) {
+    if (isAbsolute(id)) {
       ret = id;
     }
     // relative id
@@ -570,8 +578,6 @@ seajs._fn = {};
       id = '';
     }
 
-    checkPotentialErrors(factory.toString());
-
     var mod = { id: id, dependencies: deps || [], factory: factory };
     var uri;
 
@@ -597,13 +603,6 @@ seajs._fn = {};
     }
 
   };
-
-
-  function checkPotentialErrors(code) {
-    if (code.search(/\sexports\s*=\s*\w/) !== -1) {
-      throw 'Invalid code: exports = ...';
-    }
-  }
 
 
   function parseDependencies(code) {
@@ -645,7 +644,14 @@ seajs._fn = {};
       // Restrains to sandbox environment.
       if (util.indexOf(sandbox.deps, uri) === -1 ||
           !(mod = data.memoizedMods[uri])) {
-        throw 'Invalid module: ' + id;
+
+        console.error('Invalid module:', uri);
+
+        // Just return null when:
+        //  1. the module file is 404.
+        //  2. the module file is not written in valid module format.
+        //  3. other error cases.
+        return null;
       }
 
       // Checks cyclic dependencies.
@@ -682,6 +688,7 @@ seajs._fn = {};
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {
+      checkPotentialErrors(factory);
       ret = factory(createRequire(sandbox), mod.exports, mod);
       if (ret) {
         mod.exports = ret;
@@ -701,6 +708,12 @@ seajs._fn = {};
     return false;
   }
 
+  function checkPotentialErrors(factory) {
+    if (data.config.debug &&
+        factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
+      throw 'Invalid setter: exports = ...';
+    }
+  }
 
   fn.createRequire = createRequire;
 

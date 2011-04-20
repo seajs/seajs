@@ -1,14 +1,9 @@
-module.declare(['test/test'], function(require) {
+define(['test/test'], function(require) {
 
   var test = require('test/test');
 
-  try {
-    require('bogus');
-    test.print('FAIL require throws error when module missing.', 'fail');
-  } catch (x) {
-    test.print('PASS require throws error when module missing.', 'pass');
-  }
-
+  test.assert(require('bogus') === null, 'return null when module missing.');
+  
   test.print('DONE', 'info');
 
 });
