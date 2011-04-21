@@ -110,3 +110,6 @@ p.next-page {
   border-top: solid 1px #ccc;
 }
 
+#content pre.sh_sourceCode {
+  background-color: #f6f6f6;
+}
