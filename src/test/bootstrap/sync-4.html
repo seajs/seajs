@@ -8,29 +8,29 @@
 
 <p id="out"></p>
 
-<script src="../../../../build/module.js"></script>
+<script src="../../../build/sea.js"></script>
 <script>
-module
+seajs
     .config({
-      prefix: {
+      alias: {
         'sub': './sub/sub'
       }
     })
-    .load('{sub}/init');
+    .use('sub/init');
 </script>
 
-<p>静态 + config prefix + module.load</p>
+<p>静态 + config alias + use</p>
 
 <pre>
-&lt;script src="path/to/module.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-module
+seajs
     .config({
-      prefix: {
+      alias: {
         'sub': './sub/sub'
       }
     })
-    .load('{sub}/init');
+    .use('sub/init');
 &lt;/script&gt;
 </pre>
 

@@ -1,4 +1,4 @@
-module.declare(function(require, exports, module) {
+define(function(require, exports) {
 
   exports.sayHello = function() {
     document.getElementById('out').innerHTML = '<span style="color: green">It works!</span>';

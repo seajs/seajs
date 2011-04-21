@@ -8,17 +8,17 @@
 
 <p id="out"></p>
 
-<script src="../../../../build/module.js"></script>
+<script src="../../../build/sea.js"></script>
 <script>
-  module.load('./init');
+  seajs.use('./init');
 </script>
 
-<p>静态 + module.load</p>
+<p>script + seajs.use</p>
 
 <pre>
-&lt;script src="path/to/module.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  module.load('./init');
+  seajs.use('./init');
 &lt;/script&gt;
 </pre>
 

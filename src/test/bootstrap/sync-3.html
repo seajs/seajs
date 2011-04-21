@@ -8,25 +8,25 @@
 
 <p id="out"></p>
 
-<script src="../../../../build/module.js"></script>
+<script src="../../../build/sea.js"></script>
 <script>
-module
+seajs
     .config({
-      base: 'https://github.com/seajs/seajs/raw/master/src/module/test/bootstrap/sub/sub/'
+      base: 'https://github.com/seajs/seajs/raw/master/src/test/bootstrap/sub/sub/'
     })
-    .load('init');
+    .use('init');
 </script>
 
-<p>静态 + config base + module.load</p>
+<p>script + config base + seajs.use</p>
 
 <pre>
-&lt;script src="path/to/module.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-module
+seajs
     .config({
       base: 'path/to/base/'
     })
-    .load('init');
+    .use('init');
 &lt;/script&gt;
 </pre>
 

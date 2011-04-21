@@ -1,4 +1,4 @@
-module.declare(['./math-pkg', 'test/test'], function(require) {
+define(['./math-pkg', 'test/test'], function(require) {
 
   var test = require('test/test');
   var inc = require('./increment').increment;

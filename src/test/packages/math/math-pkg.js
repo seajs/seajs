@@ -1,6 +1,6 @@
 
 
-module.declare('increment', ['./math'], function(require, exports) {
+define('increment', ['./math'], function(require, exports) {
 
   var add = require('./math').add;
 
@@ -11,7 +11,7 @@ module.declare('increment', ['./math'], function(require, exports) {
 });
 
 
-module.declare('math', [], function(require, exports) {
+define('math', [], function(require, exports) {
 
   exports.add = function() {
     var sum = 0, i = 0, l = arguments.length;
