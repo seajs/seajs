@@ -16,7 +16,7 @@ build time: ${build.time}
  *
  * @const
  */
-var seajs = seajs || {};
+var seajs = { _seajs: this.seajs };
 
 
 /**
@@ -166,8 +166,9 @@ seajs._fn = {};
     url = stripUrlArgs(realpath(url));
 
     // Adds the default '.js' ext.
-    var ext = url.replace(/^.*(\..*)$/, '$1');
-    if (!ext) url += '.js';
+    if (url.lastIndexOf('.') <= url.lastIndexOf('/')) {
+      url += '.js';
+    }
 
     return url;
   }
@@ -321,6 +322,7 @@ seajs._fn = {};
   util.dirname = dirname;
   util.restoreUrlArgs = restoreUrlArgs;
   util.getHost = getHost;
+  util.pageUrl = pageUrl;
 
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;
@@ -734,15 +736,22 @@ seajs._data.config.debug = true;
 (function(util, data, fn) {
 
   var config = data.config;
+
+  // Async inserted script.
   var loaderScript = document.getElementById('seajs');
 
+  // Static script.
   if (!loaderScript) {
     var scripts = document.getElementsByTagName('script');
     loaderScript = scripts[scripts.length - 1];
   }
 
-  config.base = util.dirname(util.getScriptAbsoluteSrc(loaderScript));
+  // When script is inline code, src is pageUrl.
+  var src = util.getScriptAbsoluteSrc(loaderScript) || util.pageUrl;
+  config.base = util.dirname(src);
+
   config.main = loaderScript.getAttribute('data-main') || '';
+
 
   /**
    * The function to configure the framework.
@@ -785,6 +794,7 @@ seajs._data.config.debug = true;
   }
 
   // Parses the pre-call of seajs.config/seajs.boot/define.
+  // Ref: test/bootstrap/async-3.html
   (function(args) {
     if (args) {
       var hash = {
@@ -795,9 +805,9 @@ seajs._data.config.debug = true;
       for (var i = 0; i < args.length; i += 2) {
         fn[hash[args[i]]].apply(host, args[i + 1]);
       }
-      delete host['args'];
+      delete host._seajs;
     }
-  })(host['args']);
+  })((host._seajs || 0)['args']);
 
 })(seajs, seajs._data, seajs._fn);
 
@@ -807,19 +817,20 @@ seajs._data.config.debug = true;
 
 (function(host, data, fn, global) {
 
-  // seajs loader api:
+  // Avoids conflicting when sea.js is loaded multi times.
+  if (host._seajs) {
+    global.seajs = host._seajs;
+    return;
+  }
+
+  // SeaJS Loader API:
   host.use = fn.use;
   host.config = fn.config;
 
-  // Module authoring api:
+  // Module Authoring API:
   global.define = fn.define;
 
-  // In module environment:
-  //  require
-  //  exports
-  //  module, module.load(), module.uri etc.
-
-  // Keep clean!
+  // Keeps clean!
   if (!data.config.debug) {
     delete host._util;
     delete host._data;

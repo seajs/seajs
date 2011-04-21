@@ -10,90 +10,90 @@
 <p id="out2"></p>
 
 <script>
-// seajs 的异步载入代码
-(function(g, d, m, s, h, t, a) {
-  s = d.createElement('script');
-  s.id = 'seajs';
-  s.src = '../../../../build/module.js';
-  h = d.getElementsByTagName('head')[0];
-  h.insertBefore(s, h.firstChild);
-  if (!(t = g[m])) {
-    g[m] = t = {
-      args: (a = []),
-      config: function() { a.push(0, arguments); return t; },
-      load: function() { a.push(1, arguments); return t; },
-      declare: function() { a.push(2, arguments); return t; }
+// seajs async code
+(function(m, o, d, u, l, a, r) {
+  u = o.createElement('script');
+  u.id = 'seajs';
+  u.src = '../../../build/sea.js';
+  l = o.getElementsByTagName('head')[0];
+  l.insertBefore(u, l.firstChild);
+  if (!m[d]) {
+    m[d] = a = {
+      args: (r = []),
+      config: function() { r.push(0, arguments); return a; },
+      use: function() { r.push(1, arguments); return a; }
     };
+    m.define = function() { r.push(2, arguments); return a; }
   }
-})(window, document, 'module');
+})(window, document, 'seajs');
 
-module.load('./init');
+seajs.use('./init');
 </script>
 
 <script>
-// seajs 的异步载入代码
-(function(g, d, m, s, h, t, a) {
-  s = d.createElement('script');
-  s.id = 'seajs';
-  s.src = '../../../../build/module.js';
-  h = d.getElementsByTagName('head')[0];
-  h.insertBefore(s, h.firstChild);
-  if (!(t = g[m])) {
-    g[m] = t = {
-      args: (a = []),
-      config: function() { a.push(0, arguments); return t; },
-      load: function() { a.push(1, arguments); return t; },
-      declare: function() { a.push(2, arguments); return t; }
+// seajs async code
+(function(m, o, d, u, l, a, r) {
+  u = o.createElement('script');
+  u.id = 'seajs';
+  u.src = '../../../build/sea.js';
+  l = o.getElementsByTagName('head')[0];
+  l.insertBefore(u, l.firstChild);
+  if (!m[d]) {
+    m[d] = a = {
+      args: (r = []),
+      config: function() { r.push(0, arguments); return a; },
+      use: function() { r.push(1, arguments); return a; }
     };
+    m.define = function() { r.push(2, arguments); return a; }
   }
-})(window, document, 'module');
+})(window, document, 'seajs');
 
-module.load('./init2');
+seajs.use('./init2');
 </script>
 
-<p>加载多次：动态 + 动态</p>
+<p>multi-times: async + async</p>
 
 <pre>
 &lt;script&gt;
-// seajs 的异步载入代码
-(function(g, d, m, s, h, t, a) {
-  s = d.createElement('script');
-  s.id = 'seajs';
-  s.src = '../../../../build/module.js';
-  h = d.getElementsByTagName('head')[0];
-  h.insertBefore(s, h.firstChild);
-  if (!(t = g[m])) {
-    g[m] = t = {
-      args: (a = []),
-      config: function() { a.push(0, arguments); return t; },
-      load: function() { a.push(1, arguments); return t; },
-      declare: function() { a.push(2, arguments); return t; }
+// seajs async code
+(function(m, o, d, u, l, a, r) {
+  u = o.createElement('script');
+  u.id = 'seajs';
+  u.src = '../../../build/sea.js';
+  l = o.getElementsByTagName('head')[0];
+  l.insertBefore(u, l.firstChild);
+  if (!m[d]) {
+    m[d] = a = {
+      args: (r = []),
+      config: function() { r.push(0, arguments); return a; },
+      use: function() { r.push(1, arguments); return a; }
     };
+    m.define = function() { r.push(2, arguments); return a; }
   }
-})(window, document, 'module');
+})(window, document, 'seajs');
 
-module.load('./init');
+seajs.use('./init');
 &lt;/script&gt;
 
 &lt;script&gt;
-// seajs 的异步载入代码
-(function(g, d, m, s, h, t, a) {
-  s = d.createElement('script');
-  s.id = 'seajs';
-  s.src = '../../../../build/module.js';
-  h = d.getElementsByTagName('head')[0];
-  h.insertBefore(s, h.firstChild);
-  if (!(t = g[m])) {
-    g[m] = t = {
-      args: (a = []),
-      config: function() { a.push(0, arguments); return t; },
-      load: function() { a.push(1, arguments); return t; },
-      declare: function() { a.push(2, arguments); return t; }
+// seajs async code
+(function(m, o, d, u, l, a, r) {
+  u = o.createElement('script');
+  u.id = 'seajs';
+  u.src = '../../../build/sea.js';
+  l = o.getElementsByTagName('head')[0];
+  l.insertBefore(u, l.firstChild);
+  if (!m[d]) {
+    m[d] = a = {
+      args: (r = []),
+      config: function() { r.push(0, arguments); return a; },
+      use: function() { r.push(1, arguments); return a; }
     };
+    m.define = function() { r.push(2, arguments); return a; }
   }
-})(window, document, 'module');
+})(window, document, 'seajs');
 
-module.load('./init2');
+seajs.use('./init2');
 &lt;/script&gt;
 </pre>
 

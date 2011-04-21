@@ -8,35 +8,38 @@
 
 <p id="out"></p>
 
-<script data-main="./init">
+<script>
 /*
 Copyright 2011, SeaJS v0.9.0dev
 MIT Licensed
 build time: ${build.time}
 */
 
-var module=module||{};module.seajs="0.9.0dev";
-(function(t){function D(a){for(var c=[],b=0,d=a.length,f;b<d;b++){f=a[b];n[f]||c.push(f)}return c}function w(a,c){if(o.call(a)==="[object String]")a=[a];for(var b=0,d=a.length;b<d;b++)a[b]=a[b].replace(".js","");E.call(this,a,function(f){for(var e=[],g,h=0,j=a.length;h<j;h++){try{g=f(a[h])}catch(p){g=null}if(c){if(F(g))e=e.concat(g);else e.push(g);c.apply(t,e)}}});return this}function E(a,c,b){function d(){if(c)c(b?undefined:G.call(e,{deps:g}))}function f(u){var l;if(e!==t)l=e.uri;return x(u,l)}var e=
-this,g=f(a);a=D(g);if(a.length===0)return d();for(var h=0,j=a.length,p=j;h<j;h++)(function(u){N(u,function(){var l=(n[u]||0).dependencies||[],y=l.length;if(y){l=D(f(l));p+=y;E(l,function(){p-=y;p===0&&d()},true)}--p===0&&d()})})(a[h])}function N(a,c){function b(){var d=q.length,f=0,e,g=a,h,j=a.indexOf("-pkg")!==-1;if(d){for(;f<d;f++){h=q[f];e=h.id;delete h.id;if(e&&j)g=H(e,a);e=g;h.dependencies=x(h.dependencies,e);n[e]=h}q=[]}r[a]&&delete r[a];c&&c()}if(r[a])z(r[a],b);else{if(A)s={uri:a,timestamp:I()};
-r[a]=O(a+".js"+(J[a]||""),b)}}function O(a,c){var b=document.createElement("script");z(b,function(){c&&c.call(b);try{if(b.clearAttributes)b.clearAttributes();else for(var d in b)delete b[d]}catch(f){}v.removeChild(b)});b.async=true;b.src=a;return v.insertBefore(b,v.firstChild)}function z(a,c){a.addEventListener("load",c,false);a.addEventListener("error",function(){c()},false)}function P(){if(B&&B.readyState==="interactive")return B;for(var a=v.getElementsByTagName("script"),c,b=0,d=a.length;b<d;b++){c=
-a[b];if(c.readyState==="interactive")return c}return null}function G(a){function c(b){var d=C(b,a.uri),f,e=a.deps;f=[];for(var g,h=0;g=e[h++];)if(m[g])f=f.concat(m[g]);else f.push(g);var j;if(e=m[d]){j=[];d=0;for(b=e.length;d<b;d++)j[d]=c(e[d]);return j}if(Q(f,d)===-1||!(j=n[d]))throw"Invalid module: "+b;if(K(a,d))return j.exports;if(!j.exports){b=j;d={uri:d,deps:j.dependencies,parent:a};e=b.factory;delete b.factory;b.uri=d.uri;b.exports={};b.load=w;if(o.call(e)==="[object Function]"){if(d=e(G(d),
-b.exports,b))b.exports=d}else b.exports=e||{}}return j.exports}if(this!==t)a.uri=this.uri;return c}function K(a,c){if(a.uri===c)return true;if(a.parent)return K(a.parent,c);return false}function H(a,c){var b=C("./"+a,c);m[c]=m[c]||[];m[c].push(b);return b}function L(a){a=("./"+a).replace(/(.*)?\/.*/,"$1").substring(2);return(a?a:".")+"/"}function C(a,c){var b,d=a;if(b=k.prefix){var f=d.indexOf("{"),e=d.indexOf("}");if(f===0&&e>1){f=d.substring(1,e);if(b.hasOwnProperty(f))d=b[f]+d.substring(e+1)}}a=
-d;if(a.indexOf("://")!==-1)d=a;else if(a.indexOf("./")===0||a.indexOf("../")===0){d=L(c||M)+a;b=d.split("/");e=[];var g,h;g=0;for(h=b.length;g<h;g++){f=b[g];if(f==".."){if(e.length===0)throw"Invalid module path: "+d;e.pop()}else f!=="."&&e.push(f)}d=e.join("/")}else d=a.indexOf("/")===0?(c||M).replace(/^(\w+:\/\/[^/]+)\/?.*$/,"$1")+a:k.base+a;d=b=d;if(b=b.match(/^([^?]+)(\?.*)$/)){d=b[1];J[d]=b[2]}return d}function x(a,c){for(var b=[],d=0,f=a.length;d<f;d++)b[d]=C(a[d],c);return b}var o=Object.prototype.toString,
-F=Array.isArray?Array.isArray:function(a){return o.call(a)==="[object Array]"},Q=Array.prototype.indexOf?function(a,c){return a.indexOf(c)}:function(a,c){for(var b=0,d=a.length;b<d;b++)if(a[b]===c)return b;return-1},I=Date.now||function(){return(new Date).getTime()},r={},q=[],s=null,A=!+"\v1",n={},v=document.getElementsByTagName("head")[0];if(A)z=function(a,c){a.attachEvent("onreadystatechange",function(){var b=a.readyState;if(b==="loaded"||b==="complete")c()})};var B=null,m={},i=t.location,M=
-i.protocol+"//"+i.host+i.pathname,J={};module.config=function(a){for(var c in a)k[c]=a[c];return this};module.declare=function(a,c,b){if(F(a)){b=c;c=a;a=""}else if(o.call(a)!=="[object String]"){b=a;if(o.call(b)==="[object Function]"){a=b.toString();c=/\brequire\s*\(\s*['"]?([^'")]*)/g;for(var d=[],f;f=c.exec(a);)f[1]&&d.push(f[1]);c=d}a=""}b={dependencies:c||[],factory:b};var e;if(A){if(c=P())e=(c.hasAttribute?c.src:c.getAttribute("src",4)).replace(".js","");else if(s)if(I()-s.timestamp<10)e=s.uri;
-s=null}if(e){c=e;if(a&&e.indexOf("-pkg")!==-1)c=H(a,e);e=c;b.dependencies=x(b.dependencies,e);n[e]=b;q=[]}else{b.id=a;q.push(b)}return this};module.load=w;var k={};i=document.getElementById("seajs");if(!i){i=document.getElementsByTagName("script");i=i[i.length-1]}if(!k.base)k.base=L(i.hasAttribute?i.src:i.getAttribute("src",4));if(!k.main)k.main=i.getAttribute("data-main");if(i=k.main){if(i.indexOf("~/")===0)i=k.base.replace(/^(\w+:\/\/[^/]+)\/?.*$/,"$1")+i.substring(1);w([i])}(function(a){if(a){for(var c=
-{0:"config",1:"load",2:"declare"},b=0;b<a.length;b+=2)module[c[a[b]]].apply(module,a[b+1]);delete module.args}})(module.args)})(this);
+var seajs={_seajs:this.seajs};seajs.version="0.9.0dev";seajs._data={config:{},memoizedMods:{},pendingMod:null};seajs._util={};seajs._fn={};
+(function(a){var e=Object.prototype.toString;a.isString=function(f){return e.call(f)==="[object String]"};a.isFunction=function(f){return e.call(f)==="[object Function]"};a.isArray=Array.isArray?Array.isArray:function(f){return e.call(f)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(f,b){return f.indexOf(b)}:function(f,b){for(var h=0,d=f.length;h<d;h++)if(f[h]===b)return h;return-1}})(seajs._util);
+(function(a,e,f){function b(g){g=("./"+g).replace(/(.*)?\/.*/,"$1").substring(2);return(g?g:".")+"/"}function h(g){return g.replace(/^(\w+:\/\/[^/]+)\/?.*$/,"$1")}function d(g,l){var k=g;if(k.indexOf("://")===-1){var j=m.alias;if(j){k=k.split("/");for(var q=k.length,o=0;o<q;){var p=j[k[o]];if(p)k[o]=p;o++}k=k.join("/")}}g=k;l=l||n;if(g.indexOf("://")!==-1)j=g;else if(g.indexOf("./")===0||g.indexOf("../")===0){g=("/"+g).replace("/./","/").substring(1);j=b(l)+g}else j=g.indexOf("/")===0?h(l)+g:m.base+
+"/"+g;j=j.replace(/([^:]\/)\/+/g,"$1");if(j.indexOf(".")!==-1){k=j.split("/");q=[];p=0;for(var s=k.length;p<s;p++){o=k[p];if(o===".."){if(q.length===0)throw"Invalid path: "+j;q.pop()}else o!=="."&&q.push(o)}j=q.join("/")}if(k=j.match(/^([^?]+)(\?.*)$/)){j=k[1];i[j]=k[2]}if(j.lastIndexOf(".")<=j.lastIndexOf("/"))j+=".js";return j}function c(g,l){for(var k=[],j=0,q=g.length;j<q;j++)k[j]=d(g[j],l);return k}var m=e.config,i={};f=f.location;var n=f.protocol+"//"+f.host+f.pathname,r=e.memoizedMods;a.dirname=
+b;a.restoreUrlArgs=function(g){return g+(i[g]||"")};a.getHost=h;a.pageUrl=n;a.id2Uri=d;a.ids2Uris=c;a.memoize=function(g,l){l.dependencies=c(l.dependencies,g);e.memoizedMods[g]=l};a.getUnMemoized=function(g){for(var l=[],k=0;k<g.length;k++){var j=g[k];r[j]||l.push(j)}return l}})(seajs._util,seajs._data,this);
+(function(a){function e(b,h){b.addEventListener("load",h,false);b.addEventListener("error",function(){h()},false)}a.isOldIE=!+"\v1";var f=document.getElementsByTagName("head")[0];a.getScript=function(b,h,d){var c=document.createElement("script");e(c,function(){h&&h.call(c);try{if(c.clearAttributes)c.clearAttributes();else for(var m in c)delete c[m]}catch(i){}f.removeChild(c)});d&&c.setAttribute("charset",d);c.async=true;c.src=b;return f.insertBefore(c,f.firstChild)};if(a.isOldIE)e=function(b,
+h){b.attachEvent("onreadystatechange",function(){var d=b.readyState;if(d==="loaded"||d==="complete")h()})};a.scriptOnload=e;a.getInteractiveScript=function(){for(var b=f.getElementsByTagName("script"),h=0;h<b.length;h++){var d=b[h];if(d.readyState==="interactive")return d}return null};a.getScriptAbsoluteSrc=function(b){return b.hasAttribute?b.src:b.getAttribute("src",4)}})(seajs._util);
+(function(a,e,f,b){function h(i,n,r){function g(){if(n){var p;r||(p=f.createRequire({uri:l.uri,deps:k}));n(p)}}var l=this,k=a.ids2Uris(i,l.uri);i=a.getUnMemoized(k);if(i.length===0)return g();for(var j=0,q=i.length,o=q;j<q;j++)(function(p){d(p,function(){var s=(m[p]||0).dependencies||[],t=s.length;if(t){o+=t;h(s,function(){o-=t;o===0&&g()},true)}--o===0&&g()})})(i[j])}function d(i,n){function r(){if(e.pendingMod){a.memoize(i,e.pendingMod);e.pendingMod=null}c[i]&&delete c[i];n&&n()}if(c[i])a.scriptOnload(c[i],
+r);else c[i]=a.getScript(a.restoreUrlArgs(i),r,e.config.charset)}var c={},m=e.memoizedMods;f.load=function(i,n){if(a.isString(i))i=[i];h.call(this,i,function(r){for(var g=[],l=0;l<i.length;l++)g[l]=r(i[l]);n&&n.apply(b,g)});return this}})(seajs._util,seajs._data,seajs._fn,this);
+(function(a,e,f){f.define=function(b,h,d){if(a.isArray(b)){d=h;h=b;b=""}else if(!a.isString(b)){d=b;if(a.isFunction(d)){b=d.toString();h=/\brequire\s*\(\s*['"]?([^'")]*)/g;for(var c=[],m;m=h.exec(b);)m[1]&&c.push(m[1]);h=c}b=""}d={id:b,dependencies:h||[],factory:d};var i;if(a.isOldIE)if(b=a.getInteractiveScript())i=a.getScriptAbsoluteSrc(b);if(i)a.memoize(i,d);else e.pendingMod=d}})(seajs._util,seajs._data,seajs._fn);
+(function(a,e,f){function b(d){return function(c){var m=a.id2Uri(c,d.uri),i;if(a.indexOf(d.deps,m)===-1||!(i=e.memoizedMods[m]))return null;if(h(d,m))return i.exports;if(!i.exports){c=i;m={uri:m,deps:i.dependencies,parent:d};var n=c.factory;c.uri=m.uri;c.id=c.id||c.uri;c.exports={};c.load=f.load;delete c.factory;if(a.isFunction(n)){if(e.config.debug&&n.toString().search(/\sexports\s*=\s*[^=]/)!==-1)throw"Invalid setter: exports = ...";if(m=n(b(m),c.exports,c))c.exports=m}else c.exports=n||{}}return i.exports}}
+function h(d,c){if(d.uri===c)return true;if(d.parent)return h(d.parent,c);return false}f.createRequire=b})(seajs._util,seajs._data,seajs._fn);seajs._data.config.debug=false;(function(a,e,f){var b=e.config;e=document.getElementById("seajs");if(!e){e=document.getElementsByTagName("script");e=e[e.length-1]}var h=a.getScriptAbsoluteSrc(e)||a.pageUrl;b.base=a.dirname(h);b.main=e.getAttribute("data-main")||"";f.config=function(d){for(var c in d)b[c]=d[c];return this}})(seajs._util,seajs._data,seajs._fn);
+(function(a,e,f){e=e.config;f.use=f.load;(e=e.main)&&f.use([e]);(function(b){if(b){for(var h={0:"config",1:"use",2:"define"},d=0;d<b.length;d+=2)f[h[b[d]]].apply(a,b[d+1]);delete a.args}})((a._seajs||0).args)})(seajs,seajs._data,seajs._fn);(function(a,e,f,b){if(a._seajs)b.seajs=a._seajs;else{a.use=f.use;a.config=f.config;b.define=f.define;if(!e.config.debug){delete a._util;delete a._data;delete a._fn}}})(seajs,seajs._data,seajs._fn,this);
 
-module.load('./init');
+seajs.use('./init');
 </script>
 
-<p>内嵌 + module.load</p>
+<p>inline + seajs.use</p>
 
 <pre>
-&lt;script data-main="./init"&gt;
-/* 内嵌 module.js 的代码 */
+&lt;script&gt;
+/* sea.js source code */
+// snipping...
 
-module.load('./init');
+seajs.use('./init');
 &lt;/script&gt;
 </pre>
 

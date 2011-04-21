@@ -9,27 +9,27 @@
 <p id="out"></p>
 <p id="out2"></p>
 
-<script src="../../../../build/module.js"></script>
+<script src="../../../build/sea.js"></script>
 <script>
-  module.load('./init');
+  seajs.use('./init');
 </script>
 
-<script src="../../../../build/module.js"></script>
+<script src="../../../build/sea.js"></script>
 <script>
-  module.load('./init2');
+  seajs.use('./init2');
 </script>
 
-<p>加载多次：静态 + 静态</p>
+<p>multi-times: script + script</p>
 
 <pre>
-&lt;script src="path/to/module.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  module.load('./init');
+  seajs.use('./init');
 &lt;/script&gt;
 
-&lt;script src="path/to/module.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  module.load('./init2');
+  seajs.use('./init');
 &lt;/script&gt;
 </pre>
 

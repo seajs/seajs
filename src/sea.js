@@ -10,7 +10,7 @@
  *
  * @const
  */
-var seajs = seajs || {};
+var seajs = { _seajs: this.seajs };
 
 
 /**

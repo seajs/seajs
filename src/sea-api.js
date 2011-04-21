@@ -5,19 +5,20 @@
 
 (function(host, data, fn, global) {
 
-  // seajs loader api:
+  // Avoids conflicting when sea.js is loaded multi times.
+  if (host._seajs) {
+    global.seajs = host._seajs;
+    return;
+  }
+
+  // SeaJS Loader API:
   host.use = fn.use;
   host.config = fn.config;
 
-  // Module authoring api:
+  // Module Authoring API:
   global.define = fn.define;
 
-  // In module environment:
-  //  require
-  //  exports
-  //  module, module.load(), module.uri etc.
-
-  // Keep clean!
+  // Keeps clean!
   if (!data.config.debug) {
     delete host._util;
     delete host._data;

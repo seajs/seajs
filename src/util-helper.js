@@ -59,8 +59,9 @@
     url = stripUrlArgs(realpath(url));
 
     // Adds the default '.js' ext.
-    var ext = url.replace(/^.*(\..*)$/, '$1');
-    if (!ext) url += '.js';
+    if (url.lastIndexOf('.') <= url.lastIndexOf('/')) {
+      url += '.js';
+    }
 
     return url;
   }
@@ -214,6 +215,7 @@
   util.dirname = dirname;
   util.restoreUrlArgs = restoreUrlArgs;
   util.getHost = getHost;
+  util.pageUrl = pageUrl;
 
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;
