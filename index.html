@@ -20,14 +20,14 @@
 
   <p>
     SeaJS 是一个遵循 <a href="http://wiki.commonjs.org/">CommonJS</a>
-    规范的模块加载框架，可用来轻松愉悦地加载任意 CommonJS 模块。下面是一段典型的初始化入口代码：
+    规范的模块加载框架，可用来轻松愉悦地加载任意 JavaScript 模块。下面是一段典型的初始化入口代码：
   </p>
 
 <pre>
-&lt;script src="seajs/module.js"&gt;&lt;/script&gt;
+&lt;script src="sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
 
-  module.load('./init', function(init) {
+  seajs.use('./init', function(init) {
     init.something();
   });
 
@@ -35,18 +35,18 @@
 </pre>
 
   <p>
-    SeaJS 支持的模块遵循包装式书写格式，可运行于 Web 浏览器以及 <a href="http://nodejs.org/">node.js</a>
-    等环境中。典型的模块写法如下：
+    SeaJS 支持的标准模块遵循 <a href="http://wiki.commonjs.org/wiki/Modules/Wrappings">Modules/Wrappings</a> 规范的 define 形式，可运行于 Web 浏览器以及 <a href="http://nodejs.org/">node.JS</a>
+    等环境中。典型的模块书写格式如下：
   </p>
 
 <pre>
-module.declare(function(require, exports, module) {
+define(function(require, exports, module) {
 
   // 获取依赖的模块：
   var $ = require('jquery');
 
   // 向外提供接口：
-  exports.someMethods = someFunction;
+  exports.someMethod = someFunction;
 
 });
 </pre>

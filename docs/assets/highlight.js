@@ -1,4 +1,4 @@
-module.declare(function(require, exports, module) {
+define(function(require, exports, module) {
 
   /* Copyright (C) 2007, 2008 gnombat@users.sourceforge.net */
   /* License: http://shjs.sourceforge.net/doc/gplv3.html */

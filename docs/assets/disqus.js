@@ -2,7 +2,7 @@
  * DISQUS module for seajs.com
  */
 
-module.declare(function(require, exports, module) {
+define(function(require, exports, module) {
 
   exports.init = function() {
 
