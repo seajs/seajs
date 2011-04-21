@@ -1,5 +1,5 @@
 
-define('jquery', [], function(_) {
+define('jquery',[],function(require,exports,module) {
 /*!
  * jQuery JavaScript Library v1.5.2
  * http://jquery.com/
@@ -8375,8 +8375,5 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 window.jQuery = window.$ = jQuery;
 })(window);
 
-_ = $;
-try { delete window.jQuery; delete window.$; }
-catch(x) { window.jQuery = window.$ = undefined; }
-return _;
+module.exports=$.noConflict(true);
 });

@@ -1,5 +1,5 @@
 /*
-Copyright 2011, SeaJS v0.9.0dev
+Copyright 2011, SeaJS v0.9.0-dev
 MIT Licensed
 build time: ${build.time}
 */

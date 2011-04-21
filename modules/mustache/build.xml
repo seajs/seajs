@@ -1,0 +1,39 @@
+<project name="mustache.build" default="build" basedir=".">
+  <description>Mustache Build File</description>
+
+  <property name="module.name" value="mustache"/>
+  <property name="module.files" value="*-pkg.js"/>
+  <property name="module.dir" location="."/>
+
+  <property name="gcc.warning.level" value="QUIET"/>
+  <import file="../../tools/build/common-build.xml"/>
+
+  <target name="concat">
+    <concat destfile="${module.name}-pkg.js"
+            encoding="${charset}"
+            outputencoding="${charset}">
+      <header filtering="no" trimleading="yes">
+        define('${module.name}',[],function(require,exports,module) {
+        /**
+         * @license mustache.js -- Logic-less templates in JavaScript
+         * See http://mustache.github.com/ for more info.
+         */
+      </header>
+      <path path="${module.name}.js"/>
+      <footer filtering="no" trimleading="yes">
+          module.exports=Mustache;
+        });
+      </footer>
+    </concat>
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="${module.dir}" includes="*-pkg.js"/>
+    </delete>
+  </target>
+
+  <target name="build" depends="concat,prepare,compress,destroy,clean">
+  </target>
+
+</project>

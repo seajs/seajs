@@ -1,7 +1,7 @@
-<project name="underscore.build" default="build" basedir="">
-  <description>Underscore Build File</description>
+<project name="backbone.build" default="build" basedir="">
+  <description>Backbone Build File</description>
 
-  <property name="module.name" value="underscore"/>
+  <property name="module.name" value="backbone"/>
   <property name="module.dir" location=""/>
   <property name="build.dir" location="../../build"/>
   <import file="../../tools/build/common-build.xml"/>
@@ -11,7 +11,7 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define('${module.name}', [], function(require, exports, module) {
+        define('${module.name}', ['underscore', 'jquery'], function(require, exports) {
       </header>
       <path path="${module.name}.js"/>
       <footer filtering="no" trimleading="yes">});
@@ -22,7 +22,7 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define('${module.name}', [], function(require, exports, module) {
+        define('${module.name}', ['underscore', 'jquery'], function(require, exports) {
       </header>
       <path path="${module.name}-min.js"/>
       <footer filtering="no" trimleading="yes">});
@@ -30,6 +30,16 @@
     </concat>
   </target>
 
-  <target name="build" depends="concat">
+  <target name="replace">
+    <replaceregexp match="this.jQuery"
+                   replace="require('jquery')"
+                   flags="g"
+                   encoding="${charset}">
+      <fileset dir="${build.dir}"
+               includes="${module.name}.js,${module.name}-debug.js"/>
+    </replaceregexp>
+  </target>
+
+  <target name="build" depends="concat,replace">
   </target>
 </project>

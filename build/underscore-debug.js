@@ -807,5 +807,4 @@ define('underscore', [], function(require, exports, module) {
   };
 
 })();
-
 });

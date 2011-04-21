@@ -11,14 +11,11 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define('jquery', [], function(_) {
+        define('${module.name}',[],function(require,exports,module) {
       </header>
-      <path path="jquery.js"/>
+      <path path="${module.name}.js"/>
       <footer filtering="no" trimleading="yes">
-          _ = $;
-          try { delete window.jQuery; delete window.$; }
-          catch(x) { window.jQuery = window.$ = undefined; }
-          return _;
+          module.exports=$.noConflict(true);
         });
       </footer>
     </concat>
@@ -27,14 +24,11 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define('jquery', [], function(_) {
+        define('${module.name}',[],function(require,exports,module) {
       </header>
-      <path path="jquery-min.js"/>
+      <path path="${module.name}-min.js"/>
       <footer filtering="no" trimleading="yes">
-          _ = $;
-          try { delete window.jQuery; delete window.$; }
-          catch(x) { window.jQuery = window.$ = undefined; }
-          return _;
+          module.exports=$.noConflict(true);
         });
       </footer>
     </concat>
