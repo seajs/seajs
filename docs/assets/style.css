@@ -89,6 +89,12 @@ p.next-page {
   text-align: right;
 }
 
+#ribbon {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
 #copyright {
   border-top: solid 1px #ccc;
   margin-top: 20px;
