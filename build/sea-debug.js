@@ -771,10 +771,21 @@ seajs._data.config.debug = true;
    */
   fn.config = function(o) {
     for (var k in o) {
-      config[k] = o[k];
+      var sub = config[k];
+      if (typeof sub === 'object') {
+        mix(sub, o[k]);
+      } else {
+        config[k] = o[k];
+      }
     }
     return this;
   };
+
+  function mix(r, s) {
+    for (var k in s) {
+      r[k] = s[k];
+    }
+  }
 
 })(seajs._util, seajs._data, seajs._fn);
 
