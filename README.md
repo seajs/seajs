@@ -1,5 +1,5 @@
 
-SeaJS is a new kind of JavaScript Framework that makes it easy to build scalable web applications.
+SeaJS is a new kind of JavaScript Loader that makes it easy to build scalable web applications.
 
 <http://seajs.com/>
 
@@ -13,7 +13,7 @@ The sea can hold the water from thousands of rivers, it's big because of its cap
 
 ## License
 
-SeaJS is available under either the terms of the [MIT license](https://github.com/tannhu/jsface/blob/master/MIT-LICENSE.txt).
+SeaJS is available under the terms of the [MIT license](https://github.com/tannhu/jsface/blob/master/MIT-LICENSE.txt).
 
 
 ## Some more thing
