@@ -521,6 +521,8 @@ seajs._fn = {};
    */
   function fetch(uri, callback) {
 
+    console.log('fetch {{{');
+
     if (fetchingMods[uri]) {
       util.scriptOnload(fetchingMods[uri], cb);
     } else {
@@ -531,7 +533,11 @@ seajs._fn = {};
           );
     }
 
+    console.log('fetch }}}');
+
     function cb() {
+      console.log('fetch cb {{{');
+      console.log('data.pendingMod = ' + data.pendingMod);
       if (data.pendingMod) {
         util.memoize(uri, data.pendingMod);
         data.pendingMod = null;
@@ -544,6 +550,7 @@ seajs._fn = {};
       if (callback) {
         callback();
       }
+      console.log('fetch cb }}}');
     }
   }
 
@@ -562,6 +569,8 @@ seajs._fn = {};
    * @param {function()|Object} factory The module factory function.
    */
   fn.define = function(id, deps, factory) {
+
+    console.log('define {{{');
 
     // Overloads arguments.
     if (util.isArray(id)) {
@@ -599,8 +608,10 @@ seajs._fn = {};
     } else {
       // Saves information for "real" work in the onload event.
       data.pendingMod = mod;
+      console.log('data.pendingMod = ' + data.pendingMod);
     }
 
+    console.log('define }}}');
   };
 
 

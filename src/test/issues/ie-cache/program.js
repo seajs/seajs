@@ -1,4 +1,4 @@
-console.log('program begin');
+console.log('program {{{');
 
 define(function() {
 
@@ -6,4 +6,4 @@ define(function() {
 
 });
 
-console.log('program end');
+console.log('program }}}');
