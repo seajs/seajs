@@ -16,7 +16,7 @@ seajs._data.config.debug = true;
   var config = data.config;
 
   // Async inserted script.
-  var loaderScript = document.getElementById('seajs');
+  var loaderScript = document.getElementById('seajsnode');
 
   // Static script.
   if (!loaderScript) {

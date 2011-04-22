@@ -7,10 +7,8 @@
 
 /**
  * Base namespace for the framework.
- *
- * @const
  */
-var seajs = { _seajs: this.seajs };
+this.seajs = { _seajs: this.seajs };
 
 
 /**
@@ -41,12 +39,7 @@ seajs._data = {
    * Modules that have been memoize()d.
    * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  memoizedMods: {},
-
-  /**
-   * The module that are define()d, but has not been memoize()d.
-   */
-  pendingMod: null
+  memoizedMods: {}
 };
 
 

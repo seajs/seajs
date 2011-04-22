@@ -11,19 +11,18 @@
 <script>
 // seajs async code
 (function(m, o, d, u, l, a, r) {
+  if(m[d]) return;
+  m[d] = a = {
+    args: (r = []),
+    config: function() { r.push(0, arguments); return a; },
+    use: function() { r.push(1, arguments); return a; }
+  };
+  m.define = function() { r.push(2, arguments); };
   u = o.createElement('script');
-  u.id = 'seajs';
-  u.src = '../../../build/sea.js';
+  u.id = d + 'node';
+  u.src = '../../../build/sea-debug.js';
   l = o.getElementsByTagName('head')[0];
   l.insertBefore(u, l.firstChild);
-  if (!m[d]) {
-    m[d] = a = {
-      args: (r = []),
-      config: function() { r.push(0, arguments); return a; },
-      use: function() { r.push(1, arguments); return a; }
-    };
-    m.define = function() { r.push(2, arguments); }
-  }
 })(window, document, 'seajs');
 
 seajs.use('./init');
@@ -35,19 +34,18 @@ seajs.use('./init');
 <pre>
 &lt;script&gt;
 (function(m, o, d, u, l, a, r) {
+  if(m[d]) return;
+  m[d] = a = {
+    args: (r = []),
+    config: function() { r.push(0, arguments); return a; },
+    use: function() { r.push(1, arguments); return a; }
+  };
+  m.define = function() { r.push(2, arguments); };
   u = o.createElement('script');
-  u.id = 'seajs';
-  u.src = 'path/to/sea.js';
+  u.id = d + 'node';
+  u.src = '../../../build/sea.js';
   l = o.getElementsByTagName('head')[0];
   l.insertBefore(u, l.firstChild);
-  if (!m[d]) {
-    m[d] = a = {
-      args: (r = []),
-      config: function() { r.push(0, arguments); return a; },
-      use: function() { r.push(1, arguments); return a; }
-    };
-    m.define = function() { r.push(2, arguments); }
-  }
 })(window, document, 'seajs');
 
 seajs.use('./init');

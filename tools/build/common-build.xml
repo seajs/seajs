@@ -84,6 +84,8 @@
       <arg line="--define='seajs.version=&quot;${version}&quot;'"/>
       <arg line="--define='seajs._data.config.debug=false'"/>
 
+      <arg line="--externs ${module.dir}/extern.js"/>
+
       <arg line="--js"/>
       <srcfile/>
       <arg line="--js_output_file ${filename}.js"/>
