@@ -104,12 +104,18 @@
 
     if (fetchingMods[uri]) {
       util.scriptOnload(fetchingMods[uri], cb);
-    } else {
+    }
+    else {
+      // See fn-define.js: "uri = data.pendingModIE"
+      data.pendingModIE = uri;
+
       fetchingMods[uri] = util.getScript(
           util.restoreUrlArgs(uri),
           cb,
           data.config.charset
           );
+
+      data.pendingModIE = null;
     }
 
     function cb() {

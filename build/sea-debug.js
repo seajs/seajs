@@ -521,23 +521,23 @@ seajs._fn = {};
    */
   function fetch(uri, callback) {
 
-    console.log('fetch {{{');
-
     if (fetchingMods[uri]) {
       util.scriptOnload(fetchingMods[uri], cb);
-    } else {
+    }
+    else {
+      // See fn-define.js: "uri = data.pendingModIE"
+      data.pendingModIE = uri;
+
       fetchingMods[uri] = util.getScript(
           util.restoreUrlArgs(uri),
           cb,
           data.config.charset
           );
+
+      data.pendingModIE = null;
     }
 
-    console.log('fetch }}}');
-
     function cb() {
-      console.log('fetch cb {{{');
-      console.log('data.pendingMod = ' + data.pendingMod);
       if (data.pendingMod) {
         util.memoize(uri, data.pendingMod);
         data.pendingMod = null;
@@ -550,7 +550,6 @@ seajs._fn = {};
       if (callback) {
         callback();
       }
-      console.log('fetch cb }}}');
     }
   }
 
@@ -570,8 +569,6 @@ seajs._fn = {};
    */
   fn.define = function(id, deps, factory) {
 
-    console.log('define {{{');
-
     // Overloads arguments.
     if (util.isArray(id)) {
       factory = deps;
@@ -589,14 +586,23 @@ seajs._fn = {};
     var mod = { id: id, dependencies: deps || [], factory: factory };
     var uri;
 
-    if (!+'\v1') {
-      // For IE6-8 browsers, the script onload event may not fire right
+    if (document.attachEvent) {
+      // For IE6-9 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"
       // mode indicates the current script. Ref: http://goo.gl/JHfFW
       var script = util.getInteractiveScript();
       if (script) {
         uri = util.getScriptAbsoluteSrc(script);
+      }
+
+      // In IE6-9, if the script is in the cache, the "interactive" mode
+      // sometimes does not work. The script code actually executes *during*
+      // the DOM insertion of the script tag, so we can keep track of which
+      // script is being requested in case define() is called during the DOM
+      // insertion.
+      else {
+        uri = data.pendingModIE;
       }
 
       // NOTE: If the id-deriving methods above is failed, then falls back
@@ -608,10 +614,8 @@ seajs._fn = {};
     } else {
       // Saves information for "real" work in the onload event.
       data.pendingMod = mod;
-      console.log('data.pendingMod = ' + data.pendingMod);
     }
 
-    console.log('define }}}');
   };
 
 
