@@ -338,9 +338,6 @@ seajs._fn = {};
 
 (function(util) {
 
-  util.isOldIE = !+'\v1'; // IE6-8;
-
-
   var head = document.getElementsByTagName('head')[0];
 
   util.getScript = function(url, callback, charset) {
@@ -376,7 +373,7 @@ seajs._fn = {};
     }, false);
   }
 
-  if (util.isOldIE) {
+  if (!head.addEventListener) {
     scriptOnload = function(node, callback) {
       node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
@@ -583,7 +580,7 @@ seajs._fn = {};
     var mod = { id: id, dependencies: deps || [], factory: factory };
     var uri;
 
-    if (util.isOldIE) {
+    if (!+'\v1') {
       // For IE6-8 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"
@@ -713,7 +710,7 @@ seajs._fn = {};
   function checkPotentialErrors(factory) {
     if (data.config.debug &&
         factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
-      throw 'Invalid setter: exports = ...';
+      throw 'Invalid setter: exports = {...}';
     }
   }
 

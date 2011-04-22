@@ -30,7 +30,7 @@
     var mod = { id: id, dependencies: deps || [], factory: factory };
     var uri;
 
-    if (util.isOldIE) {
+    if (!+'\v1') {
       // For IE6-8 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"

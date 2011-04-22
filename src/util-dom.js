@@ -5,9 +5,6 @@
 
 (function(util) {
 
-  util.isOldIE = !+'\v1'; // IE6-8;
-
-
   var head = document.getElementsByTagName('head')[0];
 
   util.getScript = function(url, callback, charset) {
@@ -43,7 +40,7 @@
     }, false);
   }
 
-  if (util.isOldIE) {
+  if (!head.addEventListener) {
     scriptOnload = function(node, callback) {
       node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
