@@ -34,24 +34,24 @@
     ];
     //tests = ['modules/math'];
 
-    var reporter;
-    var testFrame, currentTest = 0;
+    var container, reporter, summary;
+    var currentTest = 0;
     var count = { pass: 0, fail: 0, error: 0 };
-    var summary;
 
     window.onload = function() {
-      var container = document.getElementById('loader-container');
+      container = document.getElementById('loader-container');
       reporter = document.getElementById('loader-reporter');
       summary = document.getElementById('loader-summary');
-
-      testFrame = document.createElement('iframe');
-      testFrame.id = 'test-frame-' + (new Date()).getTime();
-      testFrame.src = 'about:blank';
-      container.appendChild(testFrame);
 
       // start first test
       testNext();
     };
+
+    function createFrame() {
+      var testFrame = document.createElement('iframe');
+      container.appendChild(testFrame);
+      return testFrame;
+    }
 
     function printHeader(test) {
       var h = document.createElement('h3');
@@ -70,7 +70,7 @@
       var test = tests[currentTest++];
       if (test) {
         printHeader(test);
-        testFrame.src = 'sandbox.html?' + encodeURIComponent(test);
+        createFrame().src = 'sandbox.html?' + encodeURIComponent(test);
         summary.innerHTML = 'Running ' + test + ' ...';
       } else {
         printSummary();
