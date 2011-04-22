@@ -1,0 +1,35 @@
+<project name="klass.build" default="build" basedir="">
+  <description>Klass Build File</description>
+
+  <property name="module.name" value="klass"/>
+  <property name="module.dir" location=""/>
+  <property name="build.dir" location="../../build"/>
+  <import file="../../tools/build/common-build.xml"/>
+
+  <target name="concat">
+    <concat destfile="${build.dir}/${module.name}-debug.js"
+            encoding="${charset}"
+            outputencoding="${charset}">
+      <header filtering="no" trimleading="yes">
+        define('${module.name}', [], function(require, exports, module) {
+      </header>
+      <path path="${module.name}.js"/>
+      <footer filtering="no" trimleading="yes">});
+      </footer>
+    </concat>
+
+    <concat destfile="${build.dir}/${module.name}.js"
+            encoding="${charset}"
+            outputencoding="${charset}">
+      <header filtering="no" trimleading="yes">
+        define('${module.name}', [], function(require, exports, module) {
+      </header>
+      <path path="${module.name}.min.js"/>
+      <footer filtering="no" trimleading="yes">});
+      </footer>
+    </concat>
+  </target>
+
+  <target name="build" depends="concat">
+  </target>
+</project>
