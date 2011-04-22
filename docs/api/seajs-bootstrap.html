@@ -16,93 +16,123 @@
   <h2>载入方式</h2>
 
   <p>
-   在页面中，载入 SeaJS 的方式有以下几种：
+   在页面中，载入 SeaJS 的方式有：
   </p>
 
 
-  <h3>1. 同步载入</h3>
+  <h3>同步载入</h3>
 
 <pre>
-&lt;script src="path/to/seajs/module.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/sea.js"&gt;&lt;/script&gt;
 </pre>
 
   <p>可以和其他模块合并后载入：</p>
 
 <pre>
-&lt;script src="path/to/seajs/module-jquery.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/sea-jquery.js"&gt;&lt;/script&gt;
 </pre>
 
   <p>可以用 nginx combo 等服务自动合并：</p>
 
 <pre>
-&lt;script src="path/to/seajs/??module.js,jquery.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/??sea.js,jquery.js"&gt;&lt;/script&gt;
 </pre>
 
-  <p>注意：通过服务器自动 combo 时，最好手动指定 base 路径：</p>
+  <p>** 注意：通过服务器自动 combo 时，通常需要手动配置 base 路径：</p>
 
 <pre>
-&lt;script src="path/to/??seajs/1.0.0/module.js,biz/xx/a.js"&gt;&lt;/script&gt;
+&lt;script src="path/to/??seajs/sea.js,app/a.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-module.config({ 'base': 'path/to/seajs/1.0.0/' });
-module.load('jquery');
-// =&gt; path/to/seajs/1.0.0/jquery.js
-// 如果不用 module.config 设置 base 值，module.load 加载的将是：
-// =&gt; path/to/??seajs/1.0.0/module.js,biz/xx/jquery.js
-// 显然是错误的，一定要小心。
+seajs.config({ 'base': 'path/to/seajs/' });
+seajs.use('jquery');
+// =&gt; path/to/seajs/jquery.js
 &lt;/script&gt;
 </pre>
 
 
-  <h3>2. 异步载入</h3>
+  <h3>异步载入</h3>
 
-  <p>可以在页面中内嵌以下代码，来让 module.js 自身也异步载入：</p>
+  <p>可以在页面中内嵌以下代码，来让 sea.js 自身也异步载入：</p>
 
 <pre>
 &lt;script&gt;
 // 其他代码
 
 // seajs 的异步载入代码
-;(function(g, d, m, s, h, t, a) {
-  s = d.createElement('script');
-  s.id = 'seajs';
-  //s.setAttribute('data-main', './init');
-  s.src = 'path/to/module.js';
-  h = d.getElementsByTagName('head')[0];
-  h.insertBefore(s, h.firstChild);
-  if (!(t = g[m])) {
-    g[m] = t = {
-      args: (a = []),
-      config: function() { a.push(0, arguments); return t; },
-      load: function() { a.push(1, arguments); return t; },
-      declare: function() { a.push(2, arguments); return t; }
+;(function(m, o, d, u, l, a, r) {
+  u = o.createElement('script');
+  u.id = 'seajs';
+  u.src = 'path/to/sea.js';
+  l = o.getElementsByTagName('head')[0];
+  l.insertBefore(u, l.firstChild);
+  if (!m[d]) {
+    m[d] = a = {
+      args: (r = []),
+      config: function() { r.push(0, arguments); return a; },
+      use: function() { r.push(1, arguments); return a; }
     };
+    m.define = function() { r.push(2, arguments); }
   }
-})(window, document, 'module');
+})(window, document, 'seajs');
 
-// 下面立刻就可以使用 seajs 了：
-module.config({
-  'base': 'path/to/seajs/1.0.0/'
+// 下面立刻就可以调用 seajs 的方法了：
+seajs.config({
+  'base': 'path/to/seajs/'
 });
-module.load('./a', function(a) {
+seajs.use('./a', function(a) {
  // do some cool things.
 });
 &lt;/script&gt;
 </pre>
 
 
+  <h3>载入模块</h3>
+
+  <p>
+    通过 use 方法，可以在页面中加载任意模块：
+  </p>
+
+<pre>
+&lt;script src="sea.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  seajs.use('path/to/init', function(init) {
+    init.somethingA(/* 可以从页面传入配置 */);
+    init.somethingB(/* 可以从页面传入配置 */);
+  });
+&lt;/script&gt;
+</pre>
+
+  <p>
+    当无需采用上面的方式从页面中获取初始化配置时，建议将所有代码都抽离到 init.js 中：
+  </p>
+
+<pre>
+&lt;script src="sea.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  seajs.use('path/to/init');
+&lt;/script&gt;
+</pre>
+
+  <p>还可进一步简化为：</p>
+
+<pre>
+&lt;script src="sea.js" data-main="path/to/init" &gt;&lt;/script&gt;
+</pre>
+
+
   <h3>补充说明</h3>
 
   <p>
-    更多用法和测试页面：<a href="../../src/module/test/bootstrap/">bootstrap/index.html</a>
+    更多用法请见：<a href="../../src/test/bootstrap/">bootstrap/index.html</a>
   </p>
 
   <p>
-    还可以通过 script 元素的 async 和 defer 属性来调整 seajs 的执行时机，但目前主流浏览器还未完全一致支持，因此建议暂时不要在加载 seajs 时添加这两个属性，除非你清楚自己在干什么。
+    还可以通过 script 元素的 async 和 defer 属性来调整 seajs 的下载和执行时机，但目前主流浏览器还未完全一致支持。建议暂时不要添加这两个属性，除非你清楚自己在干什么。
   </p>
 
 
   <p class="next-page">
-    下一节：<a href="deps-analysis.html">依赖分析</a>
+    下一节：<a href="global-configuration.html">全局配置</a>
   </p>
 
 
@@ -111,7 +141,7 @@ module.load('./a', function(a) {
   </p>
 </div>
 
-<script src="../../build/module.js" data-main="../assets/init"></script>
+<script src="../../build/sea.js" data-main="../assets/init"></script>
 
 </body>
 </html>

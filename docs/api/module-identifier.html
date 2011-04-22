@@ -16,140 +16,89 @@
   <h2>模块标识</h2>
 
   <p>
-    module.load 和 require 的第一个参数都是 module identifier. 为了便于讨论，假设存在以下文件：
+    require 和 module.load 的参数都是 module identifier. 为了便于讨论，假设存在以下文件：
   </p>
 
 <pre>
-/*** http://example.com/path/to/html/test.html ***/
+/*** http://example.com/test.html ***/
 
-/*** http://cdn.com/path/to/seajs/module.js ***/
-/*** http://cdn.com/path/to/seajs/jquery.js ***/
+/*** http://cdn.com/seajs/sea.js ***/
+/*** http://cdn.com/seajs/jquery.js ***/
 
-/*** http://cdn.com/path/to/js/init.js ***/
-/*** http://cdn.com/path/to/js/a.js ***/
-/*** http://cdn.com/path/to/js/b.js ***/
-/*** http://cdn.com/path/to/js/path/to/sub/c.js ***/
-
-/*** http://3rd.com/path/to/js/z.js ***/
-/*** http://3rd.com/path/to/js/b.js ***/
+/*** http://cdn.com/js/a.js ***/
 </pre>
 
   <p>
-    下面分析各种情况下的路径计算方式。
+    下面分析各种情况下的路径解析方式。
   </p>
 
 
-  <h3>Absolute Id</h3>
+  <h3>absolute id</h3>
 
-  <p>id 可以直接是 URL 格式：</p>
+  <p>id 可以是绝对地址：</p>
 
 <pre>
-require('http://cdn.com/path/to/js/b');
-  // =&gt; http://cdn.com/path/to/js/b.js
+require('http://cdn.com/js/a');
+  // =&gt; http://cdn.com/js/a.js
+
+require('http://cdn.com/js/a.json');
+  // =&gt; http://cdn.com/js/a.json
 </pre>
 
+  <p>当省略文件后缀时，会自动添加上 .js 默认后缀。</p>
 
-  <h3>Root Id</h3>
+
+  <h3 id="root-id">root id</h3>
 
   <p>
-    Root Id 相对调用代码所在文件的路径来定位:
+    root id 相对调用代码所在文件的路径来定位:
   </p>
 
 <pre>
 /*** a.js ***/
-require('/path/to/js/b');
-  // =&gt; http://cdn.com/path/to/js/b.js
-
-/*** z.js ***/
-require('/path/to/js/b');
-  // =&gt; http://3rd.com/path/to/js/b.js
-
-/*** a.js 的 module.declare 里 ***/
-module.load('/path/to/js/b');
-  // =&gt; http://cdn.com/path/to/js/b.js
+require('/js/b');
+  // =&gt; http://cdn.com/js/b.js
 
 /*** test.html ***/
-module.load('/path/to/js/b');
-  // =&gt; http://example.com/path/to/js/b.js
-
-/*** test.html ***/
-&lt;script src="http://cdn.com/path/to/seajs/module.js"
-  data-main="/path/to/js/b" &gt;&lt;/script&gt;
-  // =&gt; http://example.com/path/to/js/b.js
+&lt;script src="http://cdn.com/seajs/sea.js" data-main="/js/b"&gt;&lt;/script&gt;
+  // =&gt; http://example.com/js/b.js
 </pre>
 
 
-  <h3>Relative Id</h3>
+  <h3 id="relative-id">relative id</h3>
 
-  <p>Relative Id 与 Root Id 的计算规则一致，相对调用代码所在文件的路径来定位：</p>
+  <p>relative id 与 root id 的解析规则一致，也是相对调用代码所在文件的路径来定位：</p>
 <pre>
 /*** a.js ***/
 require('./b');
-  // =&gt; http://cdn.com/path/to/js/b.js
-
-/*** a.js 的 module.declare 里 ***/
-module.load('./b');
-  // =&gt; http://cdn.com/path/to/js/b.js
-
-/*** test.html ***/
-module.load('./b');
-  // =&gt; http://example.com/path/to/html/b.js
-
-/*** z.js ***/
-require('./b');
-  // =&gt; http://3rd.com/path/to/js/b.js
+  // =&gt; http://cdn.com/js/b.js
 </pre>
 
 
-  <h3>Top-level Id</h3>
+  <h3 id="top-level-id">top-level id</h3>
 
-  <p>top-level id 始终指向 seajs 所在目录：</p>
+  <p>top-level id 相对 base 目录来定位：</p>
 <pre>
 /*** a.js ***/
 require('jquery');
-  // =&gt; http://cdn.com/path/to/seajs/jquery.js
+  // =&gt; http://cdn.com/seajs/jquery.js
+</pre>
 
-/*** z.js ***/
+  <p>base 目录默认与 sea.js 所在目录保持一致。可以通过全局配置来更改：</p>
+
+<pre>
+seajs.config({
+  base: 'http://code.jquery.com/'
+});
+
+/*** a.js ***/
 require('jquery');
-  // =&gt; http://cdn.com/path/to/seajs/jquery.js
-
-/*** test.html ***/
-module.load('jquery');
-  // =&gt; http://cdn.com/path/to/seajs/jquery.js
+  // =&gt; http://code.jquery.com/jquery.js
 </pre>
-
-  <p>注意：当有全局 prefix 设置时，需要先解析 prefix, 然后才能判定 id 是否 top-level:</p>
-
-<pre>
-module.config({
-  prefix: {
-    'sub': './path/to/sub'
-  }
-});
-
-module.declare(function(require, exports, module) {
-    var c = require('{sub}/c');
-    // =&gt; http://cdn.com/path/to/js/path/to/sub/c.js
-});
-</pre>
-
-
-  <h3>~ Id</h3>
-
-  <p>data-main 里的 id 解析规则和上面一致，除了以下特殊情况：</p>
-
-<pre>
-/*** test.html ***/
-&lt;script src="http://cdn.com/path/to/seajs/module.js"
-  data-main="~/path/to/js/init" &gt;&lt;/script&gt;
-  // =&gt; http://cdn.com/path/to/js/init.js
-</pre>
-
-  <p>在 data-main 中，当 id 以 ~ 开头时，加载的模块路径与 seajs 的 host 相同。</p>
 
 
   <p class="next-page">
-    下一节：<a href="global-configuration.html">全局配置</a>
+    下一节：<a href="seajs-bootstrap.html">载入方式</a>
   </p>
 
 
@@ -158,7 +107,7 @@ module.declare(function(require, exports, module) {
   </p>
 </div>
 
-<script src="../../build/module.js" data-main="../assets/init"></script>
+<script src="../../build/sea.js" data-main="../assets/init"></script>
 
 </body>
 </html>

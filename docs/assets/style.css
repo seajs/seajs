@@ -43,7 +43,7 @@ h3 { font-size: 22px; }
 
 pre {
   font: 16px/24px "Bitstream Vera Sans Mono", courier, monospace;
-  background: #f6f6f6;
+  background: #f6f6f6 !important;
   padding: 10px;
   border-radius: 5px;
   border: solid 1px #ddd;
@@ -51,7 +51,7 @@ pre {
 }
 
 pre.wrong {
-  background: #fff6f6;
+  background: #fff6f6 !important;
   border-color: #ffc6c6;
 }
 
@@ -110,6 +110,3 @@ p.next-page {
   border-top: solid 1px #ccc;
 }
 
-#content pre.sh_sourceCode {
-  background-color: #f6f6f6;
-}

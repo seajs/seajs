@@ -18,7 +18,9 @@ define(function(require, exports, module) {
     if(len > 0) {
 
       for(var i = 0; i < len; i++) {
-        els[i].className += ' sh_javascript';
+        if (els[i].className.indexOf('text') === -1) {
+          els[i].className += ' sh_javascript';
+        }
       }
 
       var link = document.createElement('link');

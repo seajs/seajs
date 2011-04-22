@@ -23,7 +23,7 @@
       config: function() { r.push(0, arguments); return a; },
       use: function() { r.push(1, arguments); return a; }
     };
-    m.define = function() { r.push(2, arguments); return a; }
+    m.define = function() { r.push(2, arguments); }
   }
 })(window, document, 'seajs');
 </script>
@@ -45,7 +45,7 @@
       config: function() { r.push(0, arguments); return a; },
       use: function() { r.push(1, arguments); return a; }
     };
-    m.define = function() { r.push(2, arguments); return a; }
+    m.define = function() { r.push(2, arguments); }
   }
 })(window, document, 'seajs');
 &lt;/script&gt;

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<title>依赖分析 - SeaJS</title>
+<title>require 规则 - SeaJS</title>
 <link rel="stylesheet" href="../assets/style.css"/>
 </head>
 <body>
@@ -13,10 +13,10 @@
     <a href="../">SeaJS <span class="byline">文档</span></a>
   </h1>
 
-  <h2>依赖分析</h2>
+  <h2>require 规则</h2>
 
   <p>
-    在 SeaJS 里，模块的依赖关系是通过分析源码来获取的。为了保证依赖分析的正确性，在书写模块代码时，要遵守以下规则：
+    在 SeaJS 里，当对模块进行打包部署时，要分析模块的依赖关系。为了保证依赖分析的正确性，在书写模块代码时，要遵守以下规则：
   </p>
 
 
@@ -24,12 +24,12 @@
 
 <pre>
 // 错误!
-module.declare(function(req) {
+define(function(req) {
   // ...
 });
 
 // 正确!
-module.declare(function(require) {
+define(function(require) {
   // ...
 });
 </pre>
@@ -78,7 +78,7 @@ require("my-module");
 
 
   <p class="next-page">
-    下一节：Package 支持
+    下一节：打包部署
   </p>
 
 
@@ -87,7 +87,7 @@ require("my-module");
   </p>
 </div>
 
-<script src="../../build/module.js" data-main="../assets/init"></script>
+<script src="../../build/sea.js" data-main="../assets/init"></script>
 
 </body>
 </html>

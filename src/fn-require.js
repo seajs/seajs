@@ -90,7 +90,7 @@
   function checkPotentialErrors(factory) {
     if (data.config.debug &&
         factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
-      throw 'Invalid setter: exports = ...';
+      throw 'Invalid setter: exports = {...}';
     }
   }
 
