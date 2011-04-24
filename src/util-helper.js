@@ -155,7 +155,7 @@
     // relative id
     else if (id.indexOf('./') === 0 || id.indexOf('../') === 0) {
       // Converts './a' to 'a', to avoid unnecessary loop in realpath.
-      id = ('/' + id).replace('/./', '/').substring(1);
+      id = id.replace(/^\.\//, '');
       ret = dirname(refUrl) + id;
     }
     // root id
