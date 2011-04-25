@@ -24,18 +24,32 @@
       if (util.indexOf(sandbox.deps, uri) === -1 ||
           !(mod = data.memoizedMods[uri])) {
 
-        console.error('Invalid module:', uri);
+        fn.error({
+          code: data.errorCodes.REQUIRE,
+          message: 'invalid module',
+          type: 'warn',
+          from: 'require',
+          uri: uri
+        });
 
         // Just return null when:
         //  1. the module file is 404.
-        //  2. the module file is not written in valid module format.
+        //  2. the module file is not written with valid module format.
         //  3. other error cases.
         return null;
       }
 
       // Checks cyclic dependencies.
       if (isCyclic(sandbox, uri)) {
-        console.warn('Found cyclic dependencies:', uri);
+
+        fn.error({
+          code: data.errorCodes.CYCLIC,
+          message: 'found cyclic dependencies',
+          type: 'warn',
+          from: 'require',
+          uri: uri
+        });
+
         return mod.exports;
       }
 
@@ -67,7 +81,7 @@
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {
-      checkPotentialErrors(factory);
+      checkPotentialErrors(factory, mod.uri);
       ret = factory(createRequire(sandbox), mod.exports, mod);
       if (ret) {
         mod.exports = ret;
@@ -87,10 +101,15 @@
     return false;
   }
 
-  function checkPotentialErrors(factory) {
-    if (data.config.debug &&
-        factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
-      throw 'Invalid setter: exports = {...}';
+  function checkPotentialErrors(factory, uri) {
+    if (factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
+      fn.error({
+        code: data.errorCodes.EXPORTS,
+        message: 'found invalid setter: exports = {...}',
+        type: 'error',
+        from: 'require',
+        uri: uri
+      });
     }
   }
 

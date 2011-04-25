@@ -128,6 +128,21 @@
         delete fetchingMods[uri];
       }
 
+      if (!memoizedMods[uri]) {
+        var stop = fn.error({
+          code: data.errorCodes.LOAD,
+          message: 'can not memoized',
+          type: 'warn',
+          from: 'load',
+          uri: uri,
+          callback: callback
+        });
+
+        if (stop) {
+          return;
+        }
+      }
+
       if (callback) {
         callback();
       }

@@ -12,6 +12,7 @@
             outputencoding="${charset}">
 
       <path path="sea.js"/>
+      <path path="fn-error.js"/>
 
       <path path="util-lang.js"/>
       <path path="util-helper.js"/>
@@ -23,7 +24,6 @@
 
       <path path="fn-config.js"/>
       <path path="fn-use.js"/>
-
       <path path="sea-api.js"/>
 
     </concat>

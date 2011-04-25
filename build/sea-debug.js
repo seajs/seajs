@@ -61,6 +61,65 @@ seajs._util = {};
 seajs._fn = {};
 
 /**
+ * @fileoverview The error handler.
+ */
+
+(function(data, fn) {
+
+  var config = data.config;
+
+  /**
+   * Enum for error types.
+   * @enum {number}
+   */
+  data.errorCodes = {
+    LOAD: 40,
+    REQUIRE: 41,
+    CYCLIC: 42,
+    EXPORTS: 43
+  };
+
+
+  /**
+   * The function to handle inner errors.
+   *
+   * @param {Object} o The error object.
+   */
+  fn.error = function(o) {
+    var code = o.code;
+
+    // Call custom error handler.
+    if (config.error && config.error[code]) {
+      config.error[o](o);
+    }
+    // Throw errors.
+    else if (o.type === 'error') {
+      throw 'Error occurs! ' + dump(o);
+    }
+    // Output debug info.
+    else if (config.debug && typeof console !== 'undefined') {
+      console[o.type](dump(o));
+    }
+  };
+
+  function dump(o) {
+    var out = ['{'];
+
+    for (var p in o) {
+      if (typeof o[p] === 'number' || typeof o[p] === 'string') {
+        out.push(p + ': ' + o[p]);
+        out.push(', ');
+      }
+    }
+    out.pop();
+    out.push('}');
+
+    return out.join('');
+  }
+
+})(seajs._data, seajs._fn);
+
+/**
  * @fileoverview The minimal language enhancement.
  */
 
@@ -359,11 +418,7 @@ seajs._fn = {};
 
   function scriptOnload(node, callback) {
     node.addEventListener('load', callback, false);
-
-    node.addEventListener('error', function() {
-      console.error('404 error:', node.src);
-      callback();
-    }, false);
+    node.addEventListener('error', callback, false);
   }
 
   if (!head.addEventListener) {
@@ -374,8 +429,6 @@ seajs._fn = {};
           callback();
         }
       });
-      // NOTE: In IE6-8, script node does not fire an "onerror" event when
-      // node.src is 404.
     }
   }
 
@@ -540,6 +593,21 @@ seajs._fn = {};
         delete fetchingMods[uri];
       }
 
+      if (!memoizedMods[uri]) {
+        var stop = fn.error({
+          code: data.errorCodes.LOAD,
+          message: 'can not memoized',
+          type: 'warn',
+          from: 'load',
+          uri: uri,
+          callback: callback
+        });
+
+        if (stop) {
+          return;
+        }
+      }
+
       if (callback) {
         callback();
       }
@@ -652,18 +720,32 @@ seajs._fn = {};
       if (util.indexOf(sandbox.deps, uri) === -1 ||
           !(mod = data.memoizedMods[uri])) {
 
-        console.error('Invalid module:', uri);
+        fn.error({
+          code: data.errorCodes.REQUIRE,
+          message: 'invalid module',
+          type: 'warn',
+          from: 'require',
+          uri: uri
+        });
 
         // Just return null when:
         //  1. the module file is 404.
-        //  2. the module file is not written in valid module format.
+        //  2. the module file is not written with valid module format.
         //  3. other error cases.
         return null;
       }
 
       // Checks cyclic dependencies.
       if (isCyclic(sandbox, uri)) {
-        console.warn('Found cyclic dependencies:', uri);
+
+        fn.error({
+          code: data.errorCodes.CYCLIC,
+          message: 'found cyclic dependencies',
+          type: 'warn',
+          from: 'require',
+          uri: uri
+        });
+
         return mod.exports;
       }
 
@@ -695,7 +777,7 @@ seajs._fn = {};
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {
-      checkPotentialErrors(factory);
+      checkPotentialErrors(factory, mod.uri);
       ret = factory(createRequire(sandbox), mod.exports, mod);
       if (ret) {
         mod.exports = ret;
@@ -715,10 +797,15 @@ seajs._fn = {};
     return false;
   }
 
-  function checkPotentialErrors(factory) {
-    if (data.config.debug &&
-        factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
-      throw 'Invalid setter: exports = {...}';
+  function checkPotentialErrors(factory, uri) {
+    if (factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
+      fn.error({
+        code: data.errorCodes.EXPORTS,
+        message: 'found invalid setter: exports = {...}',
+        type: 'error',
+        from: 'require',
+        uri: uri
+      });
     }
   }
 

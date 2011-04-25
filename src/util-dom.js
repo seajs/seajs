@@ -33,11 +33,7 @@
 
   function scriptOnload(node, callback) {
     node.addEventListener('load', callback, false);
-
-    node.addEventListener('error', function() {
-      console.error('404 error:', node.src);
-      callback();
-    }, false);
+    node.addEventListener('error', callback, false);
   }
 
   if (!head.addEventListener) {
@@ -48,8 +44,6 @@
           callback();
         }
       });
-      // NOTE: In IE6-8, script node does not fire an "onerror" event when
-      // node.src is 404.
     }
   }
 
