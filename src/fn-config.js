@@ -3,16 +3,17 @@
  * @fileoverview The configuration.
  */
 
-
-/**
- * Debug mode. It will be turned off automatically when compressing.
- */
-seajs._data.config.debug = '%DEBUG%';
-
-
 (function(util, data, fn) {
 
   var config = data.config;
+
+
+  /**
+   * Debug mode. It will be turned off automatically when compressing.
+   * @const
+   */
+  config.debug = '%DEBUG%';
+
 
   // Async inserted script.
   var loaderScript = document.getElementById('seajsnode');
