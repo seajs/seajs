@@ -39,7 +39,10 @@
       part = old[i];
       if (part === '..') {
         if (ret.length === 0) {
-          throw 'Invalid path: ' + path;
+          util.error({
+            message: 'invalid path: ' + path,
+            type: 'error'
+          });
         }
         ret.pop();
       }
@@ -93,35 +96,27 @@
   }
 
 
-  /**
-   * Checks id is absolute path.
-   */
-  function isAbsolute(id) {
-    return (id.indexOf('://') !== -1);
-  }
-
+  var aliasRegCache = {};
 
   /**
    * Parses alias in the module id.
    */
   function parseAlias(id) {
-    if (isAbsolute(id)) return id;
-
     var alias = config['alias'];
-    if (alias) {
-      var parts = id.split('/');
-      var len = parts.length;
-      var i = 0;
 
-      while (i < len) {
-        var val = alias[parts[i]];
-        if (val) {
-          parts[i] = val;
+    if (alias) {
+      id = '/' + id + '/';
+      for (var p in alias) {
+        if (alias.hasOwnProperty(p)) {
+          if (!aliasRegCache[p]) {
+            aliasRegCache[p] = new RegExp('/' + p + '/');
+          }
+          id = id.replace(aliasRegCache[p], '/' + alias[p] + '/');
         }
-        i++;
       }
-      id = parts.join('/');
+      id = id.slice(1, -1);
     }
+
     return id;
   }
 
@@ -149,7 +144,7 @@
     var ret;
 
     // absolute id
-    if (isAbsolute(id)) {
+    if (id.indexOf('://') !== -1) {
       ret = id;
     }
     // relative id

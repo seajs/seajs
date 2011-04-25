@@ -6,9 +6,9 @@
 <script src="../../tools/jasmine/console.js"></script>
 
 <script src="../sea.js"></script>
-<script src="../fn-error.js"></script>
 
 <script src="../util-lang.js"></script>
+<script src="../util-error.js"></script>
 <script src="../util-helper.js"></script>
 <script src="../util-dom.js"></script>
 
@@ -18,11 +18,16 @@
 
 <script src="../fn-config.js"></script>
 <script src="../fn-use.js"></script>
+
 <script src="../sea-api.js"></script>
 
 <!--<script src="../../build/sea.js"></script>-->
 
 <script>
+
+  seajs.config({
+    timeout: 1000
+  });
 
   seajs.use('./main');
 

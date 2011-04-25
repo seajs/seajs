@@ -12,8 +12,9 @@
   }
 
   // SeaJS Loader API:
-  host.use = fn.use;
   host.config = fn.config;
+  host.alias = fn.alias;
+  host.use = fn.use;
 
   // Module Authoring API:
   global.define = fn.define;

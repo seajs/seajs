@@ -3,14 +3,18 @@
  * @fileoverview DOM utils for fetching script etc.
  */
 
-(function(util) {
+(function(util, data) {
 
   var head = document.getElementsByTagName('head')[0];
 
   util.getScript = function(url, callback, charset) {
     var node = document.createElement('script');
+    var isLoaded = false;
 
-    scriptOnload(node, function() {
+    scriptOnload(node, cb);
+
+    function cb() {
+      isLoaded = true;
       if (callback) callback.call(node);
 
       // Reduces memory leak.
@@ -23,7 +27,13 @@
       } catch (x) {
       }
       head.removeChild(node);
-    });
+    }
+
+    setTimeout(function() {
+      if (!isLoaded) {
+        cb();
+      }
+    }, data.config.timeout);
 
     if (charset) node.setAttribute('charset', charset);
     node.async = true;
@@ -34,6 +44,9 @@
   function scriptOnload(node, callback) {
     node.addEventListener('load', callback, false);
     node.addEventListener('error', callback, false);
+
+    // NOTICE: Nothing will happen in Opera when the file status is 404. In
+    // this case, the callback will be called when time is out.
   }
 
   if (!head.addEventListener) {
@@ -77,4 +90,4 @@
         node.getAttribute('src', 4);
   };
 
-})(seajs._util);
+})(seajs._util, seajs._data);

@@ -3,20 +3,9 @@
  * @fileoverview The error handler.
  */
 
-(function(data, fn) {
+(function(util, data) {
 
   var config = data.config;
-
-  /**
-   * Enum for error types.
-   * @enum {number}
-   */
-  data.errorCodes = {
-    LOAD: 40,
-    REQUIRE: 41,
-    CYCLIC: 42,
-    EXPORTS: 43
-  };
 
 
   /**
@@ -24,15 +13,10 @@
    *
    * @param {Object} o The error object.
    */
-  fn.error = function(o) {
-    var code = o.code;
+  util.error = function(o) {
 
-    // Call custom error handler.
-    if (config.error && config.error[code]) {
-      config.error[o](o);
-    }
     // Throw errors.
-    else if (o.type === 'error') {
+    if (o.type === 'error') {
       throw 'Error occurs! ' + dump(o);
     }
     // Output debug info.
@@ -56,4 +40,4 @@
     return out.join('');
   }
 
-})(seajs._data, seajs._fn);
+})(seajs._util, seajs._data);

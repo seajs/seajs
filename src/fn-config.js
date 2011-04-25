@@ -31,6 +31,10 @@
   config.main = loaderScript.getAttribute('data-main') || '';
 
 
+  // The max time to load a script file.
+  config.timeout = 20000;
+
+
   /**
    * The function to configure the framework.
    * config({
@@ -41,6 +45,7 @@
    *     'cart': 'cart?t=20110419'
    *   },
    *   charset: 'utf-8',
+   *   timeout: 20000, // 20s
    *   debug: false,
    *   main: './init'
    * });
@@ -58,6 +63,22 @@
     }
     return this;
   };
+
+
+  /**
+   * The shortcut to set alias.
+   *
+   * @param {string} name The alias.
+   * @param {string} value The actual value.
+   */
+  fn.alias = function(name, value) {
+    var o = {};
+    o[name] = value;
+    return fn.config({
+      alias: o
+    });
+  };
+
 
   function mix(r, s) {
     for (var k in s) {

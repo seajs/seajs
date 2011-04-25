@@ -24,6 +24,9 @@
       ids = [ids];
     }
 
+    // normalize
+    ids = util.ids2Uris(ids, this.uri);
+
     // 'this' may be seajs or module, due to seajs.boot() or module.load().
     provide.call(this, ids, function(require) {
       var args = [];
@@ -43,20 +46,19 @@
 
   /**
    * Provides modules to the environment.
-   * @param {Array.<string>} ids An array composed of module id.
+   * @param {Array.<string>} uris An array composed of module uri.
    * @param {function(*)=} callback The callback function.
    * @param {boolean=} noRequire For inner use.
    */
-  function provide(ids, callback, noRequire) {
+  function provide(uris, callback, noRequire) {
     var that = this;
-    var originalUris = util.ids2Uris(ids, that.uri);
-    var uris = util.getUnMemoized(originalUris);
+    var _uris = util.getUnMemoized(uris);
 
-    if (uris.length === 0) {
+    if (_uris.length === 0) {
       return cb();
     }
 
-    for (var i = 0, n = uris.length, remain = n; i < n; i++) {
+    for (var i = 0, n = _uris.length, remain = n; i < n; i++) {
       (function(uri) {
 
         fetch(uri, function() {
@@ -75,7 +77,7 @@
           if (--remain === 0) cb();
         });
 
-      })(uris[i]);
+      })(_uris[i]);
     }
 
     function cb() {
@@ -85,7 +87,7 @@
         if (!noRequire) {
           require = fn.createRequire({
             uri: that.uri,
-            deps: originalUris
+            deps: uris
           });
         }
 
@@ -129,18 +131,12 @@
       }
 
       if (!memoizedMods[uri]) {
-        var stop = fn.error({
-          code: data.errorCodes.LOAD,
+        util.error({
           message: 'can not memoized',
-          type: 'warn',
           from: 'load',
           uri: uri,
-          callback: callback
+          type: 'warn'
         });
-
-        if (stop) {
-          return;
-        }
       }
 
       if (callback) {

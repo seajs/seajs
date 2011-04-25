@@ -61,65 +61,6 @@ seajs._util = {};
 seajs._fn = {};
 
 /**
- * @fileoverview The error handler.
- */
-
-(function(data, fn) {
-
-  var config = data.config;
-
-  /**
-   * Enum for error types.
-   * @enum {number}
-   */
-  data.errorCodes = {
-    LOAD: 40,
-    REQUIRE: 41,
-    CYCLIC: 42,
-    EXPORTS: 43
-  };
-
-
-  /**
-   * The function to handle inner errors.
-   *
-   * @param {Object} o The error object.
-   */
-  fn.error = function(o) {
-    var code = o.code;
-
-    // Call custom error handler.
-    if (config.error && config.error[code]) {
-      config.error[o](o);
-    }
-    // Throw errors.
-    else if (o.type === 'error') {
-      throw 'Error occurs! ' + dump(o);
-    }
-    // Output debug info.
-    else if (config.debug && typeof console !== 'undefined') {
-      console[o.type](dump(o));
-    }
-  };
-
-  function dump(o) {
-    var out = ['{'];
-
-    for (var p in o) {
-      if (typeof o[p] === 'number' || typeof o[p] === 'string') {
-        out.push(p + ': ' + o[p]);
-        out.push(', ');
-      }
-    }
-    out.pop();
-    out.push('}');
-
-    return out.join('');
-  }
-
-})(seajs._data, seajs._fn);
-
-/**
  * @fileoverview The minimal language enhancement.
  */
 
@@ -157,6 +98,49 @@ seajs._fn = {};
       };
 
 })(seajs._util);
+
+/**
+ * @fileoverview The error handler.
+ */
+
+(function(util, data) {
+
+  var config = data.config;
+
+
+  /**
+   * The function to handle inner errors.
+   *
+   * @param {Object} o The error object.
+   */
+  util.error = function(o) {
+
+    // Throw errors.
+    if (o.type === 'error') {
+      throw 'Error occurs! ' + dump(o);
+    }
+    // Output debug info.
+    else if (config.debug && typeof console !== 'undefined') {
+      console[o.type](dump(o));
+    }
+  };
+
+  function dump(o) {
+    var out = ['{'];
+
+    for (var p in o) {
+      if (typeof o[p] === 'number' || typeof o[p] === 'string') {
+        out.push(p + ': ' + o[p]);
+        out.push(', ');
+      }
+    }
+    out.pop();
+    out.push('}');
+
+    return out.join('');
+  }
+
+})(seajs._util, seajs._data);
 
 /**
  * @fileoverview The utils for the framework.
@@ -198,7 +182,10 @@ seajs._fn = {};
       part = old[i];
       if (part === '..') {
         if (ret.length === 0) {
-          throw 'Invalid path: ' + path;
+          util.error({
+            message: 'invalid path: ' + path,
+            type: 'error'
+          });
         }
         ret.pop();
       }
@@ -252,35 +239,27 @@ seajs._fn = {};
   }
 
 
-  /**
-   * Checks id is absolute path.
-   */
-  function isAbsolute(id) {
-    return (id.indexOf('://') !== -1);
-  }
-
+  var aliasRegCache = {};
 
   /**
    * Parses alias in the module id.
    */
   function parseAlias(id) {
-    if (isAbsolute(id)) return id;
-
     var alias = config['alias'];
-    if (alias) {
-      var parts = id.split('/');
-      var len = parts.length;
-      var i = 0;
 
-      while (i < len) {
-        var val = alias[parts[i]];
-        if (val) {
-          parts[i] = val;
+    if (alias) {
+      id = '/' + id + '/';
+      for (var p in alias) {
+        if (alias.hasOwnProperty(p)) {
+          if (!aliasRegCache[p]) {
+            aliasRegCache[p] = new RegExp('/' + p + '/');
+          }
+          id = id.replace(aliasRegCache[p], '/' + alias[p] + '/');
         }
-        i++;
       }
-      id = parts.join('/');
+      id = id.slice(1, -1);
     }
+
     return id;
   }
 
@@ -308,7 +287,7 @@ seajs._fn = {};
     var ret;
 
     // absolute id
-    if (isAbsolute(id)) {
+    if (id.indexOf('://') !== -1) {
       ret = id;
     }
     // relative id
@@ -388,14 +367,18 @@ seajs._fn = {};
  * @fileoverview DOM utils for fetching script etc.
  */
 
-(function(util) {
+(function(util, data) {
 
   var head = document.getElementsByTagName('head')[0];
 
   util.getScript = function(url, callback, charset) {
     var node = document.createElement('script');
+    var isLoaded = false;
 
-    scriptOnload(node, function() {
+    scriptOnload(node, cb);
+
+    function cb() {
+      isLoaded = true;
       if (callback) callback.call(node);
 
       // Reduces memory leak.
@@ -408,7 +391,13 @@ seajs._fn = {};
       } catch (x) {
       }
       head.removeChild(node);
-    });
+    }
+
+    setTimeout(function() {
+      if (!isLoaded) {
+        cb();
+      }
+    }, data.config.timeout);
 
     if (charset) node.setAttribute('charset', charset);
     node.async = true;
@@ -419,6 +408,9 @@ seajs._fn = {};
   function scriptOnload(node, callback) {
     node.addEventListener('load', callback, false);
     node.addEventListener('error', callback, false);
+
+    // NOTICE: Nothing will happen in Opera when the file status is 404. In
+    // this case, the callback will be called when time is out.
   }
 
   if (!head.addEventListener) {
@@ -462,7 +454,7 @@ seajs._fn = {};
         node.getAttribute('src', 4);
   };
 
-})(seajs._util);
+})(seajs._util, seajs._data);
 
 /**
  * @fileoverview Loads a module and gets it ready to be require()d.
@@ -489,6 +481,9 @@ seajs._fn = {};
       ids = [ids];
     }
 
+    // normalize
+    ids = util.ids2Uris(ids, this.uri);
+
     // 'this' may be seajs or module, due to seajs.boot() or module.load().
     provide.call(this, ids, function(require) {
       var args = [];
@@ -508,20 +503,19 @@ seajs._fn = {};
 
   /**
    * Provides modules to the environment.
-   * @param {Array.<string>} ids An array composed of module id.
+   * @param {Array.<string>} uris An array composed of module uri.
    * @param {function(*)=} callback The callback function.
    * @param {boolean=} noRequire For inner use.
    */
-  function provide(ids, callback, noRequire) {
+  function provide(uris, callback, noRequire) {
     var that = this;
-    var originalUris = util.ids2Uris(ids, that.uri);
-    var uris = util.getUnMemoized(originalUris);
+    var _uris = util.getUnMemoized(uris);
 
-    if (uris.length === 0) {
+    if (_uris.length === 0) {
       return cb();
     }
 
-    for (var i = 0, n = uris.length, remain = n; i < n; i++) {
+    for (var i = 0, n = _uris.length, remain = n; i < n; i++) {
       (function(uri) {
 
         fetch(uri, function() {
@@ -540,7 +534,7 @@ seajs._fn = {};
           if (--remain === 0) cb();
         });
 
-      })(uris[i]);
+      })(_uris[i]);
     }
 
     function cb() {
@@ -550,7 +544,7 @@ seajs._fn = {};
         if (!noRequire) {
           require = fn.createRequire({
             uri: that.uri,
-            deps: originalUris
+            deps: uris
           });
         }
 
@@ -594,18 +588,12 @@ seajs._fn = {};
       }
 
       if (!memoizedMods[uri]) {
-        var stop = fn.error({
-          code: data.errorCodes.LOAD,
+        util.error({
           message: 'can not memoized',
-          type: 'warn',
           from: 'load',
           uri: uri,
-          callback: callback
+          type: 'warn'
         });
-
-        if (stop) {
-          return;
-        }
       }
 
       if (callback) {
@@ -714,36 +702,23 @@ seajs._fn = {};
 
     function require(id) {
       var uri = util.id2Uri(id, sandbox.uri);
-      var mod;
+      var mod = data.memoizedMods[uri];
 
-      // Restrains to sandbox environment.
-      if (util.indexOf(sandbox.deps, uri) === -1 ||
-          !(mod = data.memoizedMods[uri])) {
-
-        fn.error({
-          code: data.errorCodes.REQUIRE,
-          message: 'invalid module',
-          type: 'warn',
-          from: 'require',
-          uri: uri
-        });
-
-        // Just return null when:
-        //  1. the module file is 404.
-        //  2. the module file is not written with valid module format.
-        //  3. other error cases.
+      // Just return null when:
+      //  1. the module file is 404.
+      //  2. the module file is not written with valid module format.
+      //  3. other error cases.
+      if (!mod) {
         return null;
       }
 
       // Checks cyclic dependencies.
       if (isCyclic(sandbox, uri)) {
-
-        fn.error({
-          code: data.errorCodes.CYCLIC,
+        util.error({
           message: 'found cyclic dependencies',
-          type: 'warn',
           from: 'require',
-          uri: uri
+          uri: uri,
+          type: 'warn'
         });
 
         return mod.exports;
@@ -799,12 +774,11 @@ seajs._fn = {};
 
   function checkPotentialErrors(factory, uri) {
     if (factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
-      fn.error({
-        code: data.errorCodes.EXPORTS,
+      util.error({
         message: 'found invalid setter: exports = {...}',
-        type: 'error',
         from: 'require',
-        uri: uri
+        uri: uri,
+        type: 'error'
       });
     }
   }
@@ -845,6 +819,10 @@ seajs._fn = {};
   config.main = loaderScript.getAttribute('data-main') || '';
 
 
+  // The max time to load a script file.
+  config.timeout = 20000;
+
+
   /**
    * The function to configure the framework.
    * config({
@@ -855,6 +833,7 @@ seajs._fn = {};
    *     'cart': 'cart?t=20110419'
    *   },
    *   charset: 'utf-8',
+   *   timeout: 20000, // 20s
    *   debug: false,
    *   main: './init'
    * });
@@ -872,6 +851,22 @@ seajs._fn = {};
     }
     return this;
   };
+
+
+  /**
+   * The shortcut to set alias.
+   *
+   * @param {string} name The alias.
+   * @param {string} value The actual value.
+   */
+  fn.alias = function(name, value) {
+    var o = {};
+    o[name] = value;
+    return fn.config({
+      alias: o
+    });
+  };
+
 
   function mix(r, s) {
     for (var k in s) {
@@ -902,8 +897,9 @@ seajs._fn = {};
     if (args) {
       var hash = {
         0: 'config',
-        1: 'use',
-        2: 'define'
+        1: 'alias',
+        2: 'use',
+        3: 'define'
       };
       for (var i = 0; i < args.length; i += 2) {
         fn[hash[args[i]]].apply(host, args[i + 1]);
@@ -927,8 +923,9 @@ seajs._fn = {};
   }
 
   // SeaJS Loader API:
-  host.use = fn.use;
   host.config = fn.config;
+  host.alias = fn.alias;
+  host.use = fn.use;
 
   // Module Authoring API:
   global.define = fn.define;
