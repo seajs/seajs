@@ -7,11 +7,11 @@
 
   var config = data.config;
 
-  fn.use = fn.load;
+  fn['use'] = fn.load;
 
   var mainModuleId = config.main;
   if (mainModuleId) {
-    fn.use([mainModuleId]);
+    fn.load([mainModuleId]);
   }
 
   // Parses the pre-call of seajs.config/seajs.boot/define.

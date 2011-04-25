@@ -31,6 +31,7 @@
 
   <!-- 压缩代码 -->
   <target name="compress">
+
     <!-- 保存 debug 版本 -->
     <copy todir="${tmp.dir}">
       <fileset dir="${tmp.dir}"/>
@@ -44,6 +45,22 @@
                    replace=""
                    flags="g"
                    byline="true"
+                   encoding="${charset}">
+      <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
+    </replaceregexp>
+
+      <!-- 版本号替换 -->
+    <replaceregexp match="%VERSION%"
+                   replace="${version}"
+                   flags="g"
+                   encoding="${charset}">
+      <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
+    </replaceregexp>
+
+    <!-- DEBUG 替换 -->
+    <replaceregexp match="%DEBUG%"
+                   replace=""
+                   flags="g"
                    encoding="${charset}">
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
     </replaceregexp>
@@ -74,15 +91,17 @@
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
       <arg line="-jar"/>
       <arg path="${gcc.jar}"/>
-      <arg line="--compilation_level SIMPLE_OPTIMIZATIONS"/>
+      <!--<arg line="-compilation_level SIMPLE_OPTIMIZATIONS"/>-->
+      <arg line="--compilation_level ADVANCED_OPTIMIZATIONS"/>
 
       <!-- http://code.google.com/p/closure-compiler/wiki/Warnings -->
       <arg line="--warning_level ${gcc.warning.level}"/>
       <arg line="--jscomp_${gcc.checkTypes}=checkTypes"/>
       <arg line="--jscomp_off=fileoverviewTags"/>
 
-      <arg line="--define='seajs.version=&quot;${version}&quot;'"/>
-      <arg line="--define='seajs._data.config.debug=false'"/>
+      <!-- define 必须要 var seajs; 在此不起作用。降级为全局替换方式 -->
+      <!--<arg line="-define='seajs.version=&quot;${version}&quot;'"/>-->
+      <!--<arg line="-define='seajs._data.config.debug=false'"/>-->
 
       <arg line="--externs ${module.dir}/extern.js"/>
 
@@ -102,6 +121,7 @@
     <delete>
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
     </delete>
+
   </target>
 
   <!-- 对 JS 文件 ASCII 化 -->
@@ -120,6 +140,7 @@
 
   <!-- 替换版本信息以及给文件加上版权信息 -->
   <target name="copyright">
+
     <tstamp>
       <format property="stamp.time" pattern="MMM d HH:mm" locale="en,UK"/>
       <format property="build.year" pattern="yyyy"/>
@@ -159,6 +180,7 @@
       <fileset dir="${tmp.dir}/cp" includes="${copyright.files}"/>
     </move>
     <delete dir="${tmp.dir}/cp"/>
+
   </target>
 
   <!-- 扫尾工作 -->

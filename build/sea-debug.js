@@ -14,14 +14,14 @@ build time: ${build.time}
 /**
  * Base namespace for the framework.
  */
-this.seajs = { _seajs: this.seajs };
+this['seajs'] = { _seajs: this['seajs'] };
 
 
 /**
- * @define {string} The version of the framework. It will be replaced
- * when building.
+ * @type {string} The version of the framework. It will be replaced
+ * with "major.minor.patch" when building.
  */
-seajs.version = 'major.minor.patch';
+seajs.version = '%VERSION%';
 
 
 // Module status\uff1a
@@ -560,7 +560,7 @@ seajs._fn = {};
    * @param {Array.<string>=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  fn['define'] = function(id, deps, factory) {
 
     // Overloads arguments.
     if (util.isArray(id)) {
@@ -732,10 +732,9 @@ seajs._fn = {};
 
 
 /**
- * @define {boolean} debug mode.
- * It will be turned off automatically when compressing.
+ * Debug mode. It will be turned off automatically when compressing.
  */
-seajs._data.config.debug = true;
+seajs._data.config.debug = '%DEBUG%';
 
 
 (function(util, data, fn) {
@@ -774,7 +773,7 @@ seajs._data.config.debug = true;
    *
    * @param {Object} o The config object.
    */
-  fn.config = function(o) {
+  fn['config'] = function(o) {
     for (var k in o) {
       var sub = config[k];
       if (typeof sub === 'object') {
@@ -802,11 +801,11 @@ seajs._data.config.debug = true;
 
   var config = data.config;
 
-  fn.use = fn.load;
+  fn['use'] = fn.load;
 
   var mainModuleId = config.main;
   if (mainModuleId) {
-    fn.use([mainModuleId]);
+    fn.load([mainModuleId]);
   }
 
   // Parses the pre-call of seajs.config/seajs.boot/define.
@@ -840,11 +839,11 @@ seajs._data.config.debug = true;
   }
 
   // SeaJS Loader API:
-  host.use = fn.use;
-  host.config = fn.config;
+  host['use'] = fn.use;
+  host['config'] = fn.config;
 
   // Module Authoring API:
-  global.define = fn.define;
+  global['define'] = fn.define;
 
   // Keeps clean!
   if (!data.config.debug) {

@@ -8,14 +8,14 @@
 /**
  * Base namespace for the framework.
  */
-this.seajs = { _seajs: this.seajs };
+this['seajs'] = { _seajs: this['seajs'] };
 
 
 /**
- * @define {string} The version of the framework. It will be replaced
- * when building.
+ * @type {string} The version of the framework. It will be replaced
+ * with "major.minor.patch" when building.
  */
-seajs.version = 'major.minor.patch';
+seajs.version = '%VERSION%';
 
 
 // Module status：

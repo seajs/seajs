@@ -11,7 +11,7 @@
    * @param {Array.<string>=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  fn['define'] = function(id, deps, factory) {
 
     // Overloads arguments.
     if (util.isArray(id)) {

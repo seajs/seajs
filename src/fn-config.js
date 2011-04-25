@@ -5,10 +5,9 @@
 
 
 /**
- * @define {boolean} debug mode.
- * It will be turned off automatically when compressing.
+ * Debug mode. It will be turned off automatically when compressing.
  */
-seajs._data.config.debug = true;
+seajs._data.config.debug = '%DEBUG%';
 
 
 (function(util, data, fn) {
@@ -47,7 +46,7 @@ seajs._data.config.debug = true;
    *
    * @param {Object} o The config object.
    */
-  fn.config = function(o) {
+  fn['config'] = function(o) {
     for (var k in o) {
       var sub = config[k];
       if (typeof sub === 'object') {
