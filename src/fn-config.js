@@ -47,7 +47,7 @@
    *
    * @param {Object} o The config object.
    */
-  fn['config'] = function(o) {
+  fn.config = function(o) {
     for (var k in o) {
       var sub = config[k];
       if (typeof sub === 'object') {

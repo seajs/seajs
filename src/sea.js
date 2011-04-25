@@ -8,7 +8,7 @@
 /**
  * Base namespace for the framework.
  */
-this['seajs'] = { _seajs: this['seajs'] };
+this.seajs = { _seajs: this.seajs };
 
 
 /**

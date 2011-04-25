@@ -14,7 +14,7 @@ build time: ${build.time}
 /**
  * Base namespace for the framework.
  */
-this['seajs'] = { _seajs: this['seajs'] };
+this.seajs = { _seajs: this.seajs };
 
 
 /**
@@ -560,7 +560,7 @@ seajs._fn = {};
    * @param {Array.<string>=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn['define'] = function(id, deps, factory) {
+  fn.define = function(id, deps, factory) {
 
     // Overloads arguments.
     if (util.isArray(id)) {
@@ -774,7 +774,7 @@ seajs._fn = {};
    *
    * @param {Object} o The config object.
    */
-  fn['config'] = function(o) {
+  fn.config = function(o) {
     for (var k in o) {
       var sub = config[k];
       if (typeof sub === 'object') {
@@ -802,11 +802,11 @@ seajs._fn = {};
 
   var config = data.config;
 
-  fn['use'] = fn.load;
+  fn.use = fn.load;
 
   var mainModuleId = config.main;
   if (mainModuleId) {
-    fn.load([mainModuleId]);
+    fn.use([mainModuleId]);
   }
 
   // Parses the pre-call of seajs.config/seajs.boot/define.
@@ -840,11 +840,11 @@ seajs._fn = {};
   }
 
   // SeaJS Loader API:
-  host['use'] = fn.use;
-  host['config'] = fn.config;
+  host.use = fn.use;
+  host.config = fn.config;
 
   // Module Authoring API:
-  global['define'] = fn.define;
+  global.define = fn.define;
 
   // Keeps clean!
   if (!data.config.debug) {

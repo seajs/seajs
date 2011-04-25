@@ -18,7 +18,7 @@ define(function(require) {
   var b = require('./submodule/b');
   var c = require('sub/c');
   var c2 = require('sub2/c2');
-  var d = require('test/modules/alias/d');
+  var d = require('./d');
 
   test.assert(a.foo == 'a', 'a.foo should equal to "a".');
   test.assert(b.foo == 'b', 'b.foo should equal to "b".');
