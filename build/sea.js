@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v0.9.0pre
 MIT Licensed
-build time: ${build.time}
+build time: Apr 26 17:02
 */
 
 this.seajs={_seajs:this.seajs};seajs.version="0.9.0pre";seajs._data={config:{},memoizedMods:{}};seajs._util={};seajs._fn={};
