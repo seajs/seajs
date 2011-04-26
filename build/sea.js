@@ -1,10 +1,10 @@
 /*
-Copyright 2011, SeaJS v0.9.0
+Copyright 2011, SeaJS v0.9.0pre
 MIT Licensed
-build time: Apr 26 16:53
+build time: ${build.time}
 */
 
-this.seajs={_seajs:this.seajs};seajs.version="0.9.0";seajs._data={config:{},memoizedMods:{}};seajs._util={};seajs._fn={};
+this.seajs={_seajs:this.seajs};seajs.version="0.9.0pre";seajs._data={config:{},memoizedMods:{}};seajs._util={};seajs._fn={};
 (function(a){var b=Object.prototype.toString;a.isString=function(a){return b.call(a)==="[object String]"};a.isFunction=function(a){return b.call(a)==="[object Function]"};a.isArray=Array.isArray?Array.isArray:function(a){return b.call(a)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(a,f){return a.indexOf(f)}:function(a,f){for(var h=0,e=a.length;h<e;h++)if(a[h]===f)return h;return-1}})(seajs._util);
 (function(a,b){function d(a){var e=["{"],c;for(c in a)if(typeof a[c]==="number"||typeof a[c]==="string")e.push(c+": "+a[c]),e.push(", ");e.pop();e.push("}");return e.join("")}var f=b.config;a.error=function(a){if(a.type==="error")throw"Error occurs! "+d(a);else if(f.debug&&typeof console!=="undefined")console[a.type](d(a))}})(seajs._util,seajs._data);
 (function(a,b,d){function f(a){a=("./"+a).replace(/(.*)?\/.*/,"$1").substring(2);return(a?a:".")+"/"}function h(a){return a.replace(/^(\w+:\/\/[^/]+)\/?.*$/,"$1")}function e(c,e){var b=c,d=i.alias;if(d){var b="/"+b+"/",j;for(j in d)d.hasOwnProperty(j)&&(l[j]||(l[j]=RegExp("/"+j+"/")),b=b.replace(l[j],"/"+d[j]+"/"));b=b.slice(1,-1)}c=b;e=e||q;c.indexOf("://")!==-1?b=c:c.indexOf("./")===0||c.indexOf("../")===0?(c=c.replace(/^\.\//,""),b=f(e)+c):b=c.indexOf("/")===0?h(e)+c:i.base+"/"+c;b=b.replace(/([^:]\/)\/+/g,
