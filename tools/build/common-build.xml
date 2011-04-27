@@ -12,6 +12,7 @@
   <property name="copyright.files" value="*.css, *.js"/>
   <property name="filename" value="${module.name}"/>
   <property name="gcc.warning.level" value="VERBOSE"/>
+  <property name="gcc.externs" value="${current.dir}/extern.js"/>
 
   <!-- 用 gslint 检查 style -->
   <target name="gjslint">
@@ -103,7 +104,7 @@
       <!--<arg line="-define='seajs.version=&quot;${version}&quot;'"/>-->
       <!--<arg line="-define='seajs._data.config.debug=false'"/>-->
 
-      <arg line="--externs ${module.dir}/extern.js"/>
+      <arg line="--externs ${gcc.externs}"/>
 
       <arg line="--js"/>
       <srcfile/>

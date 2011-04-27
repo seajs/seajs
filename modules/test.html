@@ -152,6 +152,13 @@
     });
 
 
+    seajs.use('querystring', function(querystring) {
+      printHeader('QueryString v' + querystring.version);
+
+      assert(querystring, 'check exports');
+      printDone();
+    });
+
   })(this);
 </script>
 </body>
