@@ -118,21 +118,14 @@ define(function() {
       return ret;
     }
 
-    sep = sep || '&';
+    var pairs = str.split(sep || '&');
     eq = eq || '=';
 
-    var pairs = str.split(sep);
-
     for (var i = 0; i < pairs.length; i++) {
-      var pair = pairs[i];
 
-      var p = pair.indexOf(eq);
-      if (p === -1) {
-        p = pair.length;
-      }
-
-      var key = querystring.unescape(trim(pair.slice(0, p)));
-      var val = querystring.unescape(trim(pair.slice(p + eq.length)));
+      var pair = pairs[i].split(eq);
+      var key = querystring.unescape(trim(pair[0]));
+      var val = querystring.unescape(trim(pair.slice(1).join(eq)));
 
       var m = key.match(/^(\w+)\[\]$/);
       if (m && m[1]) {
