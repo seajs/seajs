@@ -48,14 +48,14 @@ The unescape function used by `querystring.parse`,
 provided so that it could be overridden if necessary.
 
 
-### require it
+### require('querystring')
 
-This is the built-in module of SeaJS, so you can just get it using require()
-in any module:
+querystring is a built-in module in SeaJS. You can get it very easily:
 
     define(function(require, exports, module) {
       var querystring = require('querystring');
 
       querystring.stringify(someObject);
       querystring.parse(someString);
+
     });
