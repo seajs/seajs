@@ -53,6 +53,7 @@ provided so that it could be overridden if necessary.
 querystring is a built-in module in SeaJS. You can get it very easily:
 
     define(function(require, exports, module) {
+
       var querystring = require('querystring');
 
       querystring.stringify(someObject);
