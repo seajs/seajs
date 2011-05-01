@@ -6,7 +6,6 @@
  * @see Thanks to:
  *   - http://nodejs.org/docs/v0.4.7/api/querystring.html
  *   - http://developer.yahoo.com/yui/3/api/QueryString.html
- *   - https://github.com/kissyteam/kissy/blob/master/src/seed/web.js
  */
 
 define(function() {
