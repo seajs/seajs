@@ -16,7 +16,9 @@
 
   <!-- 用 gslint 检查 style -->
   <target name="gjslint">
-    <exec executable="/usr/local/bin/gjslint" os="Mac OS X" failonerror="true" searchpath="true">
+    <exec executable="/usr/local/bin/gjslint" os="Mac OS X"
+          failonerror="true"
+          searchpath="true">
       <arg line="--strict *.js"/>
     </exec>
   </target>
@@ -88,7 +90,8 @@
     </ac:if>
 
     <!-- 用 Google Closure Compiler 压缩 JS -->
-    <apply executable="java" verbose="true" dir="${tmp.dir}" failonerror="true">
+    <apply executable="java" verbose="true" dir="${tmp.dir}"
+           failonerror="true">
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
       <arg line="-jar"/>
       <arg path="${gcc.jar}"/>

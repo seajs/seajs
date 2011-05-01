@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Comparing escape(), encodeURI(), and encodeURIComponent()</title>
+<style>
+  td {
+    padding: 5px 10px;
+    width: 120px;
+    text-align: center;
+  }
+
+  .diff {
+    background: #fcc;
+  }
+</style>
+</head>
+<body>
+<table>
+  <caption>Comparing escape(), encodeURI(), and encodeURIComponent()</caption>
+  <thead>
+  <th>Hx</th>
+  <th>c</th>
+  <th>escape(c)</th>
+  <th>encodeURIComponent(c)</th>
+  <th>encodeURI(c)</th>
+  </thead>
+  <tbody id="J_Data">
+  <script>
+
+    for (var i = 32; i < 128; ++i) {
+      output(i);
+    }
+    output('雕'.charCodeAt(0));
+
+    function output(i) {
+      var c = String.fromCharCode(i);
+      var c1 = escape(c);
+      var c2 = encodeURIComponent(c);
+      var c3 = encodeURI(c);
+
+      if (c1 != c2 || c1 != c3) {
+        document.write('<tr class="diff">');
+      } else {
+        document.write('<tr>');
+      }
+      document.write('<td>' + i.toString(16) + '</td>');
+      document.write('<td>' + c + '</td>');
+      document.write('<td>' + c1 + '</td>');
+      document.write('<td>' + c2 + '</td>');
+      document.write('<td>' + c3 + '</td>');
+      document.write('</tr>');
+    }
+
+  </script>
+  </tbody>
+</table>
+
+<p>
+  Ref: <a href="http://xkr.us/articles/javascript/encode-compare/">http://xkr.us/articles/javascript/encode-compare/</a>
+</p>
+
+</body>
+</html>
