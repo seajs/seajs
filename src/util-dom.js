@@ -7,15 +7,13 @@
 
   var head = document.getElementsByTagName('head')[0];
 
-  util.getScript = function(url, callback, charset) {
-    var node = document.createElement('script');
-    var isLoaded = false;
+  util.getAsset = function(url, callback, charset) {
+    var isCSS = /\.css(?:\?|$)/i.test(url);
+    var node = document.createElement(isCSS ? 'link' : 'script');
 
-    scriptOnload(node, cb);
-
-    function cb() {
-      isLoaded = true;
+    assetOnload(node, function() {
       if (callback) callback.call(node);
+      if (isCSS) return;
 
       // Reduces memory leak.
       try {
@@ -27,30 +25,52 @@
       } catch (x) {
       }
       head.removeChild(node);
+    });
+
+    if (isCSS) {
+      node.rel = 'stylesheet';
+      node.href = url;
     }
-
-    setTimeout(function() {
-      if (!isLoaded) {
-        cb();
-      }
-    }, data.config.timeout);
-
+    else {
+      node.async = true;
+      node.src = url;
+    }
     if (charset) node.setAttribute('charset', charset);
-    node.async = true;
-    node.src = url;
+
     return head.insertBefore(node, head.firstChild);
   };
 
-  function scriptOnload(node, callback) {
-    node.addEventListener('load', callback, false);
-    node.addEventListener('error', callback, false);
+  function assetOnload(node, callback) {
+    if (node.nodeName === 'SCRIPT') {
+      scriptOnload(node, cb);
+    } else {
+      styleOnload(node, cb);
+    }
 
-    // NOTICE: Nothing will happen in Opera when the file status is 404. In
-    // this case, the callback will be called when time is out.
+    var timer = setTimeout(function() {
+      cb();
+      util.error({
+        message: 'time is out',
+        from: 'getAsset',
+        type: 'warn'
+      });
+    }, data.config.timeout);
+
+    function cb() {
+      cb.isCalled = true;
+      callback();
+      clearTimeout(timer);
+    }
   }
 
-  if (!head.addEventListener) {
-    scriptOnload = function(node, callback) {
+  function scriptOnload(node, callback) {
+    if (node.addEventListener) {
+      node.addEventListener('load', callback, false);
+      node.addEventListener('error', callback, false);
+      // NOTICE: Nothing will happen in Opera when the file status is 404. In
+      // this case, the callback will be called when time is out.
+    }
+    else { // for IE6-8
       node.attachEvent('onreadystatechange', function() {
         var rs = node.readyState;
         if (rs === 'loaded' || rs === 'complete') {
@@ -60,7 +80,48 @@
     }
   }
 
-  util.scriptOnload = scriptOnload;
+  function styleOnload(node, callback) {
+
+    // for IE6-9 and Opera
+    if (node.attachEvent) {
+      node.attachEvent('onload', callback);
+      // NOTICE:
+      // 1. "onload" will be fired in IE6-9 when the file is 404, but in
+      // this situation, Opera does nothing, so fallback to timeout.
+      // 2. "onerror" doesn't fire in any browsers!
+    }
+    // polling for Chrome and Safari
+    else if (window['devicePixelRatio']) {
+      setTimeout(function() {
+        poll(node, callback);
+      }, 0); // for cache
+    }
+    // call immediately in Firefox
+    else {
+      callback();
+    }
+  }
+
+  function poll(node, callback) {
+    if (callback.isCalled) {
+      return;
+    }
+
+    // ref: http://yearofmoo.com/2011/03/cross-browser-stylesheet-preloading/
+    var stylesheets = document.styleSheets;
+    for (var i = 0; i < stylesheets.length; i++) {
+      if (stylesheets[i]['ownerNode'] === node) {
+        callback();
+        return;
+      }
+    }
+
+    setTimeout(function() {
+      poll(node, callback);
+    }, 15);
+  }
+
+  util.assetOnload = assetOnload;
 
 
   var interactiveScript = null;
@@ -91,3 +152,9 @@
   };
 
 })(seajs._util, seajs._data);
+
+/**
+ * references:
+ *  - http://lifesinger.org/lab/2011/load-js-css/
+ *  - ./test/issues/load-css/test.html
+ */

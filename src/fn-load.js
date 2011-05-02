@@ -105,13 +105,13 @@
   function fetch(uri, callback) {
 
     if (fetchingMods[uri]) {
-      util.scriptOnload(fetchingMods[uri], cb);
+      util.assetOnload(fetchingMods[uri], cb);
     }
     else {
       // See fn-define.js: "uri = data.pendingModIE"
       data.pendingModIE = uri;
 
-      fetchingMods[uri] = util.getScript(
+      fetchingMods[uri] = util.getAsset(
           util.restoreUrlArgs(uri),
           cb,
           data.config.charset
