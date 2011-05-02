@@ -520,6 +520,7 @@ seajs._fn = {};
 /**
  * references:
  *  - http://lifesinger.org/lab/2011/load-js-css/
+ *  - ./test/issues/load-css/test.html
  */
 
 /**
