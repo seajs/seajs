@@ -67,6 +67,7 @@
     var pattern = /\brequire\s*\(\s*['"]?([^'")]*)/g;
     var ret = [], match;
 
+    code = removeComments(code);
     while ((match = pattern.exec(code))) {
       if (match[1]) {
         ret.push(match[1]);
@@ -74,6 +75,14 @@
     }
 
     return ret;
+  }
+
+
+  // http://lifesinger.org/lab/2011/remove-comments-safely/
+  function removeComments(code) {
+    return code
+        .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
+        .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
 
 })(seajs._util, seajs._data, seajs._fn);
