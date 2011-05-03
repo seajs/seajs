@@ -376,6 +376,7 @@ seajs._fn = {};
   util.getAsset = function(url, callback, charset) {
     var isCSS = /\.css(?:\?|$)/i.test(url);
     var node = document.createElement(isCSS ? 'link' : 'script');
+    if (charset) node.setAttribute('charset', charset);
 
     assetOnload(node, function() {
       if (callback) callback.call(node);
@@ -396,14 +397,15 @@ seajs._fn = {};
     if (isCSS) {
       node.rel = 'stylesheet';
       node.href = url;
+      head.appendChild(node); // keep order
     }
     else {
       node.async = true;
       node.src = url;
+      head.insertBefore(node, head.firstChild);
     }
-    if (charset) node.setAttribute('charset', charset);
 
-    return head.insertBefore(node, head.firstChild);
+    return node;
   };
 
   function assetOnload(node, callback) {
