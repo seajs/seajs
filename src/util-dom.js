@@ -6,6 +6,8 @@
 (function(util, data) {
 
   var head = document.getElementsByTagName('head')[0];
+  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') !== -1;
+
 
   util.getAsset = function(url, callback, charset) {
     var isCSS = /\.css(?:\?|$)/i.test(url);
@@ -81,7 +83,6 @@
   }
 
   function styleOnload(node, callback) {
-
     // for IE6-9 and Opera
     if (node.attachEvent) {
       node.attachEvent('onload', callback);
@@ -90,15 +91,11 @@
       // this situation, Opera does nothing, so fallback to timeout.
       // 2. "onerror" doesn't fire in any browsers!
     }
-    // polling for Chrome and Safari
-    else if (window['devicePixelRatio']) {
+    // polling for Firefox, Chrome, Safari
+    else {
       setTimeout(function() {
         poll(node, callback);
       }, 0); // for cache
-    }
-    // call immediately in Firefox
-    else {
-      callback();
     }
   }
 
@@ -107,18 +104,37 @@
       return;
     }
 
-    // ref: http://yearofmoo.com/2011/03/cross-browser-stylesheet-preloading/
-    var stylesheets = document.styleSheets;
-    for (var i = 0; i < stylesheets.length; i++) {
-      if (stylesheets[i]['ownerNode'] === node) {
-        callback();
-        return;
+    var isLoaded = false;
+
+    if (isWebKit) {
+      if (node['sheet']) {
+        isLoaded = true;
+      }
+    }
+    // for Firefox
+    else if (node['sheet']) {
+      try {
+        if (node['sheet'].cssRules) {
+          isLoaded = true;
+        }
+      } catch (ex) {
+        if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
+          isLoaded = true;
+        }
       }
     }
 
-    setTimeout(function() {
-      poll(node, callback);
-    }, 15);
+    if (isLoaded) {
+      // give time to render.
+      setTimeout(function() {
+        callback();
+      }, 1);
+    }
+    else {
+      setTimeout(function() {
+        poll(node, callback);
+      }, 1);
+    }
   }
 
   util.assetOnload = assetOnload;

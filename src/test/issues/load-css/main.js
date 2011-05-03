@@ -24,7 +24,6 @@ define(function(require, exports, module) {
   });
 
 
-  print('****NOTICE: failed in Firefox is ok.');
   print('****NOTICE: 404 will occur after 5 second (timeout) in Opera.');
 
   
