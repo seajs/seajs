@@ -24,7 +24,7 @@ this.seajs = { _seajs: this.seajs };
 seajs.version = '%VERSION%';
 
 
-// Module status\uff1a
+// Module status：
 //  1. downloaded - The script file has been downloaded to the browser.
 //  2. define()d - The define() has been executed.
 //  3. memoize()d - The module info has been added to memoizedMods.

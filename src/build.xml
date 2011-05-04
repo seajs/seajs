@@ -36,7 +36,8 @@
     </delete>
   </target>
 
-  <target name="build" depends="gjslint,concat,common.build,clean">
+  <target name="build"
+          depends="gjslint,concat,prepare,compress,copyright,destroy,clean">
   </target>
 
 </project>

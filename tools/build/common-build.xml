@@ -14,6 +14,7 @@
   <property name="gcc.warning.level" value="VERBOSE"/>
   <property name="gcc.externs" value="${current.dir}/extern.js"/>
 
+
   <!-- 用 gslint 检查 style -->
   <target name="gjslint">
     <exec executable="/usr/local/bin/gjslint" os="Mac OS X"
@@ -23,6 +24,7 @@
     </exec>
   </target>
 
+
   <!-- 清空、复制等准备工作 -->
   <target name="prepare">
     <delete dir="${tmp.dir}"/>
@@ -30,10 +32,6 @@
     <copy todir="${tmp.dir}">
       <fileset dir="${module.dir}" includes="${module.files}"/>
     </copy>
-  </target>
-
-  <!-- 压缩代码 -->
-  <target name="compress">
 
     <!-- 保存 debug 版本 -->
     <copy todir="${tmp.dir}">
@@ -42,6 +40,29 @@
               from="^(.*?)(?:-pkg)?\.(css|js)$"
               to="\1-debug.\2"/>
     </copy>
+  </target>
+
+
+  <!-- 提取并添加模块名和依赖信息 -->
+  <target name="extract">
+    <copy file="${tmp.dir}/${filename}-pkg.js"
+          tofile="${tmp.dir}/${filename}.js"/>
+
+    <exec executable="${current.dir}/extract.sh"
+          os="Mac OS X"
+          dir="${tmp.dir}"
+          failonerror="true"
+          searchpath="true">
+      <arg line="--input ${filename}.js"/>
+      <arg line="--output ${filename}-pkg.js"/>
+    </exec>
+
+    <delete file="${tmp.dir}/${filename}.js"/>
+  </target>
+
+
+  <!-- 压缩代码 -->
+  <target name="compress">
 
     <!-- 去除 console.log 等代码行 -->
     <replaceregexp match="^\s*console\.[\w]+\(.+$"
@@ -128,6 +149,7 @@
 
   </target>
 
+
   <!-- 对 JS 文件 ASCII 化 -->
   <target name="native2ascii" depends="compress">
     <mkdir dir="${tmp.dir}/ascii"/>
@@ -141,6 +163,7 @@
                   includes="*.js"/>
     <delete dir="${tmp.dir}/ascii"/>
   </target>
+
 
   <!-- 替换版本信息以及给文件加上版权信息 -->
   <target name="copyright">
@@ -187,6 +210,7 @@
 
   </target>
 
+
   <!-- 扫尾工作 -->
   <target name="destroy">
     <move todir="${tmp.dir}/../">
@@ -195,7 +219,9 @@
     <delete dir="${tmp.dir}"/>
   </target>
 
+
   <target name="common.build"
-          depends="prepare,compress,native2ascii,copyright,destroy">
+          depends="prepare,extract,compress,native2ascii,copyright,destroy">
   </target>
+
 </project>

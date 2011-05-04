@@ -21,7 +21,8 @@
     </delete>
   </target>
 
-  <target name="build" depends="gjslint,concat,common.build,clean">
+  <target name="build"
+          depends="gjslint,concat,prepare,extract,compress,copyright,destroy,clean">
   </target>
 
 </project>
