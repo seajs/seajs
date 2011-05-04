@@ -22,7 +22,7 @@ for (var i = 2; i < process.argv.length; i++) {
 }
 
 if(!inputFile) {
-  console.log('Usage: node extract --input a.js --output out.js');
+  console.log('Usage: extract --input a.js --output out.js');
   process.exit();
 }
 
