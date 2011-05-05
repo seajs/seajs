@@ -52,7 +52,7 @@ function build(files, basedir) {
     if (stat.isFile()) {
       buildFile(p);
     }
-    else if (isRecursive && stat.isDirectory()) {
+    else if (isRecursive && name != "__build" && stat.isDirectory()) {
       build(fs.readdirSync(p), path.dirname(p));
     }
   });
