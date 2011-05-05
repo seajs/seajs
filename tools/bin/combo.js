@@ -13,7 +13,8 @@ var COMBO_DIR = "__combo_tmp";
 
 
 exports.run = function(inputFile, outputFile) {
-  var files = getAllRelativeDependencies(inputFile);
+  var files = [];
+  getAllRelativeDependencies(inputFile, files);
 
   var tmpdir = path.join(path.dirname(inputFile), COMBO_DIR);
   util.mkdirSilent(tmpdir);
@@ -42,8 +43,9 @@ exports.run = function(inputFile, outputFile) {
 };
 
 
-function getAllRelativeDependencies(filepath) {
-  var ret = [filepath];
+function getAllRelativeDependencies(filepath, ret) {
+  ret.push(filepath);
+
   var basedir = path.dirname(filepath);
   var deps = getDependencies(filepath);
 
@@ -54,12 +56,12 @@ function getAllRelativeDependencies(filepath) {
       if (!path.existsSync(p)) {
         p += ".js";
         if (!path.existsSync(p)) {
-          throw p + " doesn't exist.";
+          throw "This file doesn't exist: " + p;
         }
       }
 
       if(ret.indexOf(p) == -1) {
-        ret = ret.concat(getAllRelativeDependencies(p));
+        getAllRelativeDependencies(p, ret);
       }
     }
   });

@@ -11,10 +11,4 @@ Install on Mac OS X
 Usage
 ------
 
-   sbuild filename.js [--combo | --aio]
-
-   sbuild a.js  Only extract dependencies and compress it
-       --combo  Also combine relative dependencies to a.js
-       --aio    Combine all dependencies to a.js [NOT implemented yet]
-
-   sbuild clear Clear all "__build" directories
+   sbuild --help
