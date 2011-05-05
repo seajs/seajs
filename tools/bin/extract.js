@@ -50,7 +50,7 @@ function run(inputFile, outputFile, compress) {
       outputFile = getAutoOutputPath(inputFile);
     }
     fs.writeFileSync(outputFile, out, "utf-8");
-    console.log("Successfully process " + util.getRelativePath(inputFile));
+    console.log(" ... process " + util.getRelativePath(inputFile));
   } else {
     console.log(out);
   }
