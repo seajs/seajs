@@ -1,5 +1,5 @@
 
-define('klass', [], function(require, exports, module) {
+define([],function(require, exports, module) {
 /**
   * Klass.js - copyright @dedfat
   * version 1.0

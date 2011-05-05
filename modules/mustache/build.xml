@@ -13,7 +13,7 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define('${module.name}',[],function(require,exports,module) {
+        define([],function(require,exports,module) {
         /**
          * @license mustache.js -- Logic-less templates in JavaScript
          * See http://mustache.github.com/ for more info.
