@@ -1,9 +1,3 @@
-define(['./math-pkg', 'test/test'], function(require) {
-
-  var test = require('test/test');
-  var inc = require('./increment').increment;
-
-  test.assert(inc(1) === 2, 'The result of inc(1) is 2.');
-  test.print('DONE', 'info');
-
-});
+define("program",["test/test","./increment"],function(a){var b=a("test/test"),c=a("./increment").increment;b.assert(c(1)===2,"The result of inc(1) is 2."),b.print("DONE","info")});
+define("increment",["./math"],function(a,b){var c=a("./math").add;b.increment=function(a){return c(a,1)}});
+define("math",[],function(a,b){b.add=function(){var a=0,b=0,c=arguments.length;while(b<c)a+=arguments[b++];return a}});
