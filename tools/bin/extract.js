@@ -38,11 +38,11 @@ if (__filename == process.argv[1]) {
 }
 
 
-function run(inputFile, outputFile, compress) {
+function run(inputFile, outputFile, compress, baseFile) {
   var code = fs.readFileSync(inputFile, "utf-8");
   var ast = uglifyjs.parser.parse(code);
 
-  var info = extractInfo(inputFile, ast);
+  var info = extractInfo(inputFile, ast, baseFile);
   var out = generateCode(ast, info, compress);
 
   if (outputFile) {
@@ -59,11 +59,45 @@ function run(inputFile, outputFile, compress) {
 }
 
 
-function extractInfo(inputFile, ast) {
+function extractInfo(inputFile, ast, baseFile) {
+  var name = path.basename(inputFile, ".js");
+  if (baseFile) {
+    name = getRelativeName(inputFile, baseFile);
+  }
+
   return {
-    name: path.basename(inputFile, ".js"),
+    name: name,
     deps: getDependencies(ast)
   };
+}
+
+
+function getRelativeName(inputFile, baseFile) {
+  // if baseFile is    "/path/to/abc/main.js"
+  // when inputFile is "/path/to/abc/sub/a.js"
+  // then name is      "./sub/a"
+  // when inputFile is "path/to/xyz/c.js"
+  // then name is      "../../xyz/c"
+  var base = path.dirname(baseFile).split("/");
+
+  var parts = path.dirname(inputFile).split("/");
+  parts.push(path.basename(inputFile, ".js"));
+
+  var name = [];
+
+  for (var i = 0; i < parts.length; i++) {
+    if (parts[i] != base[i]) {
+      if (base[i]) {
+        for (var j = i; j < parts.length; i++) {
+          name.push("..");
+        }
+      }
+      name = name.concat(parts.slice(i));
+      break;
+    }
+  }
+
+  return name.join("/");
 }
 
 
@@ -77,13 +111,15 @@ function getDynamicDependencies(ast) {
 
   // get dependencies
   // require('a') ==> call,name,require,string,a
-  var pattern = /,call,name,require,string,([^,]+),|$/g;
+  var pattern = /,call,name,require,string,([^,?]+)(?:\?|,|$)/g;
   var text = ast.toString();
   var match;
   while ((match = pattern.exec(text)) && match[1]) {
-    deps.push(match[1]);
+    if (deps.indexOf(match[1]) == -1) {
+      deps.push(match[1]);
+    }
   }
-  
+
   return deps;
 }
 

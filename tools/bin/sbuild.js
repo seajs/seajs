@@ -76,7 +76,10 @@ function buildFile(filepath) {
 
 
 function normalize(p, basedir) {
-  if (p.indexOf("/") != 0) {
+  if (p == "*.js") {
+    p = basedir;
+  }
+  else if (p.indexOf("/") != 0) {
     p = path.join(basedir, p);
   }
 

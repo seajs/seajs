@@ -21,7 +21,7 @@ exports.run = function(inputFile, outputFile) {
 
   var extractedFiles = files.map(function(file) {
     var t = path.join(tmpdir, path.basename(file));
-    extract.run(file, t, true);
+    extract.run(file, t, true, inputFile);
     return t;
   });
 
