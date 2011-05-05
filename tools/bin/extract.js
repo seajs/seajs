@@ -7,6 +7,8 @@
 var fs = require("fs");
 var path = require('path');
 var uglifyjs = require("uglify-js");
+var util = require("./util");
+var BUILD = "__build";
 
 
 // call directly
@@ -44,31 +46,87 @@ function run(inputFile, outputFile, compress) {
   var out = generateCode(ast, info, compress);
 
   if (outputFile) {
+    if (outputFile == "auto") {
+      outputFile = getAutoOutputPath(inputFile);
+    }
     fs.writeFileSync(outputFile, out, "utf-8");
+    console.log("Successfully process " + util.getRelativePath(inputFile));
   } else {
     console.log(out);
   }
+
+  return outputFile;
 }
 
 
 function extractInfo(inputFile, ast) {
-  // get module name
-  var name = path.basename(inputFile, ".js");
+  return {
+    name: path.basename(inputFile, ".js"),
+    deps: getDependencies(ast)
+  };
+}
+
+
+function getDependencies(ast) {
+  return getStaticDependencies(ast) || getDynamicDependencies(ast);
+}
+
+
+function getDynamicDependencies(ast) {
+  var deps = [];
 
   // get dependencies
   // require('a') ==> call,name,require,string,a
   var pattern = /,call,name,require,string,([^,]+),|$/g;
   var text = ast.toString();
-  var deps = [];
   var match;
   while ((match = pattern.exec(text)) && match[1]) {
     deps.push(match[1]);
   }
+  
+  return deps;
+}
 
-  return {
-    name: name,
-    deps: deps
-  };
+
+function getStaticDependencies(ast) {
+  var deps = null;
+
+  // ast: [ 'toplevel', [ [ 'stat', [Object] ], [ 'stat', [Object], ... ] ] ]
+  var stats = ast[1];
+
+  for (var i = 0; i < stats.length; i++) {
+    // [ 'stat', [ 'call', [ 'name', 'define' ], [ [Object] ] ] ]
+    var stat = stats[i];
+
+    if (stat.toString()
+        .indexOf("stat,call,name,define,") == 0) {
+
+      // stat:
+      // [ 'stat',
+      //   [ 'call',
+      //     [ 'name', 'define' ],
+      //     [ [Object], [Object], [Object] ] ] ]
+      var args = stat[1][2];
+
+      // args:
+      //    [ [ 'string', 'program' ],
+      //      [ 'array', [ [Object], [Object] ] ],
+      //      [ 'function', null, [ 'require' ], [] ] ]
+      if(args[1] && (args[1][0] == "array")) {
+
+        // args[1]:
+        //   [ 'array', [ [ 'string', 'a' ], [ 'string', 'b' ] ] ]
+        deps = (deps || []).concat(args[1][1].map(function(item) {
+          return item[1];
+        }));
+
+      }
+
+      break;
+    }
+  }
+
+  return deps;
 }
 
 
@@ -110,8 +168,18 @@ function generateCode(ast, info, compress) {
   return pro.gen_code(ast, {
     beautify: !compress,
     indent_level: 2
-  });
+  }) + ";";
 }
 
 
+function getAutoOutputPath(inputFile) {
+  var outputDir = path.join(path.dirname(inputFile), BUILD);
+  util.mkdirSilent(outputDir);
+  return path.join(outputDir, path.basename(inputFile));
+}
+
+
+// api
 exports.run = run;
+exports.getAutoOutputPath = getAutoOutputPath;
+exports.getDependencies = getDependencies;

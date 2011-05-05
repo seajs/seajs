@@ -17,3 +17,4 @@ Usage
        --combo  Also combine relative dependencies to a.js
        --aio    Combine all dependencies to a.js [NOT implemented yet]
 
+   sbuild clear Clear all "__build" directories

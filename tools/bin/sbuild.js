@@ -1,11 +1,12 @@
 
 var path = require("path");
 var fs = require("fs");
+var util = require("./util");
 
 
 var inputFile, combo = false;
 
-// node sbuild.js filename.js --combo
+// node sbuild filename.js --combo
 for (var i = 2; i < process.argv.length; i++) {
   var arg = process.argv[i];
   if (arg.indexOf("-") == -1) {
@@ -20,6 +21,11 @@ if (!inputFile) {
   console.log("Usage: sbuild filename.js [--combo]");
   process.exit();
 }
+// node sbuild clear
+else if (inputFile == "clear") {
+  require("./clear").run(process.cwd());
+  process.exit();
+}
 
 inputFile = path.join(process.cwd(), inputFile);
 
@@ -27,20 +33,13 @@ if (!path.existsSync(inputFile)) {
   throw "The input file doesn't exist. " + inputFile;
 }
 
-var outputDir = path.join(
-    path.dirname(inputFile),
-    "__build"
-    );
 
-var outputFile = path.join(
-    outputDir,
-    path.basename(inputFile)
-    );
-
-if (!path.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, '0766');
+// node sbuild filename.js
+if (!combo) {
+  var outputFile = require("./extract").run(inputFile, "auto", true);
+  console.log("Successfully build to " + util.getRelativePath(outputFile));
 }
-
-
-require("./extract").run(inputFile, outputFile, true);
-
+// node sbuild filename.js --combo
+else {
+  require("./combo").run(inputFile, "auto");
+}
