@@ -45,7 +45,12 @@ seajs._data = {
    * Modules that have been memoize()d.
    * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  memoizedMods: {}
+  memoizedMods: {},
+
+  /**
+   * Store the module information for "real" work in the onload event.
+   */
+  pendingMods: []
 };
 
 
@@ -663,9 +668,19 @@ seajs._fn = {};
     }
 
     function cb() {
-      if (data.pendingMod) {
-        util.memoize(uri, data.pendingMod);
-        data.pendingMod = null;
+
+      if (data.pendingMods) {
+
+        for (var i = 0; i < data.pendingMods.length; i++) {
+          var pendingMod = data.pendingMods[i];
+          var name = pendingMod.id;
+          if (name) {
+            uri = util.id2Uri('./' + name, uri);
+          }
+          util.memoize(uri, pendingMod);
+        }
+
+        data.pendingMods = [];
       }
 
       if (fetchingMods[uri]) {
@@ -697,27 +712,27 @@ seajs._fn = {};
 
   /**
    * Defines a module.
-   * @param {string=} id The module canonical id.
+   * @param {string=} name The module name.
    * @param {Array.<string>=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  fn.define = function(name, deps, factory) {
 
     // Overloads arguments.
-    if (util.isArray(id)) {
+    if (util.isArray(name)) {
       factory = deps;
-      deps = id;
-      id = '';
+      deps = name;
+      name = '';
     }
-    else if (!util.isString(id)) {
-      factory = id;
+    else if (!util.isString(name)) {
+      factory = name;
       if (util.isFunction(factory)) {
         deps = parseDependencies(factory.toString());
       }
-      id = '';
+      name = '';
     }
 
-    var mod = { id: id, dependencies: deps || [], factory: factory };
+    var mod = { id: name, dependencies: deps || [], factory: factory };
     var uri;
 
     if (document.attachEvent && !window.opera) {
@@ -744,10 +759,14 @@ seajs._fn = {};
     }
 
     if (uri) {
+      if (name) {
+        uri = util.id2Uri('./' + name, uri);
+      }
       util.memoize(uri, mod);
-    } else {
+    }
+    else {
       // Saves information for "real" work in the onload event.
-      data.pendingMod = mod;
+      data.pendingMods.push(mod);
     }
 
   };

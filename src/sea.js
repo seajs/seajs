@@ -39,7 +39,12 @@ seajs._data = {
    * Modules that have been memoize()d.
    * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  memoizedMods: {}
+  memoizedMods: {},
+
+  /**
+   * Store the module information for "real" work in the onload event.
+   */
+  pendingMods: []
 };
 
 

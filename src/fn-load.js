@@ -121,9 +121,19 @@
     }
 
     function cb() {
-      if (data.pendingMod) {
-        util.memoize(uri, data.pendingMod);
-        data.pendingMod = null;
+
+      if (data.pendingMods) {
+
+        for (var i = 0; i < data.pendingMods.length; i++) {
+          var pendingMod = data.pendingMods[i];
+          var name = pendingMod.id;
+          if (name) {
+            uri = util.id2Uri('./' + name, uri);
+          }
+          util.memoize(uri, pendingMod);
+        }
+
+        data.pendingMods = [];
       }
 
       if (fetchingMods[uri]) {

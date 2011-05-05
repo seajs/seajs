@@ -7,27 +7,27 @@
 
   /**
    * Defines a module.
-   * @param {string=} id The module canonical id.
+   * @param {string=} name The module name.
    * @param {Array.<string>=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  fn.define = function(name, deps, factory) {
 
     // Overloads arguments.
-    if (util.isArray(id)) {
+    if (util.isArray(name)) {
       factory = deps;
-      deps = id;
-      id = '';
+      deps = name;
+      name = '';
     }
-    else if (!util.isString(id)) {
-      factory = id;
+    else if (!util.isString(name)) {
+      factory = name;
       if (util.isFunction(factory)) {
         deps = parseDependencies(factory.toString());
       }
-      id = '';
+      name = '';
     }
 
-    var mod = { id: id, dependencies: deps || [], factory: factory };
+    var mod = { id: name, dependencies: deps || [], factory: factory };
     var uri;
 
     if (document.attachEvent && !window.opera) {
@@ -54,10 +54,14 @@
     }
 
     if (uri) {
+      if (name) {
+        uri = util.id2Uri('./' + name, uri);
+      }
       util.memoize(uri, mod);
-    } else {
+    }
+    else {
       // Saves information for "real" work in the onload event.
-      data.pendingMod = mod;
+      data.pendingMods.push(mod);
     }
 
   };
