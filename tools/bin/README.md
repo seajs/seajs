@@ -9,7 +9,7 @@ Install on Mac OS X
 Install on Windows
 -------------------
 
- - add X:\path\to\seajs\tools\bin to your %PATH%
+ - add X:\\path\\to\\seajs\\tools\\bin to your %PATH%
 
 
 Usage
