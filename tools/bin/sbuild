@@ -1,4 +1,3 @@
 #!/bin/sh
 
-WD=`cd \`dirname "$0"\`; pwd`
-/usr/bin/env node $WD/sbuild.js $@
+/usr/bin/env node `dirname "$0"`/sbuild.js $@
