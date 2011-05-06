@@ -1,4 +1,3 @@
 #!/bin/sh
 
-WD=`cd \`dirname "$0"\`; pwd`
-~/local/node/bin/node $WD/../bin/extract.js $@
+~/local/node/bin/node `dirname "$0"`/../bin/extract.js $@

@@ -6,7 +6,7 @@
 
 var fs = require("fs");
 var path = require("path");
-var uglifyjs = require("uglify-js");
+var uglifyjs = require("../uglify-js/uglify-js");
 var extract = require("./extract");
 var util = require("./util");
 var COMBO_DIR = "__combo_tmp";

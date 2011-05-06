@@ -3,9 +3,13 @@ Install on Mac OS X
 --------------------
 
  - brew install node
- - curl http://npmjs.org/install.sh | sh
- - npm install uglify-js
- - sudo vi /etc/paths, and adds path/to/seajs/tools/bin
+ - sudo vi /etc/paths, and add /path/to/seajs/tools/bin
+
+
+Install on Windows
+-------------------
+
+ - add X:\path\to\seajs\tools\bin to your %PATH%
 
 
 Usage
