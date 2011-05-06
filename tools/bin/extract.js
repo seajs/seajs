@@ -114,7 +114,7 @@ function getDynamicDependencies(ast) {
   var pattern = /,call,name,require,string,([^,?]+)(?:\?|,|$)/g;
   var text = ast.toString();
   var match;
-  while ((match = pattern.exec(text)) && match[1]) {
+  while ((match = pattern.exec(text))) {
     if (deps.indexOf(match[1]) == -1) {
       deps.push(match[1]);
     }
