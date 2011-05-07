@@ -8,31 +8,9 @@
 </head>
 <body>
 
+<script src="config.js"></script>
 <script>
   (function() {
-
-    var tests = [
-      'modules/math'
-      ,'modules/cyclic'
-      ,'modules/relative'
-      ,'modules/determinism'
-      ,'modules/exactExports'
-      ,'modules/hasOwnProperty'
-      ,'modules/method'
-      ,'modules/missing'
-      ,'modules/monkeys'
-      ,'modules/nested'
-      ,'modules/transitive'
-      ,'modules/alias'
-      ,'modules/version'
-      ,'modules/load'
-      ,'modules/metadata'
-      ,'modules/exports'
-      ,'modules/checkPotentialErrors'
-
-      ,'packages/math'
-    ];
-    //tests = ['packages/math'];
 
     var container, reporter, summary;
     var currentTest = 0;
@@ -67,7 +45,7 @@
     }
 
     window.testNext = function() {
-      var test = tests[currentTest++];
+      var test = testCases[currentTest++];
       if (test) {
         printHeader(test);
         createFrame().src = 'sandbox.html?' + encodeURIComponent(test);

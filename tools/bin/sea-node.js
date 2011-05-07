@@ -14,11 +14,12 @@ var window = document.createWindow();
 var location = window.location;
 var navigator = window.navigator;
 
-var defaultBase = path.join(__dirname, '../../build');
+var baseDir = path.join(__dirname, '../../build');
 
 
 function createSandbox(filename, exports, base) {
   exports = exports || {};
+  if(base) baseDir = base;
 
   var module = {
     uri: filename,
@@ -32,7 +33,7 @@ function createSandbox(filename, exports, base) {
     }
     // top-level id
     else if(id.indexOf('/') !== 0) {
-      filepath = path.join(base || defaultBase, id);
+      filepath = path.join(baseDir, id);
     }
 
     if(!path.existsSync(filepath)) {
