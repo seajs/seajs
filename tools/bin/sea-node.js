@@ -14,8 +14,10 @@ var window = document.createWindow();
 var location = window.location;
 var navigator = window.navigator;
 
+var defaultBase = path.join(__dirname, '../../build');
 
-function createSandbox(filename, exports) {
+
+function createSandbox(filename, exports, base) {
   exports = exports || {};
 
   var module = {
@@ -27,6 +29,10 @@ function createSandbox(filename, exports) {
     var filepath = id;
     if (id.indexOf('./') === 0 || id.indexOf('../') === 0) {
       filepath = path.join(path.dirname(filename), id);
+    }
+    // top-level id
+    else if(id.indexOf('/') !== 0) {
+      filepath = path.join(base || defaultBase, id);
     }
 
     if(!path.existsSync(filepath)) {
