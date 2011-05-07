@@ -1,9 +1,27 @@
 define(function(require, exports) {
 
-  function sendMessage(msg, a1, a2) {
+  function sendMessage(fn, msg, type) {
     var p = window.parent;
-    if (p && p[msg]) p[msg](a1, a2);
+
+    if (p && p[fn]) {
+      p[fn](msg, type);
+    }
+    else if (console) {
+      console.log(color(msg, type));
+    }
   }
+
+  // https://github.com/loopj/commonjs-ansi-color/blob/master/lib/ansi-color.js
+  var ANSI_CODES = {
+    'fail': 31, // red
+    'pass': 32, // green
+    'info': 36 // cyan
+  };
+
+  function color(str, type) {
+    return '\033[' + ANSI_CODES[type] + 'm  ' + str + '\033[0m';
+  }
+
 
   exports.print = function(txt, style) {
     sendMessage('printResults', txt, style);
