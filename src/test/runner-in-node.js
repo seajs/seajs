@@ -1,4 +1,8 @@
 
+// Usage:
+//  cd path/to/src/test
+//  snode runner-in-node.js --base ../
+
 /**
  * @fileoverview Run test cases in node environment.
  * @author lifesinger@gmail.com (Frank Wang)
