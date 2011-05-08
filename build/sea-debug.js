@@ -1042,11 +1042,9 @@ seajs._fn = {};
       for (var i = 0; i < args.length; i += 2) {
         fn[hash[args[i]]].apply(host, args[i + 1]);
       }
+      delete host._seajs;
     }
   })((host._seajs || 0)['args']);
-
-  // delete the private holder.
-  delete host._seajs;
 
 })(seajs, seajs._data, seajs._fn);
 
@@ -1075,6 +1073,7 @@ seajs._fn = {};
     delete host._util;
     delete host._data;
     delete host._fn;
+    delete host._seajs;
   }
 
 })(seajs, seajs._data, seajs._fn, this);
