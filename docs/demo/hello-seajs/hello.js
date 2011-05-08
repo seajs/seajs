@@ -1,8 +1,7 @@
 define(function(require, exports) {
 
   exports.sayHello = function() {
-    var str = document.createTextNode('Hello, SeaJS!');
-    document.body.appendChild(str);
+    document.getElementById('out').innerHTML = 'Hello, SeaJS!';
   };
 
 });

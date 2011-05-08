@@ -99,3 +99,14 @@ body {
   height: 82px;
   line-height: 82px;
 }
+
+#src {
+  text-align: center;
+  color: #999;
+  font-family: "Bitstream Vera Sans Mono", courier, monospace;
+}
+
+#src a {
+  color: #999;
+  text-decoration: none;
+}
