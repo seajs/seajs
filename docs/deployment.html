@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>打包部署 - SeaJS</title>
+<link rel="stylesheet" href="../assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <h1>
+    <a href="../">SeaJS <span class="byline">文档</span></a>
+  </h1>
+
+
+  <h2>打包部署</h2>
+
+  <p>
+    我们用一个例子来说明。
+  </p>
+
+
+  <h3>开发阶段</h3>
+
+  <p>这是花了两个多小时实现的简易计算器：
+    <a href="../demo/calculator/" target="_blank">calculator demo</a> .
+    项目虽小，但为了可维护性和可扩展性，分成了以下文件：
+  </p>
+
+<pre>
+index.html     -- 页面
+style.css      -- 样式
+
+init.js        -- 入口脚本
+stdin.js       -- 处理输入
+stdout.js      -- 处理输出
+calculator.js  -- 控制器
+math.js        -- 数学计算库
+</pre>
+
+  <p>
+    index.html 里仅需引入：
+  </p>
+
+<pre>
+&lt;script src="path/to/sea.js" data-main="path/to/init"&gt;&lt;/script&gt;
+</pre>
+
+  <p>
+    所有依赖的脚本，SeaJS 框架会自动加载进来：<br/>
+    <img src="../demo/calculator/http-requests-dev.png" height="208" width="196"/>
+  </p>
+
+  <p>
+    在开发阶段，这样做非常舒适。但显然，对大型应用来说，功能拆分得越细，模块也就越多。如果直接上线，HTTP 链接数会过多，对网站性能很不利。
+  </p>
+
+  <p>
+    <strong>如何才能让开发时愉悦，同时上线后又不影响性能呢？</strong>
+  </p>
+
+
+  <h3>部署阶段</h3>
+
+  <p>
+   通过部署阶段的优化，我们可以保证开发时的愉悦，同时不影响上线后的网站性能。回到我们可爱的简易计算器项目，看下具体如何做。
+  </p>
+
+  <p>
+    首先，按照说明，安装好 sbuild 工具：
+    <a href="https://github.com/seajs/seajs/blob/master/tools/bin/README.md"
+       target="_blank">tools/bin/README.md</a>
+  </p>
+
+  <p>
+    然后如下操作：
+  </p>
+  
+<pre>
+ $ cd path/to/demo/calculator
+ $ sbuild init.js --combo
+   ... process init.js
+   ... process stdin.js
+   ... process calculator.js
+   ... process stdout.js
+   ... process math.js
+   Successfully combo to __build/init.js
+</pre>
+
+  <p>
+    运行 sbuild 后，我们获得了压缩和打包合并后的 init.js 文件：
+  </p>
+
+<pre>
+ $ cat __build/init.js
+   define("init",["./stdin","./stdout"],function(a){..
+   define("stdin",["jquery","./calculator"],function(a,b){...
+   define("calculator",["./stdout","./math"],function(a,b){...
+   define("stdout",["jquery"],function(a,b){...
+   define("math",[],function(a,b){..
+</pre>
+
+  <p>
+    接下来是发布上线：
+  </p>
+
+<pre>
+ $ publish
+   Successfully push local/calculator/__build/*.js to online/calculator/*.js
+</pre>
+
+  <p>
+    这样，就将开发环境 <code>app/xx/__build/</code> 下的文件，发布到了线上对应的 <code>app/xx/</code> 目录下。注意此处的 <code>publish</code> 命令仅是示意，不同公司都会有自己的发布脚本。
+  </p>
+
+  <p>
+    页面文件里，开发阶段一般会配置好 assets 路径，比如：
+  </p>
+
+<pre>
+&lt;script src="&lt;?=$ASSETS_HOST?&gt;/lib/seajs/0.9.0/sea.js"
+           data-main="&lt;?=$ASSETS_ROOT?&gt;/app/calculator/init"&gt;
+&lt;/script&gt;
+</pre>
+
+  <p>
+    可以让 <code>$ASSETS_HOST</code> 在开发阶段指向本地环境，发布后，则自动指向线上地址。这样，页面文件在部署阶段，不需要做任何修改。
+  </p>
+
+  <p>
+    由此，我们得到了部署后的简易计算器：
+    <a href="../demo/calculator/online/" target="_blank">calculator online</a> .
+  </p>
+
+  <p>
+    来看下 HTTP 链接情况：<br/>
+    <img src="../demo/calculator/http-requests-online.png" height="132" width="192"/>
+  </p>
+
+  <p>
+    sbuild 默认的打包策略，只会合并 <code>require('relative-id')</code> 指定的相对路径的模块。根据实际需求，通过简单的脚本开发，我们还可以自定义合并哪些文件。
+  </p>
+
+
+  <h3>小结</h3>
+
+  <p>
+    这样，我们实现了：
+  </p>
+
+  <ol>
+    <li>开发阶段，页面中只要指定初始化入口模块，比如用 <code>data-main="path/to/init"</code> 或通过 <code>seajs.use("path/to/init", callback)</code> 来指定入口模块。</li>
+    <li>依赖关系由各个模块自身的 <code>require("id")</code> 来指定，无需增加或修改页面中的 <code>script</code> 引用。这能减少沟通成本，也有利于维护。</li>
+    <li>部署阶段，不需要修改页面中的 <code>script</code> 引用，和开发阶段是一样的。</li>
+    <li>上线后，能根据需求，保持 HTTP 链接数的精简。并且调试方便，只要修改 host 将入口模块的地址指向本地开发环境即可。</li>
+    <li>最重要的，是我们可以将前端开发彻底模块化了，能更好地享受纯粹的编码乐趣。</li>
+  </ol>
+
+  
+  <p class="next-page">
+    下一节：<a href="cheatsheet.html">速查手册</a>
+  </p>
+
+
+  <p id="copyright">
+    &copy; 2011 - 2022 seajs.com
+  </p>
+</div>
+
+<script src="../../build/sea.js" data-main="../assets/init"></script>
+
+</body>
+</html>

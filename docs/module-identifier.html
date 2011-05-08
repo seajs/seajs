@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>模块标识 - SeaJS</title>
+<link rel="stylesheet" href="../assets/style.css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <h1>
+    <a href="../">SeaJS <span class="byline">文档</span></a>
+  </h1>
+
+  <h2>模块标识</h2>
+
+  <p>
+    require 和 module.load 的参数都是 module identifier. 为了便于讨论，假设存在以下文件：
+  </p>
+
+<pre>
+/*** http://example.com/test.html ***/
+
+/*** http://cdn.com/seajs/sea.js ***/
+/*** http://cdn.com/seajs/jquery.js ***/
+
+/*** http://cdn.com/js/a.js ***/
+</pre>
+
+  <p>
+    下面分析各种情况下的路径解析方式。
+  </p>
+
+
+  <h3>absolute id</h3>
+
+  <p>id 可以是绝对地址：</p>
+
+<pre>
+require('http://cdn.com/js/a');
+  // =&gt; http://cdn.com/js/a.js
+
+require('http://cdn.com/js/a.json');
+  // =&gt; http://cdn.com/js/a.json
+</pre>
+
+  <p>当省略文件后缀时，会自动添加上 .js 默认后缀。</p>
+
+
+  <h3 id="root-id">root id</h3>
+
+  <p>
+    root id 相对调用代码所在文件的路径来定位:
+  </p>
+
+<pre>
+/*** a.js ***/
+require('/js/b');
+  // =&gt; http://cdn.com/js/b.js
+
+/*** test.html ***/
+&lt;script src="http://cdn.com/seajs/sea.js" data-main="/js/b"&gt;&lt;/script&gt;
+  // =&gt; http://example.com/js/b.js
+</pre>
+
+
+  <h3 id="relative-id">relative id</h3>
+
+  <p>relative id 与 root id 的解析规则一致，相对调用代码所在文件的路径来定位：</p>
+<pre>
+/*** a.js ***/
+require('./b');
+  // =&gt; http://cdn.com/js/b.js
+</pre>
+
+
+  <h3 id="top-level-id">top-level id</h3>
+
+  <p>top-level id 相对 base 目录来定位：</p>
+<pre>
+/*** a.js ***/
+require('jquery');
+  // =&gt; http://cdn.com/seajs/jquery.js
+</pre>
+
+  <p>base 目录默认与 sea.js 所在目录保持一致。可以通过全局配置来更改：</p>
+
+<pre>
+seajs.config({
+  base: 'http://code.jquery.com/'
+});
+
+/*** a.js ***/
+require('jquery');
+  // =&gt; http://code.jquery.com/jquery.js
+</pre>
+
+
+  <p class="next-page">
+    下一节：<a href="seajs-bootstrap.html">载入方式</a>
+  </p>
+
+
+  <p id="copyright">
+    &copy; 2011 - 2022 seajs.com
+  </p>
+</div>
+
+<script src="../../build/sea.js" data-main="../assets/init"></script>
+
+</body>
+</html>
