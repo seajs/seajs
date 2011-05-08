@@ -58,7 +58,7 @@ define(function(require, exports) {
 });
 </pre>
 
-  <p>如果 module code 里没有其他代码，仅纯返回对象，还可简化为：</p>
+  <p>如果 module code 里没有其他代码，纯返回对象，还可简化为：</p>
 
 <pre>
 /*** File: a.js ***/
@@ -130,7 +130,7 @@ define(function(require, exports, module) {
 
   <p>
     还有一个 module.id 属性。在浏览器端，其值大都等于 module.uri, 不推荐使用。在 node.JS
-    等环境下，module.id 一般代表当前模块的
+    等环境下，module.id 代表当前模块的
     <a href="module-identifier.html#top-level-id">top-level id</a> .
   </p>
 
