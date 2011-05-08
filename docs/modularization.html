@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <title>通用类库的模块化 - SeaJS</title>
-<link rel="stylesheet" href="../assets/style.css"/>
+<link rel="stylesheet" href="assets/style.css"/>
 </head>
 <body>
 
 <div id="content">
 
   <h1>
-    <a href="../">SeaJS <span class="byline">文档</span></a>
+    <a href="./">SeaJS <span class="byline">文档</span></a>
   </h1>
 
   <h2>通用类库的模块化</h2>
@@ -43,7 +43,7 @@ define('yui2', [], function(require, exports, module) {
 
   <p>
     将上面的代码保存为 yui2.js, 就完成了 YUI2 Core 的模块化。知晓了原理，自动化也就不难了。比如将
-    jQuery 自动模块化的 Ant 脚本：<a href="../../modules/jquery/build.xml">build.xml</a> .
+    jQuery 自动模块化的 Ant 脚本：<a href="../modules/jquery/build.xml">build.xml</a> .
   </p>
 
   <p>一旦封装好，就可以像普通模块一样调用了：</p>
@@ -65,7 +65,7 @@ define(function(require) {
 
 
   <p class="next-page">
-    返回：<a href="../index.html#practice">最佳实践</a>
+    返回：<a href="index.html#docs">使用文档</a>
   </p>
 
   <p id="copyright">
@@ -73,7 +73,7 @@ define(function(require) {
   </p>
 </div>
 
-<script src="../../build/sea.js" data-main="../assets/init"></script>
+<script src="../build/sea.js" data-main="./assets/init"></script>
 
 </body>
 </html>
