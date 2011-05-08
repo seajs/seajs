@@ -190,9 +190,12 @@
   function memoize(name, url, mod) {
     url = stripUrlArgs(url);
 
+    var uri;
     // define('name', [], fn)
     if (name) {
-      var uri = id2Uri('./' + name, url);
+      uri = id2Uri('./' + name, url);
+    } else {
+      uri = url;
     }
 
     mod.dependencies = ids2Uris(mod.dependencies, uri);
