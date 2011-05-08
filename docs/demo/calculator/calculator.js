@@ -9,6 +9,7 @@ define(function(require, exports) {
     '-': 'subtract',
     '*': 'multiple',
     '×': 'multiple',
+    'x': 'multiple',
     '/': 'divide',
     '%': 'divide'
   };

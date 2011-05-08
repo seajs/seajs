@@ -45,6 +45,10 @@ h3 { font-size: 22px; }
   left: 0;
 }
 
+code {
+  font-family: "Bitstream Vera Sans Mono", courier, monospace;
+}
+
 pre {
   font: 16px/24px "Bitstream Vera Sans Mono", courier, monospace;
   background: #f6f6f6 !important;
