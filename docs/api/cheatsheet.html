@@ -2,8 +2,17 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<title>打包部署 - SeaJS</title>
+<title>速查手册 - SeaJS</title>
 <link rel="stylesheet" href="../assets/style.css"/>
+<style>
+  h3 a {
+    float: right;
+    font-size: 16px;
+    position: relative;
+    top: 10px;
+    padding-right: 10px;
+  }
+</style>
 </head>
 <body>
 
@@ -13,9 +22,134 @@
     <a href="../">SeaJS <span class="byline">文档</span></a>
   </h1>
 
-  <h2>打包部署</h2>
+  <h2>速查手册</h2>
 
 
+  <h3 id="use">
+    seajs.use
+    <a href="../api/seajs-bootstrap.html#load-module">载入模块</a>
+  </h3>
+
+<pre>
+seajs.use('./a');
+
+seajs.use('./a', function(a) {
+  a.doSomething();
+});
+
+seajs.use(['./a', './b'], function(a, b) {
+  a.doSomething();
+  b.doSomething();
+});
+</pre>
+
+
+  <h3 id="config">
+    seajs.config
+    <a href="../api/global-configuration.html">全局配置</a>
+  </h3>
+
+<pre>
+seajs.config({
+  base: 'path/to/jslib/',
+  alias: {
+    'app': 'path/to/app/'
+  },
+  charset: 'utf-8',
+  timeout: 20000,
+  debug: false
+});
+</pre>
+
+
+  <h3 id="alias">
+    seajs.alias
+    <a href="../api/global-configuration.html#alias">alias</a>
+  </h3>
+
+<pre>
+seajs.alias('app', 'path/to/app');
+</pre>
+
+
+  <h3 id="define">
+    define
+    <a href="../api/module-authoring-format.html">模块书写格式</a>
+  </h3>
+
+<pre>
+define(function(require, exports, module) {
+  // The module code goes here
+});
+</pre>
+
+
+  <h3 id="require">
+    require
+    <a href="../api/module-authoring-format.html#require">require</a>
+  </h3>
+
+<pre>
+define(function(require) {
+  var $ = require('jquery');
+  var a = require('./a');
+
+  a.doSomething();
+  // snip...
+});
+</pre>
+
+
+  <h3 id="exports">
+    exports
+    <a href="../api/module-authoring-format.html#exports">exports</a>
+  </h3>
+
+<pre>
+define(function(require, exports) {
+  // snip...
+  exports.name = 'a';
+  exports.doSomething = function() {};
+});
+</pre>
+
+
+
+  <h3 id="module">
+    module
+    <a href="../api/module-authoring-format.html#module">module</a>
+  </h3>
+
+<pre>
+define(function(require, exports, module) {
+  // snip...
+  module.exports = {
+    name: 'a'，
+    doSomething: function() {};
+  };
+});
+</pre>
+
+
+  <h3 id="module-load">
+    module.load
+    <a href="../api/module-authoring-format.html#module-load">module.load</a>
+  </h3>
+
+<pre>
+define(function(require, exports, module) {
+
+  module.load('./b', function(b) {
+    b.doSomething();
+  });
+
+  module.load(['./c', './d'], function(c, d) {
+    // do something
+  });
+
+});
+</pre>
+  
 
   <p class="next-page">
     返回：<a href="../index.html#api">API 文档</a>

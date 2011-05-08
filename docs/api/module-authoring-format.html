@@ -30,7 +30,7 @@ define(function(require, exports, module) {
   </p>
 
 
-  <h3>exports</h3>
+  <h3 id="exports">exports</h3>
 
   <p>
     任何模块，都可以通过 exports 向外提供接口：
@@ -85,7 +85,7 @@ define(function(require, exports) {
   <p>请采用 return 或 <a href="#module-exports">module.exports</a> 的方式返回。</p>
 
 
-  <h3>require</h3>
+  <h3 id="require">require</h3>
 
   <p>
     通过 require, 可获取到其他模块的接口：
@@ -95,7 +95,6 @@ define(function(require, exports) {
 /*** File: b.js ***/
 define(function(require) {
   var a = require('./a');
-  console.log(a.name);
   a.doSomething();
 });
 </pre>
@@ -111,7 +110,7 @@ define(function(require) {
   </p>
 
 
-  <h3>module</h3>
+  <h3 id="module">module</h3>
 
   <p>module 参数存储了当前模块的元信息和实用方法。</p>
 
@@ -172,7 +171,7 @@ define(function(require, exports, module) {
 </pre>
 
 
-  <h4>module.load</h4>
+  <h4 id="module-load">module.load</h4>
 
   <p>
     通过 module.load, 可以在需要时才下载部分模块。
