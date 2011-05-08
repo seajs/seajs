@@ -16,10 +16,124 @@
 
   <h2>打包部署</h2>
 
-  <p>我们用一个例子来说明。</p>
+  <p>
+    我们用一个例子来说明。
+  </p>
 
-  <p></p>
+  <p>这是今天下午，花了两个多小时实现的简易计算器：
+    <a href="../demo/calculator/" target="_blank">calculator demo</a> .
+    项目虽小，但为了可维护性和可扩展性，分成了以下文件：
+  </p>
 
+<pre>
+index.html     -- 页面
+style.css      -- 样式
+
+init.js        -- 入口脚本
+stdin.js       -- 处理输入
+stdout.js      -- 处理输出
+calculator.js  -- 控制器
+math.js        -- 数学计算库
+</pre>
+
+  <p>
+    index.html 里仅需引入以下 script:
+  </p>
+
+<pre>
+&lt;script src="path/to/sea.js" data-main="path/to/init"&gt;&lt;/script&gt;
+</pre>
+
+  <p>
+    所有依赖的脚本文件，SeaJS 框架会自动加载进来：<br/>
+    <img src="../demo/calculator/http-requests-dev.png" height="208" width="196"/>
+  </p>
+
+  <p>
+    在开发阶段，这样做非常舒适。但很明显，对于大型应用来说，功能拆分得越细，模块也就越多。如果直接上线，HTTP 链接数会过多，对网站性能很不利。
+  </p>
+
+  <p>
+    <strong>如何才能让开发时愉悦，同时上线后不影响性能呢？</strong>
+  </p>
+
+  <p>
+    SeaJS 社区推荐在我们的开发流程中，增加部署阶段。在部署阶段，不光有传统的压缩过程，还包括打包合并等优化处理。
+  </p>
+
+  <p>
+    针对我们可爱的简易计算器项目，我们来看下如何打包部署。
+  </p>
+
+  <p>
+    首先，按照说明，安装好 sbuild 工具：
+    <a href="https://github.com/seajs/seajs/blob/master/tools/bin/README.md"
+       target="_blank">tools/bin/README.md</a>
+  </p>
+
+  <p>
+    然后如下操作：
+  </p>
+  
+<pre>
+ $ cd path/to/demo/calculator
+ $ sbuild init.js --combo
+   ... process init.js
+   ... process stdin.js
+   ... process calculator.js
+   ... process stdout.js
+   ... process math.js
+   Successfully combo to __build/init.js
+</pre>
+
+  <p>
+    运行 sbuild 后，我们获得了优化后的 init.js 文件：
+  </p>
+
+<pre>
+ $ cat __build/init.js
+   define("init",["./stdin","./stdout"],function(a){..
+   define("stdin",["jquery","./calculator"],function(a,b){...
+   define("calculator",["./stdout","./math"],function(a,b){...
+   define("stdout",["jquery"],function(a,b){...
+   define("math",[],function(a,b){..
+</pre>
+
+  <p>
+    优化和打包阶段已经完成，就这么简单。
+  </p>
+
+  <p>
+    接下来是发布阶段：
+  </p>
+
+<pre>
+ $ deploy
+   Successfully push local __build/*.js to cdn calculator/*.js
+</pre>
+
+  <p>
+    这样，就将开发环境 app/xx/__build/ 下的文件，发布到了线上 app/xx/ 目录下。
+  </p>
+
+  <p>
+    页面文件里，一般开发阶段会配置好 assets 路径，比如：
+  </p>
+
+<pre>
+&lt;script src="&lt;?=$ASSETS_HOST?&gt;/lib/seajs/0.9.0/sea.js"
+           data-main="&lt;?=$ASSETS_ROOT?&gt;/app/calculator/init"&gt;
+&lt;/script&gt;
+</pre>
+
+  <p>
+    可以让 $ASSETS_HOST 在开发阶段指向本地环境，发布后，则自动指向线上地址。这样，页面文件在开发和部署阶段，不需要做任何修改。
+  </p>
+
+  <p>
+    来看部署后的简易计算器：
+    <a href="../demo/calculator/online/" target="_blank">calculator online</a> .
+  </p>
 
   <p class="next-page">
     下一节：<a href="cheatsheet.html">速查手册</a>

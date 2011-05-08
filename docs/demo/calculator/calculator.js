@@ -14,13 +14,13 @@ define(function(require, exports) {
   };
 
   var special = {
-    'C': clear,
-    'c': clear,
-    'esc': clear,
-    'delete': del,
-    '=': equal,
-    'enter': equal,
-    '±': inverse
+    'C': 'clear',
+    'c': 'clear',
+    'esc': 'clear',
+    'delete': 'del',
+    '=': 'equal',
+    'enter': 'equal',
+    '±': 'inverse'
   };
 
 
@@ -30,30 +30,35 @@ define(function(require, exports) {
 
 
   exports.handleInput = function(value) {
-    // input number
-    if (isNum(value)) {
-      currentInput += value;
-      stdout.updateResult(currentInput);
+    // number
+    if (isNum(value) || isDot(value)) {
+      Action.updateInput(value);
     }
-    else if (isDot(value)) {
-      if (currentInput.indexOf('.') === -1) {
-        currentInput += value;
-        stdout.updateResult(currentInput);
-      }
-    }
-    // input operator
+    // operator
     else if (isOperator(value)) {
-      operate(value);
+      Action.operate(value);
     }
-    // input enter/esc/etc.
-    else if(special[value]) {
-      special[value]();
+    // special actions
+    else if (special[value]) {
+      Action[special[value]]();
     }
   };
 
 
-  function operate(type) {
-    if (operator) {
+  var Action = {
+
+    updateInput: function(value) {
+      if (isDot(value) &&
+          currentInput.indexOf('.') !== -1) {
+        return;
+      }
+
+      currentInput += value;
+      stdout.updateResult(currentInput);
+    },
+
+    operate: function(type) {
+      if (operator) {
         previousInput = calc();
         stdout.updateResult(previousInput);
       }
@@ -64,38 +69,39 @@ define(function(require, exports) {
 
       operator = operators[type];
       stdout.updateOperator(type);
-  }
+    },
+
+    clear: function () {
+      previousInput = '';
+      currentInput = '0';
+      operator = null;
+      stdout.clear();
+    },
+
+    del: function () {
+      if (currentInput && currentInput !== '0') {
+        currentInput = currentInput.substring(0, currentInput.length - 1);
+        if (!currentInput) {
+          currentInput = '0';
+        }
+        stdout.updateResult(currentInput);
+      }
+    },
+
+    inverse: function () {
+      currentInput = 0 - currentInput;
+      stdout.updateResult(currentInput);
+    },
+
+    equal: function () {
+      this.operate('');
+    }
+  };
+
 
   function calc() {
     return math[operator](Number(previousInput), Number(currentInput));
   }
-
-  function clear() {
-    previousInput = '';
-    currentInput = '0';
-    operator = null;
-    stdout.clear();
-  }
-
-  function del() {
-    if (currentInput && currentInput !== '0') {
-      currentInput = currentInput.substring(0, currentInput.length - 1);
-      if (!currentInput) {
-        currentInput = '0';
-      }
-      stdout.updateResult(currentInput);
-    }
-  }
-
-  function inverse() {
-    currentInput = 0 - currentInput;
-    stdout.updateResult(currentInput);
-  }
-
-  function equal() {
-    operate('');
-  }
-
 
   function isNum(str) {
     return /[0-9]/.test(str);

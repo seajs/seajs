@@ -187,9 +187,22 @@
   /**
    * Caches mod info to memoizedMods.
    */
-  function memoize(uri, mod) {
+  function memoize(name, url, mod) {
+    url = stripUrlArgs(url);
+
+    // define('name', [], fn)
+    if (name) {
+      var uri = id2Uri('./' + name, url);
+    }
+
     mod.dependencies = ids2Uris(mod.dependencies, uri);
     data.memoizedMods[uri] = mod;
+
+    // guest module in package
+    if (name && url !== uri) {
+      var host = memoizedMods[url];
+      augmentPackageHostDeps(host.dependencies, mod.dependencies);
+    }
   }
 
   /**
@@ -204,6 +217,22 @@
       }
     }
     return ret;
+  }
+
+  /**
+   * For example:
+   *  sbuild host.js --combo
+   *   define('host', ['./guest'], ...)
+   *   define('guest', ['jquery'], ...)
+   * The jquery is not combined to host.js, so we should add jquery
+   * to host.dependencies
+   */
+  function augmentPackageHostDeps(hostDeps, guestDeps) {
+    for (var i = 0; i < guestDeps.length; i++) {
+      if (util.indexOf(hostDeps, guestDeps[i]) === -1) {
+        hostDeps.push(guestDeps[i]);
+      }
+    }
   }
 
 

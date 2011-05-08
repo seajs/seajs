@@ -335,9 +335,22 @@ seajs._fn = {};
   /**
    * Caches mod info to memoizedMods.
    */
-  function memoize(uri, mod) {
+  function memoize(name, url, mod) {
+    url = stripUrlArgs(url);
+
+    // define('name', [], fn)
+    if (name) {
+      var uri = id2Uri('./' + name, url);
+    }
+
     mod.dependencies = ids2Uris(mod.dependencies, uri);
     data.memoizedMods[uri] = mod;
+
+    // guest module in package
+    if (name && url !== uri) {
+      var host = memoizedMods[url];
+      augmentPackageHostDeps(host.dependencies, mod.dependencies);
+    }
   }
 
   /**
@@ -352,6 +365,22 @@ seajs._fn = {};
       }
     }
     return ret;
+  }
+
+  /**
+   * For example:
+   *  sbuild host.js --combo
+   *   define('host', ['./guest'], ...)
+   *   define('guest', ['jquery'], ...)
+   * The jquery is not combined to host.js, so we should add jquery
+   * to host.dependencies
+   */
+  function augmentPackageHostDeps(hostDeps, guestDeps) {
+    for (var i = 0; i < guestDeps.length; i++) {
+      if (util.indexOf(hostDeps, guestDeps[i]) === -1) {
+        hostDeps.push(guestDeps[i]);
+      }
+    }
   }
 
 
@@ -673,11 +702,7 @@ seajs._fn = {};
 
         for (var i = 0; i < data.pendingMods.length; i++) {
           var pendingMod = data.pendingMods[i];
-          var name = pendingMod.id;
-          if (name) {
-            uri = util.id2Uri('./' + name, uri);
-          }
-          util.memoize(uri, pendingMod);
+          util.memoize(pendingMod.name, uri, pendingMod);
         }
 
         data.pendingMods = [];
@@ -732,8 +757,8 @@ seajs._fn = {};
       name = '';
     }
 
-    var mod = { id: name, dependencies: deps || [], factory: factory };
-    var uri;
+    var mod = { name: name, dependencies: deps || [], factory: factory };
+    var url;
 
     if (document.attachEvent && !window.opera) {
       // For IE6-9 browsers, the script onload event may not fire right
@@ -742,7 +767,7 @@ seajs._fn = {};
       // mode indicates the current script. Ref: http://goo.gl/JHfFW
       var script = util.getInteractiveScript();
       if (script) {
-        uri = util.getScriptAbsoluteSrc(script);
+        url = util.getScriptAbsoluteSrc(script);
       }
 
       // In IE6-9, if the script is in the cache, the "interactive" mode
@@ -751,18 +776,15 @@ seajs._fn = {};
       // script is being requested in case define() is called during the DOM
       // insertion.
       else {
-        uri = data.pendingModIE;
+        url = data.pendingModIE;
       }
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the module uri.
     }
 
-    if (uri) {
-      if (name) {
-        uri = util.id2Uri('./' + name, uri);
-      }
-      util.memoize(uri, mod);
+    if (url) {
+      util.memoize(name, url, mod);
     }
     else {
       // Saves information for "real" work in the onload event.
@@ -859,9 +881,9 @@ seajs._fn = {};
     // Attaches members to module instance.
     //mod.dependencies
     mod.uri = sandbox.uri;
-    mod.id = mod.id || mod.uri;
     mod.exports = {};
     mod.load = fn.load;
+    delete mod.name; // just keep mod.uri
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {

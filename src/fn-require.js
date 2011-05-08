@@ -62,9 +62,9 @@
     // Attaches members to module instance.
     //mod.dependencies
     mod.uri = sandbox.uri;
-    mod.id = mod.id || mod.uri;
     mod.exports = {};
     mod.load = fn.load;
+    delete mod.name; // just keep mod.uri
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {

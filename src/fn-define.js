@@ -27,8 +27,8 @@
       name = '';
     }
 
-    var mod = { id: name, dependencies: deps || [], factory: factory };
-    var uri;
+    var mod = { name: name, dependencies: deps || [], factory: factory };
+    var url;
 
     if (document.attachEvent && !window.opera) {
       // For IE6-9 browsers, the script onload event may not fire right
@@ -37,7 +37,7 @@
       // mode indicates the current script. Ref: http://goo.gl/JHfFW
       var script = util.getInteractiveScript();
       if (script) {
-        uri = util.getScriptAbsoluteSrc(script);
+        url = util.getScriptAbsoluteSrc(script);
       }
 
       // In IE6-9, if the script is in the cache, the "interactive" mode
@@ -46,18 +46,15 @@
       // script is being requested in case define() is called during the DOM
       // insertion.
       else {
-        uri = data.pendingModIE;
+        url = data.pendingModIE;
       }
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the module uri.
     }
 
-    if (uri) {
-      if (name) {
-        uri = util.id2Uri('./' + name, uri);
-      }
-      util.memoize(uri, mod);
+    if (url) {
+      util.memoize(name, url, mod);
     }
     else {
       // Saves information for "real" work in the onload event.
