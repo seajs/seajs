@@ -16,7 +16,7 @@ var navigator = window.navigator;
 
 var baseDir = path.join(__dirname, '../../build');
 
-var loadedModules = {};
+var memoizedModules = {};
 
 
 function createSandbox(filename, mod, base) {
@@ -45,12 +45,12 @@ function createSandbox(filename, mod, base) {
     }
 
     // already require()d
-    var requiringMod = loadedModules[filepath];
+    var requiringMod = memoizedModules[filepath];
     if (requiringMod) {
       return requiringMod.exports;
     }
 
-    requiringMod = loadedModules[filepath] = {};
+    requiringMod = memoizedModules[filepath] = {};
     try {
       var code = fs.readFileSync(filepath, 'utf-8');
       var sandbox = createSandbox(filepath, requiringMod);
@@ -91,5 +91,6 @@ function createSandbox(filename, mod, base) {
     navigator: navigator
   };
 }
+
 
 exports.createSandbox = createSandbox;

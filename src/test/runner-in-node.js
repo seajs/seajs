@@ -11,7 +11,8 @@ define(function(require) {
       'modules/alias',
       'modules/load',
       'modules/metadata',
-      'modules/checkPotentialErrors'
+      'modules/checkPotentialErrors',
+      'packages/math'
   ];
 
   testCases.forEach(function(test) {
