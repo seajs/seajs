@@ -19,14 +19,12 @@ var baseDir = path.join(__dirname, '../../build');
 var loadedModules = {};
 
 
-function createSandbox(filename, exports, base) {
-  exports = exports || {};
-  if (base) baseDir = base;
+function createSandbox(filename, mod, base) {
+  mod = mod || {};
+  mod.uri = filename;
+  mod.exports = {};
 
-  var module = {
-    uri: filename,
-    exports: exports
-  };
+  if (base) baseDir = base;
 
   
   function require(id) {
@@ -47,23 +45,23 @@ function createSandbox(filename, exports, base) {
     }
 
     // already require()d
-    var api = loadedModules[filepath];
-    if (api) {
-      return api;
+    var requiringMod = loadedModules[filepath];
+    if (requiringMod) {
+      return requiringMod.exports;
     }
 
-    api = loadedModules[filepath] = {};
+    requiringMod = loadedModules[filepath] = {};
     try {
       var code = fs.readFileSync(filepath, 'utf-8');
-      var sandbox = createSandbox(filepath, api);
+      var sandbox = createSandbox(filepath, requiringMod);
       vm.runInNewContext(code, sandbox);
     }
     catch(ex) {
       console.log(ex.message);
-      api = loadedModules[filepath] = null;
+      requiringMod.exports = null;
     }
 
-    return api;
+    return requiringMod.exports;
   }
 
 
@@ -72,18 +70,15 @@ function createSandbox(filename, exports, base) {
     var ret;
 
     if (typeof factory === 'function') {
-      ret = factory(require, exports, module);
+      ret = factory(require, mod.exports, mod);
     }
     else {
       ret = factory;
     }
 
     if (ret) {
-      module.exports = ret;
+      mod.exports = ret;
     }
-
-    // module.exports = xx is valid in factory.
-    exports = module.exports;
   }
 
 
