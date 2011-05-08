@@ -21,3 +21,5 @@ Usage
     sbuild [--combo] *.js
     sbuild [--combo] [-r] some_directory
     sbuild clear
+
+    snode filename.js [--base path/to/seajs/build]
