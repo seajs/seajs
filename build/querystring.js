@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.0dev
+Copyright 2011, SeaJS v0.9.0
 MIT Licensed
-build time: ${build.time}
+build time: May 9 22:18
 */
 
 define("querystring",[],function(){function k(a){var c=typeof a;return a==null||c!=="object"&&c!=="function"}var e={},l=Object.prototype.toString,m=String.prototype.trim,n=Object.prototype.hasOwnProperty,o=Array.isArray?Array.isArray:function(a){return l.call(a)==="[object Array]"},j=m?function(a){return a==null?"":m.call(a)}:function(a){return a==null?"":a.toString().replace(/^\s+/,"").replace(/\s+$/,"")};e.escape=encodeURIComponent;e.unescape=function(a){return decodeURIComponent(a.replace(/\+/g,

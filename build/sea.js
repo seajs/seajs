@@ -1,10 +1,10 @@
 /*
-Copyright 2011, SeaJS v0.9.0dev
+Copyright 2011, SeaJS v0.9.0
 MIT Licensed
-build time: ${build.time}
+build time: May 9 22:17
 */
 
-this.seajs={_seajs:this.seajs};seajs.version="0.9.0dev";seajs._data={config:{},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
+this.seajs={_seajs:this.seajs};seajs.version="0.9.0";seajs._data={config:{},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
 (function(a){var c=Object.prototype.toString;a.isString=function(a){return c.call(a)==="[object String]"};a.isFunction=function(a){return c.call(a)==="[object Function]"};a.isArray=Array.isArray?Array.isArray:function(a){return c.call(a)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(a,c){return a.indexOf(c)}:function(a,c){for(var h=0,e=a.length;h<e;h++)if(a[h]===c)return h;return-1}})(seajs._util);
 (function(a,c){function b(a){var c=["{"],d;for(d in a)if(typeof a[d]==="number"||typeof a[d]==="string")c.push(d+": "+a[d]),c.push(", ");c.pop();c.push("}");return c.join("")}var f=c.config;a.error=function(a){if(a.type==="error")throw"Error occurs! "+b(a);else if(f.debug&&typeof console!=="undefined")console[a.type](b(a))}})(seajs._util,seajs._data);
 (function(a,c,b){function f(a){a=("./"+a).replace(/(.*)?\/.*/,"$1").substring(2);return(a?a:".")+"/"}function h(a){var g=a.match(/^([^?]+)(\?.*)$/);g&&(a=g[1],l[a]=g[2]);return a}function e(a){return a.replace(/^(\w+:\/\/[^/]+)\/?.*$/,"$1")}function d(c,d){var j=c,l=g.alias;if(l){var j="/"+j+"/",b;for(b in l)l.hasOwnProperty(b)&&(q[b]||(q[b]=RegExp("/"+b+"/")),j=j.replace(q[b],"/"+l[b]+"/"));j=j.slice(1,-1)}c=j;d=d||m;c.indexOf("://")!==-1?j=c:c.indexOf("./")===0||c.indexOf("../")===0?(c=c.replace(/^\.\//,
