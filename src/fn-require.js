@@ -64,7 +64,7 @@
     mod.uri = sandbox.uri;
     mod.exports = {};
     mod.load = fn.load;
-    delete mod.name; // just keep mod.uri
+    delete mod.id; // just keep mod.uri
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {

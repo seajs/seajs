@@ -335,13 +335,13 @@ seajs._fn = {};
   /**
    * Caches mod info to memoizedMods.
    */
-  function memoize(name, url, mod) {
+  function memoize(id, url, mod) {
     url = stripUrlArgs(url);
 
     var uri;
-    // define('name', [], fn)
-    if (name) {
-      uri = id2Uri('./' + name, url);
+    // define('id', [], fn)
+    if (id) {
+      uri = id2Uri(id, url);
     } else {
       uri = url;
     }
@@ -350,7 +350,7 @@ seajs._fn = {};
     data.memoizedMods[uri] = mod;
 
     // guest module in package
-    if (name && url !== uri) {
+    if (id && url !== uri) {
       var host = memoizedMods[url];
       augmentPackageHostDeps(host.dependencies, mod.dependencies);
     }
@@ -705,7 +705,7 @@ seajs._fn = {};
 
         for (var i = 0; i < data.pendingMods.length; i++) {
           var pendingMod = data.pendingMods[i];
-          util.memoize(pendingMod.name, uri, pendingMod);
+          util.memoize(pendingMod.id, uri, pendingMod);
         }
 
         data.pendingMods = [];
@@ -740,27 +740,27 @@ seajs._fn = {};
 
   /**
    * Defines a module.
-   * @param {string=} name The module name.
+   * @param {string=} id The module id.
    * @param {Array.<string>=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(name, deps, factory) {
+  fn.define = function(id, deps, factory) {
 
     // Overloads arguments.
-    if (util.isArray(name)) {
+    if (util.isArray(id)) {
       factory = deps;
-      deps = name;
-      name = '';
+      deps = id;
+      id = '';
     }
-    else if (!util.isString(name)) {
-      factory = name;
+    else if (!util.isString(id)) {
+      factory = id;
       if (util.isFunction(factory)) {
         deps = parseDependencies(factory.toString());
       }
-      name = '';
+      id = '';
     }
 
-    var mod = { name: name, dependencies: deps || [], factory: factory };
+    var mod = { id: id, dependencies: deps || [], factory: factory };
     var url;
 
     if (document.attachEvent && !window.opera) {
@@ -787,7 +787,7 @@ seajs._fn = {};
     }
 
     if (url) {
-      util.memoize(name, url, mod);
+      util.memoize(id, url, mod);
     }
     else {
       // Saves information for "real" work in the onload event.
@@ -886,7 +886,7 @@ seajs._fn = {};
     mod.uri = sandbox.uri;
     mod.exports = {};
     mod.load = fn.load;
-    delete mod.name; // just keep mod.uri
+    delete mod.id; // just keep mod.uri
     delete mod.factory; // free
 
     if (util.isFunction(factory)) {

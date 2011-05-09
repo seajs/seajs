@@ -187,13 +187,13 @@
   /**
    * Caches mod info to memoizedMods.
    */
-  function memoize(name, url, mod) {
+  function memoize(id, url, mod) {
     url = stripUrlArgs(url);
 
     var uri;
-    // define('name', [], fn)
-    if (name) {
-      uri = id2Uri('./' + name, url);
+    // define('id', [], fn)
+    if (id) {
+      uri = id2Uri(id, url);
     } else {
       uri = url;
     }
@@ -202,7 +202,7 @@
     data.memoizedMods[uri] = mod;
 
     // guest module in package
-    if (name && url !== uri) {
+    if (id && url !== uri) {
       var host = memoizedMods[url];
       augmentPackageHostDeps(host.dependencies, mod.dependencies);
     }

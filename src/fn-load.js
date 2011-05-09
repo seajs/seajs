@@ -126,7 +126,7 @@
 
         for (var i = 0; i < data.pendingMods.length; i++) {
           var pendingMod = data.pendingMods[i];
-          util.memoize(pendingMod.name, uri, pendingMod);
+          util.memoize(pendingMod.id, uri, pendingMod);
         }
 
         data.pendingMods = [];
