@@ -11,7 +11,7 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define(['underscore-debug', 'jquery-debug'], function(require, exports) {
+        define('${module.name}-debug', ['underscore-debug', 'jquery-debug'], function(require, exports) {
       </header>
       <path path="${module.name}.js"/>
       <footer filtering="no" trimleading="yes">});
@@ -22,7 +22,7 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define(['underscore','jquery'],function(require, exports) {
+        define('${module.name}',['underscore','jquery'],function(require, exports) {
       </header>
       <path path="${module.name}-min.js"/>
       <footer filtering="no" trimleading="yes">});

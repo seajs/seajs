@@ -9,21 +9,33 @@ var path = require("path");
 var uglifyjs = require("../uglify-js/uglify-js");
 var extract = require("./extract");
 var util = require("./util");
+
 var COMBO_DIR = "__combo_tmp";
+var seajsDir = path.join(__dirname, "../../build");
 
 
-exports.run = function(inputFile, outputFile) {
-  var files = [];
-  getAllRelativeDependencies(inputFile, files);
+exports.run = function(inputFile, outputFile, comboAll) {
+  var files = getAllDependencies(inputFile, comboAll);
 
   var tmpdir = path.join(path.dirname(inputFile), COMBO_DIR);
   util.mkdirSilent(tmpdir);
 
   var extractedFiles = files.map(function(file) {
-    var t = path.join(tmpdir, path.basename(file));
-    extract.run(file, t, true, inputFile);
-    return t;
+    var ret;
+
+    // top-level module
+    if (file.indexOf(seajsDir) === 0) {
+      console.log(" ... process " + path.basename(file));
+      ret = file;
+    }
+    else {
+      ret = path.join(tmpdir, path.basename(file));
+      extract.run(file, ret, true, inputFile);
+    }
+
+    return ret;
   });
+
 
   var out = getComboCode(extractedFiles);
 
@@ -43,15 +55,23 @@ exports.run = function(inputFile, outputFile) {
 };
 
 
-function getAllRelativeDependencies(filepath, ret) {
+function getAllDependencies(filepath, comboAll, ret) {
+  ret = ret || [];
   ret.push(filepath);
 
   var basedir = path.dirname(filepath);
   var deps = getDependencies(filepath);
 
-  deps.forEach(function(dep) {
-    if (isRelativePath(dep)) {
-      var p = path.join(basedir, dep);
+  deps.forEach(function(id) {
+    if (comboAll || util.isRelativeId(id)) {
+      var p = id;
+
+      if (util.isRelativeId(id)) {
+        p = path.join(basedir, id);
+      }
+      else if (util.isTopLevelId(id)) {
+        p = path.join(seajsDir, id);
+      }
 
       if (!path.existsSync(p)) {
         p += ".js";
@@ -60,12 +80,12 @@ function getAllRelativeDependencies(filepath, ret) {
         }
       }
 
-      if(ret.indexOf(p) == -1) {
-        getAllRelativeDependencies(p, ret);
+      if (ret.indexOf(p) === -1) {
+        getAllDependencies(p, comboAll, ret);
       }
     }
   });
-  
+
   return ret;
 }
 
@@ -74,11 +94,6 @@ function getDependencies(filepath) {
   var code = fs.readFileSync(filepath, "utf-8");
   var ast = uglifyjs.parser.parse(code);
   return extract.getDependencies(ast);
-}
-
-
-function isRelativePath(path) {
-  return path.indexOf("./") == 0 || path.indexOf("../") == 0;
 }
 
 

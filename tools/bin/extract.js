@@ -8,6 +8,7 @@ var fs = require("fs");
 var path = require('path');
 var uglifyjs = require("../uglify-js/uglify-js");
 var util = require("./util");
+
 var BUILD = "__build";
 
 
@@ -39,6 +40,8 @@ if (__filename == process.argv[1]) {
 
 
 function run(inputFile, outputFile, compress, baseFile) {
+  inputFile = util.normalize(inputFile);
+
   var code = fs.readFileSync(inputFile, "utf-8");
   var ast = uglifyjs.parser.parse(code);
 
@@ -54,7 +57,7 @@ function run(inputFile, outputFile, compress, baseFile) {
   } else {
     console.log(out);
   }
-
+  
   return outputFile;
 }
 
@@ -66,7 +69,7 @@ function extractInfo(inputFile, ast, baseFile) {
   }
 
   return {
-    name: name,
+    name: name.replace(/\.js$/, ""),
     deps: getDependencies(ast)
   };
 }
@@ -75,13 +78,13 @@ function extractInfo(inputFile, ast, baseFile) {
 function getRelativeName(inputFile, baseFile) {
   // if baseFile is    "/path/to/abc/main.js"
   // when inputFile is "/path/to/abc/sub/a.js"
-  // then name is      "./sub/a"
-  // when inputFile is "path/to/xyz/c.js"
-  // then name is      "../../xyz/c"
+  // then name is      "./sub/a.js"
+  // when inputFile is "/path/to/xyz/c.js"
+  // then name is      "../../xyz/c.js"
   var base = path.dirname(baseFile).split("/");
 
   var parts = path.dirname(inputFile).split("/");
-  parts.push(path.basename(inputFile, ".js"));
+  parts.push(path.basename(inputFile));
 
   var name = [];
 
@@ -92,6 +95,11 @@ function getRelativeName(inputFile, baseFile) {
           name.push("..");
         }
       }
+
+      if (name.length === 0) {
+        name.push(".");
+      }
+
       name = name.concat(parts.slice(i));
       break;
     }

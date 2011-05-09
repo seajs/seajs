@@ -16,10 +16,10 @@ Usage
 ------
 
     sbuild --help
-    sbuild [--combo] a.js
-    sbuild [--combo] a.js b.js
-    sbuild [--combo] *.js
-    sbuild [--combo] [-r] some_directory
+    sbuild a.js [--combo [all]]
+    sbuild a.js b.js [--combo [all]]
+    sbuild *.js [--combo [all]]
+    sbuild some_directory [--combo [all]] [-r]
     sbuild clear
 
     snode filename.js [--base path/to/seajs/build]

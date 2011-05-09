@@ -31,3 +31,37 @@ exports.getRelativePath = function(filepath) {
   }
   return filepath;
 };
+
+
+exports.isAbsoluteId = function(id) {
+  return id.indexOf("/") === 0 || id.indexOf("://") !== -1;
+};
+
+
+exports.isRelativeId = function(id) {
+  return id.indexOf("./") === 0 || id.indexOf("../") === 0;
+};
+
+
+exports.isTopLevelId = function(id) {
+  return !this.isAbsoluteId(id) && !this.isRelativeId(id);
+};
+
+
+exports.normalize = function(p, basedir) {
+  if (p == "*.js") {
+    p = basedir;
+  }
+  else if (p.indexOf("/") != 0) {
+    p = path.join(basedir, p);
+  }
+
+  if (!path.existsSync(p)) {
+    p += ".js";
+    if (!path.existsSync(p)) {
+      throw "This file or directory doesn't exist: " + p;
+    }
+  }
+
+  return p;
+};

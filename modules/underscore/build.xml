@@ -11,7 +11,7 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define([], function(require, exports, module) {
+        define('${module.name}-debug', [], function(require, exports, module) {
       </header>
       <path path="${module.name}.js"/>
       <footer filtering="no" trimleading="yes">});
@@ -22,7 +22,7 @@
             encoding="${charset}"
             outputencoding="${charset}">
       <header filtering="no" trimleading="yes">
-        define([],function(require, exports, module) {
+        define('${module.name}',[],function(require, exports, module) {
       </header>
       <path path="${module.name}-min.js"/>
       <footer filtering="no" trimleading="yes">});

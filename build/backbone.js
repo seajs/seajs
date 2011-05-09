@@ -1,5 +1,5 @@
 
-define(['underscore','jquery'],function(require, exports) {
+define('backbone',['underscore','jquery'],function(require, exports) {
 // Backbone.js 0.3.3
 // (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 // Backbone may be freely distributed under the MIT license.

@@ -89,6 +89,13 @@
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
     </replaceregexp>
 
+    <!-- ${module.name}-debug 替换 -->
+    <replace token="define('${filename}-debug',"
+             value="define('${filename}',"
+             encoding="${charset}">
+      <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
+    </replace>
+
     <!-- 用 YUICompressor 压缩 CSS -->
     <apply executable="java" verbose="true" dir="${tmp.dir}">
       <fileset dir="${tmp.dir}" includes="*.css"/>
