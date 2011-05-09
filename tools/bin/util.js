@@ -34,7 +34,9 @@ exports.getRelativePath = function(filepath) {
 
 
 exports.isAbsoluteId = function(id) {
-  return id.indexOf("/") === 0 || id.indexOf("://") !== -1;
+  return id.indexOf("/") === 0 ||
+      id.indexOf("://") !== -1 ||
+      id.indexOf(":\\") !== -1;
 };
 
 
@@ -56,7 +58,7 @@ exports.normalize = function(p, basedir) {
   if (p == "*.js") {
     p = basedir;
   }
-  else if (p.indexOf("/") !== 0) {
+  else if (!this.isAbsoluteId(p)) {
     p = path.join(basedir, p);
   }
 
