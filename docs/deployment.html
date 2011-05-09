@@ -94,11 +94,11 @@ math.js        -- 数学计算库
 
 <pre>
  $ cat __build/init.js
-   define("init",["./stdin","./stdout"],function(a){..
-   define("stdin",["jquery","./calculator"],function(a,b){...
-   define("calculator",["./stdout","./math"],function(a,b){...
-   define("stdout",["jquery"],function(a,b){...
-   define("math",[],function(a,b){..
+   define("./init",["./stdin","./stdout"],function(a){..
+   define("./stdin",["jquery","./calculator"],function(a,b){...
+   define("./calculator",["./stdout","./math"],function(a,b){...
+   define("./stdout",["jquery"],function(a,b){...
+   define("./math",[],function(a,b){..
 </pre>
 
   <p>
@@ -130,7 +130,7 @@ math.js        -- 数学计算库
 
   <p>
     由此，我们得到了部署后的简易计算器：
-    <a href="demo/calculator/online/" target="_blank">calculator online</a> .
+    <a href="demo/calculator/online/" target="_blank">online version</a> .
   </p>
 
   <p>
@@ -139,7 +139,29 @@ math.js        -- 数学计算库
   </p>
 
   <p>
-    sbuild 默认的打包策略，只会合并 <code>require('relative-id')</code> 指定的相对路径的模块。根据实际需求，通过简单的脚本开发，我们还可以自定义合并哪些文件。
+    <code>sbuild filename.js --combo</code> 只会合并 <code>require('./abc')</code> 或 <code>require('../xyz')</code> 指定的相对路径的模块。要将所有依赖的模块都打包进一个文件时，我们可以加入 <code>all</code> 参数：
+  </p>
+
+<pre>
+ $ cd path/to/demo/calculator
+ $ sbuild init.js --combo all
+   ... process init.js
+   ... process stdin.js
+   ... process jquery.js
+   ... process calculator.js
+   ... process stdout.js
+   ... process math.js
+   Successfully combo to __build/init.js
+</pre>
+
+  <p>
+    这样，<code>__build/init.js</code> 文件里，会将 <code>jquery.js</code> 也打包进来。上线后的
+    HTTP 链接数就更少了：
+    <a href="demo/calculator/standalone/">standalone version</a> .
+  </p>
+
+  <p>
+    对于绝大部分项目来说，推荐使用 <code>sbuild init.js --combo</code> , 仅合并本项目的文件就好。HTTP 链接数并不是越少越好，还要考虑缓存。推荐根据实际需求，进行合理的拆分和打包。
   </p>
 
 

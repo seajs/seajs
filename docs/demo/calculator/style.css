@@ -45,6 +45,7 @@ body {
 
 #keyboard div {
   display: inline-block;
+  *display: inline; *zoom: 1;
   background-color: rgb(137, 137, 137);
   border: 2px solid #000;
   border-radius: 5px;
