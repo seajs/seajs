@@ -57,6 +57,13 @@
       <arg line="--output ${filename}-pkg.js"/>
     </exec>
 
+    <!-- 去掉 ./ -->
+    <replace token="define(&quot;./"
+             value="define(&quot;"
+             encoding="${charset}">
+      <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
+    </replace>
+
     <delete file="${tmp.dir}/${filename}.js"/>
   </target>
 

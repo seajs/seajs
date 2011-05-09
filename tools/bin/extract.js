@@ -63,10 +63,10 @@ function run(inputFile, outputFile, compress, baseFile) {
 
 
 function extractInfo(inputFile, ast, baseFile) {
-  var name = path.basename(inputFile, ".js");
-  if (baseFile) {
-    name = getRelativeName(inputFile, baseFile);
+  if (!baseFile) {
+    baseFile = path.join(process.cwd(), "INDEX");
   }
+  var name = getRelativeName(inputFile, baseFile);
 
   return {
     name: name.replace(/\.js$/, ""),

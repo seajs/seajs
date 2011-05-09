@@ -49,10 +49,14 @@ exports.isTopLevelId = function(id) {
 
 
 exports.normalize = function(p, basedir) {
+  if (!basedir) {
+    basedir = process.cwd();
+  }
+
   if (p == "*.js") {
     p = basedir;
   }
-  else if (p.indexOf("/") != 0) {
+  else if (p.indexOf("/") !== 0) {
     p = path.join(basedir, p);
   }
 
