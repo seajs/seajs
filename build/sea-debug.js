@@ -160,10 +160,11 @@ seajs._fn = {};
    * Extracts the directory portion of a path.
    * dirname('a/b/c.js') ==> 'a/b/'
    * dirname('d.js') ==> './'
+   * @see http://jsperf.com/regex-vs-split/2
    */
   function dirname(path) {
-    var s = ('./' + path).replace(/(.*)?\/.*/, '$1').substring(2);
-    return (s ? s : '.') + '/';
+    var s = path.match(/.*(?=\/.*$)/);
+    return (s ? s[0] : '.') + '/';
   }
 
 
