@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.0
+Copyright 2011, SeaJS v1.0.0-dev
 MIT Licensed
-build time: May 9 22:17
+build time: ${build.time}
 */
 
 
@@ -746,13 +746,14 @@ seajs._fn = {};
    */
   fn.define = function(id, deps, factory) {
 
-    // Overloads arguments.
+    // define([], factory)
     if (util.isArray(id)) {
       factory = deps;
       deps = id;
       id = '';
     }
-    else if (!util.isString(id)) {
+    // define(factory)
+    else if (arguments.length === 1) {
       factory = id;
       if (util.isFunction(factory)) {
         deps = parseDependencies(factory.toString());
