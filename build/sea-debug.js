@@ -747,18 +747,18 @@ seajs._fn = {};
    */
   fn.define = function(id, deps, factory) {
 
-    // define([], factory)
-    if (util.isArray(id)) {
-      factory = deps;
-      deps = id;
-      id = '';
-    }
     // define(factory)
-    else if (arguments.length === 1) {
+    if (arguments.length === 1) {
       factory = id;
       if (util.isFunction(factory)) {
         deps = parseDependencies(factory.toString());
       }
+      id = '';
+    }
+    // define([], factory)
+    else if (util.isArray(id)) {
+      factory = deps;
+      deps = id;
       id = '';
     }
 
