@@ -62,8 +62,12 @@
   function normalize(url) {
     url = stripUrlArgs(realpath(url));
 
-    // Adds the default '.js' ext.
-    if (url.lastIndexOf('.') <= url.lastIndexOf('/')) {
+    // Adds the default '.js' extension except that the url ends with #.
+    if (/#$/.test(url)) {
+      url = url.slice(0, -1);
+    }
+    else if (
+        url.lastIndexOf('.') <= url.lastIndexOf('/')) {
       url += '.js';
     }
 
