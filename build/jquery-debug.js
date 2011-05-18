@@ -8936,6 +8936,16 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
 window.jQuery = window.$ = jQuery;
 })(window);
-
+var k = 'uid', n = 1;
+$.plug = function(fn) {
+  var t = fn[k];
+  if (!t) {
+    t = fn[k] = new Date().getTime() + '' + n++;
+  }
+  if (!this.plug[t]) {
+    fn(this);
+    this.plug[t] = 1;
+  }
+};
 module.exports=$.noConflict(true);
 });
