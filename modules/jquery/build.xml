@@ -14,7 +14,6 @@
         define('${module.name}-debug', [], function(require,exports,module) {
       </header>
       <path path="${module.name}.js"/>
-      <path path="${module.name}-plug.js"/>
       <footer filtering="no" trimleading="yes">
           module.exports=$.noConflict(true);
         });
@@ -28,7 +27,6 @@
         define('${module.name}',[],function(require,exports,module) {
       </header>
       <path path="${module.name}-min.js"/>
-      <path path="${module.name}-plug.js"/>
       <footer filtering="no" trimleading="yes">
           module.exports=$.noConflict(true);
         });
