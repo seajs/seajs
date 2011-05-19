@@ -28,7 +28,7 @@ define(function(require, exports) {
 
     ,'packages/math'
   ];
-  //testCases = ['modules/math'];
+  //testCases = ['modules/alias'];
 
   exports.testCases = testCases;
 

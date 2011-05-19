@@ -284,6 +284,7 @@ seajs._fn = {};
 
   var loc = global['location'];
   var pageUrl = loc.protocol + '//' + loc.host + loc.pathname;
+  var id2UriCache = {};
 
   /**
    * Converts id to uri.
@@ -291,6 +292,11 @@ seajs._fn = {};
    * @param {string=} refUrl The referenced uri for relative id.
    */
   function id2Uri(id, refUrl) {
+    // only run once.
+    if (id2UriCache[id]) {
+      return id;
+    }
+
     id = parseAlias(id);
     refUrl = refUrl || pageUrl;
 
@@ -315,7 +321,10 @@ seajs._fn = {};
       ret = config.base + '/' + id;
     }
 
-    return normalize(ret);
+    ret = normalize(ret);
+    id2UriCache[ret] = true;
+
+    return ret;
   }
 
 

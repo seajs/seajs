@@ -6,8 +6,7 @@ seajs.config({
   }
 });
 
-
-define(function(require) {
+define(function(require, exports, module) {
 
   var test = require('test/test');
   var a = require('./a');
@@ -19,9 +18,16 @@ define(function(require) {
   test.assert(a.foo == 'a', 'a.foo should equal to "a".');
   test.assert(b.foo == 'b', 'b.foo should equal to "b".');
   test.assert(c.foo == 'c', 'c.foo should equal to "c".');
-  test.assert(c2.foo == 'c2', 'should keep the previous config.alias.');
+  test.assert(c2.foo == 'c2', 'c2.foo should equal to "c2".');
   test.assert(d.foo == 'd', 'd.foo should equal to "d".');
 
-  test.print('DONE', 'info');
+  
+  module.load(['test/test', 'sub/c'], function(test, c) {
+
+    test.assert((c || 0).foo == 'c', 'c.foo should equal to "c".');
+    test.print('DONE', 'info');
+
+  });
+
 
 });
