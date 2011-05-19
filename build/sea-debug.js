@@ -1004,21 +1004,6 @@ seajs._fn = {};
   };
 
 
-  /**
-   * The shortcut to set alias.
-   *
-   * @param {string} name The alias.
-   * @param {string} value The actual value.
-   */
-  fn.alias = function(name, value) {
-    var o = {};
-    o[name] = value;
-    return fn.config({
-      alias: o
-    });
-  };
-
-
   function mix(r, s) {
     for (var k in s) {
       r[k] = s[k];
@@ -1048,9 +1033,8 @@ seajs._fn = {};
     if (args) {
       var hash = {
         0: 'config',
-        1: 'alias',
-        2: 'use',
-        3: 'define'
+        1: 'use',
+        2: 'define'
       };
       for (var i = 0; i < args.length; i += 2) {
         fn[hash[args[i]]].apply(host, args[i + 1]);
@@ -1075,7 +1059,6 @@ seajs._fn = {};
 
   // SeaJS Loader API:
   host.config = fn.config;
-  host.alias = fn.alias;
   host.use = fn.use;
 
   // Module Authoring API:

@@ -58,17 +58,15 @@ define(function(require, exports, module) {
 });
 </pre>
 
-  <p>还可以通过 alias 方法来快捷设置别名：</p>
-
-<pre>
-seajs.alias('app', 'path/to/app');
-</pre>
-
   <p>alias 方法支持正则：</p>
 
 <pre>
-seajs.alias('([^/]+)$', '$1-v2');
-// 将 require('./abc') 等价成 require('./abc-v2')
+seajs.config({
+  alias: {
+    '([^/]+)$': '$1-v2'
+    // 将 require('./abc') 等价成 require('./abc-v2')
+  }
+});
 </pre>
 
 

@@ -1,11 +1,11 @@
 
 seajs.config({
   alias: {
-    'sub': './submodule/sub'
+    'sub': './submodule/sub',
+    'sub2': './submodule/sub'
   }
 });
 
-seajs.alias('sub2', './submodule/sub');
 
 define(function(require) {
 

@@ -20,9 +20,8 @@
     if (args) {
       var hash = {
         0: 'config',
-        1: 'alias',
-        2: 'use',
-        3: 'define'
+        1: 'use',
+        2: 'define'
       };
       for (var i = 0; i < args.length; i += 2) {
         fn[hash[args[i]]].apply(host, args[i + 1]);

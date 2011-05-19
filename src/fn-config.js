@@ -72,21 +72,6 @@
   };
 
 
-  /**
-   * The shortcut to set alias.
-   *
-   * @param {string} name The alias.
-   * @param {string} value The actual value.
-   */
-  fn.alias = function(name, value) {
-    var o = {};
-    o[name] = value;
-    return fn.config({
-      alias: o
-    });
-  };
-
-
   function mix(r, s) {
     for (var k in s) {
       r[k] = s[k];
