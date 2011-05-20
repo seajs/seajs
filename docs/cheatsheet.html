@@ -136,10 +136,25 @@ define(function(require, exports, module) {
   module.load(['./c', './d'], function(c, d) {
     // do something
   });
-
 });
 </pre>
-  
+
+
+  <h3 id="no-conflict">
+    seajs.noConflict
+    <a href="global-configuration.html#no-conflict">noConflict</a>
+  </h3>
+
+<pre>
+var myLoader = seajs.noConflict(true);
+myLoader.use('./main');
+
+/* main.js */
+myLoader.define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
 
   <p class="next-page">
     下一节：<a href="recommended-modules.html">模块精选</a>

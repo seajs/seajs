@@ -1071,7 +1071,18 @@ seajs._fn = {};
   host.use = fn.use;
 
   // Module Authoring API:
+  var previousDefine = global.define;
   global.define = fn.define;
+
+  // For custom loader name.
+  host.noConflict = function(all) {
+    global.seajs = host._seajs;
+    if (all) {
+      global.define = previousDefine;
+      host.define = fn.define;
+    }
+    return host;
+  };
 
   // Keeps clean!
   if (!data.config.debug) {

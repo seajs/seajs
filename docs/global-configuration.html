@@ -70,6 +70,33 @@ seajs.config({
 </pre>
 
 
+  <h2 id="no-conflict">noConflict</h2>
+
+  <p>为了避免冲突，或期望能自定义全局变量的命名时，可通过 noConflict 方法来实现：</p>
+
+<pre>
+var myLoader = seajs.noConflict();
+myLoader.use('./main');
+
+/* main.js */
+define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
+  <p>通过 true 参数，还可以避免 define 方法的冲突：</p>
+
+<pre>
+var myLoader = seajs.noConflict(true);
+myLoader.use('./main');
+
+/* main.js */
+myLoader.define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
+  
   <p class="next-page">
     下一节：<a href="require-rules.html">require 规则</a>
   </p>
