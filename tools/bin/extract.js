@@ -183,7 +183,7 @@ function generateCode(ast, info, compress) {
     var stat = stats[i];
 
     if (stat.toString()
-        .indexOf('stat,call,name,define,function,,') == 0) {
+        .indexOf('stat,call,name,define,') == 0) {
 
       // stat[1]:
       //     [ 'call',
