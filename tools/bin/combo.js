@@ -57,6 +57,10 @@ exports.run = function(inputFile, outputFile, comboAll) {
 
 function getAllDependencies(filepath, comboAll, ret) {
   ret = ret || [];
+  if (path.extname(filepath) !== ".js") {
+    return ret;
+  }
+
   ret.push(filepath);
 
   var basedir = path.dirname(filepath);
