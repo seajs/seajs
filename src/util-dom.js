@@ -18,16 +18,19 @@
       if (callback) callback.call(node);
       if (isCSS) return;
 
-      // Reduces memory leak.
-      try {
-        if (node.clearAttributes) {
-          node.clearAttributes();
-        } else {
-          for (var p in node) delete node[p];
+      // Don't remove inserted node when debug is on.
+      if (!data.config.debug) {
+        try {
+          // Reduces memory leak.
+          if (node.clearAttributes) {
+            node.clearAttributes();
+          } else {
+            for (var p in node) delete node[p];
+          }
+        } catch (x) {
         }
-      } catch (x) {
+        head.removeChild(node);
       }
-      head.removeChild(node);
     });
 
     if (isCSS) {

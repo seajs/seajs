@@ -112,7 +112,7 @@
       data.pendingModIE = uri;
 
       fetchingMods[uri] = util.getAsset(
-          util.restoreUrlArgs(uri),
+          getUrl(uri),
           cb,
           data.config.charset
           );
@@ -149,6 +149,23 @@
         callback();
       }
     }
+  }
+
+
+  var timestamp = util.now();
+
+  function getUrl(uri) {
+    var url = util.restoreUrlArgs(uri);
+
+    // When debug is 2, a unique timestamp will be added to each URL.
+    // This can be useful during testing to prevent the browser from
+    // using a cached version of the file.
+    if (data.config.debug == 2) {
+      url += (url.indexOf('?') === -1 ? '?' : '') +
+          'seajs-timestamp=' + timestamp;
+    }
+
+    return url;
   }
 
 })(seajs._util, seajs._data, seajs._fn, this);

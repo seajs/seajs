@@ -102,6 +102,11 @@ seajs._fn = {};
         return -1;
       };
 
+
+  util.now = Date.now ? Date.now : function() {
+    return new Date().getTime();
+  };
+
 })(seajs._util);
 
 /**
@@ -433,16 +438,19 @@ seajs._fn = {};
       if (callback) callback.call(node);
       if (isCSS) return;
 
-      // Reduces memory leak.
-      try {
-        if (node.clearAttributes) {
-          node.clearAttributes();
-        } else {
-          for (var p in node) delete node[p];
+      // Don't remove inserted node when debug is on.
+      if (!data.config.debug) {
+        try {
+          // Reduces memory leak.
+          if (node.clearAttributes) {
+            node.clearAttributes();
+          } else {
+            for (var p in node) delete node[p];
+          }
+        } catch (x) {
         }
-      } catch (x) {
+        head.removeChild(node);
       }
-      head.removeChild(node);
     });
 
     if (isCSS) {
@@ -705,7 +713,7 @@ seajs._fn = {};
       data.pendingModIE = uri;
 
       fetchingMods[uri] = util.getAsset(
-          util.restoreUrlArgs(uri),
+          getUrl(uri),
           cb,
           data.config.charset
           );
@@ -742,6 +750,23 @@ seajs._fn = {};
         callback();
       }
     }
+  }
+
+
+  var timestamp = util.now();
+
+  function getUrl(uri) {
+    var url = util.restoreUrlArgs(uri);
+
+    // When debug is 2, a unique timestamp will be added to each URL.
+    // This can be useful during testing to prevent the browser from
+    // using a cached version of the file.
+    if (data.config.debug == 2) {
+      url += (url.indexOf('?') === -1 ? '?' : '') +
+          'seajs-timestamp=' + timestamp;
+    }
+
+    return url;
   }
 
 })(seajs._util, seajs._data, seajs._fn, this);
