@@ -142,16 +142,6 @@
     });
 
 
-    seajs.use('klass', function(klass) {
-      printHeader('Klass v1.0');
-
-      assert(klass, 'check exports');
-      assert((typeof global['klass']) === "undefined", 'no global klass');
-
-      printDone();
-    });
-
-
     seajs.use('querystring', function(querystring) {
       printHeader('QueryString v' + querystring.version);
 
