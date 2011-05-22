@@ -219,8 +219,7 @@ seajs._fn = {};
     if (/#$/.test(url)) {
       url = url.slice(0, -1);
     }
-    else if (
-        url.lastIndexOf('.') <= url.lastIndexOf('/')) {
+    else if (!(/\.js$/.test(url))) {
       url += '.js';
     }
 
@@ -408,7 +407,6 @@ seajs._fn = {};
 
   util.dirname = dirname;
   util.restoreUrlArgs = restoreUrlArgs;
-  util.getHost = getHost;
   util.pageUrl = pageUrl;
 
   util.id2Uri = id2Uri;
