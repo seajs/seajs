@@ -219,7 +219,7 @@ seajs._fn = {};
     if (/#$/.test(url)) {
       url = url.slice(0, -1);
     }
-    else if (!(/\.js$/.test(url))) {
+    else if (!(/\.(?:css|js)$/.test(url))) {
       url += '.js';
     }
 
