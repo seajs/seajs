@@ -40,12 +40,7 @@
 <pre>
 require('http://cdn.com/js/a');
   // =&gt; http://cdn.com/js/a.js
-
-require('http://cdn.com/js/a.json');
-  // =&gt; http://cdn.com/js/a.json
 </pre>
-
-  <p>当省略文件后缀时，会自动添加上 .js 默认后缀。</p>
 
 
   <h3 id="root-id">root id</h3>
@@ -94,6 +89,24 @@ seajs.config({
 /*** a.js ***/
 require('jquery');
   // =&gt; http://code.jquery.com/jquery.js
+</pre>
+
+
+<h3 id="tips">注意事项</h3>
+
+<pre>
+// 当文件后缀是 .js 时，默认可省略。
+require('http://cdn.com/js/a');
+require('http://cdn.com/js/a.js');
+  // =&gt; http://cdn.com/js/a.js
+
+// 当文件后缀是 .css 时，不可省略。
+require('http://cdn.com/js/a.css');
+  // =&gt; http://cdn.com/js/a.css
+
+// 当文件后缀是其他情况时，必须添加 # 来表示结束，否则会添加 .js 后缀。
+require('http://cdn.com/js/a.json#');
+  // =&gt; http://cdn.com/js/a.json
 </pre>
 
 
