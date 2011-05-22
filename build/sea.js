@@ -1,10 +1,10 @@
 /*
-Copyright 2011, SeaJS v1.0.0-dev
+Copyright 2011, SeaJS v0.9.1
 MIT Licensed
-build time: ${build.time}
+build time: May 22 23:10
 */
 
-this.seajs={_seajs:this.seajs};seajs.version="1.0.0-dev";seajs._data={config:{},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
+this.seajs={_seajs:this.seajs};seajs.version="0.9.1";seajs._data={config:{},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
 (function(a){var b=Object.prototype.toString;a.isString=function(a){return b.call(a)==="[object String]"};a.isFunction=function(a){return b.call(a)==="[object Function]"};a.isArray=Array.isArray?Array.isArray:function(a){return b.call(a)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(a,b){return a.indexOf(b)}:function(a,b){for(var i=0,h=a.length;i<h;i++)if(a[i]===b)return i;return-1};a.now=Date.now?Date.now:function(){return(new Date).getTime()}})(seajs._util);
 (function(a,b){function c(a){var b=["{"],e;for(e in a)if(typeof a[e]==="number"||typeof a[e]==="string")b.push(e+": "+a[e]),b.push(", ");b.pop();b.push("}");return b.join("")}var g=b.config;a.error=function(a){if(a.type==="error")throw"Error occurs! "+c(a);else if(g.debug&&typeof console!=="undefined")console[a.type](c(a))}})(seajs._util,seajs._data);
 (function(a,b,c){function g(a){a=a.match(/.*(?=\/.*$)/);return(a?a[0]:".")+"/"}function i(a){var d=a.match(/^([^?]+)(\?.*)$/);d&&(a=d[1],f[a]=d[2]);return a}function h(b,e){if(q[b])return b;var f=b,h=j.alias;if(h){var f="/"+f+"/",c;for(c in h)h.hasOwnProperty(c)&&(l[c]||(l[c]=RegExp("/"+c+"/")),f=f.replace(l[c],"/"+h[c]+"/"));f=f.slice(1,-1)}b=f;e=e||d;b.indexOf("://")!==-1?f=b:b.indexOf("./")===0||b.indexOf("../")===0?(b=b.replace(/^\.\//,""),f=g(e)+b):f=b.indexOf("/")===0?e.replace(/^(\w+:\/\/[^/]+)\/?.*$/,
