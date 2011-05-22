@@ -178,8 +178,9 @@ seajs._fn = {};
    * realpath('./a//b/../c') ==> 'a/c'
    */
   function realpath(path) {
-    // 'a//b/c' ==> 'a/b/c'
-    path = path.replace(/([^:]\/)\/+/g, '$1');
+    // 'file:///a//b/c' ==> 'file:///a/b/c'
+    // 'http://a//b/c' ==> 'http://a/b/c'
+    path = path.replace(/([^:\/])\/+/g, '$1\/');
 
     // 'a/b/c', just return.
     if (path.indexOf('.') === -1) {
