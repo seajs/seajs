@@ -89,7 +89,11 @@ pre.wrong {
 }
 
 ul {
-  list-style-type: square;
+  list-style-type: circle;
+}
+
+.text-list li {
+  margin-bottom: 10px;
 }
 
 p.next-page {

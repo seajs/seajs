@@ -1,3 +1,0 @@
-#!/bin/sh
-
-/usr/bin/env node `dirname "$0"`/sbuild.js $@

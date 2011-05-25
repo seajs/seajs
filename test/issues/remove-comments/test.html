@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Issue Test</title>
+<script src="../../../build/sea.js"></script>
+</head>
+<body>
+
+<p>
+  <a href="https://github.com/seajs/seajs/issues/25">https://github.com/seajs/seajs/issues/25</a>
+</p>
+
+<div id="out"></div>
+
+<h3>References:</h3>
+<ul>
+  <li><a href="http://lifesinger.org/lab/2011/remove-comments-safely/">http://lifesinger.org/lab/2011/remove-comments-safely/</a></li>
+</ul>
+
+<script>
+
+  seajs.use('./main');
+
+  function printResults(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+    document.getElementById('out').appendChild(d);
+  }
+
+</script>
+</body>
+</html>

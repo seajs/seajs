@@ -4,7 +4,8 @@
   <property name="module.name" value="sea"/>
   <property name="module.files" value="*-pkg.js"/>
   <property name="module.dir" location="."/>
-  <import file="../tools/build/common-build.xml"/>
+  <import file="../tools/common-build.xml"/>
+
 
   <target name="concat">
     <concat destfile="${module.name}-pkg.js"
@@ -30,14 +31,16 @@
     </concat>
   </target>
 
+
   <target name="clean">
     <delete>
-      <fileset dir="${module.dir}" includes="*-pkg.js"/>
+      <fileset dir="${module.dir}" includes="${module.files}"/>
     </delete>
   </target>
 
+
   <target name="build"
-          depends="gjslint,concat,prepare,compress,copyright,destroy,clean">
+          depends="gjslint,concat,common.build,clean">
   </target>
 
 </project>

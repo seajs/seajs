@@ -74,9 +74,7 @@ math.js        -- 数学计算库
   </p>
 
   <p>
-    首先，按照说明，安装好 sbuild 工具：
-    <a href="https://github.com/seajs/seajs/blob/master/tools/bin/README.md"
-       target="_blank">tools/bin/README.md</a>
+    首先，按照说明，安装好 spm 工具：<a href="https://github.com/seajs/spm/" target="_blank">spm</a>
   </p>
 
   <p>
@@ -177,13 +175,17 @@ math.js        -- 数学计算库
     这样，我们实现了：
   </p>
 
-  <ol>
+  <ol class="text-list">
     <li>开发阶段，页面中只要指定初始化入口模块，比如用 <code>data-main="path/to/init"</code> 或通过 <code>seajs.use("path/to/init", callback)</code> 来指定入口模块。</li>
     <li>依赖关系由各个模块自身的 <code>require("id")</code> 来指定，无需增加或修改页面中的 <code>script</code> 引用。这能减少沟通成本，也有利于维护。</li>
     <li>部署阶段，不需要修改页面中的 <code>script</code> 引用，和开发阶段是一样的。</li>
     <li>上线后，能根据需求，保持 HTTP 链接数的精简。并且调试方便，只要修改 host 将入口模块的地址指向本地开发环境即可。</li>
     <li><strong>最重要的，是我们可以将前端开发彻底模块化了，能更好地享受纯粹的编码乐趣。</strong></li>
   </ol>
+
+  <p>
+    关于压缩优化、打包部署等更多信息，请参考：<a href="https://github.com/seajs/spm/">spm</a>
+  </p>
 
   
   <p class="next-page">

@@ -1,3 +1,11 @@
+
+seajs.config({
+  alias: {
+    'jquery': '../../assets/jquery'
+  }
+});
+
+
 define(function(require) {
 
   var $ = require('jquery');

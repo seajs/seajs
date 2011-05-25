@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Test Runner</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<script src="config.js"></script>
+<script>
+  (function() {
+
+    var container, reporter, summary, start;
+    var currentTest, count;
+    var tests = this['testCases'];
+
+    window['onload'] = function() {
+      container = document.getElementById('container');
+      reporter = document.getElementById('reporter');
+      summary = document.getElementById('summary');
+      start = document.getElementById('start');
+      start.setAttribute('autocomplete', 'off');
+
+      start['onclick'] = function() {
+        start.setAttribute('disabled', 'true');
+        reset();
+        testNext();
+
+      };
+    };
+
+    window.testNext = function() {
+      var test = tests[currentTest++];
+      if (test) {
+        printHeader(test);
+        load(test);
+        summary.innerHTML = currentTest + ' / ' + tests.length +
+            ' Running ' + test + ' ... ';
+      } else {
+        printSummary();
+        start.removeAttribute('disabled');
+      }
+    };
+
+    window['printResults'] = function(txt, style) {
+      var d = document.createElement('div');
+      d.innerHTML = txt;
+      d.className = style;
+      reporter.appendChild(d);
+      reporter.scrollTop = reporter.scrollHeight;
+      if (style in count) count[style] += 1;
+    };
+
+    function load(test) {
+      var url = '';
+      if (test.indexOf('issues/') === 0) {
+        url = test + '/test.html';
+      }
+      else if (test.indexOf('bootstrap/') === 0) {
+        url = test + '.html';
+      }
+      else {
+        url = 'sandbox.html?' + encodeURIComponent(test);
+      }
+      createFrame().src = url;
+    }
+
+    function createFrame() {
+      var testFrame = document.createElement('iframe');
+      container.appendChild(testFrame);
+      return testFrame;
+    }
+
+    function printHeader(test) {
+      var h = document.createElement('h3');
+      h.appendChild(document.createTextNode(test));
+      reporter.appendChild(h);
+    }
+
+    function printSummary() {
+      summary.innerHTML =
+          'Passed: <span class="pass">' + count.pass + '<' + '/span> ' +
+              'Failed: <span class="fail">' + count.fail + '<' + '/span> ' +
+              'Errors: <span class="error">' + count.error + '<' + '/span>';
+    }
+
+    function reset() {
+      reporter.innerHTML = '';
+      currentTest = 0;
+      count = { pass: 0, fail: 0, error: 0 };
+    }
+
+  })();
+</script>
+<div id="container">
+  <div id="banner">
+    <div id="logo">Test Suite for sea.js</div>
+    <div id="summary"></div>
+  </div>
+  <div id="reporter"></div>
+  <button id="start">Start</button>
+</div>
+</body>
+</html>

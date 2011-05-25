@@ -1,0 +1,69 @@
+
+body {
+  font-family: "Helvetica Neue Light", "Lucida Grande", "Calibri", "Arial", sans-serif;
+}
+
+#banner {
+  color: #303;
+  background-color: #fef;
+  padding: 5px;
+  position: relative;
+  border: 1px solid #ddd;
+  border-bottom: none;
+}
+
+#logo {
+  font-size: 1.1em;
+  padding-left: 5px;
+}
+
+#summary {
+  position: absolute;
+  left: 300px;
+  top: 8px;
+  font: 15px Arial;
+}
+
+#summary span {
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+#container {
+  margin: 0 5px;
+}
+
+#container iframe {
+  top: 0;
+  left: 0;
+  position: absolute;
+  visibility: hidden;
+}
+
+#start {
+  width: 90px;
+  height: 30px;
+  margin:  5px 10px;
+  font-size: 18px;
+}
+
+#reporter {
+  padding: 0 10px;
+  margin-bottom: 10px;
+  height: 360px;
+  overflow-y: scroll;
+  border: 1px solid #ddd;
+}
+
+#reporter h3 {
+  font: bold 15px Arial;
+}
+
+.pass {
+  color: green;
+}
+
+.fail,
+.error {
+  color: red;
+}

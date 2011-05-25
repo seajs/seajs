@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.1
+Copyright 2011, SeaJS v1.0.0dev
 MIT Licensed
-build time: May 22 23:10
+build time: ${build.time}
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '%VERSION%';
+seajs.version = '1.0.0dev';
 
 
 // Module status：
@@ -295,14 +295,17 @@ seajs._fn = {};
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
+   * @param {boolean=} noAlias When set to true, don't pass alias.
    */
-  function id2Uri(id, refUrl) {
+  function id2Uri(id, refUrl, noAlias) {
     // only run once.
     if (id2UriCache[id]) {
       return id;
     }
 
-    id = parseAlias(id);
+    if (!noAlias) {
+      id = parseAlias(id);
+    }
     refUrl = refUrl || pageUrl;
 
     var ret;
@@ -360,7 +363,7 @@ seajs._fn = {};
     var uri;
     // define('id', [], fn)
     if (id) {
-      uri = id2Uri(id, url);
+      uri = id2Uri(id, url, true);
     } else {
       uri = url;
     }
@@ -371,7 +374,9 @@ seajs._fn = {};
     // guest module in package
     if (id && url !== uri) {
       var host = memoizedMods[url];
-      augmentPackageHostDeps(host.dependencies, mod.dependencies);
+      if (host) {
+        augmentPackageHostDeps(host.dependencies, mod.dependencies);
+      }
     }
   }
 
@@ -392,8 +397,8 @@ seajs._fn = {};
   /**
    * For example:
    *  sbuild host.js --combo
-   *   define('host', ['./guest'], ...)
-   *   define('guest', ['jquery'], ...)
+   *   define('./host', ['./guest'], ...)
+   *   define('./guest', ['jquery'], ...)
    * The jquery is not combined to host.js, so we should add jquery
    * to host.dependencies
    */

@@ -142,14 +142,17 @@
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
+   * @param {boolean=} noAlias When set to true, don't pass alias.
    */
-  function id2Uri(id, refUrl) {
+  function id2Uri(id, refUrl, noAlias) {
     // only run once.
     if (id2UriCache[id]) {
       return id;
     }
 
-    id = parseAlias(id);
+    if (!noAlias) {
+      id = parseAlias(id);
+    }
     refUrl = refUrl || pageUrl;
 
     var ret;
@@ -207,7 +210,7 @@
     var uri;
     // define('id', [], fn)
     if (id) {
-      uri = id2Uri(id, url);
+      uri = id2Uri(id, url, true);
     } else {
       uri = url;
     }
@@ -218,7 +221,9 @@
     // guest module in package
     if (id && url !== uri) {
       var host = memoizedMods[url];
-      augmentPackageHostDeps(host.dependencies, mod.dependencies);
+      if (host) {
+        augmentPackageHostDeps(host.dependencies, mod.dependencies);
+      }
     }
   }
 
@@ -239,8 +244,8 @@
   /**
    * For example:
    *  sbuild host.js --combo
-   *   define('host', ['./guest'], ...)
-   *   define('guest', ['jquery'], ...)
+   *   define('./host', ['./guest'], ...)
+   *   define('./guest', ['jquery'], ...)
    * The jquery is not combined to host.js, so we should add jquery
    * to host.dependencies
    */
