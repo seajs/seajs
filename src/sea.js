@@ -33,7 +33,13 @@ seajs._data = {
   /**
    * The configuration data.
    */
-  config: {},
+  config: {
+    /**
+     * Debug mode. It will be turned off automatically when compressing.
+     * @const
+     */
+    debug: '%DEBUG%'
+  },
 
   /**
    * Modules that have been memoize()d.

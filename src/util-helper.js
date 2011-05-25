@@ -61,14 +61,17 @@
    * Normalizes an url.
    */
   function normalize(url) {
-    url = stripUrlArgs(realpath(url));
 
     // Adds the default '.js' extension except that the url ends with #.
     if (/#$/.test(url)) {
       url = url.slice(0, -1);
     }
-    else if (!(/\.(?:css|js)$/.test(url))) {
-      url += '.js';
+    else {
+      url = stripUrlArgs(realpath(url));
+
+      if (!(/\.(?:css|js)$/.test(url))) {
+        url += '.js';
+      }
     }
 
     return url;
@@ -130,7 +133,7 @@
    * Gets the host portion from url.
    */
   function getHost(url) {
-    return url.replace(/^(\w+:\/\/[^/]+)\/?.*$/, '$1');
+    return url.replace(/^(\w+:\/\/[^/]*)\/?.*$/, '$1');
   }
 
 
@@ -267,5 +270,12 @@
 
   util.memoize = memoize;
   util.getUnMemoized = getUnMemoized;
+
+  if (data.config.debug) {
+    util.realpath = realpath;
+    util.normalize = normalize;
+    util.parseAlias = parseAlias;
+    util.getHost = getHost;
+  }
 
 })(seajs._util, seajs._data, this);

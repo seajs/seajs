@@ -28,6 +28,8 @@ define(function(require, exports) {
 
     ,'packages/math'
 
+    ,'unit/util-helper'
+
     ,'issues/config-base'
     ,'issues/ie-cache'
     ,'issues/load-css'
@@ -38,6 +40,6 @@ define(function(require, exports) {
     ,'bootstrap/index'
   ];
 
-  //exports.testCases = ['issues/config-base'];
+  //exports.testCases = ['unit/util-helper'];
 
 });

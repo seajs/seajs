@@ -56,11 +56,14 @@
       if (test.indexOf('issues/') === 0) {
         url = test + '/test.html';
       }
+      else if (test.indexOf('unit/') === 0) {
+        url = 'sandbox.html?' + encodeURIComponent(test);
+      }
       else if (test.indexOf('bootstrap/') === 0) {
         url = test + '.html';
       }
       else {
-        url = 'sandbox.html?' + encodeURIComponent(test);
+        url = 'sandbox.html?' + encodeURIComponent(test + '/program.js');
       }
       createFrame().src = url;
     }

@@ -17,7 +17,6 @@ define(function(require) {
     ,'modules/load'
     ,'modules/metadata'
     ,'modules/checkPotentialErrors'
-    ,'packages/math'
   ];
 
   var currentTest = 0;
@@ -27,8 +26,7 @@ define(function(require) {
     var testCase = testCases[currentTest++];
 
     if (excludes.indexOf(testCase) === -1 &&
-        testCase.indexOf('issues/') === -1 &&
-        testCase.indexOf('bootstrap/') === -1) {
+        testCase.indexOf('modules/') === 0) {
 
       require('./' + testCase + '/program.js');
 

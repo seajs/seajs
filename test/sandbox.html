@@ -29,10 +29,8 @@
         timeout: 1000
       });
 
-  var dir = decodeURIComponent((location.search || '?').substring(1));
-  var program = './' + dir + '/program';
-
-  seajs.use(program);
+  var file = decodeURIComponent((location.search || '?').substring(1));
+  seajs.use('./' + file);
 
 })();
 </script>
