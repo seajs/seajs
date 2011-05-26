@@ -18,8 +18,12 @@
   }
 
   // When script is inline code, src is pageUrl.
-  var src = util.getScriptAbsoluteSrc(loaderScript) || util.pageUrl;
-  config.base = util.dirname(src);
+  var src = util.getScriptAbsoluteSrc(loaderScript);
+  if (src) {
+    src = util.dirname(src);
+    src = util.realpath(src + '../../');
+    config.base = src;
+  }
 
   config.main = loaderScript.getAttribute('data-main') || '';
 

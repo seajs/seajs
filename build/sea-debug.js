@@ -335,13 +335,25 @@ seajs._fn = {};
     }
     // top-level id
     else {
-      ret = config.base + '/' + id;
+      ret = getConfigBase() + '/' + id;
     }
 
     ret = normalize(ret);
     id2UriCache[ret] = true;
 
     return ret;
+  }
+
+
+  function getConfigBase() {
+    if (!config.base) {
+      util.error({
+        message: 'the config.base is empty',
+        from: 'id2Uri',
+        type: 'error'
+      });
+    }
+    return config.base;
   }
 
 
@@ -421,6 +433,7 @@ seajs._fn = {};
 
 
   util.dirname = dirname;
+  util.realpath = realpath;
   util.restoreUrlArgs = restoreUrlArgs;
   util.pageUrl = pageUrl;
 
@@ -431,7 +444,6 @@ seajs._fn = {};
   util.getUnMemoized = getUnMemoized;
 
   if (data.config.debug) {
-    util.realpath = realpath;
     util.normalize = normalize;
     util.parseAlias = parseAlias;
     util.getHost = getHost;
@@ -1004,8 +1016,12 @@ seajs._fn = {};
   }
 
   // When script is inline code, src is pageUrl.
-  var src = util.getScriptAbsoluteSrc(loaderScript) || util.pageUrl;
-  config.base = util.dirname(src);
+  var src = util.getScriptAbsoluteSrc(loaderScript);
+  if (src) {
+    src = util.dirname(src);
+    src = util.realpath(src + '../../');
+    config.base = src;
+  }
 
   config.main = loaderScript.getAttribute('data-main') || '';
 
