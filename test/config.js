@@ -36,6 +36,7 @@ define(function(require, exports) {
     ,'issues/local-files'
     ,'issues/no-conflict'
     ,'issues/remove-comments'
+    ,'issues/multi-use'
 
     ,'bootstrap/index'
   ];
