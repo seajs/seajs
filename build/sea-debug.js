@@ -266,25 +266,32 @@ seajs._fn = {};
   var aliasRegCache = {};
 
   /**
-   * Parses alias in the module id.
+   * Parses alias in the module id. Only parse the prefix and suffix.
    */
   function parseAlias(id) {
     var alias = config['alias'];
 
-    if (alias) {
-      id = '/' + id + '/';
-      for (var p in alias) {
-        if (alias.hasOwnProperty(p)) {
-          if (!aliasRegCache[p]) {
-            aliasRegCache[p] = new RegExp('/' + p + '/');
-          }
-          id = id.replace(aliasRegCache[p], '/' + alias[p] + '/');
-        }
+    var parts = id.split('/');
+    var last = parts.length - 1;
+
+    parse(parts, 0);
+    if (last) parse(parts, last);
+
+    function parse(parts, i) {
+      var part = parts[i];
+      var m;
+
+      if (alias && alias.hasOwnProperty(part)) {
+        parts[i] = alias[part];
       }
-      id = id.slice(1, -1);
+      // jquery:1.6.1 => jquery/1.6.1/jquery
+      // jquery:1.6.1-debug => jquery/1.6.1/jquery-debug
+      else if ((m = part.match(/(.+):([\d\.]+)(-debug)?/))) {
+        parts[i] = m[1] + '/' + m[2] + '/' + m[1] + (m[3] ? m[3] : '');
+      }
     }
 
-    return id;
+    return parts.join('/');
   }
 
 
