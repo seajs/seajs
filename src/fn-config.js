@@ -17,13 +17,19 @@
     loaderScript = scripts[scripts.length - 1];
   }
 
-  // When script is inline code, src is pageUrl.
   var src = util.getScriptAbsoluteSrc(loaderScript);
   if (src) {
     src = util.dirname(src);
-    src = util.realpath(src + '../../');
+    // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
+    // to "http://test.com/libs/"
+    var match = src.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+    if (match) {
+      src = match[1];
+    }
     config.base = src;
   }
+  // When script is inline code, src is empty.
+
 
   config.main = loaderScript.getAttribute('data-main') || '';
 

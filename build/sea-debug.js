@@ -433,9 +433,7 @@ seajs._fn = {};
 
 
   util.dirname = dirname;
-  util.realpath = realpath;
   util.restoreUrlArgs = restoreUrlArgs;
-  util.pageUrl = pageUrl;
 
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;
@@ -444,6 +442,7 @@ seajs._fn = {};
   util.getUnMemoized = getUnMemoized;
 
   if (data.config.debug) {
+    util.realpath = realpath;
     util.normalize = normalize;
     util.parseAlias = parseAlias;
     util.getHost = getHost;
@@ -1015,13 +1014,19 @@ seajs._fn = {};
     loaderScript = scripts[scripts.length - 1];
   }
 
-  // When script is inline code, src is pageUrl.
   var src = util.getScriptAbsoluteSrc(loaderScript);
   if (src) {
     src = util.dirname(src);
-    src = util.realpath(src + '../../');
+    // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
+    // to "http://test.com/libs/"
+    var match = src.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+    if (match) {
+      src = match[1];
+    }
     config.base = src;
   }
+  // When script is inline code, src is empty.
+
 
   config.main = loaderScript.getAttribute('data-main') || '';
 

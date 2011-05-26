@@ -274,9 +274,7 @@
 
 
   util.dirname = dirname;
-  util.realpath = realpath;
   util.restoreUrlArgs = restoreUrlArgs;
-  util.pageUrl = pageUrl;
 
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;
@@ -285,6 +283,7 @@
   util.getUnMemoized = getUnMemoized;
 
   if (data.config.debug) {
+    util.realpath = realpath;
     util.normalize = normalize;
     util.parseAlias = parseAlias;
     util.getHost = getHost;
