@@ -104,8 +104,6 @@
   }
 
 
-  var aliasRegCache = {};
-
   /**
    * Parses alias in the module id. Only parse the prefix and suffix.
    */
