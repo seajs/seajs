@@ -70,14 +70,20 @@
           var m = deps.length;
 
           if (m) {
-            remain += m;
+            // if a -> [b -> [c -> [a, e], d]]
+            // when use(['a', 'b'])
+            // should remove a from c.deps
+            deps = util.removeCyclicWaitingUris(uri, deps);
+            m = deps.length;
+          }
 
+          if (m) {
+            remain += m;
             provide(deps, function() {
               remain -= m;
               if (remain === 0) onProvide();
             }, true);
           }
-
           if (--remain === 0) onProvide();
         }
 
@@ -92,8 +98,7 @@
 
         if (!noRequire) {
           require = fn.createRequire({
-            uri: that.uri,
-            deps: uris
+            uri: that.uri
           });
         }
 

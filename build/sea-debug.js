@@ -461,6 +461,38 @@ seajs._fn = {};
     });
   }
 
+  /**
+   * if a -> [b -> [c -> [a, e], d]]
+   * call removeMemoizedCyclicUris(c, [a, e])
+   * return [e]
+   */
+  function removeCyclicWaitingUris(uri, deps) {
+    return util.filter(deps, function(dep) {
+      return !isCyclicWaiting(memoizedMods[dep], uri);
+    });
+  }
+
+  function isCyclicWaiting(mod, uri) {
+    if (!mod || mod.ready) {
+      return false;
+    }
+
+    var deps = mod.dependencies || [];
+    if (deps.length) {
+      if (util.indexOf(deps, uri) !== -1) {
+        return true;
+      } else {
+        for (var i = 0; i < deps.length; i++) {
+          if (isCyclicWaiting(memoizedMods[deps[i]], uri)) {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+    return false;
+  }
+
 
   /**
    * For example:
@@ -488,6 +520,7 @@ seajs._fn = {};
   util.memoize = memoize;
   util.setReadyState = setReadyState;
   util.getUnReadyUris = getUnReadyUris;
+  util.removeCyclicWaitingUris = removeCyclicWaitingUris;
 
   if (data.config.debug) {
     util.realpath = realpath;
@@ -750,14 +783,20 @@ seajs._fn = {};
           var m = deps.length;
 
           if (m) {
-            remain += m;
+            // if a -> [b -> [c -> [a, e], d]]
+            // when use(['a', 'b'])
+            // should remove a from c.deps
+            deps = util.removeCyclicWaitingUris(uri, deps);
+            m = deps.length;
+          }
 
+          if (m) {
+            remain += m;
             provide(deps, function() {
               remain -= m;
               if (remain === 0) onProvide();
             }, true);
           }
-
           if (--remain === 0) onProvide();
         }
 
@@ -772,8 +811,7 @@ seajs._fn = {};
 
         if (!noRequire) {
           require = fn.createRequire({
-            uri: that.uri,
-            deps: uris
+            uri: that.uri
           });
         }
 
