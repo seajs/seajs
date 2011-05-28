@@ -258,46 +258,17 @@ seajs._fn = {};
    * Normalizes an url.
    */
   function normalize(url) {
+    url = realpath(url);
 
     // Adds the default '.js' extension except that the url ends with #.
     if (/#$/.test(url)) {
       url = url.slice(0, -1);
     }
-    else {
-      url = stripUrlArgs(realpath(url));
-
-      if (!(/\.(?:css|js)$/.test(url))) {
-        url += '.js';
-      }
+    else if (url.indexOf('?') === -1 && !/\.(?:css|js)$/.test(url)) {
+      url += '.js';
     }
 
     return url;
-  }
-
-
-  /**
-   * Url args cache.
-   * { uri: args, ... }
-   */
-  var urlArgs = {};
-
-  /**
-   * Strips off the args from url and caches it.
-   */
-  function stripUrlArgs(url) {
-    var m = url.match(/^([^?]+)(\?.*)$/);
-    if (m) {
-      url = m[1];
-      urlArgs[url] = m[2];
-    }
-    return url;
-  }
-
-  /**
-   * Restores the args for url.
-   */
-  function restoreUrlArgs(url) {
-    return url + (urlArgs[url] || '');
   }
 
 
@@ -418,9 +389,8 @@ seajs._fn = {};
    * Caches mod info to memoizedMods.
    */
   function memoize(id, url, mod) {
-    url = stripUrlArgs(url);
-
     var uri;
+
     // define('id', [], fn)
     if (id) {
       uri = id2Uri(id, url, true);
@@ -512,7 +482,6 @@ seajs._fn = {};
 
 
   util.dirname = dirname;
-  util.restoreUrlArgs = restoreUrlArgs;
 
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;
@@ -704,6 +673,17 @@ seajs._fn = {};
         node.getAttribute('src', 4);
   };
 
+
+  var noCacheTimeStamp = 'seajs-timestamp=' + util.now();
+
+  util.addNoCacheTimeStamp = function(url) {
+    return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
+  };
+
+  util.removeNoCacheTimeStamp = function(url) {
+    return url.replace(noCacheTimeStamp, '').slice(0, -1);
+  };
+
 })(seajs._util, seajs._data);
 
 /**
@@ -874,17 +854,14 @@ seajs._fn = {};
   }
 
 
-  var timestamp = util.now();
-
   function getUrl(uri) {
-    var url = util.restoreUrlArgs(uri);
+    var url = uri;
 
     // When debug is 2, a unique timestamp will be added to each URL.
     // This can be useful during testing to prevent the browser from
     // using a cached version of the file.
     if (data.config.debug == 2) {
-      url += (url.indexOf('?') === -1 ? '?' : '') +
-          'seajs-timestamp=' + timestamp;
+      url = util.addNoCacheTimeStamp(url);
     }
 
     return url;
@@ -932,6 +909,10 @@ seajs._fn = {};
       var script = util.getInteractiveScript();
       if (script) {
         url = util.getScriptAbsoluteSrc(script);
+        // remove no cache timestamp
+        if (data.config.debug == 2) {
+          url = util.removeNoCacheTimeStamp(url);
+        }
       }
 
       // In IE6-9, if the script is in the cache, the "interactive" mode

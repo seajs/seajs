@@ -61,46 +61,17 @@
    * Normalizes an url.
    */
   function normalize(url) {
+    url = realpath(url);
 
     // Adds the default '.js' extension except that the url ends with #.
     if (/#$/.test(url)) {
       url = url.slice(0, -1);
     }
-    else {
-      url = stripUrlArgs(realpath(url));
-
-      if (!(/\.(?:css|js)$/.test(url))) {
-        url += '.js';
-      }
+    else if (url.indexOf('?') === -1 && !/\.(?:css|js)$/.test(url)) {
+      url += '.js';
     }
 
     return url;
-  }
-
-
-  /**
-   * Url args cache.
-   * { uri: args, ... }
-   */
-  var urlArgs = {};
-
-  /**
-   * Strips off the args from url and caches it.
-   */
-  function stripUrlArgs(url) {
-    var m = url.match(/^([^?]+)(\?.*)$/);
-    if (m) {
-      url = m[1];
-      urlArgs[url] = m[2];
-    }
-    return url;
-  }
-
-  /**
-   * Restores the args for url.
-   */
-  function restoreUrlArgs(url) {
-    return url + (urlArgs[url] || '');
   }
 
 
@@ -221,9 +192,8 @@
    * Caches mod info to memoizedMods.
    */
   function memoize(id, url, mod) {
-    url = stripUrlArgs(url);
-
     var uri;
+
     // define('id', [], fn)
     if (id) {
       uri = id2Uri(id, url, true);
@@ -315,7 +285,6 @@
 
 
   util.dirname = dirname;
-  util.restoreUrlArgs = restoreUrlArgs;
 
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;

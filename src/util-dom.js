@@ -172,6 +172,17 @@
         node.getAttribute('src', 4);
   };
 
+
+  var noCacheTimeStamp = 'seajs-timestamp=' + util.now();
+
+  util.addNoCacheTimeStamp = function(url) {
+    return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
+  };
+
+  util.removeNoCacheTimeStamp = function(url) {
+    return url.replace(noCacheTimeStamp, '').slice(0, -1);
+  };
+
 })(seajs._util, seajs._data);
 
 /**

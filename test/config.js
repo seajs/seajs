@@ -37,6 +37,7 @@ define(function(require, exports) {
     ,'issues/no-conflict'
     ,'issues/remove-comments'
     ,'issues/multi-use'
+    ,'issues/jsonp'
 
     ,'bootstrap/index'
   ];
