@@ -1,4 +1,9 @@
+
+//console.log('main.js is loaded');
+
 define(function(require, exports) {
+
+  //console.log('main.js is required');
 
   var test = require('../../test');
 

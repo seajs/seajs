@@ -78,6 +78,7 @@ seajs._fn = {};
 (function(util) {
 
   var toString = Object.prototype.toString;
+  var AP = Array.prototype;
 
 
   util.isString = function(val) {
@@ -96,16 +97,53 @@ seajs._fn = {};
 
 
   util.indexOf = Array.prototype.indexOf ?
-      function(array, item) {
-        return array.indexOf(item);
+      function(arr, item) {
+        return arr.indexOf(item);
       } :
-      function(array, item) {
-        for (var i = 0, l = array.length; i < l; i++) {
-          if (array[i] === item) {
+      function(arr, item) {
+        for (var i = 0, len = arr.length; i < len; i++) {
+          if (arr[i] === item) {
             return i;
           }
         }
         return -1;
+      };
+
+
+  var forEach = util.each = function(arr, fn) {
+    var val, i = 0, len = arr.length;
+    for (val = arr[0];
+         i < len && fn(val, i, arr) !== false;
+         val = arr[++i]) {
+    }
+  };
+
+
+  util.map = AP.map ?
+      function(arr, fn) {
+        return arr.map(fn);
+      } :
+      function(arr, fn) {
+        var ret = [];
+        forEach(arr, function(item, i, arr) {
+          ret.push(fn(item, i, arr));
+        });
+        return ret;
+      };
+
+
+  util.filter = AP.filter ?
+      function(arr, fn) {
+        return arr.filter(fn);
+      } :
+      function(arr, fn) {
+        var ret = [];
+        forEach(arr, function(item, i, arr) {
+          if (fn(item, i, arr)) {
+            ret.push(item);
+          }
+        });
+        return ret;
       };
 
 
@@ -368,13 +406,9 @@ seajs._fn = {};
    * @param {string=} refUri The referenced uri for relative id.
    */
   function ids2Uris(ids, refUri) {
-    var uris = [];
-
-    for (var i = 0, len = ids.length; i < len; i++) {
-      uris[i] = id2Uri(ids[i], refUri);
-    }
-
-    return uris;
+    return util.map(ids, function(id) {
+      return id2Uri(id, refUri);
+    });
   }
 
 
@@ -395,7 +429,7 @@ seajs._fn = {};
     }
 
     mod.dependencies = ids2Uris(mod.dependencies, uri);
-    data.memoizedMods[uri] = mod;
+    memoizedMods[uri] = mod;
 
     // guest module in package
     if (id && url !== uri) {
@@ -407,18 +441,26 @@ seajs._fn = {};
   }
 
   /**
-   * Removes the memoize()d uris from input.
+   * Set mod.ready to true when all the requires of the module is loaded.
    */
-  function getUnMemoized(uris) {
-    var ret = [];
-    for (var i = 0; i < uris.length; i++) {
-      var uri = uris[i];
-      if (!memoizedMods[uri]) {
-        ret.push(uri);
+  function setReadyState(uris) {
+    util.each(uris, function(uri) {
+      if (memoizedMods[uri]) {
+        memoizedMods[uri].ready = true;
       }
-    }
-    return ret;
+    });
   }
+
+  /**
+   * Removes the "ready = true" uris from input.
+   */
+  function getUnReadyUris(uris) {
+    return util.filter(uris, function(uri) {
+      var mod = memoizedMods[uri];
+      return !mod || !mod.ready;
+    });
+  }
+
 
   /**
    * For example:
@@ -429,11 +471,11 @@ seajs._fn = {};
    * to host.dependencies
    */
   function augmentPackageHostDeps(hostDeps, guestDeps) {
-    for (var i = 0; i < guestDeps.length; i++) {
-      if (util.indexOf(hostDeps, guestDeps[i]) === -1) {
-        hostDeps.push(guestDeps[i]);
+    util.each(guestDeps, function(guestDep) {
+      if (util.indexOf(hostDeps, guestDep) === -1) {
+        hostDeps.push(guestDep);
       }
-    }
+    });
   }
 
 
@@ -444,7 +486,8 @@ seajs._fn = {};
   util.ids2Uris = ids2Uris;
 
   util.memoize = memoize;
-  util.getUnMemoized = getUnMemoized;
+  util.setReadyState = setReadyState;
+  util.getUnReadyUris = getUnReadyUris;
 
   if (data.config.debug) {
     util.realpath = realpath;
@@ -662,15 +705,13 @@ seajs._fn = {};
     }
 
     // normalize
-    ids = util.ids2Uris(ids, this.uri);
+    var uris = util.ids2Uris(ids, this.uri);
 
     // 'this' may be seajs or module, due to seajs.boot() or module.load().
-    provide.call(this, ids, function(require) {
-      var args = [];
-
-      for (var i = 0; i < ids.length; i++) {
-        args[i] = require(ids[i]);
-      }
+    provide.call(this, uris, function(require) {
+      var args = util.map(uris, function(uri) {
+        return require(uri);
+      });
 
       if (callback) {
         callback.apply(global, args);
@@ -689,16 +730,22 @@ seajs._fn = {};
    */
   function provide(uris, callback, noRequire) {
     var that = this;
-    var _uris = util.getUnMemoized(uris);
+    var unReadyUris = util.getUnReadyUris(uris);
 
-    if (_uris.length === 0) {
-      return cb();
+    if (unReadyUris.length === 0) {
+      return onProvide();
     }
 
-    for (var i = 0, n = _uris.length, remain = n; i < n; i++) {
+    for (var i = 0, n = unReadyUris.length, remain = n; i < n; i++) {
       (function(uri) {
 
-        fetch(uri, function() {
+        if (memoizedMods[uri]) {
+          onLoad();
+        } else {
+          fetch(uri, onLoad);
+        }
+
+        function onLoad() {
           var deps = (memoizedMods[uri] || 0).dependencies || [];
           var m = deps.length;
 
@@ -707,17 +754,19 @@ seajs._fn = {};
 
             provide(deps, function() {
               remain -= m;
-              if (remain === 0) cb();
+              if (remain === 0) onProvide();
             }, true);
           }
 
-          if (--remain === 0) cb();
-        });
+          if (--remain === 0) onProvide();
+        }
 
-      })(_uris[i]);
+      })(unReadyUris[i]);
     }
 
-    function cb() {
+    function onProvide() {
+      util.setReadyState(unReadyUris);
+
       if (callback) {
         var require;
 
@@ -760,11 +809,9 @@ seajs._fn = {};
     function cb() {
 
       if (data.pendingMods) {
-
-        for (var i = 0; i < data.pendingMods.length; i++) {
-          var pendingMod = data.pendingMods[i];
+        util.each(data.pendingMods, function(pendingMod) {
           util.memoize(pendingMod.id, uri, pendingMod);
-        }
+        });
 
         data.pendingMods = [];
       }
@@ -964,6 +1011,7 @@ seajs._fn = {};
     mod.load = fn.load;
     delete mod.id; // just keep mod.uri
     delete mod.factory; // free
+    delete mod.ready; // free
 
     if (util.isFunction(factory)) {
       checkPotentialErrors(factory, mod.uri);

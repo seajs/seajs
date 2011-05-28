@@ -25,15 +25,13 @@
     }
 
     // normalize
-    ids = util.ids2Uris(ids, this.uri);
+    var uris = util.ids2Uris(ids, this.uri);
 
     // 'this' may be seajs or module, due to seajs.boot() or module.load().
-    provide.call(this, ids, function(require) {
-      var args = [];
-
-      for (var i = 0; i < ids.length; i++) {
-        args[i] = require(ids[i]);
-      }
+    provide.call(this, uris, function(require) {
+      var args = util.map(uris, function(uri) {
+        return require(uri);
+      });
 
       if (callback) {
         callback.apply(global, args);
@@ -52,16 +50,22 @@
    */
   function provide(uris, callback, noRequire) {
     var that = this;
-    var _uris = util.getUnMemoized(uris);
+    var unReadyUris = util.getUnReadyUris(uris);
 
-    if (_uris.length === 0) {
-      return cb();
+    if (unReadyUris.length === 0) {
+      return onProvide();
     }
 
-    for (var i = 0, n = _uris.length, remain = n; i < n; i++) {
+    for (var i = 0, n = unReadyUris.length, remain = n; i < n; i++) {
       (function(uri) {
 
-        fetch(uri, function() {
+        if (memoizedMods[uri]) {
+          onLoad();
+        } else {
+          fetch(uri, onLoad);
+        }
+
+        function onLoad() {
           var deps = (memoizedMods[uri] || 0).dependencies || [];
           var m = deps.length;
 
@@ -70,17 +74,19 @@
 
             provide(deps, function() {
               remain -= m;
-              if (remain === 0) cb();
+              if (remain === 0) onProvide();
             }, true);
           }
 
-          if (--remain === 0) cb();
-        });
+          if (--remain === 0) onProvide();
+        }
 
-      })(_uris[i]);
+      })(unReadyUris[i]);
     }
 
-    function cb() {
+    function onProvide() {
+      util.setReadyState(unReadyUris);
+
       if (callback) {
         var require;
 
@@ -123,11 +129,9 @@
     function cb() {
 
       if (data.pendingMods) {
-
-        for (var i = 0; i < data.pendingMods.length; i++) {
-          var pendingMod = data.pendingMods[i];
+        util.each(data.pendingMods, function(pendingMod) {
           util.memoize(pendingMod.id, uri, pendingMod);
-        }
+        });
 
         data.pendingMods = [];
       }

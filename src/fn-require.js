@@ -66,6 +66,7 @@
     mod.load = fn.load;
     delete mod.id; // just keep mod.uri
     delete mod.factory; // free
+    delete mod.ready; // free
 
     if (util.isFunction(factory)) {
       checkPotentialErrors(factory, mod.uri);

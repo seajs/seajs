@@ -209,13 +209,9 @@
    * @param {string=} refUri The referenced uri for relative id.
    */
   function ids2Uris(ids, refUri) {
-    var uris = [];
-
-    for (var i = 0, len = ids.length; i < len; i++) {
-      uris[i] = id2Uri(ids[i], refUri);
-    }
-
-    return uris;
+    return util.map(ids, function(id) {
+      return id2Uri(id, refUri);
+    });
   }
 
 
@@ -236,7 +232,7 @@
     }
 
     mod.dependencies = ids2Uris(mod.dependencies, uri);
-    data.memoizedMods[uri] = mod;
+    memoizedMods[uri] = mod;
 
     // guest module in package
     if (id && url !== uri) {
@@ -248,18 +244,26 @@
   }
 
   /**
-   * Removes the memoize()d uris from input.
+   * Set mod.ready to true when all the requires of the module is loaded.
    */
-  function getUnMemoized(uris) {
-    var ret = [];
-    for (var i = 0; i < uris.length; i++) {
-      var uri = uris[i];
-      if (!memoizedMods[uri]) {
-        ret.push(uri);
+  function setReadyState(uris) {
+    util.each(uris, function(uri) {
+      if (memoizedMods[uri]) {
+        memoizedMods[uri].ready = true;
       }
-    }
-    return ret;
+    });
   }
+
+  /**
+   * Removes the "ready = true" uris from input.
+   */
+  function getUnReadyUris(uris) {
+    return util.filter(uris, function(uri) {
+      var mod = memoizedMods[uri];
+      return !mod || !mod.ready;
+    });
+  }
+
 
   /**
    * For example:
@@ -270,11 +274,11 @@
    * to host.dependencies
    */
   function augmentPackageHostDeps(hostDeps, guestDeps) {
-    for (var i = 0; i < guestDeps.length; i++) {
-      if (util.indexOf(hostDeps, guestDeps[i]) === -1) {
-        hostDeps.push(guestDeps[i]);
+    util.each(guestDeps, function(guestDep) {
+      if (util.indexOf(hostDeps, guestDep) === -1) {
+        hostDeps.push(guestDep);
       }
-    }
+    });
   }
 
 
@@ -285,7 +289,8 @@
   util.ids2Uris = ids2Uris;
 
   util.memoize = memoize;
-  util.getUnMemoized = getUnMemoized;
+  util.setReadyState = setReadyState;
+  util.getUnReadyUris = getUnReadyUris;
 
   if (data.config.debug) {
     util.realpath = realpath;

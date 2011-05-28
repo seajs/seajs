@@ -7,4 +7,10 @@ define(function(require, exports, m) {
   test.assert(m.uri, 'module.uri = ' + m.uri);
   test.assert(typeof(m.load) === 'function', 'check module.load');
 
+  var i = 0;
+  for (var k in m) {
+    i++;
+  }
+  test.assert(i === 4, 'module has only 4 members');
+
 });

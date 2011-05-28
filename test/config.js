@@ -41,6 +41,6 @@ define(function(require, exports) {
     ,'bootstrap/index'
   ];
 
-  //exports.testCases = ['unit/util-helper'];
+  exports.testCases = ['modules/cyclic'];
 
 });
