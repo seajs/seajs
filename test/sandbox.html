@@ -25,9 +25,11 @@
 <script>
 (function(){
 
-  seajs.config({
-        timeout: 1000
-      });
+  if (location.host.indexOf('seajs.com') === -1) {
+    seajs.config({
+          timeout: 1000
+        });
+  }
 
   var file = decodeURIComponent((location.search || '?').substring(1));
   seajs.use('./' + file);
