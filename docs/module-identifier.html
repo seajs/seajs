@@ -95,16 +95,20 @@ require('jquery');
 <h3 id="tips">小技巧</h3>
 
 <pre>
-// 当文件后缀是 .js 时，默认可省略。
+// 当文件后缀是 .js 时，默认可省略：
 require('http://cdn.com/js/a');
 require('http://cdn.com/js/a.js');
   // =&gt; http://cdn.com/js/a.js
 
-// 当文件后缀是 .css 时，不可省略。
+// 当文件后缀是 .css 时，不可省略：
 require('http://cdn.com/js/a.css');
   // =&gt; http://cdn.com/js/a.css
 
-// 当文件后缀是其他情况时，必须添加 # 来表示结束，否则会添加 .js 后缀。
+// 当文件路径中含有 ? 字符时，不会添加默认后缀：
+require('http://cdn.com/js/a.json?callback=define');
+  // =&gt; http://cdn.com/js/a.json?callback=define
+
+// 当文件路径以 # 结尾时，不会添加默认后缀：
 require('http://cdn.com/js/a.json#');
   // =&gt; http://cdn.com/js/a.json
 </pre>
