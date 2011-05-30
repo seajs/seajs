@@ -1,0 +1,12 @@
+{
+  "name"          : "SeaJS",
+  "description"   : "SeaJS is a new kind of JavaScript Loader that makes it easy to build scalable web applications. SeaJS is designed to change the way you organize JavaScript.",
+  "homepage"      : "https://lifesinger.github.com/querystring/",
+  "keywords"      : ["util", "server", "client", "browser"],
+  "author"        : "Frank Wang <lifesinger@gmail.com>",
+  "contributors"  : [],
+  "dependencies"  : [],
+  "repository"    : {"type": "git", "url": "git://github.com/lifesinger/querystring.git"},
+  "main"          : "querystring.js",
+  "version"       : "1.0.0"
+}

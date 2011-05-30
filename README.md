@@ -1,5 +1,5 @@
 
-SeaJS is a new kind of JavaScript Loader that makes it easy to build scalable web applications. SeaJS is designed to change the way you write JavaScript.
+SeaJS is a new kind of JavaScript Loader that makes it easy to build scalable web applications. SeaJS is designed to change the way you organize JavaScript.
 
 <http://seajs.com/>
 
