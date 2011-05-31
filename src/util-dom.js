@@ -180,7 +180,11 @@
   };
 
   util.removeNoCacheTimeStamp = function(url) {
-    return url.replace(noCacheTimeStamp, '').slice(0, -1);
+    var ret = url;
+    if (url.indexOf(noCacheTimeStamp) !== -1) {
+      ret = url.replace(noCacheTimeStamp, '').slice(0, -1);
+    }
+    return ret;
   };
 
 })(seajs._util, seajs._data);
