@@ -46,7 +46,7 @@
 <script>
   window.onload = function() {
     seajs.use('../test', function(test) {
-      test.assert(testCount == 12, 'The count of test cases is 12');
+      test.assert(testCount !== undefined, 'The test cases of bootstrap.');
       test.done();
     });
   };
