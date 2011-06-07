@@ -19,7 +19,7 @@
 <div id="content">
 
   <h1>
-    <a href="./">SeaJS <span class="byline">文档</span></a>
+    <a href="./"><span class="logo">SeaJS</span> <span class="byline">文档</span></a>
   </h1>
 
   <h2>速查手册</h2>
@@ -90,6 +90,25 @@ define(function(require) {
 </pre>
 
 
+  <h3 id="require-async">
+    require.async
+    <a href="module-authoring-format.html#require-async">require.async</a>
+  </h3>
+
+<pre>
+define(function(require, exports, module) {
+
+  require.async('./b', function(b) {
+    b.doSomething();
+  });
+
+  require.async(['./c', './d'], function(c, d) {
+    // do something
+  });
+});
+</pre>
+
+
   <h3 id="exports">
     exports
     <a href="module-authoring-format.html#exports">exports</a>
@@ -105,9 +124,9 @@ define(function(require, exports) {
 
 
 
-  <h3 id="module">
-    module
-    <a href="module-authoring-format.html#module">module</a>
+  <h3 id="module-exports">
+    module.exports
+    <a href="module-authoring-format.html#module-exports">module.exports</a>
   </h3>
 
 <pre>
@@ -117,25 +136,6 @@ define(function(require, exports, module) {
     name: 'a'，
     doSomething: function() {};
   };
-});
-</pre>
-
-
-  <h3 id="module-load">
-    module.load
-    <a href="module-authoring-format.html#module-load">module.load</a>
-  </h3>
-
-<pre>
-define(function(require, exports, module) {
-
-  module.load('./b', function(b) {
-    b.doSomething();
-  });
-
-  module.load(['./c', './d'], function(c, d) {
-    // do something
-  });
 });
 </pre>
 

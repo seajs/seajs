@@ -2,7 +2,7 @@
  * DISQUS module for seajs.com
  */
 
-define(function(require, exports, module) {
+define(function(require, exports) {
 
   exports.init = function() {
 
@@ -28,7 +28,7 @@ define(function(require, exports, module) {
         location.pathname;
 
     // load it
-    module.load('http://' + disqus_shortname + '.disqus.com/embed.js');
+    require.async('http://' + disqus_shortname + '.disqus.com/embed.js');
 
   };
 

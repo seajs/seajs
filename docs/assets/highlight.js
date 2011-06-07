@@ -23,13 +23,10 @@ define(function(require, exports, module) {
         }
       }
 
-      var link = document.createElement('link');
-      link.setAttribute('rel', 'stylesheet');
-      link.href = module.uri.replace(/(.*)\/.*$/, '$1/highlight.css');
-      document.getElementsByTagName('head')[0].appendChild(link);
-
       sh_highlightDocument();
     }
   };
+
+  require('./highlight.css');
 
 });

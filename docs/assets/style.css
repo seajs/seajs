@@ -24,6 +24,15 @@ h1 a {
   color: #333;
 }
 
+/*
+h1 .logo {
+  background: url(seajs.png) 0 0 no-repeat;
+  width: 75px;
+  height: 50px;
+  text-indent: -999999px;
+  float: left;
+}*/
+
 h1 .byline {
   font: italic 18px "Lucida Grande", Helvetica, "Microsoft YaHei", Arial, sans-serif;
   margin: 3px 0;

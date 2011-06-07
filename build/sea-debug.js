@@ -736,8 +736,6 @@ seajs._fn = {};
         callback.apply(global, args);
       }
     });
-
-    return this;
   };
 
 
