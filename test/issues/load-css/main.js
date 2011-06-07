@@ -13,11 +13,11 @@ define(function(require, exports, module) {
   test.assert($('#red').width() === 200, '#red width should be 200');
 
   test.assert($('#blue').width() !== 200, '#blue width should not be 200');
-  module.load('./blue.css', function() {
+  require.async('./blue.css', function() {
     test.assert($('#blue').width() === 200, '#blue width should be 200 now');
   });
 
-  module.load('./notExisted.css', function() {
+  require.async('./notExisted.css', function() {
     test.print('404!');
   });
   test.print('** 404 will occur after 5 second (timeout) in Opera.');

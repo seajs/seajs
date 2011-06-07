@@ -6,7 +6,7 @@ seajs.config({
   }
 });
 
-define(function(require, exports, module) {
+define(function(require) {
 
   var test = require('../../test');
   var a = require('./a');
@@ -22,7 +22,7 @@ define(function(require, exports, module) {
   test.assert(d.foo == 'd', 'd.foo should equal to "d".');
 
   
-  module.load(['../../test', 'sub/c'], function(test, c) {
+  require.async(['../../test', 'sub/c'], function(test, c) {
 
     test.assert((c || 0).foo == 'c', 'c.foo should equal to "c".');
     test.done();

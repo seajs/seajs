@@ -18,17 +18,19 @@
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
    * @param {function(*)=} callback The callback function.
+   * @param {string=} refUrl The referenced uri for relative id.
    */
-  fn.load = function(ids, callback) {
+  fn.load = function(ids, callback, refUrl) {
     if (util.isString(ids)) {
       ids = [ids];
     }
+    var uris = util.ids2Uris(ids, refUrl);
 
-    // normalize
-    var uris = util.ids2Uris(ids, this.uri);
+    provide(uris, function() {
+      var require = fn.createRequire({
+        uri: refUrl
+      });
 
-    // 'this' may be seajs or module, due to seajs.boot() or module.load().
-    provide.call(this, uris, function(require) {
       var args = util.map(uris, function(uri) {
         return require(uri);
       });
@@ -37,19 +39,15 @@
         callback.apply(global, args);
       }
     });
-
-    return this;
   };
 
 
   /**
    * Provides modules to the environment.
    * @param {Array.<string>} uris An array composed of module uri.
-   * @param {function(*)=} callback The callback function.
-   * @param {boolean=} noRequire For inner use.
+   * @param {function()=} callback The callback function.
    */
-  function provide(uris, callback, noRequire) {
-    var that = this;
+  function provide(uris, callback) {
     var unReadyUris = util.getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
@@ -82,7 +80,7 @@
             provide(deps, function() {
               remain -= m;
               if (remain === 0) onProvide();
-            }, true);
+            });
           }
           if (--remain === 0) onProvide();
         }
@@ -92,18 +90,7 @@
 
     function onProvide() {
       util.setReadyState(unReadyUris);
-
-      if (callback) {
-        var require;
-
-        if (!noRequire) {
-          require = fn.createRequire({
-            uri: that.uri
-          });
-        }
-
-        callback(require);
-      }
+      callback();
     }
   }
 

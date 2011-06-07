@@ -1,13 +1,15 @@
-define(function(require, exports, module) {
+define(function(require) {
 
   var test = require('../../test');
 
-  module
-      .load('./a', function(a) {
-          test.assert(a.foo === 'a', 'test module.load from factory.');
-        })
-      .load('./b')
-      .load('./c.js', function() { // load normal script file.
-        test.done();
-      });
+  require.async('./a', function(a) {
+    test.assert(a.foo === 'a', 'test require.async from factory.');
+  });
+
+  require.async('./b');
+
+  require.async('./c.js', function() { // load normal script file.
+    test.done();
+  });
+
 });

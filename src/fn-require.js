@@ -52,6 +52,10 @@
       return mod.exports;
     }
 
+    require.async = function(ids, callback) {
+      fn.load(ids, callback, sandbox.uri);
+    };
+
     return require;
   }
 
@@ -61,21 +65,20 @@
 
     // Attaches members to module instance.
     //mod.dependencies
-    mod.uri = sandbox.uri;
+    mod.id = sandbox.uri;
     mod.exports = {};
-    mod.load = fn.load;
-    delete mod.id; // just keep mod.uri
     delete mod.factory; // free
     delete mod.ready; // free
 
     if (util.isFunction(factory)) {
       checkPotentialErrors(factory, mod.uri);
       ret = factory(createRequire(sandbox), mod.exports, mod);
-      if (ret) {
+      if (ret !== undefined) {
         mod.exports = ret;
       }
-    } else {
-      mod.exports = factory || {};
+    }
+    else if (factory !== undefined) {
+      mod.exports = factory;
     }
   }
 

@@ -715,17 +715,19 @@ seajs._fn = {};
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
    * @param {function(*)=} callback The callback function.
+   * @param {string=} refUrl The referenced uri for relative id.
    */
-  fn.load = function(ids, callback) {
+  fn.load = function(ids, callback, refUrl) {
     if (util.isString(ids)) {
       ids = [ids];
     }
+    var uris = util.ids2Uris(ids, refUrl);
 
-    // normalize
-    var uris = util.ids2Uris(ids, this.uri);
+    provide(uris, function() {
+      var require = fn.createRequire({
+        uri: refUrl
+      });
 
-    // 'this' may be seajs or module, due to seajs.boot() or module.load().
-    provide.call(this, uris, function(require) {
       var args = util.map(uris, function(uri) {
         return require(uri);
       });
@@ -742,11 +744,9 @@ seajs._fn = {};
   /**
    * Provides modules to the environment.
    * @param {Array.<string>} uris An array composed of module uri.
-   * @param {function(*)=} callback The callback function.
-   * @param {boolean=} noRequire For inner use.
+   * @param {function()=} callback The callback function.
    */
-  function provide(uris, callback, noRequire) {
-    var that = this;
+  function provide(uris, callback) {
     var unReadyUris = util.getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
@@ -779,7 +779,7 @@ seajs._fn = {};
             provide(deps, function() {
               remain -= m;
               if (remain === 0) onProvide();
-            }, true);
+            });
           }
           if (--remain === 0) onProvide();
         }
@@ -789,18 +789,7 @@ seajs._fn = {};
 
     function onProvide() {
       util.setReadyState(unReadyUris);
-
-      if (callback) {
-        var require;
-
-        if (!noRequire) {
-          require = fn.createRequire({
-            uri: that.uri
-          });
-        }
-
-        callback(require);
-      }
+      callback();
     }
   }
 
@@ -1027,6 +1016,10 @@ seajs._fn = {};
       return mod.exports;
     }
 
+    require.async = function(ids, callback) {
+      fn.load(ids, callback, sandbox.uri);
+    };
+
     return require;
   }
 
@@ -1036,21 +1029,20 @@ seajs._fn = {};
 
     // Attaches members to module instance.
     //mod.dependencies
-    mod.uri = sandbox.uri;
+    mod.id = sandbox.uri;
     mod.exports = {};
-    mod.load = fn.load;
-    delete mod.id; // just keep mod.uri
     delete mod.factory; // free
     delete mod.ready; // free
 
     if (util.isFunction(factory)) {
       checkPotentialErrors(factory, mod.uri);
       ret = factory(createRequire(sandbox), mod.exports, mod);
-      if (ret) {
+      if (ret !== undefined) {
         mod.exports = ret;
       }
-    } else {
-      mod.exports = factory || {};
+    }
+    else if (factory !== undefined) {
+      mod.exports = factory;
     }
   }
 
