@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.2
+Copyright 2011, SeaJS v0.9.3dev
 MIT Licensed
-build time: May 31 11:51
+build time: ${build.time}
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '0.9.2';
+seajs.version = '0.9.3dev';
 
 
 // Module status：
@@ -944,7 +944,14 @@ seajs._fn = {};
 
 
   function parseDependencies(code) {
-    var pattern = /\brequire\s*\(\s*['"]?([^'")]*)/g;
+    // Parse these `requires`:
+    //   var a = require('a');
+    //   someMethod(require('b'));
+    //   require('c');
+    //   ...
+    // Doesn't parse:
+    //   someInstance.require(...);
+    var pattern = /[^.]\brequire\s*\(\s*['"]?([^'")]*)/g;
     var ret = [], match;
 
     code = removeComments(code);

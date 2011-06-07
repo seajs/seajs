@@ -12,6 +12,9 @@ define(function(require) {
 
   require('./c');
 
+  this.require = function() { };
+  this.require('./404');
+
 
   test.assert(this.a === undefined, 'remove require ./a');
   test.assert(this.b === undefined, 'remove require ./b');

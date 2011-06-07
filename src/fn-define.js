@@ -70,7 +70,14 @@
 
 
   function parseDependencies(code) {
-    var pattern = /\brequire\s*\(\s*['"]?([^'")]*)/g;
+    // Parse these `requires`:
+    //   var a = require('a');
+    //   someMethod(require('b'));
+    //   require('c');
+    //   ...
+    // Doesn't parse:
+    //   someInstance.require(...);
+    var pattern = /[^.]\brequire\s*\(\s*['"]?([^'")]*)/g;
     var ret = [], match;
 
     code = removeComments(code);
