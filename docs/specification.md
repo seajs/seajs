@@ -62,7 +62,7 @@ Guarantees Made by Module Interpreters
         1.  If every ``require`` call returns, ``async`` must call
             ``callback`` with the respective exports for each module
             identifier as its arguments.
-1.  an ``exports`` object must exist in a function's lexical scope.
+1.  An ``exports`` object must exist in a function's lexical scope.
     1.  the ``exports`` object must initially be the same value as
         ``module.exports``.
 1.  A ``module`` object must exist in a function's lexical scope.
@@ -78,7 +78,7 @@ Guarantees Made by Module Interpreters
             object.
         1.  The ``module.exports`` property must be writable and
             configurable.
-1.  a ``define`` function must exist in a function's lexical scope.
+1.  A ``define`` function must exist in a function's lexical scope.
     1.  ``define`` accepts a function ("callback") as its last argument.
     1.  ``callback`` accepts ``require``, ``exports``, and ``module``.
     1.  ``callback`` must be called with the corresponding values from
@@ -96,8 +96,7 @@ Module Identifiers
     1.  any combination of lower-case letters, numbers, and hyphens,
     1.  ``.``, or
     1.  ``..``
-1.  Module identifiers may not have file-name extensions like
-    ``.js``.
+1.  Module identifiers may have file-name extensions like ``.js``.
 1.  Module identifiers may be "relative" or "resolved".  A module
     identifier is "relative" if the first term is ``.`` or ``..``.
 1.  The ``require`` function in each module resolves relative
@@ -122,4 +121,5 @@ Thanks
 =======
 
 This specification is forked from <https://github.com/kriskowal/uncommonjs/blob/master/modules/specification.md>
+
 Thanks Kris Kowal and all members of [CommonJS Group](http://groups.google.com/group/commonjs)!
