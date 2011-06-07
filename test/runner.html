@@ -85,6 +85,10 @@
           'Passed: <span class="pass">' + count.pass + '<' + '/span> ' +
               'Failed: <span class="fail">' + count.fail + '<' + '/span> ' +
               'Errors: <span class="error">' + count.error + '<' + '/span>';
+
+      if (self != parent && parent['sendResult']) {
+        parent['sendResult'](count);
+      }
     }
 
     function reset() {
