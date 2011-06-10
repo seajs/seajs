@@ -38,13 +38,15 @@
       };
 
 
-  var forEach = util.each = function(arr, fn) {
-    var val, i = 0, len = arr.length;
-    for (val = arr[0];
-         i < len && fn(val, i, arr) !== false;
-         val = arr[++i]) {
-    }
-  };
+  var forEach = util.each = AP.forEach ?
+      function(arr, fn) {
+        arr.forEach(fn);
+      } :
+      function(arr, fn) {
+        for (var i = 0, len = arr.length; i < len; i++) {
+          fn(arr[i], i, arr);
+        }
+      };
 
 
   util.map = AP.map ?
