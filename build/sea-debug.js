@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.3
+Copyright 2011, SeaJS v0.9.4dev
 MIT Licensed
-build time: Jun 7 15:40
+build time: ${build.time}
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '0.9.3';
+seajs.version = '0.9.4dev';
 
 
 // Module status：
@@ -110,13 +110,15 @@ seajs._fn = {};
       };
 
 
-  var forEach = util.each = function(arr, fn) {
-    var val, i = 0, len = arr.length;
-    for (val = arr[0];
-         i < len && fn(val, i, arr) !== false;
-         val = arr[++i]) {
-    }
-  };
+  var forEach = util.each = AP.forEach ?
+      function(arr, fn) {
+        arr.forEach(fn);
+      } :
+      function(arr, fn) {
+        for (var i = 0, len = arr.length; i < len; i++) {
+          fn(arr[i], i, arr);
+        }
+      };
 
 
   util.map = AP.map ?
@@ -869,7 +871,7 @@ seajs._fn = {};
   /**
    * Defines a module.
    * @param {string=} id The module id.
-   * @param {Array.<string>=} deps The module dependencies.
+   * @param {Array.<string>|string=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
   fn.define = function(id, deps, factory) {
