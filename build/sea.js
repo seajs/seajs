@@ -1,10 +1,10 @@
 /*
-Copyright 2011, SeaJS v1.0.0dev
+Copyright 2011, SeaJS v0.9.5
 MIT Licensed
-build time: ${build.time}
+build time: Jun 20 20:52
 */
 
-this.seajs={_seajs:this.seajs};seajs.version="1.0.0dev";seajs._data={config:{debug:""},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
+this.seajs={_seajs:this.seajs};seajs.version="0.9.5";seajs._data={config:{debug:""},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
 (function(a){var b=Object.prototype.toString,g=Array.prototype;a.isString=function(a){return b.call(a)==="[object String]"};a.isFunction=function(a){return b.call(a)==="[object Function]"};a.isArray=Array.isArray?Array.isArray:function(a){return b.call(a)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(a,c){return a.indexOf(c)}:function(a,c){for(var d=0,b=a.length;d<b;d++)if(a[d]===c)return d;return-1};var f=a.each=g.forEach?function(a,c){a.forEach(c)}:function(a,c){for(var d=0,b=a.length;d<
 b;d++)c(a[d],d,a)};a.map=g.map?function(a,c){return a.map(c)}:function(a,c){var d=[];f(a,function(a,b,e){d.push(c(a,b,e))});return d};a.filter=g.filter?function(a,c){return a.filter(c)}:function(a,c){var b=[];f(a,function(a,f,e){c(a,f,e)&&b.push(a)});return b};a.now=Date.now?Date.now:function(){return(new Date).getTime()}})(seajs._util);
 (function(a,b){function g(a){var b=["{"],d;for(d in a)if(typeof a[d]==="number"||typeof a[d]==="string")b.push(d+": "+a[d]),b.push(", ");b.pop();b.push("}");return b.join("")}var f=b.config;a.error=function(a){if(a.type==="error")throw"Error occurs! "+g(a);else if(f.debug&&typeof console!=="undefined")console[a.type](g(a))}})(seajs._util,seajs._data);
