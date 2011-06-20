@@ -13,7 +13,7 @@
   <property name="filename" value="${module.name}"/>
 
 
-  <!-- 用 gslint 检查 style -->
+  <!-- 用 gslint 检查 -->
   <target name="gjslint">
     <exec executable="/usr/local/bin/gjslint" os="Mac OS X" failonerror="true">
       <arg line="--strict *.js"/>
