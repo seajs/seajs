@@ -28,7 +28,7 @@
       id = '';
     }
 
-    var mod = { id: id, dependencies: deps || [], factory: factory };
+    var mod = new fn.Module(id, deps, factory);
     var url;
 
     if (document.attachEvent && !window.opera) {

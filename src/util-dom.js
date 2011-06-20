@@ -173,7 +173,7 @@
   };
 
 
-  var noCacheTimeStamp = 'seajs-timestamp=' + util.now();
+  var noCacheTimeStamp = 'seajs_t=' + util.now();
 
   util.addNoCacheTimeStamp = function(url) {
     return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;

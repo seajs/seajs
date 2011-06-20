@@ -25,6 +25,7 @@ define(function(require, exports) {
     ,'modules/metadata'
     ,'modules/exports'
     ,'modules/checkPotentialErrors'
+    ,'modules/extend'
 
     ,'packages/math'
 

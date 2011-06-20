@@ -1,5 +1,5 @@
 /*
-Copyright 2011, SeaJS v0.9.4dev
+Copyright 2011, SeaJS v1.0.0dev
 MIT Licensed
 build time: ${build.time}
 */
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '0.9.4dev';
+seajs.version = '1.0.0dev';
 
 
 // Module status：
@@ -676,7 +676,7 @@ seajs._fn = {};
   };
 
 
-  var noCacheTimeStamp = 'seajs-timestamp=' + util.now();
+  var noCacheTimeStamp = 'seajs_t=' + util.now();
 
   util.addNoCacheTimeStamp = function(url) {
     return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
@@ -863,6 +863,29 @@ seajs._fn = {};
 })(seajs._util, seajs._data, seajs._fn, this);
 
 /**
+ * @fileoverview Module Constructor.
+ */
+
+(function(fn) {
+
+  /**
+   * Module constructor.
+   * @constructor
+   * @param {string=} id The module id.
+   * @param {Array.<string>|string=} deps The module dependencies.
+   * @param {function()|Object} factory The module factory function.
+   */
+  fn.Module = function(id, deps, factory) {
+
+    this.id = id;
+    this.dependencies = deps || [];
+    this.factory = factory;
+
+  };
+
+})(seajs._fn);
+
+/**
  * @fileoverview Module authoring format.
  */
 
@@ -891,7 +914,7 @@ seajs._fn = {};
       id = '';
     }
 
-    var mod = { id: id, dependencies: deps || [], factory: factory };
+    var mod = new fn.Module(id, deps, factory);
     var url;
 
     if (document.attachEvent && !window.opera) {
