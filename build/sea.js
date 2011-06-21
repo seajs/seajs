@@ -1,12 +1,12 @@
 /*
-Copyright 2011, SeaJS v0.9.5
+Copyright 2011, SeaJS v1.0.0dev
 MIT Licensed
-build time: Jun 20 20:52
+build time: ${build.time}
 */
 
-this.seajs={_seajs:this.seajs};seajs.version="0.9.5";seajs._data={config:{debug:""},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
-(function(a){var b=Object.prototype.toString,g=Array.prototype;a.isString=function(a){return b.call(a)==="[object String]"};a.isFunction=function(a){return b.call(a)==="[object Function]"};a.isArray=Array.isArray?Array.isArray:function(a){return b.call(a)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(a,c){return a.indexOf(c)}:function(a,c){for(var d=0,b=a.length;d<b;d++)if(a[d]===c)return d;return-1};var f=a.each=g.forEach?function(a,c){a.forEach(c)}:function(a,c){for(var d=0,b=a.length;d<
-b;d++)c(a[d],d,a)};a.map=g.map?function(a,c){return a.map(c)}:function(a,c){var d=[];f(a,function(a,b,e){d.push(c(a,b,e))});return d};a.filter=g.filter?function(a,c){return a.filter(c)}:function(a,c){var b=[];f(a,function(a,f,e){c(a,f,e)&&b.push(a)});return b};a.now=Date.now?Date.now:function(){return(new Date).getTime()}})(seajs._util);
+this.seajs={_seajs:this.seajs};seajs.version="1.0.0dev";seajs._data={config:{debug:""},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
+(function(a){var b=Object.prototype.toString,g=Array.prototype;a.isString=function(a){return b.call(a)==="[object String]"};a.isFunction=function(a){return b.call(a)==="[object Function]"};a.isArray=Array.isArray||function(a){return b.call(a)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(a,c){return a.indexOf(c)}:function(a,c){for(var d=0,b=a.length;d<b;d++)if(a[d]===c)return d;return-1};var f=a.each=g.forEach?function(a,c){a.forEach(c)}:function(a,c){for(var d=0,b=a.length;d<b;d++)c(a[d],
+d,a)};a.map=g.map?function(a,c){return a.map(c)}:function(a,c){var d=[];f(a,function(a,b,e){d.push(c(a,b,e))});return d};a.filter=g.filter?function(a,c){return a.filter(c)}:function(a,c){var b=[];f(a,function(a,f,e){c(a,f,e)&&b.push(a)});return b};a.now=Date.now||function(){return(new Date).getTime()}})(seajs._util);
 (function(a,b){function g(a){var b=["{"],d;for(d in a)if(typeof a[d]==="number"||typeof a[d]==="string")b.push(d+": "+a[d]),b.push(", ");b.pop();b.push("}");return b.join("")}var f=b.config;a.error=function(a){if(a.type==="error")throw"Error occurs! "+g(a);else if(f.debug&&typeof console!=="undefined")console[a.type](g(a))}})(seajs._util,seajs._data);
 (function(a,b,g){function f(a){a=a.match(/.*(?=\/.*$)/);return(a?a[0]:".")+"/"}function i(e){e=e.replace(/([^:\/])\/+/g,"$1/");if(e.indexOf(".")===-1)return e;for(var b=e.split("/"),d=[],c,k=0,f=b.length;k<f;k++)c=b[k],c===".."?(d.length===0&&a.error({message:"invalid path: "+e,type:"error"}),d.pop()):c!=="."&&d.push(c);return d.join("/")}function c(a){a=i(a);/#$/.test(a)?a=a.slice(0,-1):a.indexOf("?")===-1&&!/\.(?:css|js)$/.test(a)&&(a+=".js");return a}function d(a){function e(a,d){var c=a[d];if(b&&
 b.hasOwnProperty(c))a[d]=b[c];else if(c=c.match(/(.+):([\d\.]+)(-debug)?/))a[d]=c[1]+"/"+c[2]+"/"+c[1]+(c[3]?c[3]:"")}var b=n.alias,a=a.split("/"),d=a.length-1;e(a,0);d&&e(a,d);return a.join("/")}function j(a){return a.replace(/^(\w+:\/\/[^/]*)\/?.*$/,"$1")}function h(e,b,k){if(m[e])return e;k||(e=d(e));b=b||o;e.indexOf("://")===-1&&(e.indexOf("./")===0||e.indexOf("../")===0?(e=e.replace(/^\.\//,""),e=f(b)+e):e.indexOf("/")===0?e=j(b)+e:(n.base||a.error({message:"the config.base is empty",from:"id2Uri",

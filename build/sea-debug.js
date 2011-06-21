@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.5
+Copyright 2011, SeaJS v1.0.0dev
 MIT Licensed
-build time: Jun 20 20:52
+build time: ${build.time}
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '0.9.5';
+seajs.version = '1.0.0dev';
 
 
 // Module status：
@@ -91,7 +91,7 @@ seajs._fn = {};
   };
 
 
-  util.isArray = Array.isArray ? Array['isArray'] : function(val) {
+  util.isArray = Array.isArray || function(val) {
     return toString.call(val) === '[object Array]';
   };
 
@@ -149,7 +149,7 @@ seajs._fn = {};
       };
 
 
-  util.now = Date.now ? Date.now : function() {
+  util.now = Date.now || function() {
     return new Date().getTime();
   };
 

@@ -19,7 +19,7 @@
   };
 
 
-  util.isArray = Array.isArray ? Array['isArray'] : function(val) {
+  util.isArray = Array.isArray || function(val) {
     return toString.call(val) === '[object Array]';
   };
 
@@ -77,7 +77,7 @@
       };
 
 
-  util.now = Date.now ? Date.now : function() {
+  util.now = Date.now || function() {
     return new Date().getTime();
   };
 
