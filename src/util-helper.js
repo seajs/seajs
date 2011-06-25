@@ -89,15 +89,8 @@
 
     function parse(parts, i) {
       var part = parts[i];
-      var m;
-
       if (alias && alias.hasOwnProperty(part)) {
         parts[i] = alias[part];
-      }
-      // jquery:1.6.1 => jquery/1.6.1/jquery
-      // jquery:1.6.1-debug => jquery/1.6.1/jquery-debug
-      else if ((m = part.match(/(.+):([\d\.]+)(-debug)?/))) {
-        parts[i] = m[1] + '/' + m[2] + '/' + m[1] + (m[3] ? m[3] : '');
       }
     }
 

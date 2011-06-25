@@ -30,8 +30,6 @@ define(function(require) {
         }
       });
   test.assert(util.parseAlias('jquery') === 'jquery/1.6.1/jquery-debug', 'parseAlias');
-  test.assert(util.parseAlias('jquery:1.6.1') === 'jquery/1.6.1/jquery', 'parseAlias');
-  test.assert(util.parseAlias('jquery:1.6.1-debug') === 'jquery/1.6.1/jquery-debug', 'parseAlias');
   test.assert(util.parseAlias('app') === 'app/1.2/app', 'parseAlias');
   test.assert(util.parseAlias('http://test.com/router') === 'http://test.com/router.js?t=20110525', 'parseAlias');
 
