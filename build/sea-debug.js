@@ -110,7 +110,7 @@ seajs._fn = {};
       };
 
 
-  var forEach = util.each = AP.forEach ?
+  var forEach = util.forEach = AP.forEach ?
       function(arr, fn) {
         arr.forEach(fn);
       } :
@@ -288,19 +288,26 @@ seajs._fn = {};
 
     function parse(parts, i) {
       var part = parts[i];
-      var m;
-
       if (alias && alias.hasOwnProperty(part)) {
         parts[i] = alias[part];
-      }
-      // jquery:1.6.1 => jquery/1.6.1/jquery
-      // jquery:1.6.1-debug => jquery/1.6.1/jquery-debug
-      else if ((m = part.match(/(.+):([\d\.]+)(-debug)?/))) {
-        parts[i] = m[1] + '/' + m[2] + '/' + m[1] + (m[3] ? m[3] : '');
       }
     }
 
     return parts.join('/');
+  }
+
+
+  /**
+   * Maps the module id.
+   */
+  function parseMap(url) {
+    // config.map: [[match, replace], ...]
+
+    util.forEach(config['map'], function(rule) {
+      url = url.replace(rule[0], rule[1]);
+    });
+
+    return url;
   }
 
 
@@ -328,7 +335,7 @@ seajs._fn = {};
       return id;
     }
 
-    if (!noAlias) {
+    if (!noAlias && config['alias']) {
       id = parseAlias(id);
     }
     refUrl = refUrl || pageUrl;
@@ -355,8 +362,11 @@ seajs._fn = {};
     }
 
     ret = normalize(ret);
-    id2UriCache[ret] = true;
+    if (config['map']) {
+      ret = parseMap(ret);
+    }
 
+    id2UriCache[ret] = true;
     return ret;
   }
 
@@ -416,7 +426,7 @@ seajs._fn = {};
    * Set mod.ready to true when all the requires of the module is loaded.
    */
   function setReadyState(uris) {
-    util.each(uris, function(uri) {
+    util.forEach(uris, function(uri) {
       if (memoizedMods[uri]) {
         memoizedMods[uri].ready = true;
       }
@@ -475,7 +485,7 @@ seajs._fn = {};
    * to host.dependencies
    */
   function augmentPackageHostDeps(hostDeps, guestDeps) {
-    util.each(guestDeps, function(guestDep) {
+    util.forEach(guestDeps, function(guestDep) {
       if (util.indexOf(hostDeps, guestDep) === -1) {
         hostDeps.push(guestDep);
       }
@@ -820,7 +830,7 @@ seajs._fn = {};
     function cb() {
 
       if (data.pendingMods) {
-        util.each(data.pendingMods, function(pendingMod) {
+        util.forEach(data.pendingMods, function(pendingMod) {
           util.memoize(pendingMod.id, uri, pendingMod);
         });
 

@@ -25,6 +25,9 @@ seajs.config({
   alias: {
     'app': 'path/to/app/'
   },
+  map: [
+    ['http://a.tbcdn.cn/', 'http://localhost/']
+  ],
   charset: 'utf-8',
   timeout: 20000,
   debug: false
@@ -34,9 +37,10 @@ seajs.config({
   <ul>
     <li>base - top-level id 的相对目录，默认指向 sea.js 所在目录。</li>
     <li>alias - 全局别名配置。</li>
+    <li>map - 文件路径映射表。</li>
     <li>charset - 下载文件时 script 元素的 charset 属性。</li>
     <li>timeout - 下载文件的最大时长。</li>
-    <li>debug - 调试信息的开关。当其值设为 2 时，还会给所有加载的文件自动添加时间戳。</li>
+    <li>debug - 0: 关闭调试； 1: 打开调试； 2: 打开调试并自动添加时间戳。</li>
   </ul>
 
 
@@ -47,25 +51,18 @@ seajs.config({
 <pre>
 seajs.config({
   alias: {
-    'app': 'path/to/app'
+    'app': 'path/to/app',
+    'jquery': 'jquery/1.6.1/jquery'
   }
 });
 
 /** a.js **/
 define(function(require, exports, module) {
-    var b = require('app/b');
-    // 等价于：var b = require('path/to/app/b');
-});
-</pre>
+    var $ = require('jquery');
+    // 解析后：require('jquery/1.6.1/jquery');
 
-  <p>alias 方法支持正则：</p>
-
-<pre>
-seajs.config({
-  alias: {
-    '([^/]+)$': '$1-v2'
-    // 将 require('./abc') 等价成 require('./abc-v2')
-  }
+    var biz = require('app/biz');
+    // 解析后：require('path/to/app/biz');
 });
 </pre>
 

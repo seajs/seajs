@@ -121,7 +121,7 @@
     function cb() {
 
       if (data.pendingMods) {
-        util.each(data.pendingMods, function(pendingMod) {
+        util.forEach(data.pendingMods, function(pendingMod) {
           util.memoize(pendingMod.id, uri, pendingMod);
         });
 

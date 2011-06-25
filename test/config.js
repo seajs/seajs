@@ -26,6 +26,7 @@ define(function(require, exports) {
     ,'modules/exports'
     ,'modules/checkPotentialErrors'
     ,'modules/extend'
+    ,'modules/configMap'
 
     ,'packages/math'
 
@@ -43,6 +44,6 @@ define(function(require, exports) {
     ,'bootstrap/index'
   ];
 
-  //exports.testCases = ['modules/cyclic'];
+  exports.testCases = ['modules/configMap'];
 
 });

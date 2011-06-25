@@ -99,6 +99,20 @@
 
 
   /**
+   * Maps the module id.
+   */
+  function parseMap(url) {
+    // config.map: [[match, replace], ...]
+
+    util.forEach(config['map'], function(rule) {
+      url = url.replace(rule[0], rule[1]);
+    });
+
+    return url;
+  }
+
+
+  /**
    * Gets the host portion from url.
    */
   function getHost(url) {
@@ -122,7 +136,7 @@
       return id;
     }
 
-    if (!noAlias) {
+    if (!noAlias && config['alias']) {
       id = parseAlias(id);
     }
     refUrl = refUrl || pageUrl;
@@ -149,8 +163,11 @@
     }
 
     ret = normalize(ret);
-    id2UriCache[ret] = true;
+    if (config['map']) {
+      ret = parseMap(ret);
+    }
 
+    id2UriCache[ret] = true;
     return ret;
   }
 
@@ -210,7 +227,7 @@
    * Set mod.ready to true when all the requires of the module is loaded.
    */
   function setReadyState(uris) {
-    util.each(uris, function(uri) {
+    util.forEach(uris, function(uri) {
       if (memoizedMods[uri]) {
         memoizedMods[uri].ready = true;
       }
@@ -269,7 +286,7 @@
    * to host.dependencies
    */
   function augmentPackageHostDeps(hostDeps, guestDeps) {
-    util.each(guestDeps, function(guestDep) {
+    util.forEach(guestDeps, function(guestDep) {
       if (util.indexOf(hostDeps, guestDep) === -1) {
         hostDeps.push(guestDep);
       }

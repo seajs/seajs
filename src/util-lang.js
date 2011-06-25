@@ -38,7 +38,7 @@
       };
 
 
-  var forEach = util.each = AP.forEach ?
+  var forEach = util.forEach = AP.forEach ?
       function(arr, fn) {
         arr.forEach(fn);
       } :
