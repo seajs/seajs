@@ -6,21 +6,28 @@
 define(function() {
 
   var config = getConfig();
+  var loc = this.location;
 
-  // Once load this file, set debug to true.
-  config.debug = 1;
-  saveConfig(config);
+  // Force debug to true when load via ?seajs-debug.
+  if (loc.search.indexOf('seajs-debug') !== -1) {
+    config.debug = 1;
+    config.console = 1;
+    saveConfig(config);
+  }
 
   // Load the map file
   if (config.map) {
+    document.title = '[debug] - ' + document.title;
     seajs._data.preloadMods.push(config.map);
   }
 
-  createConsole(config.map);
+  // Display console
+  if (config.console) {
+    displayConsole(config.map);
+  }
 
-
-  function createConsole(mapfile) {
-    var html = '<div style="position: absolute; bottom: 10px; right: 10px;';
+  function displayConsole(mapfile) {
+    var html = '<div style="position: fixed; bottom: 10px; right: 10px;';
     html += 'z-index: 999999999; border: 2px solid #000;';
     html += 'background: #fff; color: #000; font: 12px arial;';
     html += 'padding: 0 10px 10px;">';
@@ -39,6 +46,7 @@ define(function() {
     html += 'width: 300px; margin: 0 10px;';
     html += '" value="' + mapfile + '"></label>';
     html += '<button>Refresh</button>';
+    html += '<button style="margin-left: 5px">Exit Debug Mode</button>';
 
     html += '</div>';
 
@@ -48,19 +56,25 @@ define(function() {
 
     // close button
     div.getElementsByTagName('span')[0].onclick = function() {
-      config.debug = 0;
+      config.console = 0;
       saveConfig(config);
-      document.body.removeChild(div);
+      loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''));
     };
 
     // refresh button
     div.getElementsByTagName('button')[0].onclick = function() {
       config.map = div.getElementsByTagName('input')[0].value;
       saveConfig(config);
-      window.location.reload();
+      loc.reload();
+    };
+
+    // exit debug mode button
+    div.getElementsByTagName('button')[1].onclick = function() {
+      config.debug = 0;
+      saveConfig(config);
+      loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''));
     };
   }
-
 
   function getConfig() {
     var cookie = '', m;
@@ -73,7 +87,8 @@ define(function() {
     var parts = cookie.split('`');
     return {
       debug: Number(parts[0]) || 0,
-      map: parts[1] || ''
+      map: parts[1] || '',
+      console: Number(parts[2]) || 0
     };
   }
 
@@ -81,7 +96,7 @@ define(function() {
     var date = new Date();
     date.setTime(date.getTime() + 30 * 86400000); // 30 days
 
-    document.cookie = 'seajs=' + o.debug + '`' + o.map +
+    document.cookie = 'seajs=' + o.debug + '`' + o.map + '`' + o.console +
         '; expires=' + date.toUTCString();
   }
 
