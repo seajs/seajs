@@ -40,10 +40,11 @@ define(function(require, exports) {
     ,'issues/remove-comments'
     ,'issues/multi-use'
     ,'issues/jsonp'
+    ,'issues/seajs-map'
 
     ,'bootstrap/index'
   ];
 
-  exports.testCases = ['modules/configMap'];
+  //exports.testCases = ['modules/configMap'];
 
 });

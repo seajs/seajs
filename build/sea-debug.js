@@ -56,7 +56,12 @@ seajs._data = {
   /**
    * Store the module information for "real" work in the onload event.
    */
-  pendingMods: []
+  pendingMods: [],
+
+  /**
+   * Modules that are needed to load before all other modules.
+   */
+  preloadMods: []
 };
 
 
@@ -304,7 +309,9 @@ seajs._fn = {};
     // config.map: [[match, replace], ...]
 
     util.forEach(config['map'], function(rule) {
-      url = url.replace(rule[0], rule[1]);
+      if (rule && rule.length === 2) {
+        url = url.replace(rule[0], rule[1]);
+      }
     });
 
     return url;
@@ -686,7 +693,7 @@ seajs._fn = {};
   };
 
 
-  var noCacheTimeStamp = 'seajs_t=' + util.now();
+  var noCacheTimeStamp = 'seajs-ts=' + util.now();
 
   util.addNoCacheTimeStamp = function(url) {
     return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
@@ -1108,7 +1115,7 @@ seajs._fn = {};
  * @fileoverview The configuration.
  */
 
-(function(util, data, fn) {
+(function(util, data, fn, global) {
 
   var config = data.config;
 
@@ -1122,16 +1129,16 @@ seajs._fn = {};
     loaderScript = scripts[scripts.length - 1];
   }
 
-  var src = util.getScriptAbsoluteSrc(loaderScript);
-  if (src) {
-    src = util.dirname(src);
+  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript), loaderDir;
+  if (loaderSrc) {
+    var base = loaderDir = util.dirname(loaderSrc);
     // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
     // to "http://test.com/libs/"
-    var match = src.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+    var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
     if (match) {
-      src = match[1];
+      base = match[1];
     }
-    config.base = src;
+    config.base = base;
   }
   // When script is inline code, src is empty.
 
@@ -1143,6 +1150,15 @@ seajs._fn = {};
   config.timeout = 20000;
 
 
+  // seajs-debug
+  if (loaderDir &&
+      (global.location.search.indexOf('seajs-debug') !== -1 ||
+          document.cookie.indexOf('seajs=1') !== -1)) {
+    config.debug = true;
+    data.preloadMods.push(loaderDir + 'plugin-map');
+  }
+
+
   /**
    * The function to configure the framework.
    * config({
@@ -1152,6 +1168,9 @@ seajs._fn = {};
    *     'jquery': 'jquery-1.5.2',
    *     'cart': 'cart?t=20110419'
    *   },
+   *   'map': [
+   *     ['test.cdn.cn', 'localhost']
+   *   ],
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
    *   debug: false,
@@ -1186,7 +1205,7 @@ seajs._fn = {};
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs._util, seajs._data, seajs._fn, this);
 
 /**
  * @fileoverview The bootstrap and entrances.
@@ -1196,14 +1215,35 @@ seajs._fn = {};
 
   var config = data.config;
 
-  fn.use = fn.load;
 
+  /**
+   * Loads modules to the environment.
+   * @param {Array.<string>} ids An array composed of module id.
+   * @param {function(*)=} callback The callback function.
+   */
+  fn.use = function(ids, callback) {
+    var mod = data.preloadMods.shift();
+    if (mod) {
+      // Loads preloadMods one by one, because the preloadMods
+      // may be dynamically changed.
+      fn.load(mod, function() {
+        fn.use(ids, callback);
+      });
+    }
+    else {
+      fn.load(ids, callback);
+    }
+  };
+
+
+  // main
   var mainModuleId = config.main;
   if (mainModuleId) {
     fn.use([mainModuleId]);
   }
 
-  // Parses the pre-call of seajs.config/seajs.boot/define.
+
+  // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
   (function(args) {
     if (args) {

@@ -50,7 +50,12 @@ seajs._data = {
   /**
    * Store the module information for "real" work in the onload event.
    */
-  pendingMods: []
+  pendingMods: [],
+
+  /**
+   * Modules that are needed to load before all other modules.
+   */
+  preloadMods: []
 };
 
 

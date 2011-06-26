@@ -3,7 +3,7 @@
  * @fileoverview The configuration.
  */
 
-(function(util, data, fn) {
+(function(util, data, fn, global) {
 
   var config = data.config;
 
@@ -17,16 +17,16 @@
     loaderScript = scripts[scripts.length - 1];
   }
 
-  var src = util.getScriptAbsoluteSrc(loaderScript);
-  if (src) {
-    src = util.dirname(src);
+  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript), loaderDir;
+  if (loaderSrc) {
+    var base = loaderDir = util.dirname(loaderSrc);
     // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
     // to "http://test.com/libs/"
-    var match = src.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+    var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
     if (match) {
-      src = match[1];
+      base = match[1];
     }
-    config.base = src;
+    config.base = base;
   }
   // When script is inline code, src is empty.
 
@@ -38,6 +38,15 @@
   config.timeout = 20000;
 
 
+  // seajs-debug
+  if (loaderDir &&
+      (global.location.search.indexOf('seajs-debug') !== -1 ||
+          document.cookie.indexOf('seajs=1') !== -1)) {
+    config.debug = true;
+    data.preloadMods.push(loaderDir + 'plugin-map');
+  }
+
+
   /**
    * The function to configure the framework.
    * config({
@@ -47,6 +56,9 @@
    *     'jquery': 'jquery-1.5.2',
    *     'cart': 'cart?t=20110419'
    *   },
+   *   'map': [
+   *     ['test.cdn.cn', 'localhost']
+   *   ],
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
    *   debug: false,
@@ -81,4 +93,4 @@
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs._util, seajs._data, seajs._fn, this);

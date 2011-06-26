@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Issue Test</title>
+
+<script>
+
+  document.cookie = 'seajs=1`' + location.href.replace('test.html', 'seajs-map.js');
+
+</script>
+
+<script src="../../../build/sea.js"></script>
+</head>
+
+<body>
+
+<p>
+  <a href="https://github.com/seajs/seajs/issues/68">https://github.com/seajs/seajs/issues/68</a>
+</p>
+
+<div id="out"></div>
+
+<script>
+
+  seajs.use('./main');
+
+  function printResults(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+    document.getElementById('out').appendChild(d);
+  }
+
+</script>
+</body>
+</html>

@@ -25,7 +25,7 @@
       <path path="fn-require.js"/>
 
       <path path="fn-config.js"/>
-      <path path="fn-use.js"/>
+      <path path="fn-bootstrap.js"/>
 
       <path path="sea-api.js"/>
 
@@ -33,15 +33,19 @@
   </target>
 
 
-  <target name="clean">
+  <target name="finish">
     <delete>
       <fileset dir="${module.dir}" includes="${module.files}"/>
     </delete>
+
+    <copy todir="${root.dir}/build/">
+      <fileset dir="${module.dir}" includes="plugin-*.js"/>
+    </copy>
   </target>
 
 
   <target name="build"
-          depends="gjslint,concat,common.build,clean">
+          depends="gjslint,concat,common.build,finish">
   </target>
 
 </project>

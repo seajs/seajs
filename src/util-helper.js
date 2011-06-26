@@ -105,7 +105,9 @@
     // config.map: [[match, replace], ...]
 
     util.forEach(config['map'], function(rule) {
-      url = url.replace(rule[0], rule[1]);
+      if (rule && rule.length === 2) {
+        url = url.replace(rule[0], rule[1]);
+      }
     });
 
     return url;
