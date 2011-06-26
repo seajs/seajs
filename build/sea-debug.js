@@ -328,6 +328,12 @@ seajs._fn = {};
 
   var loc = global['location'];
   var pageUrl = loc.protocol + '//' + loc.host + loc.pathname;
+
+  // local file in IE: C:\path\to\xx.js
+  if (pageUrl.indexOf('\\') !== -1) {
+    pageUrl = pageUrl.replace(/\\/g, '/');
+  }
+
   var id2UriCache = {};
 
   /**
