@@ -7,6 +7,10 @@ define(function(require) {
 
   test.assert(a.name === 'a', 'a is ok');
   test.assert(b.name === 'b', 'b is ok');
-  test.done();
+
+  require.async('./c', function(c) {
+    test.assert(c.name === 'c', 'c is ok');
+    test.done();
+  });
 
 });
