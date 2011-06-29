@@ -6,6 +6,7 @@
 (function(host, data, fn) {
 
   var config = data.config;
+  var preloadMods = data.preloadMods;
 
 
   /**
@@ -14,11 +15,14 @@
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var mod = data.preloadMods.shift();
+    var mod = preloadMods[0];
     if (mod) {
       // Loads preloadMods one by one, because the preloadMods
       // may be dynamically changed.
       fn.load(mod, function() {
+        if (preloadMods[0] === mod) {
+          preloadMods.shift();
+        }
         fn.use(ids, callback);
       });
     }

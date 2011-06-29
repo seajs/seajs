@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v1.0.0dev
+Copyright 2011, SeaJS v0.9.6
 MIT Licensed
-build time: ${build.time}
+build time: Jun 29 17:35
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.0.0dev';
+seajs.version = '0.9.6';
 
 
 // Module status：
@@ -1220,6 +1220,7 @@ seajs._fn = {};
 (function(host, data, fn) {
 
   var config = data.config;
+  var preloadMods = data.preloadMods;
 
 
   /**
@@ -1228,11 +1229,14 @@ seajs._fn = {};
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var mod = data.preloadMods.shift();
+    var mod = preloadMods[0];
     if (mod) {
       // Loads preloadMods one by one, because the preloadMods
       // may be dynamically changed.
       fn.load(mod, function() {
+        if (preloadMods[0] === mod) {
+          preloadMods.shift();
+        }
         fn.use(ids, callback);
       });
     }
