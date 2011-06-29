@@ -15,11 +15,6 @@ define(function() {
     saveConfig(config);
   }
 
-  // Check switch
-  if (!config.debug) {
-    return;
-  }
-
   // Load the map file
   if (config.map) {
     document.title = '[debug] - ' + document.title;
