@@ -1,91 +1,103 @@
 <!doctype html>
-<html lang="zh-CN">
+<html>
 <head>
 <meta charset="utf-8"/>
-<title>SeaJS - 海纳百川，有容乃大。</title>
-<link rel="stylesheet" href="docs/assets/style.css"/>
+<title>sea.js</title>
+<link rel="stylesheet" href="docs/assets/home.css"/>
 </head>
 <body>
+
+<div id="toc">
+  <ul>
+    <li><a href="#download">Download</a></li>
+    <li><a href="docs/">Docs</a></li>
+    <li><a href="docs/changelog.md">ChangeLog</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <ul>
+    <li><a href="https://github.com/seajs/seajs/wiki">Wiki</a></li>
+    <li><a href="http://lifesinger.wordpress.com/?s=seajs">Blog</a></li>
+    <li><a href="https://github.com/seajs/seajs/wiki/Community">Community</a></li>
+    <li><a href="docs/demo/">Demo</a></li>
+  </ul>
+</div>
+
 <div id="content">
 
-  <h1>
-    <a href="./"><span class="logo">SeaJS</span> <span class="byline">海纳百川，有容乃大。</span></a>
-  </h1>
+  <img id="logo" src="docs/assets/logo.png" alt="sea.js"/>
 
-  <ul id="menu">
-    <li><a href="docs/">文档</a></li>
-    <li><a href="docs/download.html">下载</a></li>
-    <li><a href="docs/help.html">帮助</a></li>
-  </ul>
+  <p>A new kind of JavaScript <a href="http://wiki.commonjs.org/wiki/Modules">module</a> loader.</p>
 
-  <p>
-    SeaJS 是一个遵循 <a href="http://wiki.commonjs.org/">CommonJS</a>
-    规范的模块加载框架，可用来轻松愉悦地加载任意 JavaScript 模块。下面是一段典型的初始化入口代码：
-  </p>
 
-<pre>
-&lt;script src="sea.js"&gt;&lt;/script&gt;
-&lt;script&gt;
+  <p>An example of a JavaScript module which provides a <code>sayHello</code> method:</p>
 
-  seajs.use('./init', function(init) {
-    init.something();
-  });
-
-&lt;/script&gt;
-</pre>
-
-  <p>
-    SeaJS 支持的标准模块遵循 <a href="docs/specification.md">Modules/Wrappings-Define</a> 规范，可运行于 Web 浏览器以及 <a href="http://nodejs.org/">node.JS</a>
-    等环境中。典型的模块书写格式如下：
-  </p>
-
-<pre>
+  <pre>
 define(function(require, exports, module) {
-
-  // 获取依赖的模块：
-  var $ = require('jquery');
-
-  // 向外提供接口：
-  exports.someMethod = someFunction;
-
+  exports.sayHello = function() {
+    alert('Hello from module: ' + module.id);
+  };
 });
 </pre>
 
   <p>
-    在 SeaJS 的世界里，一切皆是模块。任何模块都不会污染全局，依赖关系也只需遵守简单约定，无需冗长的配置。使用 SeaJS,
-    能让你更关注于编码的乐趣。
+    To use the module, put the code into a file <code>example.js</code> and
+    launch it with a html file:
   </p>
 
-  <p>
-    立刻体验 SeaJS 的奥妙，请点击 <a href="docs/download.html">下载</a> 。
+  <pre>
+&lt;script src="sea.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  seajs.use('./example', function(example) {
+    example.sayHello();
+  });
+&lt;/script&gt;
+</pre>
+
+  <p>See the <a href="docs/">API documentation</a> for more details.</p>
+
+
+<!--  <h2 id="intro">Introduction</h2>
+
+  <iframe src="http://www.slideshare.net/slideshow/embed_code/7735168" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+-->
+
+
+  <h2 id="download">Download</h2>
+
+  <p><a href="http://github.com/seajs/seajs">git repo</a></p>
+
+  <p class="download">
+    <a href="http://modules.seajs.com/seajs/1.0.0/sea-debug.js">Development Version (1.0.0)</a> <i>29kb, Uncompressed with Comments</i><br/>
+    <a href="http://modules.seajs.com/seajs/1.0.0/sea.js">Production Version (1.0.0)</a> <i>4kb, Minified and Gzipped</i>
   </p>
 
-  <p>
-    了解 SeaJS 的更多优点和详细用法，请查看 <a href="docs/">文档</a> 。
-  </p>
-
-  <p>
-    想参与 SeaJS 的开发，请访问 <a
-      href="https://github.com/seajs/seajs">GitHub</a> .
-  </p>
-
-
-  <p>
-    <img src="docs/assets/seajs-poster.jpg" width="541" height="412" alt="SeaJS"/>
+  <p class="promotejs">
+    <a href="https://developer.mozilla.org/en/JavaScript/Guide" title="JavaScript Guide"><img src="http://static.jsconf.us/promotejsv.gif" height="280" width="160" alt="JavaScript Guide"/></a>
   </p>
 
   
-  <div id="ribbon">
-    <a href="http://github.com/seajs/seajs">
-    <img src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"
-         alt="Fork me on GitHub">
-    </a>
-  </div>
+  <h2 id="about">About</h2>
 
-  <p id="copyright">
-    &copy; 2011 - 2022 seajs.com
+  <p>
+    The sea can hold the water from thousands of rivers, it's big because of
+    its capacity.
   </p>
-    
+  
+  <p>
+    SeaJS is a new kind of JavaScript module loader that makes it easy to build
+    scalable web applications. SeaJS is designed to change the way you organize
+    JavaScript.
+  </p>
+
+  <p>
+    SeaJS is available under the terms of the <a href="https://github.com/tannhu/jsface/blob/master/MIT-LICENSE.txt">MIT license</a>.
+  </p>
+
+  <p>
+    Questions, comments, feedbacks please go to <a href="http://groups.google.com/group/seajs">SeaJS Group</a>.
+  </p>
+
+  <p class="copyright">Copyright&copy;2011-2022 seajs.com</p>
 </div>
 
 <script src="build/sea.js" data-main="./docs/assets/init"></script>

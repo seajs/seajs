@@ -1,74 +1,39 @@
 <!doctype html>
-<html lang="zh-CN">
+<html>
 <head>
 <meta charset="utf-8"/>
-<title>文档 - SeaJS</title>
-<link rel="stylesheet" href="assets/style.css"/>
+<title>Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
 </head>
-<body>
+<body class="index">
+<div id="container">
 
-<div id="content">
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
 
-  <h1>
-    <a href="../"><span class="logo">SeaJS</span> <span class="byline">海纳百川，有容乃大。</span></a>
-  </h1>
+  <h2 id="table_of_Contents">Table of Contents</h2>
 
-  <ul id="menu">
-    <li>文档</li>
-    <li><a href="download.html">下载</a></li>
-    <li><a href="help.html">帮助</a></li>
-  </ul>
-
-
-  <h2 id="demo">简易示例</h2>
   <ul>
-    <li><a href="demo/hello-seajs/">Hello, SeaJS!</a></li>
-    <li><a href="demo/calculator/">简易计算器</a></li>
+    <li><a href="commonjs-modules.html">CommonJS Modules</a></li>
+    <li><a href="module-environment.html">Module Environment</a></li>
+    <li><a href="module-identifier.html">Module Identifier</a></li>
+    <li><a href="rules.html">Rules</a></li>
+    <li><a href="configuration.html">Configuration</a></li>
+    <li><a href="bootstrapping.html">Bootstrapping</a></li>
+    <li><a href="deployment.html">Deployment</a></li>
+    <li><a href="cheatsheet.html">Quick References</a></li>
+    <li>Appendixes
+      <ul>
+        <li><a href="appendix-recommended-modules.html">Appendix 1: Recommended Modules</a></li>
+        <li><a href="appendix-community-posts.html">Appendix 2: Community Posts</a></li>
+      </ul>
+    </li>
   </ul>
-
-
-  <h2 id="docs">使用文档</h2>
-  <ul>
-    <li><a href="module-authoring-format.html">模块书写格式</a></li>
-    <li><a href="module-identifier.html">模块标识</a></li>
-    <li><a href="bootstrap.html">载入方式</a></li>
-    <li><a href="global-configuration.html">全局配置</a></li>
-    <li><a href="require-rules.html">require 规则</a></li>
-    <li><a href="deployment.html">打包部署</a></li>
-    <li><a href="cheatsheet.html">速查手册</a></li>
-    <li><a href="recommended-modules.html">模块精选</a></li>
-  </ul>
-
-
-  <h2 id="posts">社区动态</h2>
-  <ul>
-    <li>seajs 源码解析：<a href="http://www.nodejser.com/?p=146340">开篇</a>、<a href="http://www.nodejser.com/?p=146344">fn-define.js</a>、<a href="http://www.nodejser.com/?p=146367">fn-load.js</a>、<a href="http://www.nodejser.com/?p=146378">fn-require.js</a></li>
-    <li><a href="http://classjs.com/?p=300">结合 seajs 使用的 gotop 小插件</a></li>
-    <li><a href="http://clonn.blogspot.com/2011/05/seajs-nonblocking-require-library.html">SeaJS, 模組化開發加載套件</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/05/26/exports-and-module-load-in-seajs/">SeaJS 中的 exports 和模块加载</a></li>
-    <li><a href="http://blog.163.com/jinlu_hz/blog/static/113830152201142011225195/">在 SeaJS 里使用 LABjs</a></li>
-    <li><a href="http://www.infoq.com/cn/news/2011/05/nodeparty-hangzhou">NodeParty 杭州站会议纪实：Jscex, SeaJS 与 MyFOX</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/05/18/jquery-plugins-modulization/">jQuery 插件的模块化</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/05/17/the-difference-between-seajs-and-requirejs/">SeaJS 和 RequireJS 的异同</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/05/14/seajs-and-nodejs/">SeaJS - 跨环境模块化开发实践</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/05/09/seajs-090-released/">发布 SeaJS 0.9.0 - 打造不一样的前端开发体验</a></li>
-    <li><a href="http://ghsky.com/2011/05/seajs-first-view.html">初识 SeaJS</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/05/02/seajs-css-support/">SeaJS - 对 CSS 模块的支持</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/04/26/intro-to-seajs/">SeaJS - 不仅仅是脚本加载器</a></li>
-    <li><a href="http://www.infoq.com/cn/presentations/hjp-infoq-salon">去哪儿网的 JavaScript 模块化之路</a></li>
-    <li>范例：<a href="demo/spinning-icons/">旋转图标</a></li>
-    <li><a href="http://lifesinger.wordpress.com/2011/04/05/seajs-080-released/">发布 SeaJS 0.8.0 - 海纳百川、有容乃大</a></li>
-  </ul>
-
-
-  <p>
-     有任何疑问或建议，欢迎参与到 <a href="https://groups.google.com/group/seajs">seajs | Google Groups</a>
-  </p>
-
-
-  <p id="copyright">
-    &copy; 2010 - 2022 seajs.com
-  </p>
 </div>
 
 <script src="../build/sea.js" data-main="./assets/init"></script>

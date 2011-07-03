@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Rules - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">Table of Contents</h2>
+
+    <ul>
+      <li><a href="#rules">Rules</a>
+        <ol>
+          <li><a href="#spell-it-right">Spell It Right</a></li>
+          <li><a href="#leave-it-alone">Leave It Alone</a></li>
+          <li><a href="#use-string-literals">Use String Literals</a></li>
+        </ol>
+      </li>
+      <li><a href="#note-dynamic-deps">A Note About Dynamic Dependencies</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="rules">Rules</h2>
+
+  <p>
+    In order for static analysis to work properly, you'll need to follow a few
+    simple rules when using the require function:
+  </p>
+
+
+  <h3 id="spell-it-right">1. Spell It Right</h3>
+
+  <p>
+    In the wrapper, the first argument <em>MUST</em> be named
+    "<code>require</code>".
+  </p>
+
+<pre>
+// Wrong!
+define(function(req) {
+  // ...
+});
+
+// Right!
+define(function(require) {
+  // ...
+});
+</pre>
+
+
+  <h3 id="leave-it-alone">2. Leave It Alone</h3>
+
+  <p>
+    Don't rename the <code>require</code> function, or assign any other value
+    to the <code>require</code> variable <em>in any scope</em>.
+  </p>
+
+<pre>
+// Wrong - Renaming "require"!
+var req = require, mod = req("./mod");
+
+// Wrong - Redefining "require"!
+require = function() {};
+
+// Wrong - Redefining "require" as a function parameter!
+function F(require) {}
+
+// Wrong - Redefining "require" in a nested scope!
+function F() {
+  var require = function() {};
+}
+</pre>
+
+
+  <h3 id="use-string-literals">3. Use String Literals</h3>
+
+  <p>
+    The argument to <code>require</code> <em>MUST</em> be a single string
+    literal.
+  </p>
+
+<pre>
+// Wrong!
+require(myModule);
+
+// Wrong!
+require("my-" + "module");
+
+// Wrong!
+require("MY-MODULE".toLowerCase());
+
+// Right!
+require("my-module");
+</pre>
+
+  <p>
+    I assure you, you can create large, complex applications while following
+    these rules. Think of <code>require</code> not as a function, but as a
+    language-level statement, and you'll be just fine.
+  </p>
+
+
+  <h2 id="note-dynamic-deps">A Note About Dynamic Dependencies</h2>
+
+  <p>
+    Occasionally developers have felt the need to use <code>require</code>
+    conditionally:
+  </p>
+
+<pre>
+if (todayIsWeekend)
+  require("play");
+else
+  require("work");
+</pre>
+
+  <p>
+    Keep in mind that from the point of view of static analysis, this module is
+    dependant on both the "play" and "work" modules, and the loader will
+    probably attempt to fetch both.
+  </p>
+
+  <p>
+    In this case, you can use <code>require.async</code> to load conditional
+    modules asynchronously.
+  </p>
+
+
+  <hr/>
+
+  <p>
+    Most of words in this page is copied from
+    <a href="http://www.flyscript.org/docs-static-analysis">FlyScript's Documentation</a>.
+    Thanks very much to Kevin H. Smith.
+  </p>
+  
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>

@@ -1,127 +1,176 @@
 <!doctype html>
-<html lang="zh-CN">
+<html>
 <head>
 <meta charset="utf-8"/>
-<title>模块标识 - SeaJS</title>
-<link rel="stylesheet" href="assets/style.css"/>
+<title>Module Identifier - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
 </head>
 <body>
+<div id="container">
 
-<div id="content">
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
 
-  <h1>
-    <a href="./"><span class="logo">SeaJS</span> <span class="byline">文档</span></a>
-  </h1>
+  <div id="toc">
+    <h2 id="table_of_Contents">Table of Contents</h2>
 
-  <h2>模块标识</h2>
+    <ul>
+      <li><a href="#module-identifier">Module Identifier</a>
+        <ul>
+          <li><a href="#absolute-paths">Absolute Paths</a></li>
+          <li><a href="#root-paths">Root Paths</a></li>
+          <li><a href="#relative-paths">Relative Paths</a></li>
+          <li><a href="#top-level-paths">Top-level Paths</a></li>
+        </ul>
+      </li>
+      <li><a href="#tips">Tips About File Extensions</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="module-identifier">Module Identifier</h2>
 
   <p>
-    require 和 require.async 的参数都是 module identifier. 为了便于讨论，假设存在以下文件：
+    The <code>require</code> function take module identifier as the parameter.
+    For illustration purposes, let's assume that we have these files:
   </p>
 
 <pre>
-/*** http://example.com/test.html ***/
-
-/*** http://cdn.com/seajs/sea.js ***/
-/*** http://cdn.com/seajs/jquery.js ***/
-
-/*** http://cdn.com/js/a.js ***/
+http://example.com/js/a.js
+http://example.com/libs/seajs/1.0.0/sea.js
+http://example.com/libs/jquery/1.6.2/jquery.js
 </pre>
 
+
+  <h3 id="absolute-paths">Absolute Paths</h3>
+
   <p>
-    下面分析各种情况下的路径解析方式。
+    Although not a feature of the CommonJS Modules specification, SeaJS can
+    load modules referenced with an absolute URL.
   </p>
 
-
-  <h3>absolute id</h3>
-
-  <p>id 可以是绝对地址：</p>
-
 <pre>
-require('http://cdn.com/js/a');
-  // =&gt; http://cdn.com/js/a.js
+require('http://example.com/js/a');
+  // =&gt; http://example.com/js/a.js
 </pre>
 
 
-  <h3 id="root-id">root id</h3>
+  <h3 id="root-paths">Root Paths</h3>
 
   <p>
-    root id 相对调用代码所在文件的路径来定位:
+    Root paths start with a slash (<code>"/"</code>). They are resolved
+    relative to the containing file:
   </p>
 
+  <p>a.js: </p>
+
 <pre>
-/*** a.js ***/
 require('/js/b');
-  // =&gt; http://cdn.com/js/b.js
-
-/*** test.html ***/
-&lt;script src="http://cdn.com/seajs/sea.js" data-main="/js/b"&gt;&lt;/script&gt;
   // =&gt; http://example.com/js/b.js
 </pre>
 
 
-  <h3 id="relative-id">relative id</h3>
+  <h3 id="relative-paths">Relative Paths</h3>
 
-  <p>relative id 与 root id 的解析规则一致，相对调用代码所在文件的路径来定位：</p>
+  <p>
+    Relative paths start with a dot (<code>"."</code>). They are resolved
+    relative to the containing file:
+  </p>
+
+  <p>a.js:</p>
+
 <pre>
-/*** a.js ***/
 require('./b');
-  // =&gt; http://cdn.com/js/b.js
+  // =&gt; http://example.com/js/b.js
 </pre>
 
 
-  <h3 id="top-level-id">top-level id</h3>
+  <h3 id="top-level-paths">Top-level Paths</h3>
 
-  <p>top-level id 相对 base 目录来定位：</p>
+  <p>
+    Top-level paths do not start with a dot (<code>"."</code>) or a slash (
+    <code>"/"</code>). They are resolved relative to the conceptual namespace
+    root. SeaJS will attempt to locate modules referenced with top-level paths
+    relative to the <code>base</code> path.
+  </p>
+
 <pre>
-/*** a.js ***/
-require('jquery');
-  // =&gt; http://cdn.com/seajs/jquery.js
+require('jquery/1.6.2/jquery');
+  // =&gt; http://example.com/libs/jquery/1.6.2/jquery.js
 </pre>
 
-  <p>base 目录默认与 sea.js 所在目录保持一致。可以通过全局配置来更改：</p>
+  <p>
+    The default value of <code>base</code> is related to the path of
+    <code>sea.js</code>:
+  </p>
+
+<pre>
+If the sea.js path is:
+  http://example.com/js/libs/sea.js
+Then the base path is:
+  http://example.com/js/libs/
+</pre>
+
+  <p>
+    When the path of <code>sea.js</code> contains version number, the
+    default value of <code>base</code> will ignore <code>seajs/x.y.z</code>.
+    This way is more friendly for hosting multiple versions of libraries.
+  </p>
+
+<pre>
+If the sea.js path is:
+  http://example.com/libs/seajs/1.0.0/sea.js
+Then the base path is:
+  http://example.com/libs/
+</pre>
+
+  <p>Of course, you can config the base path manually.</p>
 
 <pre>
 seajs.config({
   base: 'http://code.jquery.com/'
 });
 
-/*** a.js ***/
 require('jquery');
   // =&gt; http://code.jquery.com/jquery.js
 </pre>
 
 
-<h3 id="tips">小技巧</h3>
+
+<h2 id="tips">Tips About File Extensions</h2>
+
+  <p>
+    SeaJS always adds the file extension (".js") when attempting to locate
+    JavaScript modules, except when a hash ("#") or question mark ("?") are
+    present in the path. An easy way to suppress the automatic file extension
+    is to add a hash ("#") to the end of the path.
+  </p>
 
 <pre>
-// 当文件后缀是 .js 时，默认可省略：
-require('http://cdn.com/js/a');
-require('http://cdn.com/js/a.js');
-  // =&gt; http://cdn.com/js/a.js
+// The ".js" extension can be omitted:
+require('http://example.com/js/a');
+require('http://example.com/js/a.js');
+  // =&gt; http://example.com/js/a.js
 
-// 当文件后缀是 .css 时，不可省略：
-require('http://cdn.com/js/a.css');
-  // =&gt; http://cdn.com/js/a.css
+// The ".css" extension can NOT be omitted:
+require('http://example.com/css/a.css');
+  // =&gt; http://example.com/css/a.css
 
-// 当文件路径中含有 ? 字符时，不会添加默认后缀：
-require('http://cdn.com/js/a.json?callback=define');
-  // =&gt; http://cdn.com/js/a.json?callback=define
+// When a question mark ("?") is present, nothing will be added to the path:
+require('http://example.com/js/a.json?callback=define');
+  // =&gt; http://example.com/js/a.json?callback=define
 
-// 当文件路径以 # 结尾时，不会添加默认后缀：
-require('http://cdn.com/js/a.json#');
-  // =&gt; http://cdn.com/js/a.json
+// When the path ends with a hash ("#"), the hash will be ignored:
+require('http://example.com/js/a.json#');
+  // =&gt; http://example.com/js/a.json
 </pre>
 
-
-  <p class="next-page">
-    下一节：<a href="bootstrap.html">载入方式</a>
-  </p>
-
-
-  <p id="copyright">
-    &copy; 2011 - 2022 seajs.com
-  </p>
 </div>
 
 <script src="../build/sea.js" data-main="./assets/init"></script>

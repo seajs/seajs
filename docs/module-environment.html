@@ -1,0 +1,244 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Module Environment - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">Table of Contents</h2>
+
+    <ul>
+      <li><a href="#authoring-format">Module Environment</a>
+        <ul>
+          <li><a href="#exports">exports</a></li>
+          <li><a href="#require">require</a>
+            <ul>
+              <li><a href="#require-async">require.async</a></li>
+            </ul>
+          </li>
+          <li><a href="#module">module</a>
+            <ul>
+              <li><a href="#module-id">module.id</a></li>
+              <li><a href="#module-exports">module.exports</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="authoring-format">Module Environment</h2>
+
+  <p>
+    In SeaJS, any JavaScript file should be written in module format.
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+
+  // The module code goes here
+  
+});
+</pre>
+
+  <p>
+    Three symbols are available to every module: <code>require</code>,
+    <code>exports</code>, and <code>module</code>.
+  </p>
+
+
+  <h3 id="exports">exports</h3>
+
+  <p>
+    The <code>exports</code> object is used to export the API of the module.
+  </p>
+
+<pre>
+define(function(require, exports) {
+  // snip...
+  exports.foo = 'bar';
+  exports.doSomething = function() {};
+});
+</pre>
+
+  <p>
+    Except adding members to <code>exports</code> object, you can also use
+    <code>return</code> to provide the API directly.
+  </p>
+
+<pre>
+define(function(require, exports) {
+  // snip...
+  return {
+    foo: 'bar'，
+    doSomething: function() {};
+  };
+});
+</pre>
+
+  <p>
+    If the <code>return</code> statement is the only code in the module code,
+    it can be simplified to:
+  </p>
+
+<pre>
+define({
+  foo: 'bar'，
+  doSomething: function() {};
+});
+</pre>
+
+  <p>
+    The above writing format is especially suited for defining JSON data.
+  </p>
+
+  <p>
+    ** ATTENTION: the following code is WRONG!
+  </p>
+
+<pre class="wrong">
+define(function(require, exports) {
+  // snip...
+  exports = { // WRONG!
+    foo: 'bar'，
+    doSomething: function() {};
+  };
+});
+</pre>
+
+  <p>
+    The module loader can not obtain the new value assigned to the
+    <code>exports</code> variable. Please use <code>return</code> or
+    <code>module.exports</code> to expose the API in this case.
+  </p>
+
+
+  <h3 id="require">require</h3>
+
+  <p>
+    The <code>require</code> function is used to access the exported API of
+    other modules.
+  </p>
+
+<pre>
+define(function(require) {
+  var a = require('./a');
+  a.doSomething();
+});
+</pre>
+
+  <p>
+    It accepts a single <a href="module-identifier.html">module identifier</a>
+    as parameter.
+  </p>
+
+  <p>
+    Keep in mind that you'll need to follow a few simple
+    <a href="rules.html">rules</a> to make sure that static analysis will be
+    able to detect the dependencies within your module.
+  </p>
+
+
+  <h4 id="require-async">require.async</h4>
+
+  <p>
+    Use this function to load the specified modules asynchronously and execute
+    the optional callback when complete.
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+  // load one module
+  require.async('./b', function(b) {
+    b.doSomething();
+  });
+  
+  // load multiple modules
+  require.async(['./c', './d'], function(c, d) {
+    // do something
+  });
+});
+</pre>
+
+
+  <h3 id="module">module</h3>
+
+  <p>
+    The module object contains metadata about the module. It contains the
+    following members:
+  </p>
+
+  <h4 id="module-id">module.id</h4>
+
+  <p>
+    The unique module identifier for the current module.
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+  console.log(module.id); // http://path/to/this/file.js
+  console.log(require(module.id) === exports); // true
+});
+</pre>
+
+  <h4 id="module-exports">module.exports</h4>
+
+  <p>
+    The <code>exports</code> object is created by the module system. Sometimes
+    this is not acceptable, many want their module to be an instance of some
+    class. To do this assign the desired export object to
+    <code>module.exports</code>.
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+  console.log(module.exports === exports); // true
+  module.exports = new SomeClass();
+  console.log(module.exports === exports); // false
+});
+</pre>
+
+  <p>
+    Note that assignment to <code>module.exports</code> must be done
+    immediately. It cannot be done in any callbacks. This does not work:
+  </p>
+
+  <p>x.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  setTimeout(function() {
+    module.exports = { a: "hello" };
+  }, 0);
+});
+</pre>
+
+  <p>y.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  var x = require('./x');
+  console.log(x.a); // undefined
+});
+</pre>
+
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>

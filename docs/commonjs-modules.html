@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>CommonJS Modules - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">Table of Contents</h2>
+
+    <ul>
+      <li><a href="#commonjs">What is CommonJS</a></li>
+      <li><a href="#commonjs-modules">What are CommonJS Modules</a></li>
+      <li><a href="#why-wrapped">Why Wrapped Modules</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="commonjs">What is CommonJS?</h2>
+
+  <p>
+    <a href="http://wiki.commonjs.org/">CommonJS</a> is a group with a goal of
+    building up the JavaScript ecosystem. It has a
+    <a href="http://groups.google.com/group/commonjs">mailing list</a> of
+    developers, just like you, who are dedicated to promoting portability and
+    interoperability of JavaScript programs across JavaScript environments,
+    from the server to the browser.
+  </p>
+
+
+  <h2 id="commonjs-modules">What are CommonJS Modules?</h2>
+
+  <p>
+    JavaScript doesn't have a built-in module system (not yet anyway), so the
+    developers on the mailing list created their own. Traditional CommonJS
+    modules might look like this:
+  </p>
+
+  <p>math.js:</p>
+
+<pre>
+exports.add = function() {
+  var sum = 0, i = 0, args = arguments, l = args.length;
+  while (i < l) {
+    sum += args[i++];
+  }
+  return sum;
+};
+</pre>
+
+  <p>increment.js:</p>
+
+<pre>
+var add = require('math').add;
+exports.increment = function(val) {
+  return add(val, 1);
+};
+</pre>
+
+  <p>program.js:</p>
+
+<pre>
+var inc = require('increment').increment;
+var a = 1;
+inc(a); // 2
+</pre>
+
+  
+  <h2 id="why-wrapped">Why Wrapped Modules?</h2>
+
+  <p>
+    If you look closely at the example above, you might notice that
+    <code>require</code> is <em>synchronous</em>. That is, we're assuming that
+    the module system will able to determine whether a given module is
+    available (and initialize it) <em>before the require call returns</em>.
+  </p>
+
+  <p>
+    As it turns out, this is highly problematic for the browser.
+  </p>
+
+  <p>
+    Hands down, the best way to load JavaScript into the browser is by inserting
+    <code>&lt;script&gt;</code> tags into the document. But script tag insertion
+    is inherently <em>asynchronous</em>. As a result traditional CommonJS
+    modules aren't going to work in this kind of environment.
+  </p>
+
+  <p>
+    One option would be to have a server-side component perform static analysis
+    on the module code and return the module along with a list of its
+    dependencies to the browser. This works pretty well, but it necessitates
+    the installation of an external component along with all of the
+    infrastructure that it depends on.
+  </p>
+
+  <p>
+  Instead, we wrap the module definition in a small amount of boilerplate, like this:
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+
+  // The module code goes here
+
+});
+</pre>
+
+  <p>
+    The boilerplate gives the module loader the opportunity to perform static
+    analysis on the module code and dynamically generate a list of dependencies
+    that must be resolved before the module code executes.
+  </p>
+
+  <p>
+    In order for static analysis to work, though, you'll need to follow a few
+    simple <a href="rules.html">rules</a>.
+  </p>
+
+  <p>
+    If we wrap the traditional modules that we looked at previously, we get
+    this:
+  </p>
+
+  <p>math.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  exports.add = function() {
+    var sum = 0, i = 0, args = arguments, l = args.length;
+    while (i < l) {
+      sum += args[i++];
+    }
+    return sum;
+  };
+});
+</pre>
+
+  <p>increment.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  var add = require('math').add;
+  exports.increment = function(val) {
+    return add(val, 1);
+  };
+});
+</pre>
+
+  <p>program.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  var inc = require('increment').increment;
+  var a = 1;
+  inc(a); // 2
+});
+</pre>
+
+
+  <hr/>
+
+  <p>
+    Most of words in this page is copied from
+    <a href="http://www.flyscript.org/docs-commonjs">FlyScript's Documentation</a>.
+    Thanks very much to Kevin H. Smith.
+  </p>
+
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>

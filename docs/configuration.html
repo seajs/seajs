@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Configuration - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">Table of Contents</h2>
+
+    <ul>
+      <li><a href="#config">config</a>
+        <ul>
+          <li><a href="#alias">alias</a></li>
+        </ul>
+      </li>
+      <li><a href="#no-conflict">noConflict</a>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="config">config</h2>
+
+  <p>
+    You can use the <code>config</code> function to set the loader configuration
+    options.
+  </p>
+
+<pre><code>seajs.config({
+  base: 'http://path/to/libs/',
+  alias: {
+    'app': 'path/to/app/'
+  },
+  map: [
+    ['http://example.com/', 'http://localhost/']
+  ],
+  charset: 'utf-8',
+  timeout: 20000,
+  debug: 0
+});</code></pre>
+
+  <p>
+    The following options are available:
+  </p>
+
+  <ul>
+    <li><code>base</code>
+      <p>
+        The base path that the loader will use when attempting to load
+        top-level module identifiers. For more information, see the
+        <a href="module-identifier.html#top-level-paths">Top-level Paths</a>
+        section.
+      </p>
+    </li>
+    <li><code>alias</code>
+      <p>
+        When the module identifier is very long, you can use the
+        <code>alias</code> to simplify code.
+      </p>
+<pre>
+seajs.config({
+  alias: {
+    'app': 'path/to/app',
+    'jquery': 'jquery/1.6.2/jquery'
+  }
+});
+</pre>
+
+<p>a.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+    var $ = require('jquery');
+    // parsed to: require('jquery/1.6.2/jquery');
+
+    var biz = require('app/biz');
+    // parsed to: require('path/to/app/biz');
+});
+</pre>
+    </li>
+    <li><code>map</code>
+      <p>
+        This configuration can be used to map one file to another. It's
+        convenient for online debugging. For more information, see the
+        <a href="plugin-map.html">Map Plugin</a> section.
+      </p>
+    </li>
+    <li><code>charset</code>
+      <p>
+        The charset attribute of the <code>&lt;script&gt;</code>
+        elements used to fetch the module files.
+      </p>
+    </li>
+    <li><code>timeout</code>
+      <p>
+        The number of milliseconds that the loader will wait before determining
+        that a script file is not available. The default is 10000 (10 seconds).
+      </p>
+    </li>
+    <li><code>debug</code>
+      <p>
+        If <code>true</code>, the loader will use <code>console.log</code> to
+        print out all warning and errors messages. The default is
+        <code>false</code>, and the loader will only throw out errors messages.
+      </p>
+      <p>
+        In addition, you can set the <code>debug</code> value to
+        <code>2</code>. In this case, an unique timestamp will be added to each
+        script URL. This can be useful during testing to prevent the browser
+        from using a cached version of the file.
+      </p>
+    </li>
+  </ul>
+
+
+  <h2 id="no-conflict">noConflict</h2>
+
+  <p>
+    To avoid conflicts, or expect to custom the global namespace to your taste,
+    you can use <code>noConflict</code> method to give the control of the
+    <code>seajs</code> variable back to its previous value and return a
+    reference to the loader object.
+  </p>
+
+<pre>
+var myLoader = seajs.noConflict();
+myLoader.use('./main');
+
+/* main.js */
+define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
+  <p>
+    If necessary, you can free up the name of the <code>define</code> method
+    as well by passing <code>true</code> as an argument to the method. This is
+    rarely necessary, and if you must do this, please consider carefully.
+  </p>
+
+<pre>
+var myLoader = seajs.noConflict(true);
+myLoader.use('./main');
+
+/* main.js */
+myLoader.define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>
