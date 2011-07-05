@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>Bootstrapping - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">Table of Contents</h2>
+
+    <ul>
+      <li><a href="#bootstrapping">Bootstrapping</a>
+        <ul>
+          <li><a href="#sync">Sync Loading</a></li>
+          <li><a href="#async">Async Loading</a></li>
+        </ul>
+      </li>
+      <li><a href="#use">use</a>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="bootstrapping">Bootstrapping</h2>
+
+  <p>
+   You can load <code>sea.js</code> synchronously or asynchronously.
+  </p>
+
+
+  <h3 id="sync">Sync Loading</h3>
+
+  <p>
+    This is the most straightforward way to load <code>sea.js</code> via
+    the src attribute of <code>script</code> tag.
+  </p>
+
+<pre>
+&lt;script src="http://example.com/libs/seajs/1.0.0/sea.js"&gt;&lt;/script&gt;
+</pre>
+
+  <p>
+    You can combine <code>sea.js</code> with other common libraries such as
+    <code>jquery.js</code>:
+  </p>
+
+<pre>
+&lt;script src="http://example.com/libs/sea-jquery.js"&gt;&lt;/script&gt;
+</pre>
+
+  <p>
+    Nginx combo service is recommended for automatically combination.
+  </p>
+
+<pre>
+&lt;script src="http://example.com/libs/??seajs/1.0.0/sea.js,jquery/1.6.2/jquery.js"&gt;&lt;/script&gt;
+</pre>
+
+  <p>
+    ** NOTICE: When using the combo service, the <code>base</code> path should
+    be set manually.
+  </p>
+
+<pre>
+&lt;script src="http://example.com/libs/??seajs/1.0.0/sea.js,jquery/1.6.2/jquery.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+seajs.config({ 'base': 'http://example.com/libs/' });
+seajs.use('underscore/1.1.6/underscore');
+// =&gt; http://example.com/libs/underscore/1.1.6/underscore.js
+&lt;/script&gt;
+</pre>
+
+
+  <h3 id="async">Asynchronously Loading</h3>
+
+  <p>
+    It will be ironic that the JavaScript module loader for loading scripts
+    asynchronously have to be loaded in a blocking manner. Here’s the snippet
+    to make sure that <code>sea.js</code> itself could be loaded
+    asynchronously:
+  </p>
+
+<pre>
+&lt;script&gt;
+// snip...
+
+// load sea.js asynchronously:
+;(function(m, o, d, u, l, a, r) {
+  if(m[d]) return;
+  function f(n, t) { return function() { r.push(n, arguments); return t; } }
+  m[d] = a = { args: (r = []), config: f(0, a), use: f(1, a) };
+  m.define = f(2);
+  u = o.createElement('script');
+  u.id = d + 'node';
+  u.src = 'http://example.com/libs/seajs/1.0.0/sea.js';
+  l = o.getElementsByTagName('head')[0];
+  l.insertBefore(u, l.firstChild);
+})(window, document, 'seajs');
+
+// you can call seajs public method immediately:
+seajs.config({
+  'base': 'http://example.com/libs/'
+});
+
+seajs.use('./init', function(init) {
+ // do some cool things.
+});
+&lt;/script&gt;
+</pre>
+
+
+  <h2 id="use">use</h2>
+
+  <p>
+    Use this function to load the specified modules asynchronously and execute
+    the optional callback when complete.
+  </p>
+
+<pre>
+&lt;script src="http://example.comlibs/seajs/1.0.0/sea.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  seajs.use('path/to/init', function(init) {
+    init.somethingA(/* You can pass config as parameters here. */);
+    init.somethingB(/* You can pass config as parameters here. */);
+  });
+&lt;/script&gt;
+</pre>
+
+  <p>
+    The <code>callback</code> parameter is optional.
+  </p>
+
+<pre>
+&lt;script src="http://example.com/libs/seajs/1.0.0/sea.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  seajs.use('path/to/init');
+&lt;/script&gt;
+</pre>
+
+  <p>
+    The code above can be further simplified to <code>data-main</code>
+    attribute.
+  </p>
+
+<pre>
+&lt;script src="http://example.com/libs/seajs/1.0.0/sea.js"
+        data-main="path/to/init" &gt;&lt;/script&gt;
+</pre>
+
+
+  <p>
+    For more usages, see <a href="../test/bootstrap/">bootstrap/index.html</a>
+  </p>
+
+  <p>
+    You can also use the <code>defer</code> or <code>async</code> attribute to
+    adjust the download start time of <code>sea.js</code>. But the two
+    attributes are not implemented by all major browsers now, so just keep
+    these attributes away from <code>sea.js</code>, unless you know what are
+    you doing.
+  </p>
+
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>
