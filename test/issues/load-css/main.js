@@ -4,10 +4,10 @@ seajs.config({
 });
 
 
-define(function(require, exports, module) {
+define(function(require) {
 
   var test = require('../../test');
-  var $ = require('../../../docs/assets/jquery');
+  var $ = require('../../../../modules/jquery/1.6.2/jquery');
 
   require('./red.css');
   test.assert($('#red').width() === 200, '#red width should be 200');
