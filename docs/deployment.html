@@ -80,7 +80,7 @@ math.js        -- math lib
   </p>
 
   <p>
-    This is very comfortable in the development phase, and obviously, the
+    This is very comfortable in the development phase, but obviously, the
     number of files will increase quickly in large applications. If we put
     these files to production environment directly, the page performance will
     be hurt badly due to too much HTTP requests. This is really depressed!
@@ -127,7 +127,7 @@ math.js        -- math lib
 
 <pre>
  $ cat __build/init.js
-   define("./init",["./stdin","./stdout"],function(a){..
+   seajs.config({alias: {"jquery":"jquery/1.6.2/jquery"}});define("./init"...
    define("./stdin",["jquery","./calculator"],function(a,b){...
    define("./calculator",["./stdout","./math"],function(a,b){...
    define("./stdout",["jquery"],function(a,b){...

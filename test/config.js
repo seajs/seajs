@@ -45,6 +45,6 @@ define(function(require, exports) {
     ,'bootstrap/index'
   ];
 
-  //exports.testCases = ['modules/configMap'];
+  //exports.testCases = ['modules/exports'];
 
 });

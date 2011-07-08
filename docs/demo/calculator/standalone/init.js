@@ -1,7 +1,7 @@
-define("./init",["./stdin","./stdout"],function(a){a("./stdin").init(),a("./stdout").init()});
+seajs.config({alias: {"jquery":"jquery/1.6.2/jquery"}});define("./init",["./stdin","./stdout"],function(a){a("./stdin").init(),a("./stdout").init()});
 define("./stdin",["jquery","./calculator"],function(a,b){var c=a("jquery"),d=a("./calculator"),e={8:"delete",13:"enter",27:"esc"};b.init=function(){c("#keyboard").delegate("div","click",function(){d.handleInput(c(this).text())}),c(document).keypress(function(a){var b=a.keyCode;b===8&&a.preventDefault();var c=e[b];c||(c=String.fromCharCode(a.which)),d.handleInput(c)})}});
 
-define('jquery',[],function(require,exports,module) {
+define('jquery/1.6.2/jquery',[],function(require,exports,module) {
 /*!
  * jQuery JavaScript Library v1.6
  * http://jquery.com/

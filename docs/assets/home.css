@@ -45,6 +45,7 @@ body {
 #content {
   margin-left: 10em;
   max-width: 42em;
+  margin-bottom: 10em;
 }
 
 #logo {

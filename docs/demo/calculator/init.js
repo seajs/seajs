@@ -1,7 +1,7 @@
 
 seajs.config({
   alias: {
-    'jquery': '../../assets/jquery'
+    'jquery': 'jquery/1.6.2/jquery'
   }
 });
 
