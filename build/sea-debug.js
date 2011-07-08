@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.6
+Copyright 2011, SeaJS v1.0.0dev
 MIT Licensed
-build time: Jun 29 17:35
+build time: ${build.time}
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '0.9.6';
+seajs.version = '1.0.0dev';
 
 
 // Module status：
