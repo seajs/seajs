@@ -32,6 +32,7 @@
           <li><a href="#module">module</a>
             <ul>
               <li><a href="#module-id">module.id</a></li>
+              <li><a href="#module-deps">module.dependencies</a></li>
               <li><a href="#module-exports">module.exports</a></li>
             </ul>
           </li>
@@ -183,10 +184,12 @@ define(function(require, exports, module) {
     following members:
   </p>
 
+
   <h4 id="module-id">module.id</h4>
 
   <p>
-    The unique module identifier for the current module.
+    The unique identifier for the current module.
+    <code>require(module.id)</code> must return this module’s exports object.
   </p>
 
 <pre>
@@ -195,6 +198,19 @@ define(function(require, exports, module) {
   console.log(require(module.id) === exports); // true
 });
 </pre>
+
+
+  <h4 id="module-deps">module.dependencies</h4>
+
+  <p>
+    <code>module.dependencies</code> is a reference to the module’s dependency
+    array.
+  </p>
+
+  <p>This array is informative only: modification of this array has no
+    effect on the module once the module has been provided to the environment.
+  </p>
+
 
   <h4 id="module-exports">module.exports</h4>
 
