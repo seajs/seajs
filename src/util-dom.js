@@ -157,6 +157,7 @@
     for (var i = 0; i < scripts.length; i++) {
       var script = scripts[i];
       if (script.readyState === 'interactive') {
+        interactiveScript = script;
         return script;
       }
     }
