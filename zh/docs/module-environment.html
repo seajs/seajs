@@ -1,0 +1,249 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>模块环境 - Sea.js 手册与文档</title>
+<link rel="stylesheet" href="../../docs/assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js 手册与文档</h1>
+    <div id="gtoc">
+	  <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#authoring-format">模块环境</a>
+        <ul>
+          <li><a href="#exports">exports</a></li>
+          <li><a href="#require">require</a>
+            <ul>
+              <li><a href="#require-async">require.async</a></li>
+            </ul>
+          </li>
+          <li><a href="#module">module</a>
+            <ul>
+              <li><a href="#module-id">module.id</a></li>
+              <li><a href="#module-deps">module.dependencies</a></li>
+              <li><a href="#module-exports">module.exports</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="authoring-format">模块环境</h2>
+
+  <p>
+    在 SeaJS 中，所有 JavaScript 文件都应以模块格式书写。
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+
+  // The module code goes here
+  
+});
+</pre>
+
+  <p>
+    每个模块都有三个参数可用：<code>require</code>、
+    <code>exports</code> 和 <code>module</code>。
+  </p>
+
+
+  <h3 id="exports">exports</h3>
+
+  <p>
+    <code>exports</code> 对想用来输出模块的 API。
+  </p>
+
+<pre>
+define(function(require, exports) {
+  // snip...
+  exports.foo = 'bar';
+  exports.doSomething = function() {};
+});
+</pre>
+
+  <p>
+    除了给 <code>exports</code> 对象增加成员变量，您还可以使用 <code>return</code> 直接提供 API。
+  </p>
+
+<pre>
+define(function(require, exports) {
+  // snip...
+  return {
+    foo: 'bar'，
+    doSomething: function() {};
+  };
+});
+</pre>
+
+  <p>
+    如果 <code>return</code> 表达式是模块中的唯一代码，那么它还可以直接省略成：
+  </p>
+
+<pre>
+define({
+  foo: 'bar'，
+  doSomething: function() {};
+});
+</pre>
+
+  <p>
+    上述格式特别适合定义 JSON 数据。
+  </p>
+
+  <p>
+    ** 注意：下例代码是错误的！
+  </p>
+
+<pre class="wrong">
+define(function(require, exports) {
+  // snip...
+  exports = { // 错误!
+    foo: 'bar'，
+    doSomething: function() {};
+  };
+});
+</pre>
+
+  <p>
+    模块装载器不能取得新赋给 <code>exports</code> 变量的值。
+	请使用 <code>return</code> 或者 <code>module.exports</code> 以输出 API。
+  </p>
+
+
+  <h3 id="require">require</h3>
+
+  <p>
+    <code>require</code> 函数用来访问其他模块的输出 API。
+  </p>
+
+<pre>
+define(function(require) {
+  var a = require('./a');
+  a.doSomething();
+});
+</pre>
+
+  <p>
+    它接受单个 <a href="module-identifier.html">模块标示</a> 作参数。
+  </p>
+
+  <p>
+    请牢记，为了使静态分析能够探测到您的模块的依赖，您需要遵循一些简单的 
+	<a href="rules.html">规则</a>。
+  </p>
+
+
+  <h4 id="require-async">require.async</h4>
+
+  <p>
+    使用此方法以异步加载指定模块，并在加载完成后执行可选的回调函数。
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+  // load one module
+  require.async('./b', function(b) {
+    b.doSomething();
+  });
+  
+  // load multiple modules
+  require.async(['./c', './d'], function(c, d) {
+    // do something
+  });
+});
+</pre>
+
+
+  <h3 id="module">module</h3>
+
+  <p>
+    <code>module</code> 对象含有模块的元数据。它有以下成员变量：
+  </p>
+
+  <h4 id="module-id">module.id</h4>
+
+  <p>
+    当前模块的唯一标示。
+    <code>require(module.id)</code> 必定返回此模块的输出对象。
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+  console.log(module.id); // http://path/to/this/file.js
+  console.log(require(module.id) === exports); // true
+});
+</pre>
+
+
+  <h4 id="module-deps">module.dependencies</h4>
+
+  <p>
+    <code>module.dependencies</code> 是指向当前模块的依赖数组的引用。
+  </p>
+
+  <p>
+    此数组仅作指示用：模块已提供当前环境后，对此数组的修改没有任何效果。
+  </p>
+
+
+  <h4 id="module-exports">module.exports</h4>
+
+  <p>
+    <code>exports</code> 对象由模块系统创建。有些时候这不为开发者所接受，
+	他们更希望模块是某个类。将需要的输出对象赋值给 <code>module.exports</code> 就可以了。
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+  console.log(module.exports === exports); // true
+  module.exports = new SomeClass();
+  console.log(module.exports === exports); // false
+});
+</pre>
+
+  <p>
+    注意，对 <code>module.exports</code> 的赋值需要立即执行。它不能放在回调函数里头。
+	这样是不行的：
+  </p>
+
+  <p>x.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  setTimeout(function() {
+    module.exports = { a: "hello" };
+  }, 0);
+});
+</pre>
+
+  <p>y.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  var x = require('./x');
+  console.log(x.a); // undefined
+});
+</pre>
+
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>
