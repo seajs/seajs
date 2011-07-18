@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>快速参考 - Sea.js 手册与文档</title>
+<link rel="stylesheet" href="../../docs/assets/api.css"/>
+<style>
+  h3 a {
+    float: right;
+    font-size: 16px;
+    font-weight: normal;
+    position: relative;
+    top: 5px;
+    padding-right: 10px;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js 手册与文档</h1>
+    <div id="gtoc">
+      <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#quick-refs">Quick References</a>
+        <ul>
+          <li><a href="#use">seajs.use</a></li>
+          <li><a href="#config">seajs.config</a></li>
+          <li><a href="#define">define</a></li>
+          <li><a href="#require">require</a></li>
+          <li><a href="#require-async">require.async</a></li>
+          <li><a href="#exports">exports</a></li>
+          <li><a href="#module-exports">module.exports</a></li>
+          <li><a href="#no-conflict">seajs.noConflict</a></li>
+        </ul>
+      </li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="quick-refs">快速参考</h2>
+
+
+  <h3 id="use">
+    seajs.use
+    <a href="bootstrapping.html#use">seajs.use</a>
+  </h3>
+
+<pre>
+seajs.use('./a');
+
+seajs.use('./a', function(a) {
+  a.doSomething();
+});
+
+seajs.use(['./a', './b'], function(a, b) {
+  a.doSomething();
+  b.doSomething();
+});
+</pre>
+
+
+  <h3 id="config">
+    seajs.config
+    <a href="configuration.html#config">seajs.config</a>
+  </h3>
+
+<pre>
+seajs.config({
+  base: 'http://path/to/libs/',
+  alias: {
+    'app': 'path/to/app/'
+  },
+  map: [
+    ['http://example.com/', 'http://localhost/']
+  ],
+  charset: 'utf-8',
+  timeout: 20000,
+  debug: 0
+});
+</pre>
+
+
+  <h3 id="define">
+    define
+    <a href="module-environment.html#authoring-format">define</a>
+  </h3>
+
+<pre>
+define(function(require, exports, module) {
+
+  // The module code goes here
+
+});
+</pre>
+
+
+  <h3 id="require">
+    require
+    <a href="module-environment.html#require">require</a>
+  </h3>
+
+<pre>
+define(function(require) {
+  var a = require('./a');
+  a.doSomething();
+});
+</pre>
+
+
+  <h3 id="require-async">
+    require.async
+    <a href="module-environment.html#require-async">require.async</a>
+  </h3>
+
+<pre>
+define(function(require, exports, module) {
+  // load one module
+  require.async('./b', function(b) {
+    b.doSomething();
+  });
+
+  // load multiple modules
+  require.async(['./c', './d'], function(c, d) {
+    // do something
+  });
+});
+</pre>
+
+
+  <h3 id="exports">
+    exports
+    <a href="module-environment.html#exports">exports</a>
+  </h3>
+
+<pre>
+define(function(require, exports) {
+  // snip...
+  exports.foo = 'bar';
+  exports.doSomething = function() {};
+});
+</pre>
+
+
+
+  <h3 id="module-exports">
+    module.exports
+    <a href="module-environment.html#module-exports">module.exports</a>
+  </h3>
+
+<pre>
+define(function(require, exports, module) {
+  // snip...
+  module.exports = {
+    name: 'a'，
+    doSomething: function() {};
+  };
+});
+</pre>
+
+
+  <h3 id="no-conflict">
+    seajs.noConflict
+    <a href="configuration.html#no-conflict">seajs.noConflict</a>
+  </h3>
+
+<pre>
+var myLoader = seajs.noConflict(true);
+myLoader.use('./main');
+
+/* main.js */
+myLoader.define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>
