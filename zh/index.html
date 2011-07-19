@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>sea.js</title>
+<link rel="stylesheet" href="../docs/assets/home.css"/>
+</head>
+<body>
+
+<div id="toc">
+  <ul>
+    <li><a href="#download">下载</a></li>
+    <li><a href="docs/">文档</a></li>
+    <li><a href="docs/release-notes.html">发布志</a></li>
+    <li><a href="#about">关于</a></li>
+  </ul>
+  <ul>
+    <li><a href="https://github.com/seajs/seajs/wiki">维基</a></li>
+    <li><a href="http://lifesinger.wordpress.com/?s=seajs">博客</a></li>
+    <li><a href="https://github.com/seajs/seajs/wiki/Community">社区</a></li>
+	<li><a href="../docs/demo/">演示</a></li>
+  </ul>
+</div>
+
+<div id="content">
+
+  <img id="logo" src="../docs/assets/logo.png" alt="sea.js"/>
+
+  <p>不一样的 JavaScript <a href="http://wiki.commonjs.org/wiki/Modules">加载器</a></p>
+
+  <p>下例即一个 JavaScript 模块，提供了 <code>sayHello</code> 方法：</p>
+
+  <pre>
+define(function(require, exports, module) {
+  exports.sayHello = function() {
+    alert('Hello from module: ' + module.id);
+  };
+});
+</pre>
+
+  <p>
+	要使用上例模块，把代码存为 <code>example.js</code> 模块，并在 HTML 文件中
+	加载之：
+  </p>
+
+  <pre>
+&lt;script src="sea.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  seajs.use('./example', function(example) {
+    example.sayHello();
+  });
+&lt;/script&gt;
+</pre>
+
+  <p>详情请参考 <a href="docs/">API 文档</a></p>
+
+
+<!--  <h2 id="intro">Introduction</h2>
+
+  <iframe src="http://www.slideshare.net/slideshow/embed_code/7735168" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+-->
+
+
+  <h2 id="download">下载</h2>
+
+  <p><a href="http://github.com/seajs/seajs">Git 仓库</a></p>
+
+  <p class="download">
+    <a href="http://modules.seajs.com/seajs/1.0.0/sea-debug.js">开发版本 (1.0.0dev)</a> <i>29kb，未压缩，有注释</i><br/>
+    <a href="http://modules.seajs.com/seajs/1.0.0/sea.js">产品版本 (1.0.0dev)</a> <i>4kb，压缩并 Gzip 之</i>
+  </p>
+
+  <p class="promotejs">
+    <a href="https://developer.mozilla.org/en/JavaScript/Guide" title="JavaScript Guide"><img src="http://static.jsconf.us/promotejsv.gif" height="280" width="160" alt="JavaScript Guide"/></a>
+  </p>
+
+  
+  <h2 id="about">关于</h2>
+
+  <p>
+    海纳百川，有容乃大。
+  </p>
+  
+  <p>
+    SeaJS 是个新型 JavaScript 模块装载器。它使构造可伸缩的互联网应用变得
+	简单。它以改变您组织 JavaScript 的方式为设计目标。
+  </p>
+
+  <p>
+    SeaJS 根据
+    <a href="https://github.com/tannhu/jsface/blob/master/MIT-LICENSE.txt">MIT 协议</a>
+	的条款授权提供。
+  </p>
+
+  <p>
+    任何疑问、评论与反馈，请移步 <a href="http://groups.google.com/group/seajs">SeaJS 群组</a>。
+  </p>
+
+  <p class="copyright">版权所有&copy;2011-2022 seajs.com</p>
+</div>
+
+<script src="../build/sea.js" data-main="../docs/assets/init"></script>
+
+</body>
+</html>

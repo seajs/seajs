@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>模块标示 - Sea.js 手册与文档</title>
+<link rel="stylesheet" href="../../docs/assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js 手册与文档</h1>
+    <div id="gtoc">
+      <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#module-identifier">模块标识</a>
+        <ul>
+          <li><a href="#absolute-paths">绝对路径</a></li>
+          <li><a href="#root-paths">根路径</a></li>
+          <li><a href="#relative-paths">相对路径</a></li>
+          <li><a href="#top-level-paths">顶级路径</a></li>
+        </ul>
+      </li>
+      <li><a href="#tips">文件扩展名小贴士</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="module-identifier">模块标识</h2>
+
+  <p>
+    <code>require</code> 函数以模块标示作参数。举例来说，假设我们有如下文件：
+  </p>
+
+<pre>
+http://example.com/js/a.js
+http://example.com/libs/seajs/1.0.0/sea.js
+http://example.com/libs/jquery/1.6.2/jquery.js
+</pre>
+
+
+  <h3 id="absolute-paths">绝对路径</h3>
+
+  <p>
+    尽管并非 CommonJS 模块标准的特性之一，SeaJS 能够加载以绝对路径标识的模块。
+  </p>
+
+<pre>
+require('http://example.com/js/a');
+  // =&gt; http://example.com/js/a.js
+</pre>
+
+
+  <h3 id="root-paths">根路径</h3>
+
+  <p>
+    根路径以斜线开始（<code>"/"</code>）。它们会当前文件的基本路径为基本解析，
+    （即当前文件的基本路径加上请求的模块标示符）：
+  </p>
+
+  <p>a.js: </p>
+
+<pre>
+require('/js/b');
+  // =&gt; http://example.com/js/b.js
+</pre>
+
+
+  <h3 id="relative-paths">相对路径</h3>
+
+  <p>
+    相对路径以一个点开始（<code>"."</code>）。它们相对于当前文件的路径解析：
+  </p>
+
+  <p>a.js:</p>
+
+<pre>
+require('./b');
+  // =&gt; http://example.com/js/b.js
+</pre>
+
+
+  <h3 id="top-level-paths">顶级路径</h3>
+
+  <p>
+    顶级路径并不以点（<code>"."</code>）或者斜线（<code>"/"</code>）开始。
+	它们相对于概念上的命名空间解析。SeaJS 相对 <code>base</code> 路径去查找顶级路径所指示的模块。
+  </p>
+
+<pre>
+require('jquery/1.6.2/jquery');
+  // =&gt; http://example.com/libs/jquery/1.6.2/jquery.js
+</pre>
+
+  <p>
+    <code>base</code> 路径的默认值，就是 <code>sea.js</code> 的相对路径。
+  </p>
+
+<pre>
+If the sea.js path is:
+  http://example.com/js/libs/sea.js
+Then the base path is:
+  http://example.com/js/libs/
+</pre>
+
+  <p>
+    当 <code>sea.js</code> 的路径含有版本号，默认的 <code>base</code> 会无视 <code>seajs/x.y.z</code>。
+    这对提供多版本的类库的主机更友好。
+  </p>
+
+<pre>
+If the sea.js path is:
+  http://example.com/libs/seajs/1.0.0/sea.js
+Then the base path is:
+  http://example.com/libs/
+</pre>
+
+  <p>当然，您可以手工配置基本路径。</p>
+
+<pre>
+seajs.config({
+  base: 'http://code.jquery.com/'
+});
+
+require('jquery');
+  // =&gt; http://code.jquery.com/jquery.js
+</pre>
+
+
+
+<h2 id="tips">文件扩展名小贴士</h2>
+
+  <p>
+    除非在路径中出现井号（“#”）或者问好（“？”），SeaJS 在找 JavaScript 模块的时候，
+	会添加文件扩展名（“.js”）。防止自动添加文件扩展名的一个简单的方式就是，在路径末尾加上井号（“#”）。
+  </p>
+
+<pre>
+// The ".js" extension can be omitted:
+require('http://example.com/js/a');
+require('http://example.com/js/a.js');
+  // =&gt; http://example.com/js/a.js
+
+// The ".css" extension can NOT be omitted:
+require('http://example.com/css/a.css');
+  // =&gt; http://example.com/css/a.css
+
+// When a question mark ("?") is present, nothing will be added to the path:
+require('http://example.com/js/a.json?callback=define');
+  // =&gt; http://example.com/js/a.json?callback=define
+
+// When the path ends with a hash ("#"), the hash will be ignored:
+require('http://example.com/js/a.json#');
+  // =&gt; http://example.com/js/a.json
+</pre>
+
+</div>
+
+<script src="../../build/sea.js" data-main="../../docs/assets/init"></script>
+
+</body>
+</html>

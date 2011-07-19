@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>Map Plugin - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="../../docs/assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js 手册与文档</h1>
+    <div id="gtoc">
+      <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#map-plugin">Map Plugin</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="map-plugin">Map Plugin</h2>
+
+
+  <p>
+    Bookmarklet:
+    <a href='javascript:void((function(){function c(a){var b=new Date;b.setTime(b.getTime()+2592e6),document.cookie="seajs="+a.debug+"`"+a.map+"`"+a.console+"; expires="+b.toUTCString()}function b(){var a="",b;if(b=document.cookie.match(/(?:^| )seajs(?:(?:=([^;]*))|;|$)/))a=b[1]?decodeURIComponent(b[1]):"";var c=a.split("`");return{debug:Number(c[0])||0,map:c[1]||"",console:Number(c[2])||0}}var a=b();a.debug=1,a.console=1,c(a),location.reload()})())'>seajs map tool</a>
+  </p>
+
+
+  <p>页面建设中</p>
+
+
+</div>
+
+<script src="../../build/sea.js" data-main="../../docs/assets/init"></script>
+
+</body>
+</html>

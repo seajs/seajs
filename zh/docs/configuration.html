@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>配置 - Sea.js 手册与文档</title>
+<link rel="stylesheet" href="../../docs/assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+	  <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#config">config</a></li>
+      <li><a href="#no-conflict">noConflict</a>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="config">config</h2>
+
+  <p>
+    您可以使用 <code>config</code> 方法配置装载器的选项。
+  </p>
+
+<pre>
+seajs.config({
+  base: 'http://path/to/libs/',
+  alias: {
+    'app': 'path/to/app/'
+  },
+  map: [
+    ['http://example.com/', 'http://localhost/']
+  ],
+  charset: 'utf-8',
+  timeout: 20000,
+  debug: 0
+});
+</pre>
+
+  <p>
+    可配置选项如下：
+  </p>
+
+  <ul>
+    <li><code>base</code> 基本路径
+      <p>
+	    装载器在试图加载顶级模块标识时，将使用基本路径。详情请参阅
+        <a href="module-identifier.html#top-level-paths">顶级路径</a>
+		章节。
+      </p>
+    </li>
+    <li><code>alias</code> 别名
+	  <p>
+        当模块标识很长的时候，您可以使用 <code>alias</code> 以简化代码。
+      </p>
+<pre>
+seajs.config({
+  alias: {
+    'app': 'path/to/app',
+    'jquery': 'jquery/1.6.2/jquery'
+  }
+});
+</pre>
+
+<p>a.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+    var $ = require('jquery');
+    // parsed to: require('jquery/1.6.2/jquery');
+
+    var biz = require('app/biz');
+    // parsed to: require('path/to/app/biz');
+});
+</pre>
+    </li>
+    <li><code>map</code> 映射
+      <p>
+	    此配置项可以用来将某个文件迎映射到另一个。用来在线除虫十分方便。更多信息，请看
+        <a href="appendix-map-plugin.html">映射插件</a> 章节。
+      </p>
+    </li>
+    <li><code>charset</code> 字符集
+      <p>
+	    获取模块文件时，<code>&lt;script&gt;</code> 标签的 charset 属性值。
+      </p>
+    </li>
+    <li><code>timeout</code> 超时
+      <p>
+	    装载器等候一个脚本的反馈的时间，单位毫秒，超时即认为不可用。默认是 20000 （20秒）。
+      </p>
+    </li>
+    <li><code>debug</code>
+      <p>
+	    如果 <code>true</code>，装载器会使用 <code>console.log</code> 输出所有的警告与错误。
+	    默认是 <code>false</code>，装载器只会抛出异常。
+      </p>
+	  <p>
+	    另外，您还可以将 <code>debug</code> 的值设为 <code>2</code>。如此，
+		每个脚本链接会加上唯一的时间戳。这在测试的时候很有用，可以防止浏览器使用缓存的版本。
+      </p>
+    </li>
+  </ul>
+
+
+  <h2 id="no-conflict">noConflict</h2>
+
+  <p>
+    为了避免冲突，或者定制全局命名空间以符合自己的口味，您可以使用 <code>noConflict</code>
+	方法以获取 <code>seajs</code> 变量的初始状态值，并将其引用返回。
+  </p>
+
+<pre>
+var myLoader = seajs.noConflict();
+myLoader.use('./main');
+
+/* main.js */
+define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
+  <p>
+    如果有必要，您还可以通过给该方法传递 <code>true</code> 作参数，以释放 <code>define</code> 方法。
+    很少会有这么做的必要。请三思而后行。
+  </p>
+
+<pre>
+var myLoader = seajs.noConflict(true);
+myLoader.use('./main');
+
+/* main.js */
+myLoader.define(function(require, exports, module) {
+  // snip...
+});
+</pre>
+
+</div>
+
+<script src="../build/sea.js" data-main="./assets/init"></script>
+
+</body>
+</html>
