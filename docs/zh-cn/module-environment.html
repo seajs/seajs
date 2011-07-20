@@ -4,7 +4,7 @@
 <meta http-equiv="pragma" content="no-cache"/>
 <meta charset="utf-8"/>
 <title>模块环境 - Sea.js 手册与文档</title>
-<link rel="stylesheet" href="../../docs/assets/api.css"/>
+<link rel="stylesheet" href="../assets/api.css"/>
 </head>
 <body>
 <div id="container">
@@ -12,7 +12,7 @@
   <header>
     <h1>Sea.js 手册与文档</h1>
     <div id="gtoc">
-	  <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+	  <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
     </div>
     <hr/>
   </header>
@@ -46,7 +46,7 @@
   <h2 id="authoring-format">模块环境</h2>
 
   <p>
-    在 SeaJS 中，所有 JavaScript 文件都应以模块格式书写。
+    在 SeaJS 中，所有 JavaScript 文件都应该遵循模块书写格式：
   </p>
 
 <pre>
@@ -66,7 +66,7 @@ define(function(require, exports, module) {
   <h3 id="exports">exports</h3>
 
   <p>
-    <code>exports</code> 对想用来输出模块的 API。
+    <code>exports</code> 用来对外提供模块的 API.
   </p>
 
 <pre>
@@ -78,7 +78,7 @@ define(function(require, exports) {
 </pre>
 
   <p>
-    除了给 <code>exports</code> 对象增加成员变量，您还可以使用 <code>return</code> 直接提供 API。
+    除了给 <code>exports</code> 对象增加成员，还可以用 <code>return</code> 直接对外提供 API.
   </p>
 
 <pre>
@@ -92,7 +92,7 @@ define(function(require, exports) {
 </pre>
 
   <p>
-    如果 <code>return</code> 表达式是模块中的唯一代码，那么它还可以直接省略成：
+    如果 <code>return</code> 语句是模块中的唯一代码，可直接写成：
   </p>
 
 <pre>
@@ -121,15 +121,15 @@ define(function(require, exports) {
 </pre>
 
   <p>
-    模块装载器不能取得新赋给 <code>exports</code> 变量的值。
-	请使用 <code>return</code> 或者 <code>module.exports</code> 以输出 API。
+    模块加载器不能获取到新赋给 <code>exports</code> 变量的值。
+	  请使用 <code>return</code> 或 <code>module.exports</code> .
   </p>
 
 
   <h3 id="require">require</h3>
 
   <p>
-    <code>require</code> 函数用来访问其他模块的输出 API。
+    <code>require</code> 函数用来访问其他模块提供的 API.
   </p>
 
 <pre>
@@ -140,11 +140,11 @@ define(function(require) {
 </pre>
 
   <p>
-    它接受单个 <a href="module-identifier.html">模块标示</a> 作参数。
+    它接受 <a href="module-identifier.html">模块标识</a> 作为唯一的参数。
   </p>
 
   <p>
-    请牢记，为了使静态分析能够探测到您的模块的依赖，您需要遵循一些简单的 
+    请牢记，为了使静态分析能成功获取到模块依赖，您需要遵循一些简单的
 	<a href="rules.html">规则</a>。
   </p>
 
@@ -152,7 +152,7 @@ define(function(require) {
   <h4 id="require-async">require.async</h4>
 
   <p>
-    使用此方法以异步加载指定模块，并在加载完成后执行可选的回调函数。
+    该方法可以用来异步加载模块，并在加载完成后执行回调函数。
   </p>
 
 <pre>
@@ -173,14 +173,14 @@ define(function(require, exports, module) {
   <h3 id="module">module</h3>
 
   <p>
-    <code>module</code> 对象含有模块的元数据。它有以下成员变量：
+    <code>module</code> 参数存储模块的元数据。拥有以下成员：
   </p>
 
   <h4 id="module-id">module.id</h4>
 
   <p>
-    当前模块的唯一标示。
-    <code>require(module.id)</code> 必定返回此模块的输出对象。
+    当前模块的唯一标识。
+    <code>require(module.id)</code> 肯定返回此模块的 <code>exports</code> .
   </p>
 
 <pre>
@@ -194,19 +194,20 @@ define(function(require, exports, module) {
   <h4 id="module-deps">module.dependencies</h4>
 
   <p>
-    <code>module.dependencies</code> 是指向当前模块的依赖数组的引用。
+    <code>module.dependencies</code> 是一个数组，表示当前模块的依赖列表。
   </p>
 
   <p>
-    此数组仅作指示用：模块已提供当前环境后，对此数组的修改没有任何效果。
+    该数组只读：模块加载完成后，对该数组的修改不会有任何效果。
   </p>
 
 
   <h4 id="module-exports">module.exports</h4>
 
   <p>
-    <code>exports</code> 对象由模块系统创建。有些时候这不为开发者所接受，
-	他们更希望模块是某个类。将需要的输出对象赋值给 <code>module.exports</code> 就可以了。
+    <code>exports</code> 对象由模块系统创建。这不能满足开发者的所有需求，
+    有时候更希望 <code>exports</code> 是某个类的实例。
+    这时可用 <code>module.exports</code> 来实现：
   </p>
 
 <pre>
@@ -216,10 +217,9 @@ define(function(require, exports, module) {
   console.log(module.exports === exports); // false
 });
 </pre>
-
   <p>
-    注意，对 <code>module.exports</code> 的赋值需要立即执行。它不能放在回调函数里头。
-	这样是不行的：
+    注意，对 <code>module.exports</code> 的赋值需要同步执行，它不能放在回调函数里。
+	  这样是不行的：
   </p>
 
   <p>x.js:</p>
@@ -243,7 +243,7 @@ define(function(require, exports, module) {
 
 </div>
 
-<script src="../build/sea.js" data-main="./assets/init"></script>
+<script src="../../build/sea.js" data-main="../assets/init"></script>
 
 </body>
 </html>

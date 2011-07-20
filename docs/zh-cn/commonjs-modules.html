@@ -4,7 +4,7 @@
 <meta http-equiv="pragma" content="no-cache"/>
 <meta charset="utf-8"/>
 <title>CommonJS 模块 - Sea.js 手册与文档</title>
-<link rel="stylesheet" href="../../docs/assets/api.css"/>
+<link rel="stylesheet" href="../assets/api.css"/>
 </head>
 <body>
 <div id="container">
@@ -12,7 +12,7 @@
   <header>
     <h1>Sea.js 手册与文档</h1>
     <div id="gtoc">
-      <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+      <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
     </div>
     <hr/>
   </header>
@@ -23,7 +23,7 @@
     <ul>
 	  <li><a href="#commonjs">何为 CommonJS</a></li>
       <li><a href="#commonjs-modules">何为 CommonJS 模块</a></li>
-      <li><a href="#why-wrapped">为什么封装模块</a></li>
+      <li><a href="#why-wrapped">为何封装模块</a></li>
     </ul>
     <hr/>
   </div>
@@ -32,16 +32,17 @@
   <h2 id="commonjs">何为 CommonJS？</h2>
 
   <p>
-    <a href="http://wiki.commonjs.org/">CommonJS</a> 是个有志于构建 JavaScript 生态圈的团队。
-	它有个由开发者组成的 <a href="http://groups.google.com/group/commonjs">邮件列表</a>。
-	他们像您一样，致力于提高 JavaScript 程序跨平台，从浏览器到服务端，的可移植性与互用性。
+    <a href="http://wiki.commonjs.org/">CommonJS</a> 是一个有志于构建 JavaScript
+    生态圈的组织。它有一个
+    <a href="http://groups.google.com/group/commonjs">邮件列表</a>，有很多开发者参与其中。
+    他们就像您一样，致力于提高 JavaScript 程序的可移植性和可交换性，无论是在服务端还是浏览器端。
   </p>
 
 
   <h2 id="commonjs-modules">何为 CommonJS 模块？</h2>
 
   <p>
-    JavaScript 并没有内建模块系统（反正现在没有），所以邮件列表中的开发者们创造了他们自己的。
+    JavaScript 并没有内置模块系统（反正现在没有），于是 CommonJS 创造了他们自己的。
 	传统的 CommonJS 模块如下：
   </p>
 
@@ -78,27 +79,26 @@ inc(a); // 2
   <h2 id="why-wrapped">为何封装模块？</h2>
 
   <p>
-    细看上述示例，您可能会注意到 <code>require</code> 是 <em>同步的</em>。也就是说，
-	我们假定模块系统<em>在 <code>require</code> 调用返回之前</em>，就能够区分给定模块是否可用（并将其初始化）。
+    仔细看上面的代码，您会注意到 <code>require</code> 是<em>同步的</em>。也就是说，
+	模块系统需要在<em> require 方法调用返回</em> 之前，就能判定给定模块是否可用（并初始化它）。
   </p>
 
   <p>
-    结果，这在浏览器里问题多多。
+    然而，这在浏览器端问题多多。
   </p>
 
   <p>
-    加载 JavaScript 到浏览器中最佳、最容易的方式就给 <code>document</code> 插入
-	<code>&lt;script&gt;</code> 标签。但是脚本标签是天生异步的。
-	因此传统的 CommonJS 模块在此类环境中行不通。
+    浏览器端，加载 JavaScript 最佳、最容易的方式是在 <code>document</code> 中插入
+	<code>&lt;script&gt;</code> 标签。但脚本标签天生异步，传统 CommonJS 模块在此类环境中无法正常加载。
   </p>
 
   <p>
-    选项其一，是拥有个服务端组件，对模块代码作静态分析，并将模块与它的依赖列表一并返回到浏览器。
-	这很好使，但它需要安装一个额外的组件，以及这组件依赖的一系列技术架构。
+    解决思路之一是，开发一个服务器端组件，对模块代码作静态分析，将模块与它的依赖列表一起返回给浏览器端。
+	  这很好使，但需要安装额外的组件，并因此要调整一系列底层架构。
   </p>
 
   <p>
-    相反的，我们将模块定义封装到一段样板代码中，如下：
+    另一种解决思路是，用一套标准模板来封装模块定义：
   </p>
 
 <pre>
@@ -110,16 +110,15 @@ define(function(require, exports, module) {
 </pre>
 
   <p>
-    这段样板代码为模块装载器提供了机会，以对模块代码实行静态分析，并动态生成一个依赖列表。
-	它们需要在模块代码执行之前解决的。
+    这套模板代码为模块加载器提供了机会，使其能在模块代码执行之前，对模块代码进行静态分析，并动态生成依赖列表。
   </p>
 
   <p>
-    为了让静态分析好做，您需要遵守一些简单的 <a href="rules.html">规矩</a>。
+    为了让静态分析可行，需要遵守一些简单的 <a href="rules.html">规则</a>。
   </p>
 
   <p>
-    把之前看到的模块封装起来，我们得到：
+    把上面例子中的模块封装起来，可得到：
   </p>
 
   <p>math.js:</p>
@@ -161,14 +160,14 @@ define(function(require, exports, module) {
   <hr/>
 
   <p>
-    若干说明派生自
+    若干说明源自
     <a href="http://www.flyscript.org/docs-commonjs">FlyScript 的文档</a>。
 	非常感谢 Kevin H. Smith。
   </p>
 
 </div>
 
-<script src="../../build/sea.js" data-main="../../docs/assets/init"></script>
+<script src="../../build/sea.js" data-main="../assets/init"></script>
 
 </body>
 </html>

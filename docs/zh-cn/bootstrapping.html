@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="pragma" content="no-cache"/>
 <meta charset="utf-8"/>
-<title>引导程序 - Sea.js 手册与文档</title>
-<link rel="stylesheet" href="../../docs/assets/api.css"/>
+<title>加载方式 - Sea.js 手册与文档</title>
+<link rel="stylesheet" href="../assets/api.css"/>
 </head>
 <body>
 <div id="container">
@@ -12,7 +12,7 @@
   <header>
     <h1>Sea.js Manual &amp; Documentation</h1>
     <div id="gtoc">
-      <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+      <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
     </div>
     <hr/>
   </header>
@@ -21,7 +21,7 @@
     <h2 id="table_of_Contents">Table of Contents</h2>
 
     <ul>
-      <li><a href="#bootstrapping">引导程序</a>
+      <li><a href="#bootstrapping">加载方式</a>
         <ul>
           <li><a href="#sync">同步加载</a></li>
           <li><a href="#async">异步加载</a></li>
@@ -33,17 +33,17 @@
   </div>
 
 
-  <h2 id="bootstrapping">引导程序</h2>
+  <h2 id="bootstrapping">加载方式</h2>
 
   <p>
-   您可以同步或者异步地加载 <code>sea.js</code>。
+   可以使用同步或异步的方式来加载 <code>sea.js</code>
   </p>
 
 
   <h3 id="sync">同步加载</h3>
 
   <p>
-    加载 <code>sea.js</code> 最直接的方式就是通过 <code>script</code> 标签。
+    加载 <code>sea.js</code> 最直接的方式是通过 <code>script</code> 标签来引入。
   </p>
 
 <pre>
@@ -51,7 +51,7 @@
 </pre>
 
   <p>
-    您可以将 <code>sea.js</code> 与其他常见类库合并，例如 <code>jquery.js</code>：
+    可以将 <code>sea.js</code> 与其他常见类库合并，例如 <code>jquery.js</code>：
   </p>
 
 <pre>
@@ -59,7 +59,7 @@
 </pre>
 
   <p>
-    推荐使用 Nginx 合并服务进行自动合并。
+    推荐使用 nginx combo 等服务进行自动合并。
   </p>
 
 <pre>
@@ -67,7 +67,7 @@
 </pre>
 
   <p>
-    ** 注意：使用合并服务的时候，基本路径（<code>base</code>）需要手动设置。
+    ** 注意：通过服务器自动 combo 时，通常需要手动配置 <code>base</code> 路径：
   </p>
 
 <pre>
@@ -83,15 +83,14 @@ seajs.use('underscore/1.1.6/underscore');
   <h3 id="async">异步加载</h3>
 
   <p>
-    如果专门为了异步加载脚本的 JavaScript 模块装载器本身必须以阻塞方式加载，那就太讽刺了。
-    以下为确保 <code>sea.js</code> 能够异步加载的代码片段：
+    可以在页面中内嵌以下代码，来让 <code>sea.js</code> 自身也能通过异步的方式加载：
   </p>
 
 <pre>
 &lt;script&gt;
-// snip...
+// 其他代码
 
-// load sea.js asynchronously:
+// 下面是 seajs 的异步载入代码：
 ;(function(m, o, d, u, l, a, r) {
   if(m[d]) return;
   function f(n, t) { return function() { r.push(n, arguments); return t; } }
@@ -104,7 +103,7 @@ seajs.use('underscore/1.1.6/underscore');
   l.insertBefore(u, l.firstChild);
 })(window, document, 'seajs');
 
-// you can call seajs public method immediately:
+// 下面立刻就可以调用 seajs 的方法了：
 seajs.config({
   'base': 'http://example.com/libs/'
 });
@@ -119,7 +118,7 @@ seajs.use('./init', function(init) {
   <h2 id="use">use</h2>
 
   <p>
-    使用这个函数异步加载特定的模块，并在加载完毕之后执行回调函数（可选）。
+    通过 use 方法，可以在页面中加载任意模块：
   </p>
 
 <pre>
@@ -133,7 +132,7 @@ seajs.use('./init', function(init) {
 </pre>
 
   <p>
-    <code>callback</code> 参数是可选的。
+    <code>callback</code> 参数是可选的：
   </p>
 
 <pre>
@@ -144,7 +143,7 @@ seajs.use('./init', function(init) {
 </pre>
 
   <p>
-    上例代码可以通过 <code>data-main</code> 再简化。
+    上例代码还可以通过 <code>data-main</code> 来简化：
   </p>
 
 <pre>
@@ -154,18 +153,18 @@ seajs.use('./init', function(init) {
 
 
   <p>
-    更多用法，请看 <a href="../../test/bootstrap/">bootstrap/index.html</a>
+    更多用法，请参考 <a href="../../test/bootstrap/">bootstrap/index.html</a>
   </p>
 
   <p>
-    您还可以用 <code>defer</code> 或者 <code>async</code> 属性来调整 <code>sea.js</code> 的下载开始时间。
-	但目前这两个属性并没有在所有的主流浏览器伤实现。因此，不要在 <code>sea.js</code> 上用这俩属性，
-	除非你知道自己在做啥。
+    还可以通过 script 元素的 <code>async</code> 和 <code>defer</code> 属性来调整
+    seajs 的下载和执行时机，但目前主流浏览器还未完全一致支持。
+    建议暂时不要添加这两个属性，除非你清楚自己在干什么。
   </p>
 
 </div>
 
-<script src="../../build/sea.js" data-main="../../docs/assets/init"></script>
+<script src="../../build/sea.js" data-main="../assets/init"></script>
 
 </body>
 </html>

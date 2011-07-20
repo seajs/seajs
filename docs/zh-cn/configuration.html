@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="pragma" content="no-cache"/>
 <meta charset="utf-8"/>
-<title>配置 - Sea.js 手册与文档</title>
-<link rel="stylesheet" href="../../docs/assets/api.css"/>
+<title>全局配置 - Sea.js 手册与文档</title>
+<link rel="stylesheet" href="../assets/api.css"/>
 </head>
 <body>
 <div id="container">
@@ -12,7 +12,7 @@
   <header>
     <h1>Sea.js Manual &amp; Documentation</h1>
     <div id="gtoc">
-	  <p><a href="../">首页</a> | <a href="index.html">索引</a></p>
+	  <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
     </div>
     <hr/>
   </header>
@@ -31,7 +31,7 @@
   <h2 id="config">config</h2>
 
   <p>
-    您可以使用 <code>config</code> 方法配置装载器的选项。
+    您可以使用 <code>config</code> 方法来配置加载器。
   </p>
 
 <pre>
@@ -56,14 +56,14 @@ seajs.config({
   <ul>
     <li><code>base</code> 基本路径
       <p>
-	    装载器在试图加载顶级模块标识时，将使用基本路径。详情请参阅
+	    加载器在加载顶级模块标识时，将基于基本路径来解析。详情请参阅
         <a href="module-identifier.html#top-level-paths">顶级路径</a>
 		章节。
       </p>
     </li>
     <li><code>alias</code> 别名
 	  <p>
-        当模块标识很长的时候，您可以使用 <code>alias</code> 以简化代码。
+        当模块标识很长时，可以使用 <code>alias</code> 来简化。
       </p>
 <pre>
 seajs.config({
@@ -88,7 +88,7 @@ define(function(require, exports, module) {
     </li>
     <li><code>map</code> 映射
       <p>
-	    此配置项可以用来将某个文件迎映射到另一个。用来在线除虫十分方便。更多信息，请看
+	      该配置项可用来将某个文件映射到另一个。该特性可用来做在线调试，非常方便。更多信息，请参考
         <a href="appendix-map-plugin.html">映射插件</a> 章节。
       </p>
     </li>
@@ -97,19 +97,19 @@ define(function(require, exports, module) {
 	    获取模块文件时，<code>&lt;script&gt;</code> 标签的 charset 属性值。
       </p>
     </li>
-    <li><code>timeout</code> 超时
+    <li><code>timeout</code> 超时时长
       <p>
-	    装载器等候一个脚本的反馈的时间，单位毫秒，超时即认为不可用。默认是 20000 （20秒）。
+	    加载器等待一个脚本加载的最长时间。单位毫秒，超时即认为不可用。默认 20000（20秒）。
       </p>
     </li>
     <li><code>debug</code>
       <p>
-	    如果 <code>true</code>，装载器会使用 <code>console.log</code> 输出所有的警告与错误。
-	    默认是 <code>false</code>，装载器只会抛出异常。
+	    值为 <code>true</code> 时，加载器会使用 <code>console.log</code> 输出所有警告和错误。
+	    默认为 <code>false</code>, 加载器只会抛出异常。
       </p>
 	  <p>
-	    另外，您还可以将 <code>debug</code> 的值设为 <code>2</code>。如此，
-		每个脚本链接会加上唯一的时间戳。这在测试的时候很有用，可以防止浏览器使用缓存的版本。
+	    另外，还可以将 <code>debug</code> 的值设为 <code>2</code> . 这种情况下，
+		  每个脚本的请求都会加上唯一时间戳。这在测试期间很有用，可以强制浏览器每次都请求最新版本。
       </p>
     </li>
   </ul>
@@ -118,8 +118,8 @@ define(function(require, exports, module) {
   <h2 id="no-conflict">noConflict</h2>
 
   <p>
-    为了避免冲突，或者定制全局命名空间以符合自己的口味，您可以使用 <code>noConflict</code>
-	方法以获取 <code>seajs</code> 变量的初始状态值，并将其引用返回。
+    为了避免冲突，或者需要定制全局命名空间以符合自己的口味时，可以使用 <code>noConflict</code>
+	方法来实现。
   </p>
 
 <pre>
@@ -133,8 +133,8 @@ define(function(require, exports, module) {
 </pre>
 
   <p>
-    如果有必要，您还可以通过给该方法传递 <code>true</code> 作参数，以释放 <code>define</code> 方法。
-    很少会有这么做的必要。请三思而后行。
+    如果有必要，还可以通过给该方法传递 <code>true</code> 参数，来释放 <code>define</code> 方法。
+    很少会有这么做的必要，请三思而后行。
   </p>
 
 <pre>
@@ -149,7 +149,7 @@ myLoader.define(function(require, exports, module) {
 
 </div>
 
-<script src="../build/sea.js" data-main="./assets/init"></script>
+<script src="../../build/sea.js" data-main="../assets/init"></script>
 
 </body>
 </html>

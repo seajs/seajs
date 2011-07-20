@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>打包部署 - Sea.js 手册与文档</title>
+<link rel="stylesheet" href="../assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js 手册与文档</h1>
+    <div id="gtoc">
+      <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#deployment">打包部署</a>
+        <ul>
+          <li><a href="#dev-phase">开发阶段</a></li>
+          <li><a href="#deploy-phase">部署阶段</a></li>
+        </ul>
+      </li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="deployment">打包部署</h2>
+
+  <p>
+    我们用一个例子来说明。
+  </p>
+
+
+  <h3 id="dev-phase">开发阶段</h3>
+
+  <p>
+    这是一个简单的计算器：
+    <a href="../../docs/demo/calculator/" target="_blank">calculator demo</a><br/>
+    项目虽小，但为了可维护性和可扩展性，分成了以下文件：
+  </p>
+
+<pre>
+index.html     -- 页面
+style.css      -- 样式
+
+init.js        -- 入口脚本
+stdin.js       -- 处理输入
+stdout.js      -- 处理输出
+calculator.js  -- 控制器
+math.js        -- 数学计算库
+</pre>
+
+  <p>
+    源代码在这里：
+    <a href="https://github.com/seajs/seajs/tree/master/docs/demo/calculator">calculator@github</a>
+  </p>
+
+  <p>
+    <code>index.html</code> 中仅需引入：
+  </p>
+
+<pre>
+&lt;script src="path/to/sea.js" data-main="path/to/init"&gt;&lt;/script&gt;
+</pre>
+
+  <p>
+    所有依赖的脚本，SeaJS 框架会自动加载进来：
+    <br/>
+    <img src="../../docs/demo/calculator/http-requests-dev.png" height="208" width="196"/>
+  </p>
+
+  <p>
+    在开发阶段，这样做非常舒适。但显然，对大型应用来说，功能拆分得越细，模块也就越多。
+    如果直接上线，HTTP 链接数会过多，对网站性能很不利。
+  </p>
+
+  <p>
+    <strong>如何才能让开发时愉悦，同时上线后又不影响性能呢？</strong>
+  </p>
+
+
+  <h3 id="deploy-phase">部署阶段</h3>
+
+  <p>
+    通过部署阶段的优化，我们可以保证开发时的愉悦，同时不影响上线后的网站性能。
+    回到我们可爱的简易计算器项目，看下具体如何做。
+  </p>
+
+  <p>
+    首先，按照说明，安装好 spm 工具：
+    <a href="https://github.com/seajs/spm/" target="_blank">spm</a>
+  </p>
+
+  <p>
+    然后如下操作：
+  </p>
+
+<pre>
+ $ cd path/to/demo/calculator
+ $ spm build init.js --combo
+   ... process init.js
+   ... process stdin.js
+   ... process calculator.js
+   ... process stdout.js
+   ... process math.js
+   Successfully combo to __build/init.js
+</pre>
+
+  <p>
+    运行 sbuild 后，我们获得了压缩和打包合并后的 <code>init.js</code> 文件：
+  </p>
+
+<pre>
+ $ cat __build/init.js
+   seajs.config({alias: {"jquery":"jquery/1.6.2/jquery"}});define("./init"...
+   define("./stdin",["jquery","./calculator"],function(a,b){...
+   define("./calculator",["./stdout","./math"],function(a,b){...
+   define("./stdout",["jquery"],function(a,b){...
+   define("./math",[],function(a,b){..
+</pre>
+
+  <p>
+    接下来发布上线：
+  </p>
+
+<pre>
+ $ publish
+   Successfully push local/calculator/__build/*.js to online/calculator/*.js
+</pre>
+
+  <p>
+    这样，我们得到了线上版本：
+    <a href="../../docs/demo/calculator/online/" target="_blank">online version</a>
+  </p>
+
+  <p>
+    来看下 HTTP 链接数：<br/>
+    <img src="../../docs/demo/calculator/http-requests-online.png" height="132" width="192"/>
+  </p>
+
+  <p>
+    除了 <code>sea.js</code> 和 <code>jquery.js</code>，其他所有脚本都合并到了
+    <code>init.js</code> 文件中，这对页面性能很有裨益。
+  </p>
+
+  <p>
+    还可以用 <code>--combo all</code> 选项把所有依赖的模块合并到单个文件:
+  </p>
+
+<pre>
+ $ cd path/to/demo/calculator
+ $ spm build init.js --combo all
+   ... process init.js
+   ... process stdin.js
+   ... process jquery.js
+   ... process calculator.js
+   ... process stdout.js
+   ... process math.js
+   Successfully combo to __build/init.js
+</pre>
+
+  <p>
+    这样，<code>__build/init.js</code> 也会包含
+    <code>jquery.js</code>, 脚本的 HTTP 链接数就只剩下一个了。
+  </p>
+
+  <p>
+    这是独立版本:
+    <a href="../../docs/demo/calculator/standalone/">standalone version</a>
+  </p>
+
+  <p>
+    HTTP 链接数并不是越少越好，还要考虑缓存。推荐根据实际需求，进行合理的拆分和打包。
+  </p>
+
+  <p>
+    更多信息，请参考：
+    <a href="https://github.com/seajs/spm/">spm 项目</a>
+  </p>
+
+
+</div>
+
+<script src="../../build/sea.js" data-main="../assets/init"></script>
+
+</body>
+</html>

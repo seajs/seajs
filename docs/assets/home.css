@@ -79,8 +79,8 @@ pre {
   margin: -.5em 0 1.1em;
   padding: 1em 1.6em 1em 1.2em;
   vertical-align: top;
-  background: #f8f8f8;
-  border: 1px solid #999;
-  border-left-width: 6px;
+  /*background: #f8f8f8;*/
+  border-left: 1px solid #999;
+  /*border-left-width: 6px;*/
 }
 
