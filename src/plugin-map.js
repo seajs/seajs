@@ -27,49 +27,75 @@ define(function() {
   }
 
   function displayConsole(mapfile) {
-    var html = '<div style="position: fixed; bottom: 10px; right: 10px;';
-    html += 'z-index: 999999999; border: 2px solid #000;';
-    html += 'background: #fff; color: #000; font: 12px arial;';
-    html += 'padding: 0 10px 10px;">';
+    var style =
+        '#seajs-debug-console { ' +
+        '  position: fixed; bottom: 10px; right: 10px; z-index: 999999999;' +
+        '  background: #fff; color: #000; font: 12px arial;' +
+        '  border: 2px solid #000; padding: 0 10px 10px;' +
+        '}' +
+        '#seajs-debug-console h3 {' +
+        '  margin: 3px 0 6px -6px; padding: 0;' +
+        '  font-weight: bold; font-size: 14px;' +
+        '}' +
+        '#seajs-debug-console input {' +
+        '  width: 300px; margin-left: 10px;' +
+        '}' +
+        '#seajs-debug-console button {' +
+        '  float: right; margin: 6px 0 0 10px;' +
+        '  padding: 2px 10px;' +
+	      '  color: #211922; background: #f9f9f9;' +
+        '  background-image: -webkit-linear-gradient(top, #fefeff, #efefef);' +
+        '  background-image: -moz-linear-gradient(top, #fefeff, #efefef);' +
+	      '  text-shadow: 0 1px #eaeaea;' +
+	      '  border: 1px solid #bbb;' +
+	      '  border-radius: 3px;' +
+	      '  cursor: pointer; opacity: .8' +
+        '}' +
+        '#seajs-debug-console button:hover {' +
+        '  background: #e8e8e8; text-shadow: none; opacity: 1' +
+        '}' +
+        '#seajs-debug-console a {' +
+        '  position: relative; top: 10px; text-decoration: none;' +
+        '}';
 
-    html += '<span style="';
-    html += 'display: block; position: absolute; top: 0; right: 0;';
-    html += 'font-weight: bold; color: #fff; background: #c00; padding: 2px;';
-    html += 'width: 11px; height: 12px; line-height: 12px; text-align: center;';
-    html += 'cursor: pointer;';
-    html += '">X</span>';
-
-    html += '<h3 style="margin: 3px 0 10px -6px; padding: 0; font-weight: bold';
-    html += '">SeaJS Map Console</h3>';
-
-    html += '<label>Map file: <input style="';
-    html += 'width: 300px; margin: 0 10px;';
-    html += '" value="' + mapfile + '"></label>';
-    html += '<button>Refresh</button>';
-    html += '<button style="margin-left: 5px">Exit Debug Mode</button>';
-
-    html += '</div>';
+    var html =
+        '<style>' + style + '</style>' +
+        '<div id="seajs-debug-console">' +
+        '  <h3>SeaJS Debug Console</h3>' +
+        '  <label>Map file: <input value="' + mapfile + '"/></label><br/>' +
+        '  <button>Exit</button>' +
+        '  <button>Hide</button>' +
+        '  <button>Refresh</button>' +
+        '  <a href="http://seajs.com/docs/appendix-map-plugin.html" target="_blank">help</a>' +
+        '</div>';
 
     var div = document.createElement('div');
     div.innerHTML = html;
     document.body.appendChild(div);
 
-    // close button
-    div.getElementsByTagName('span')[0].onclick = function() {
+    var buttons = div.getElementsByTagName('button');
+
+    // hide
+    buttons[1].onclick = function() {
       config.console = 0;
       saveConfig(config);
       loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''));
     };
 
-    // refresh button
-    div.getElementsByTagName('button')[0].onclick = function() {
-      config.map = div.getElementsByTagName('input')[0].value;
+    // refresh
+    buttons[2].onclick = function() {
+      var link = div.getElementsByTagName('input')[0].value;
+      if (link.indexOf('://') === -1) {
+        link = 'http://' + link;
+      }
+
+      config.map = link;
       saveConfig(config);
       loc.reload();
     };
 
-    // exit debug mode button
-    div.getElementsByTagName('button')[1].onclick = function() {
+    // exit debug mode
+    buttons[0].onclick = function() {
       config.debug = 0;
       saveConfig(config);
       loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''));
