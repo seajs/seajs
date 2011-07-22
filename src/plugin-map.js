@@ -43,13 +43,13 @@ define(function() {
         '#seajs-debug-console button {' +
         '  float: right; margin: 6px 0 0 10px;' +
         '  padding: 2px 10px;' +
-	      '  color: #211922; background: #f9f9f9;' +
+        '  color: #211922; background: #f9f9f9;' +
         '  background-image: -webkit-linear-gradient(top, #fefeff, #efefef);' +
         '  background-image: -moz-linear-gradient(top, #fefeff, #efefef);' +
-	      '  text-shadow: 0 1px #eaeaea;' +
-	      '  border: 1px solid #bbb;' +
-	      '  border-radius: 3px;' +
-	      '  cursor: pointer; opacity: .8' +
+        '  text-shadow: 0 1px #eaeaea;' +
+        '  border: 1px solid #bbb;' +
+        '  border-radius: 3px;' +
+        '  cursor: pointer; opacity: .8' +
         '}' +
         '#seajs-debug-console button:hover {' +
         '  background: #e8e8e8; text-shadow: none; opacity: 1' +
@@ -66,7 +66,8 @@ define(function() {
         '  <button>Exit</button>' +
         '  <button>Hide</button>' +
         '  <button>Refresh</button>' +
-        '  <a href="http://seajs.com/docs/appendix-map-plugin.html" target="_blank">help</a>' +
+        '  <a href="http://seajs.com/docs/appendix-map-plugin.html"' +
+        ' target="_blank">help</a>' +
         '</div>';
 
     var div = document.createElement('div');

@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v1.0.0dev
+Copyright 2011, SeaJS v1.0.0
 MIT Licensed
-build time: ${build.time}
+build time: Jul 22 15:04
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.0.0dev';
+seajs.version = '1.0.0';
 
 
 // Module status：
@@ -683,6 +683,7 @@ seajs._fn = {};
     for (var i = 0; i < scripts.length; i++) {
       var script = scripts[i];
       if (script.readyState === 'interactive') {
+        interactiveScript = script;
         return script;
       }
     }
