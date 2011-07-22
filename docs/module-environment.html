@@ -34,6 +34,7 @@
               <li><a href="#module-id">module.id</a></li>
               <li><a href="#module-deps">module.dependencies</a></li>
               <li><a href="#module-exports">module.exports</a></li>
+              <li><a href="#module-constructor">module.constructor</a></li>
             </ul>
           </li>
         </ul>
@@ -252,6 +253,38 @@ define(function(require, exports, module) {
   console.log(x.a); // undefined
 });
 </pre>
+
+
+  <h4 id="module-constructor">module.constructor</h4>
+
+  <p>
+    Occasionally, we want to add some members to all <code>module</code>
+    objects. In this case, using <code>module.constructor</code> is very
+    convenient.
+  </p>
+
+  <p>extend.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  var Module = module.constructor;
+
+  Module.prototype.filename = function() {
+    var id = this.id;
+    var parts = id.split('/');
+    return parts[parts.length - 1];
+  };
+});
+</pre>
+
+  <p>a.js:</p>
+
+<pre>
+define(function(require, exports, module) {
+  exports.filename = module.filename();
+});
+</pre>
+
 
 </div>
 
