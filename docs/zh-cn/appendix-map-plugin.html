@@ -31,13 +31,17 @@
 
 
   <p>
-    Bookmarklet:
-    <a href='javascript:void((function(){function c(a){var b=new Date;b.setTime(b.getTime()+2592e6),document.cookie="seajs="+a.debug+"`"+a.map+"`"+a.console+"; expires="+b.toUTCString()}function b(){var a="",b;if(b=document.cookie.match(/(?:^| )seajs(?:(?:=([^;]*))|;|$)/))a=b[1]?decodeURIComponent(b[1]):"";var c=a.split("`");return{debug:Number(c[0])||0,map:c[1]||"",console:Number(c[2])||0}}var a=b();a.debug=1,a.console=1,c(a),location.reload()})())'>seajs map tool</a>
+    通过映射插件，可以实现在线本地调试。请参考这篇博客：
+    <a href="http://lifesinger.wordpress.com/2011/07/24/online-local-debug/">在线本地调试大观</a>
   </p>
 
+  <p>
+    除了给 URL 添加 <code>seajs-debug</code> 参数来开启调试，还可以通过 bookmarklet 来操作：
+  </p>
 
-  <p>火热开发中，敬请期待...</p>
-
+  <p style="margin-left: 2em">
+    <a href='javascript:void((function(){function c(a){var b=new Date;b.setTime(b.getTime()+2592e6),document.cookie="seajs="+a.debug+"`"+a.map+"`"+a.console+"; expires="+b.toUTCString()}function b(){var a="",b;if(b=document.cookie.match(/(?:^| )seajs(?:(?:=([^;]*))|;|$)/))a=b[1]?decodeURIComponent(b[1]):"";var c=a.split("`");return{debug:Number(c[0])||0,map:c[1]||"",console:Number(c[2])||0}}var a=b();a.debug=1,a.console=1,c(a),location.reload()})())'>seajs map tool</a>（请将我拖动到收藏夹里，需要的时候点击即可）
+  </p>
 
 </div>
 
