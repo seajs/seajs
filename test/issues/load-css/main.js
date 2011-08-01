@@ -7,7 +7,7 @@ seajs.config({
 define(function(require) {
 
   var test = require('../../test');
-  var $ = require('../../../../modules/jquery/1.6.2/jquery');
+  var $ = require('http://modules.seajs.com/jquery/1.6.2/jquery');
 
   require('./red.css');
   test.assert($('#red').width() === 200, '#red width should be 200');

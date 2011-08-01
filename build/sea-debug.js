@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v1.0.0
 MIT Licensed
-build time: Jul 22 15:10
+build time: Aug 1 16:57
 */
 
 
@@ -24,7 +24,7 @@ this.seajs = { _seajs: this.seajs };
 seajs.version = '1.0.0';
 
 
-// Module status：
+// Module status:
 //  1. downloaded - The script file has been downloaded to the browser.
 //  2. define()d - The define() has been executed.
 //  3. memoize()d - The module info has been added to memoizedMods.
@@ -1277,12 +1277,6 @@ seajs._fn = {};
  */
 
 (function(host, data, fn, global) {
-
-  // Avoids conflicting when sea.js is loaded multi times.
-  if (host._seajs) {
-    global.seajs = host._seajs;
-    return;
-  }
 
   // SeaJS Loader API:
   host.config = fn.config;

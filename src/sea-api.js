@@ -5,12 +5,6 @@
 
 (function(host, data, fn, global) {
 
-  // Avoids conflicting when sea.js is loaded multi times.
-  if (host._seajs) {
-    global.seajs = host._seajs;
-    return;
-  }
-
   // SeaJS Loader API:
   host.config = fn.config;
   host.use = fn.use;

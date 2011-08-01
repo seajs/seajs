@@ -41,6 +41,7 @@ define(function(require, exports) {
     ,'issues/multi-use'
     ,'issues/jsonp'
     ,'issues/seajs-map'
+    ,'issues/timestamp'
 
     ,'bootstrap/index'
   ];
