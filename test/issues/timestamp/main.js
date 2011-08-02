@@ -4,7 +4,7 @@ seajs.config({
     'c': 'c.js?20110801'
   },
   'map': [
-      [ /^(.*\/issues\/timestamp\/.*\.(?:css|js))(.*)$/i, '$1?20110802' ]
+      [ /^(.*\/issues\/timestamp\/.*\.(?:css|js))(?:.*)$/i, '$1?20110802' ]
   ]
 });
 
