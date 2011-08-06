@@ -312,7 +312,7 @@
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
 
-  if (data.config.debug) {
+  if (config.debug) {
     util.realpath = realpath;
     util.normalize = normalize;
     util.parseAlias = parseAlias;

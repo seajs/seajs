@@ -13,6 +13,7 @@
   var previousDefine = global.define;
   global.define = fn.define;
 
+
   // For custom loader name.
   host.noConflict = function(all) {
     global.seajs = host._seajs;
@@ -22,6 +23,17 @@
     }
     return host;
   };
+
+
+  // For multi instances.
+  /** @constructor */
+  function Sub() {}
+  Sub.prototype = host;
+
+  host.sub = function() {
+    return new Sub();
+  };
+
 
   // Keeps clean!
   if (!data.config.debug) {

@@ -1,7 +1,7 @@
 /*
 Copyright 2011, SeaJS v1.0.0
 MIT Licensed
-build time: Aug 1 17:17
+build time: Aug 5 16:42
 */
 
 
@@ -516,7 +516,7 @@ seajs._fn = {};
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
 
-  if (data.config.debug) {
+  if (config.debug) {
     util.realpath = realpath;
     util.normalize = normalize;
     util.parseAlias = parseAlias;
@@ -1208,7 +1208,9 @@ seajs._fn = {};
 
   function mix(r, s) {
     for (var k in s) {
-      r[k] = s[k];
+      if (s.hasOwnProperty(k)) {
+        r[k] = s[k];
+      }
     }
   }
 
@@ -1286,6 +1288,7 @@ seajs._fn = {};
   var previousDefine = global.define;
   global.define = fn.define;
 
+
   // For custom loader name.
   host.noConflict = function(all) {
     global.seajs = host._seajs;
@@ -1295,6 +1298,17 @@ seajs._fn = {};
     }
     return host;
   };
+
+
+  // For multi instances.
+  /** @constructor */
+  function Sub() {}
+  Sub.prototype = host;
+
+  host.sub = function() {
+    return new Sub();
+  };
+
 
   // Keeps clean!
   if (!data.config.debug) {

@@ -89,7 +89,9 @@
 
   function mix(r, s) {
     for (var k in s) {
-      r[k] = s[k];
+      if (s.hasOwnProperty(k)) {
+        r[k] = s[k];
+      }
     }
   }
 
