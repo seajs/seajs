@@ -1173,6 +1173,7 @@ seajs._fn = {};
    *   'map': [
    *     ['test.cdn.cn', 'localhost']
    *   ],
+   *   preload: [],
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
    *   debug: false,
@@ -1183,11 +1184,23 @@ seajs._fn = {};
    */
   fn.config = function(o) {
     for (var k in o) {
-      var sub = config[k];
-      if (typeof sub === 'object') {
-        mix(sub, o[k]);
-      } else {
-        config[k] = o[k];
+      var previous = config[k];
+      var current = o[k];
+
+      if (previous && k === 'alias') {
+        for (var p in current) {
+          if (current.hasOwnProperty(p)) {
+            checkConflict(previous[p], current[p]);
+            previous[p] = current[p];
+          }
+        }
+      }
+      else if (previous && (k === 'map' || k === 'preload')) {
+        // NOTICE: no need to check conflict for map and preload.
+        config[k] = previous.concat(current);
+      }
+      else {
+        config[k] = current;
       }
     }
 
@@ -1201,11 +1214,15 @@ seajs._fn = {};
   };
 
 
-  function mix(r, s) {
-    for (var k in s) {
-      if (s.hasOwnProperty(k)) {
-        r[k] = s[k];
-      }
+  function checkConflict(previous, current) {
+    if (previous !== undefined && previous !== current) {
+      util.error({
+        'message': 'config is conflicted',
+        'previous': previous,
+        'current': current,
+        'from': 'config',
+        'type': 'error'
+      });
     }
   }
 
@@ -1218,7 +1235,6 @@ seajs._fn = {};
 (function(host, data, fn) {
 
   var config = data.config;
-  var preloadMods = config.preload;
 
 
   /**
@@ -1227,13 +1243,13 @@ seajs._fn = {};
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var mod = preloadMods[0];
+    var mod = config.preload[0];
     if (mod) {
       // Loads preloadMods one by one, because the preloadMods
       // may be dynamically changed.
       fn.load(mod, function() {
-        if (preloadMods[0] === mod) {
-          preloadMods.shift();
+        if (config.preload[0] === mod) {
+          config.preload.shift();
         }
         fn.use(ids, callback);
       });
@@ -1292,14 +1308,6 @@ seajs._fn = {};
       host.define = fn.define;
     }
     return host;
-  };
-
-
-  // For multi instances.
-  /** @constructor */ function Sub() {}
-  Sub.prototype = host;
-  host.sub = function() {
-    return new Sub();
   };
 
 

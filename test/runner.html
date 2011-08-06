@@ -64,6 +64,7 @@
       }
       else {
         url = 'sandbox.html?' + encodeURIComponent(test + '/program.js');
+        url += '&t=' + new Date().getTime();
       }
       createFrame().src = url;
     }

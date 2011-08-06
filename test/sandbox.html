@@ -32,8 +32,13 @@
         });
   }
 
+  // no cache
+  seajs.config({
+    debug: 2
+  });
+
   var file = decodeURIComponent((location.search || '?').substring(1));
-  seajs.use('./' + file);
+  seajs.use('./' + file.replace(/&t=\d+/, ''));
 
 })();
 </script>

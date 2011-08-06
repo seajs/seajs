@@ -42,6 +42,8 @@ define(function(require, exports) {
     ,'issues/jsonp'
     ,'issues/seajs-map'
     ,'issues/timestamp'
+    ,'issues/module-extend'
+    ,'issues/config-conflict'
 
     ,'bootstrap/index'
   ];

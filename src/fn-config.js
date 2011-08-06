@@ -70,8 +70,23 @@
    */
   fn.config = function(o) {
     for (var k in o) {
-      if (o.hasOwnProperty(k)) {
-        config[k] = o[k];
+      var previous = config[k];
+      var current = o[k];
+
+      if (previous && k === 'alias') {
+        for (var p in current) {
+          if (current.hasOwnProperty(p)) {
+            checkConflict(previous[p], current[p]);
+            previous[p] = current[p];
+          }
+        }
+      }
+      else if (previous && (k === 'map' || k === 'preload')) {
+        // NOTICE: no need to check conflict for map and preload.
+        config[k] = previous.concat(current);
+      }
+      else {
+        config[k] = current;
       }
     }
 
@@ -83,5 +98,18 @@
 
     return this;
   };
+
+
+  function checkConflict(previous, current) {
+    if (previous !== undefined && previous !== current) {
+      util.error({
+        'message': 'config is conflicted',
+        'previous': previous,
+        'current': current,
+        'from': 'config',
+        'type': 'error'
+      });
+    }
+  }
 
 })(seajs._util, seajs._data, seajs._fn, this);

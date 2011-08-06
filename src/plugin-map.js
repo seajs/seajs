@@ -18,7 +18,9 @@ define(function() {
   // Load the map file
   if (config.map) {
     document.title = '[debug] - ' + document.title;
-    seajs._data.preloadMods.push(config.map);
+    seajs.config({
+      preload: config.map
+    });
   }
 
   // Display console

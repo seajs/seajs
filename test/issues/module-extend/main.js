@@ -5,10 +5,15 @@ define(function(require) {
 
   require('./extend');
   var Developer = require('./developer');
+  var Stuff = require('./stuff');
 
   var dev = new Developer();
+  var stuff = new Stuff();
 
-  console.dir(dev);
+  if(this.console) console.dir(dev);
+
+  test.assert(dev.constructor.file.indexOf('developer.js') > 0, 'test constructor.file');
+  test.assert(stuff.constructor.file.indexOf('stuff.js') > 0, 'test constructor.file');
 
   test.done();
 });
