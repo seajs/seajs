@@ -39,7 +39,12 @@ seajs._data = {
      * Debug mode. It will be turned off automatically when compressing.
      * @const
      */
-    debug: '%DEBUG%'
+    debug: '%DEBUG%',
+
+    /**
+     * Modules that are needed to load before all other modules.
+     */
+    preload: []
   },
 
   /**
@@ -51,12 +56,7 @@ seajs._data = {
   /**
    * Store the module information for "real" work in the onload event.
    */
-  pendingMods: [],
-
-  /**
-   * Modules that are needed to load before all other modules.
-   */
-  preloadMods: []
+  pendingMods: []
 };
 
 
@@ -1157,7 +1157,7 @@ seajs._fn = {};
       (global.location.search.indexOf('seajs-debug') !== -1 ||
           document.cookie.indexOf('seajs=1') !== -1)) {
     config.debug = true;
-    data.preloadMods.push(loaderDir + 'plugin-map');
+    config.preload.push(loaderDir + 'plugin-map');
   }
 
 
@@ -1218,7 +1218,7 @@ seajs._fn = {};
 (function(host, data, fn) {
 
   var config = data.config;
-  var preloadMods = data.preloadMods;
+  var preloadMods = config.preload;
 
 
   /**
@@ -1296,10 +1296,8 @@ seajs._fn = {};
 
 
   // For multi instances.
-  /** @constructor */
-  function Sub() {}
+  /** @constructor */ function Sub() {}
   Sub.prototype = host;
-
   host.sub = function() {
     return new Sub();
   };

@@ -43,7 +43,7 @@
       (global.location.search.indexOf('seajs-debug') !== -1 ||
           document.cookie.indexOf('seajs=1') !== -1)) {
     config.debug = true;
-    data.preloadMods.push(loaderDir + 'plugin-map');
+    config.preload.push(loaderDir + 'plugin-map');
   }
 
 

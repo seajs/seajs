@@ -6,7 +6,7 @@
 (function(host, data, fn) {
 
   var config = data.config;
-  var preloadMods = data.preloadMods;
+  var preloadMods = config.preload;
 
 
   /**

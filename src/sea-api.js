@@ -26,10 +26,8 @@
 
 
   // For multi instances.
-  /** @constructor */
-  function Sub() {}
+  /** @constructor */ function Sub() {}
   Sub.prototype = host;
-
   host.sub = function() {
     return new Sub();
   };
