@@ -11,4 +11,4 @@ The sea, holding water from thousands of rivers, is huge owing to its capacity.
 
 ## License
 
-SeaJS is available under the terms of the [MIT license](http://seajs.com/license).
+SeaJS is available under the terms of the [MIT license](http://seajs.com/MIT-LICENSE.txt).

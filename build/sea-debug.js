@@ -1,4 +1,4 @@
-/* SeaJS v1.0.0 http://seajs.com/ | http://seajs.com/license */
+/* SeaJS v1.0.0 http://seajs.com/ | http://seajs.com/MIT-LICENSE.txt */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
