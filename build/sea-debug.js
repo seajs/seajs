@@ -1,9 +1,4 @@
-/*
-Copyright 2011, SeaJS v1.0.0
-MIT Licensed
-build time: Aug 5 16:42
-*/
-
+/* SeaJS v1.0.0 http://seajs.com/ | http://seajs.com/license */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.

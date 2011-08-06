@@ -121,12 +121,7 @@
       <sequential>
         <concat destfile="@{file}.tmp" encoding="${charset}"
                 outputencoding="${charset}">
-          <header filtering="no" trimleading="yes">/*
-            Copyright ${build.year}, SeaJS v${version}
-            MIT Licensed
-            build time: ${build.time}
-            */
-
+          <header filtering="no" trimleading="yes">/* SeaJS v${version} http://seajs.com/ | http://seajs.com/license */
           </header>
           <fileset file="@{file}"/>
         </concat>
