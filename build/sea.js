@@ -1,4 +1,4 @@
-/* SeaJS v1.0.0 http://seajs.com/ | http://seajs.com/MIT-LICENSE.txt */
+/* SeaJS v1.0.0 | seajs.com | MIT Licensed */
 this.seajs={_seajs:this.seajs};seajs.version="1.0.0";seajs._data={config:{debug:"",preload:[]},memoizedMods:{},pendingMods:[]};seajs._util={};seajs._fn={};
 (function(a){var d=Object.prototype.toString,g=Array.prototype;a.isString=function(a){return d.call(a)==="[object String]"};a.isFunction=function(a){return d.call(a)==="[object Function]"};a.isArray=Array.isArray||function(a){return d.call(a)==="[object Array]"};a.indexOf=Array.prototype.indexOf?function(a,c){return a.indexOf(c)}:function(a,c){for(var b=0,d=a.length;b<d;b++)if(a[b]===c)return b;return-1};var f=a.forEach=g.forEach?function(a,c){a.forEach(c)}:function(a,c){for(var b=0,d=a.length;b<
 d;b++)c(a[b],b,a)};a.map=g.map?function(a,c){return a.map(c)}:function(a,c){var b=[];f(a,function(a,i,h){b.push(c(a,i,h))});return b};a.filter=g.filter?function(a,c){return a.filter(c)}:function(a,c){var b=[];f(a,function(a,d,h){c(a,d,h)&&b.push(a)});return b};a.now=Date.now||function(){return(new Date).getTime()}})(seajs._util);
