@@ -25,14 +25,6 @@
   };
 
 
-  // For multi instances.
-  /** @constructor */ function Sub() {}
-  Sub.prototype = host;
-  host.sub = function() {
-    return new Sub();
-  };
-
-
   // Keeps clean!
   if (!data.config.debug) {
     delete host._util;
