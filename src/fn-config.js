@@ -59,6 +59,7 @@
    *   'map': [
    *     ['test.cdn.cn', 'localhost']
    *   ],
+   *   preload: [],
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
    *   debug: false,
@@ -69,10 +70,7 @@
    */
   fn.config = function(o) {
     for (var k in o) {
-      var sub = config[k];
-      if (typeof sub === 'object') {
-        mix(sub, o[k]);
-      } else {
+      if (o.hasOwnProperty(k)) {
         config[k] = o[k];
       }
     }
@@ -85,14 +83,5 @@
 
     return this;
   };
-
-
-  function mix(r, s) {
-    for (var k in s) {
-      if (s.hasOwnProperty(k)) {
-        r[k] = s[k];
-      }
-    }
-  }
 
 })(seajs._util, seajs._data, seajs._fn, this);
