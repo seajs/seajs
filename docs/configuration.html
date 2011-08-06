@@ -44,6 +44,7 @@ seajs.config({
   map: [
     ['http://example.com/', 'http://localhost/']
   ],
+  preload: [],
   charset: 'utf-8',
   timeout: 20000,
   debug: 0
@@ -94,6 +95,12 @@ define(function(require, exports, module) {
         This configuration can be used to map one file to another. It's
         convenient for online debugging. For more information, see the
         <a href="appendix-map-plugin.html">Map Plugin</a> section.
+      </p>
+    </li>
+    <li><code>preload</code>
+      <p>
+        This configuration can be used to load some modules before any other
+        modules.
       </p>
     </li>
     <li><code>charset</code>
