@@ -644,7 +644,8 @@ seajs._fn = {};
           isLoaded = true;
         }
       } catch (ex) {
-        if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
+        // NS_ERROR_DOM_SECURITY_ERR
+        if (ex.code === 1000) {
           isLoaded = true;
         }
       }
