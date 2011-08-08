@@ -16,6 +16,13 @@
 
 <script>
 
+  seajs.config({
+    preload: [
+      [].map ? '' : './es5-safe',
+      this.JSON ? '' : './json2'
+    ]
+  });
+
   seajs.use('./main');
 
   function printResults(txt, style) {

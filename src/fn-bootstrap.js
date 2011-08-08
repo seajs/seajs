@@ -6,6 +6,7 @@
 (function(host, data, fn) {
 
   var config = data.config;
+  var preloadMods = config.preload;
 
 
   /**
@@ -14,12 +15,11 @@
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var preloadMods = config.preload;
     var len = preloadMods.length;
 
     if (len) {
       fn.load(preloadMods, function() {
-        config.preload = preloadMods.slice(len);
+        preloadMods = config.preload.slice(len);
         fn.use(ids, callback);
       });
     }

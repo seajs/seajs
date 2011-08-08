@@ -87,7 +87,9 @@
           current = [current];
         }
         util.forEach(current, function(item) {
-          previous.push(item);
+          if (item) { // Ignore empty string.
+            previous.push(item);
+          }
         });
         // NOTICE: no need to check conflict for map and preload.
       }

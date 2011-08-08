@@ -1202,7 +1202,9 @@ seajs._fn = {};
           current = [current];
         }
         util.forEach(current, function(item) {
-          previous.push(item);
+          if (item) { // Ignore empty string.
+            previous.push(item);
+          }
         });
         // NOTICE: no need to check conflict for map and preload.
       }
@@ -1242,6 +1244,7 @@ seajs._fn = {};
 (function(host, data, fn) {
 
   var config = data.config;
+  var preloadMods = config.preload;
 
 
   /**
@@ -1250,12 +1253,11 @@ seajs._fn = {};
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var preloadMods = config.preload;
     var len = preloadMods.length;
 
     if (len) {
       fn.load(preloadMods, function() {
-        config.preload = preloadMods.slice(len);
+        preloadMods = config.preload.slice(len);
         fn.use(ids, callback);
       });
     }

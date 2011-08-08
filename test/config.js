@@ -44,6 +44,7 @@ define(function(require, exports) {
     ,'issues/timestamp'
     ,'issues/module-extend'
     ,'issues/config-conflict'
+    ,'issues/preload'
 
     ,'bootstrap/index'
   ];
