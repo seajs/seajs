@@ -6,4 +6,3 @@ seajs.config({
         ['c.js', 'sub/c.js']
       ]
     });
-debugger
