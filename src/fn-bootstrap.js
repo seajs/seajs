@@ -14,14 +14,12 @@
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var mod = config.preload[0];
-    if (mod) {
-      // Loads preloadMods one by one, because the preloadMods
-      // may be dynamically changed.
-      fn.load(mod, function() {
-        if (config.preload[0] === mod) {
-          config.preload.shift();
-        }
+    var preloadMods = config.preload;
+    var len = preloadMods.length;
+
+    if (len) {
+      fn.load(preloadMods, function() {
+        config.preload = preloadMods.slice(len);
         fn.use(ids, callback);
       });
     }

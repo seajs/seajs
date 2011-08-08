@@ -82,8 +82,14 @@
         }
       }
       else if (previous && (k === 'map' || k === 'preload')) {
+        // for config({ preload: 'some-module' })
+        if (!util.isArray(current)) {
+          current = [current];
+        }
+        util.forEach(current, function(item) {
+          previous.push(item);
+        });
         // NOTICE: no need to check conflict for map and preload.
-        config[k] = previous.concat(current);
       }
       else {
         config[k] = current;

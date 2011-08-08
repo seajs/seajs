@@ -1197,8 +1197,14 @@ seajs._fn = {};
         }
       }
       else if (previous && (k === 'map' || k === 'preload')) {
+        // for config({ preload: 'some-module' })
+        if (!util.isArray(current)) {
+          current = [current];
+        }
+        util.forEach(current, function(item) {
+          previous.push(item);
+        });
         // NOTICE: no need to check conflict for map and preload.
-        config[k] = previous.concat(current);
       }
       else {
         config[k] = current;
@@ -1244,14 +1250,12 @@ seajs._fn = {};
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var mod = config.preload[0];
-    if (mod) {
-      // Loads preloadMods one by one, because the preloadMods
-      // may be dynamically changed.
-      fn.load(mod, function() {
-        if (config.preload[0] === mod) {
-          config.preload.shift();
-        }
+    var preloadMods = config.preload;
+    var len = preloadMods.length;
+
+    if (len) {
+      fn.load(preloadMods, function() {
+        config.preload = preloadMods.slice(len);
         fn.use(ids, callback);
       });
     }
