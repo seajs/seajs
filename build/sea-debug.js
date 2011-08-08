@@ -1244,7 +1244,6 @@ seajs._fn = {};
 (function(host, data, fn) {
 
   var config = data.config;
-  var preloadMods = config.preload;
 
 
   /**
@@ -1253,11 +1252,12 @@ seajs._fn = {};
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
+    var preloadMods = config.preload;
     var len = preloadMods.length;
 
     if (len) {
       fn.load(preloadMods, function() {
-        preloadMods = config.preload.slice(len);
+        config.preload = preloadMods.slice(len);
         fn.use(ids, callback);
       });
     }
