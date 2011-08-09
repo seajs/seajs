@@ -24,7 +24,7 @@
   };
 
 
-  util.indexOf = Array.prototype.indexOf ?
+  util.indexOf = AP.indexOf ?
       function(arr, item) {
         return arr.indexOf(item);
       } :
