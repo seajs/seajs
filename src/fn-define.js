@@ -16,9 +16,6 @@
     // define(factory)
     if (arguments.length === 1) {
       factory = id;
-      if (util.isFunction(factory)) {
-        deps = parseDependencies(factory.toString());
-      }
       id = '';
     }
     // define([], factory)
@@ -28,10 +25,18 @@
       id = '';
     }
 
+    // parse deps
+    if (!util.isArray(deps) && util.isFunction(factory)) {
+      deps = parseDependencies(factory.toString());
+    }
+
     var mod = new fn.Module(id, deps, factory);
     var url;
 
-    if (document.attachEvent && !window.opera) {
+    if (util.isInlineMod(id)) {
+      url = util.pageUrl;
+    }
+    else if (document.attachEvent && !window.opera) {
       // For IE6-9 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"

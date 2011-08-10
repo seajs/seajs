@@ -151,6 +151,11 @@
 
     var ret;
 
+    // Converts inline id to relative id: '~/xx' -> './xx'
+    if (isInlineMod(id)) {
+      id = '.' + id.substring(1);
+    }
+
     // absolute id
     if (id.indexOf('://') !== -1) {
       ret = id;
@@ -302,6 +307,17 @@
   }
 
 
+  /**
+   * define module in html page:
+   *   define('~/init', deps, fn)
+   *
+   * @param {string} id The module id.
+   */
+  function isInlineMod(id) {
+    return id.charAt(0) === '~';
+  }
+
+
   util.dirname = dirname;
 
   util.id2Uri = id2Uri;
@@ -311,6 +327,8 @@
   util.setReadyState = setReadyState;
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
+  util.isInlineMod = isInlineMod;
+  util.pageUrl = pageUrl;
 
   if (config.debug) {
     util.realpath = realpath;

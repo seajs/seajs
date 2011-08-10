@@ -350,6 +350,11 @@ seajs._fn = {};
 
     var ret;
 
+    // Converts inline id to relative id: '~/xx' -> './xx'
+    if (isInlineMod(id)) {
+      id = '.' + id.substring(1);
+    }
+
     // absolute id
     if (id.indexOf('://') !== -1) {
       ret = id;
@@ -501,6 +506,17 @@ seajs._fn = {};
   }
 
 
+  /**
+   * define module in html page:
+   *   define('~/init', deps, fn)
+   *
+   * @param {string} id The module id.
+   */
+  function isInlineMod(id) {
+    return id.charAt(0) === '~';
+  }
+
+
   util.dirname = dirname;
 
   util.id2Uri = id2Uri;
@@ -510,6 +526,8 @@ seajs._fn = {};
   util.setReadyState = setReadyState;
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
+  util.isInlineMod = isInlineMod;
+  util.pageUrl = pageUrl;
 
   if (config.debug) {
     util.realpath = realpath;
@@ -922,9 +940,6 @@ seajs._fn = {};
     // define(factory)
     if (arguments.length === 1) {
       factory = id;
-      if (util.isFunction(factory)) {
-        deps = parseDependencies(factory.toString());
-      }
       id = '';
     }
     // define([], factory)
@@ -934,10 +949,18 @@ seajs._fn = {};
       id = '';
     }
 
+    // parse deps
+    if (!util.isArray(deps) && util.isFunction(factory)) {
+      deps = parseDependencies(factory.toString());
+    }
+
     var mod = new fn.Module(id, deps, factory);
     var url;
 
-    if (document.attachEvent && !window.opera) {
+    if (util.isInlineMod(id)) {
+      url = util.pageUrl;
+    }
+    else if (document.attachEvent && !window.opera) {
       // For IE6-9 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"
