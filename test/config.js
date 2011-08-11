@@ -46,6 +46,7 @@ define(function(require, exports) {
     ,'issues/config-conflict'
     ,'issues/preload'
     ,'issues/inline-module'
+    ,'issues/modules'
 
     ,'bootstrap/index'
   ];

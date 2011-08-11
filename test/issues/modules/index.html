@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Modules Test</title>
+</head>
+<body>
+
+<h1>Modules</h1>
+
+<div id="out"></div>
+
+<script src="http://modules.seajs.com/seajs/1.0.1/sea.js"></script>
+
+<script>
+
+  seajs.config({
+    preload: [
+      Function.prototype.bind ? '' : 'es5-safe/0.9.0/es5-safe',
+      this.JSON ? '' : 'json/1.0.0/json'
+    ]
+  });
+
+  seajs.use('./main');
+
+  function printResults(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+    document.getElementById('out').appendChild(d);
+  }
+
+</script>
+
+</body>
+</html>
