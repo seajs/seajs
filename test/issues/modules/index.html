@@ -10,13 +10,14 @@
 
 <div id="out"></div>
 
-<script src="http://modules.seajs.com/seajs/1.0.1/sea.js"></script>
+<script src="../../../build/sea-debug.js"></script>
 
 <script>
 
   seajs.config({
+    base: '../../../../modules/',
     preload: [
-      Function.prototype.bind ? '' : 'es5-safe/0.9.0/es5-safe',
+      Function.prototype.bind ? '' : 'es5-safe/0.9.1/es5-safe',
       this.JSON ? '' : 'json/1.0.0/json'
     ]
   });

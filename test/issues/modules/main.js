@@ -2,7 +2,7 @@
 seajs.config({
   alias: {
     // for backbone
-    'jquery': 'jquery/1.6.2/jquery',
+    'jquery': 'jquery/1.6.2/jquery-debug',
     'underscore': 'underscore/1.1.7/underscore'
   }
 });
@@ -35,6 +35,10 @@ define(function(require) {
   var Mustache = require('mustache/0.3.1/mustache');
   test.assert(this['Mustache'] === undefined, 'dont pollute global');
   test.assert(Mustache.version === '0.3.1-dev', 'local variable');
+
+  var Prefetch = require('prefetch/0.9.0/prefetch');
+  test.assert(this['Prefetch'] === undefined, 'dont pollute global');
+  test.assert(Prefetch.version === '0.9.0', 'local variable');
 
   var QueryString = require('querystring/1.0.0/querystring');
   test.assert(this['QueryString'] === undefined, 'dont pollute global');
