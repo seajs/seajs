@@ -5,32 +5,20 @@
 
 (function(host, data, fn) {
 
-  var config = data.config;
-
-
   /**
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var preloadMods = config.preload;
-    var len = preloadMods.length;
-
-    if (len) {
-      fn.load(preloadMods, function() {
-        config.preload = preloadMods.slice(len);
-        fn.use(ids, callback);
-      });
-    }
-    else {
+    fn.preload(function() {
       fn.load(ids, callback);
-    }
+    });
   };
 
 
   // main
-  var mainModuleId = config.main;
+  var mainModuleId = data.config.main;
   if (mainModuleId) {
     fn.use([mainModuleId]);
   }

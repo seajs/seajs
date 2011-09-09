@@ -3,7 +3,7 @@
  * @fileoverview Module authoring format.
  */
 
-(function(util, data, fn) {
+(function(util, data, fn, global) {
 
   /**
    * Defines a module.
@@ -36,7 +36,7 @@
     if (util.isInlineMod(id)) {
       url = util.pageUrl;
     }
-    else if (document.attachEvent && !window.opera) {
+    else if (document.attachEvent && !global['opera']) {
       // For IE6-9 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"
@@ -103,4 +103,4 @@
         .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs._util, seajs._data, seajs._fn, this);

@@ -750,6 +750,28 @@ seajs._fn = {};
 
   var memoizedMods = data.memoizedMods;
 
+  var config = data.config;
+
+
+  /**
+   * Loads preload modules before callback.
+   * @param {function()} callback The callback function.
+   */
+  fn.preload = function(callback) {
+    var preloadMods = config.preload;
+    var len = preloadMods.length;
+
+    if (len) {
+      config.preload = preloadMods.slice(len);
+      fn.load(preloadMods, function() {
+        fn.preload(callback);
+      });
+    }
+    else {
+      callback();
+    }
+  };
+
 
   /**
    * Loads modules to the environment.
@@ -764,17 +786,19 @@ seajs._fn = {};
     var uris = util.ids2Uris(ids, refUrl);
 
     provide(uris, function() {
-      var require = fn.createRequire({
-        uri: refUrl
-      });
+      fn.preload(function() {
+        var require = fn.createRequire({
+          uri: refUrl
+        });
 
-      var args = util.map(uris, function(uri) {
-        return require(uri);
-      });
+        var args = util.map(uris, function(uri) {
+          return require(uri);
+        });
 
-      if (callback) {
-        callback.apply(global, args);
-      }
+        if (callback) {
+          callback.apply(global, args);
+        }
+      });
     });
   };
 
@@ -927,7 +951,7 @@ seajs._fn = {};
  * @fileoverview Module authoring format.
  */
 
-(function(util, data, fn) {
+(function(util, data, fn, global) {
 
   /**
    * Defines a module.
@@ -960,7 +984,7 @@ seajs._fn = {};
     if (util.isInlineMod(id)) {
       url = util.pageUrl;
     }
-    else if (document.attachEvent && !window.opera) {
+    else if (document.attachEvent && !global['opera']) {
       // For IE6-9 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"
@@ -1027,7 +1051,7 @@ seajs._fn = {};
         .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs._util, seajs._data, seajs._fn, this);
 
 /**
  * @fileoverview The factory for "require".
@@ -1266,32 +1290,20 @@ seajs._fn = {};
 
 (function(host, data, fn) {
 
-  var config = data.config;
-
-
   /**
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    var preloadMods = config.preload;
-    var len = preloadMods.length;
-
-    if (len) {
-      fn.load(preloadMods, function() {
-        config.preload = preloadMods.slice(len);
-        fn.use(ids, callback);
-      });
-    }
-    else {
+    fn.preload(function() {
       fn.load(ids, callback);
-    }
+    });
   };
 
 
   // main
-  var mainModuleId = config.main;
+  var mainModuleId = data.config.main;
   if (mainModuleId) {
     fn.use([mainModuleId]);
   }

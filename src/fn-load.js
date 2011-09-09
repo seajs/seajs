@@ -13,6 +13,28 @@
 
   var memoizedMods = data.memoizedMods;
 
+  var config = data.config;
+
+
+  /**
+   * Loads preload modules before callback.
+   * @param {function()} callback The callback function.
+   */
+  fn.preload = function(callback) {
+    var preloadMods = config.preload;
+    var len = preloadMods.length;
+
+    if (len) {
+      config.preload = preloadMods.slice(len);
+      fn.load(preloadMods, function() {
+        fn.preload(callback);
+      });
+    }
+    else {
+      callback();
+    }
+  };
+
 
   /**
    * Loads modules to the environment.
@@ -27,17 +49,19 @@
     var uris = util.ids2Uris(ids, refUrl);
 
     provide(uris, function() {
-      var require = fn.createRequire({
-        uri: refUrl
-      });
+      fn.preload(function() {
+        var require = fn.createRequire({
+          uri: refUrl
+        });
 
-      var args = util.map(uris, function(uri) {
-        return require(uri);
-      });
+        var args = util.map(uris, function(uri) {
+          return require(uri);
+        });
 
-      if (callback) {
-        callback.apply(global, args);
-      }
+        if (callback) {
+          callback.apply(global, args);
+        }
+      });
     });
   };
 
