@@ -174,21 +174,6 @@
         node.getAttribute('src', 4);
   };
 
-
-  var noCacheTimeStamp = 'seajs-ts=' + util.now();
-
-  util.addNoCacheTimeStamp = function(url) {
-    return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
-  };
-
-  util.removeNoCacheTimeStamp = function(url) {
-    var ret = url;
-    if (url.indexOf(noCacheTimeStamp) !== -1) {
-      ret = url.replace(noCacheTimeStamp, '').slice(0, -1);
-    }
-    return ret;
-  };
-
 })(seajs._util, seajs._data);
 
 /**

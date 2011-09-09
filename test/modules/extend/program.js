@@ -5,7 +5,7 @@ define(function(require) {
   require('./extend');
   var a = require('./a');
 
-  test.assert(a.filename === 'a.js', 'The result of a.filename is a.js');
+  test.assert(a.filename.indexOf('a.js') === 0, 'The result of a.filename is a.js');
   test.done();
 
 });

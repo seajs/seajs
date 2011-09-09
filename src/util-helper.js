@@ -100,15 +100,29 @@
 
   /**
    * Maps the module id.
+   * @param {string} url The url string.
+   * @param {Array=} map The optional map array.
    */
-  function parseMap(url) {
+  function parseMap(url, map) {
     // config.map: [[match, replace], ...]
 
-    util.forEach(config['map'], function(rule) {
-      if (rule && rule.length === 2) {
-        url = url.replace(rule[0], rule[1]);
+    // [match, replace, -1]
+    var last = [];
+
+    util.forEach(map || config['map'], function(rule) {
+      if (rule && rule.length > 1) {
+        if (rule[2] === -1) {
+          last.push([[rule[0], rule[1]]]);
+        }
+        else {
+          url = url.replace(rule[0], rule[1]);
+        }
       }
     });
+
+    if (last.length) {
+      url = parseMap(url, last);
+    }
 
     return url;
   }

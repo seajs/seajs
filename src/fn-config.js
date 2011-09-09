@@ -6,6 +6,7 @@
 (function(util, data, fn, global) {
 
   var config = data.config;
+  var noCacheTimeStamp = 'seajs-ts=' + util.now();
 
 
   // Async inserted script.
@@ -102,6 +103,20 @@
     var base = config.base;
     if (base.indexOf('://') === -1) {
       config.base = util.id2Uri(base + '#');
+    }
+
+    // use map to implement nocache
+    if (config.debug === 2) {
+      config.debug = 1;
+      fn.config({
+        map: [
+          [/.*/, function(url) {
+            return url +
+                (url.indexOf('?') === -1 ? '?' : '&') +
+                noCacheTimeStamp;
+          }, -1]
+        ]
+      });
     }
 
     return this;

@@ -44,10 +44,6 @@
       var script = util.getInteractiveScript();
       if (script) {
         url = util.getScriptAbsoluteSrc(script);
-        // remove no cache timestamp
-        if (data.config.debug == 2) {
-          url = util.removeNoCacheTimeStamp(url);
-        }
       }
 
       // In IE6-9, if the script is in the cache, the "interactive" mode

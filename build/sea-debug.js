@@ -299,15 +299,29 @@ seajs._fn = {};
 
   /**
    * Maps the module id.
+   * @param {string} url The url string.
+   * @param {Array=} map The optional map array.
    */
-  function parseMap(url) {
+  function parseMap(url, map) {
     // config.map: [[match, replace], ...]
 
-    util.forEach(config['map'], function(rule) {
-      if (rule && rule.length === 2) {
-        url = url.replace(rule[0], rule[1]);
+    // [match, replace, -1]
+    var last = [];
+
+    util.forEach(map || config['map'], function(rule) {
+      if (rule && rule.length > 1) {
+        if (rule[2] === -1) {
+          last.push([[rule[0], rule[1]]]);
+        }
+        else {
+          url = url.replace(rule[0], rule[1]);
+        }
       }
     });
+
+    if (last.length) {
+      url = parseMap(url, last);
+    }
 
     return url;
   }
@@ -713,21 +727,6 @@ seajs._fn = {};
         node.getAttribute('src', 4);
   };
 
-
-  var noCacheTimeStamp = 'seajs-ts=' + util.now();
-
-  util.addNoCacheTimeStamp = function(url) {
-    return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
-  };
-
-  util.removeNoCacheTimeStamp = function(url) {
-    var ret = url;
-    if (url.indexOf(noCacheTimeStamp) !== -1) {
-      ret = url.replace(noCacheTimeStamp, '').slice(0, -1);
-    }
-    return ret;
-  };
-
 })(seajs._util, seajs._data);
 
 /**
@@ -871,7 +870,7 @@ seajs._fn = {};
       data.pendingModIE = uri;
 
       fetchingMods[uri] = util.getAsset(
-          getUrl(uri),
+          uri,
           cb,
           data.config.charset
           );
@@ -906,20 +905,6 @@ seajs._fn = {};
         callback();
       }
     }
-  }
-
-
-  function getUrl(uri) {
-    var url = uri;
-
-    // When debug is 2, a unique timestamp will be added to each URL.
-    // This can be useful during testing to prevent the browser from
-    // using a cached version of the file.
-    if (data.config.debug == 2) {
-      url = util.addNoCacheTimeStamp(url);
-    }
-
-    return url;
   }
 
 })(seajs._util, seajs._data, seajs._fn, this);
@@ -992,10 +977,6 @@ seajs._fn = {};
       var script = util.getInteractiveScript();
       if (script) {
         url = util.getScriptAbsoluteSrc(script);
-        // remove no cache timestamp
-        if (data.config.debug == 2) {
-          url = util.removeNoCacheTimeStamp(url);
-        }
       }
 
       // In IE6-9, if the script is in the cache, the "interactive" mode
@@ -1168,6 +1149,7 @@ seajs._fn = {};
 (function(util, data, fn, global) {
 
   var config = data.config;
+  var noCacheTimeStamp = 'seajs-ts=' + util.now();
 
 
   // Async inserted script.
@@ -1264,6 +1246,20 @@ seajs._fn = {};
     var base = config.base;
     if (base.indexOf('://') === -1) {
       config.base = util.id2Uri(base + '#');
+    }
+
+    // use map to implement nocache
+    if (config.debug === 2) {
+      config.debug = 1;
+      fn.config({
+        map: [
+          [/.*/, function(url) {
+            return url +
+                (url.indexOf('?') === -1 ? '?' : '&') +
+                noCacheTimeStamp;
+          }, -1]
+        ]
+      });
     }
 
     return this;
