@@ -80,6 +80,7 @@
    */
   function parseAlias(id) {
     var alias = config['alias'];
+    if (!alias) return id;
 
     var parts = id.split('/');
     var last = parts.length - 1;
@@ -105,14 +106,16 @@
    */
   function parseMap(url, map) {
     // config.map: [[match, replace], ...]
+    map = map || config['map'] || [];
+    if (!map.length) return url;
 
     // [match, replace, -1]
     var last = [];
 
-    util.forEach(map || config['map'], function(rule) {
+    util.forEach(map, function(rule) {
       if (rule && rule.length > 1) {
         if (rule[2] === -1) {
-          last.push([[rule[0], rule[1]]]);
+          last.push([rule[0], rule[1]]);
         }
         else {
           url = url.replace(rule[0], rule[1]);
@@ -144,23 +147,13 @@
     pageUrl = pageUrl.replace(/\\/g, '/');
   }
 
-  var id2UriCache = {};
-
   /**
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
-   * @param {boolean=} noAlias When set to true, don't pass alias.
    */
-  function id2Uri(id, refUrl, noAlias) {
-    // only run once.
-    if (id2UriCache[id]) {
-      return id;
-    }
-
-    if (!noAlias && config['alias']) {
-      id = parseAlias(id);
-    }
+  function id2Uri(id, refUrl) {
+    id = parseAlias(id);
     refUrl = refUrl || pageUrl;
 
     var ret;
@@ -190,11 +183,8 @@
     }
 
     ret = normalize(ret);
-    if (config['map']) {
-      ret = parseMap(ret);
-    }
+    ret = parseMap(ret);
 
-    id2UriCache[ret] = true;
     return ret;
   }
 
@@ -233,11 +223,12 @@
 
     // define('id', [], fn)
     if (id) {
-      uri = id2Uri(id, url, true);
+      uri = id2Uri(id, url);
     } else {
       uri = url;
     }
 
+    mod.id = uri; // change id to absolute path.
     mod.dependencies = ids2Uris(mod.dependencies, uri);
     memoizedMods[uri] = mod;
 

@@ -86,6 +86,11 @@ seajs._fn = {};
   };
 
 
+  util.isObject = function(val) {
+    return toString.call(val) === '[object Object]';
+  };
+
+
   util.isFunction = function(val) {
     return toString.call(val) === '[object Function]';
   };
@@ -279,6 +284,7 @@ seajs._fn = {};
    */
   function parseAlias(id) {
     var alias = config['alias'];
+    if (!alias) return id;
 
     var parts = id.split('/');
     var last = parts.length - 1;
@@ -304,14 +310,16 @@ seajs._fn = {};
    */
   function parseMap(url, map) {
     // config.map: [[match, replace], ...]
+    map = map || config['map'] || [];
+    if (!map.length) return url;
 
     // [match, replace, -1]
     var last = [];
 
-    util.forEach(map || config['map'], function(rule) {
+    util.forEach(map, function(rule) {
       if (rule && rule.length > 1) {
         if (rule[2] === -1) {
-          last.push([[rule[0], rule[1]]]);
+          last.push([rule[0], rule[1]]);
         }
         else {
           url = url.replace(rule[0], rule[1]);
@@ -343,23 +351,13 @@ seajs._fn = {};
     pageUrl = pageUrl.replace(/\\/g, '/');
   }
 
-  var id2UriCache = {};
-
   /**
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
-   * @param {boolean=} noAlias When set to true, don't pass alias.
    */
-  function id2Uri(id, refUrl, noAlias) {
-    // only run once.
-    if (id2UriCache[id]) {
-      return id;
-    }
-
-    if (!noAlias && config['alias']) {
-      id = parseAlias(id);
-    }
+  function id2Uri(id, refUrl) {
+    id = parseAlias(id);
     refUrl = refUrl || pageUrl;
 
     var ret;
@@ -389,11 +387,8 @@ seajs._fn = {};
     }
 
     ret = normalize(ret);
-    if (config['map']) {
-      ret = parseMap(ret);
-    }
+    ret = parseMap(ret);
 
-    id2UriCache[ret] = true;
     return ret;
   }
 
@@ -432,11 +427,12 @@ seajs._fn = {};
 
     // define('id', [], fn)
     if (id) {
-      uri = id2Uri(id, url, true);
+      uri = id2Uri(id, url);
     } else {
       uri = url;
     }
 
+    mod.id = uri; // change id to absolute path.
     mod.dependencies = ids2Uris(mod.dependencies, uri);
     memoizedMods[uri] = mod;
 
@@ -791,7 +787,7 @@ seajs._fn = {};
         });
 
         var args = util.map(uris, function(uri) {
-          return require(uri);
+          return require(data.memoizedMods[uri]);
         });
 
         if (callback) {
@@ -946,16 +942,21 @@ seajs._fn = {};
    */
   fn.define = function(id, deps, factory) {
 
-    // define(factory)
+    // define(fn)
     if (arguments.length === 1) {
       factory = id;
       id = '';
     }
-    // define([], factory)
+    // define([], fn)
     else if (util.isArray(id)) {
       factory = deps;
       deps = id;
       id = '';
+    }
+    // define(id, fn)
+    else if (util.isFunction(deps)) {
+      factory = deps;
+      deps = '';
     }
 
     // parse deps
@@ -1052,8 +1053,18 @@ seajs._fn = {};
     // }
 
     function require(id) {
-      var uri = util.id2Uri(id, sandbox.uri);
-      var mod = data.memoizedMods[uri];
+      var uri, mod;
+
+      // require(mod) ** inner use ONLY.
+      if (util.isObject(id)) {
+        mod = id;
+        uri = mod.id;
+      }
+      // NOTICE: id maybe undefined in 404 etc cases.
+      else if (util.isString(id)) {
+        uri = util.id2Uri(id, sandbox.uri);
+        mod = data.memoizedMods[uri];
+      }
 
       // Just return null when:
       //  1. the module file is 404.
@@ -1079,7 +1090,6 @@ seajs._fn = {};
       if (!mod.exports) {
         initExports(mod, {
           uri: uri,
-          deps: mod.dependencies,
           parent: sandbox
         });
       }
@@ -1098,15 +1108,12 @@ seajs._fn = {};
     var ret;
     var factory = mod.factory;
 
-    // Attaches members to module instance.
-    //mod.dependencies
-    mod.id = sandbox.uri;
     mod.exports = {};
-    delete mod.factory; // free
-    delete mod.ready; // free
+    delete mod.factory;
+    delete mod.ready;
 
     if (util.isFunction(factory)) {
-      checkPotentialErrors(factory, mod.uri);
+      checkPotentialErrors(factory, mod.id);
       ret = factory(createRequire(sandbox), mod.exports, mod);
       if (ret !== undefined) {
         mod.exports = ret;

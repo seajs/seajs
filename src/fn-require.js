@@ -17,8 +17,18 @@
     // }
 
     function require(id) {
-      var uri = util.id2Uri(id, sandbox.uri);
-      var mod = data.memoizedMods[uri];
+      var uri, mod;
+
+      // require(mod) ** inner use ONLY.
+      if (util.isObject(id)) {
+        mod = id;
+        uri = mod.id;
+      }
+      // NOTICE: id maybe undefined in 404 etc cases.
+      else if (util.isString(id)) {
+        uri = util.id2Uri(id, sandbox.uri);
+        mod = data.memoizedMods[uri];
+      }
 
       // Just return null when:
       //  1. the module file is 404.
@@ -44,7 +54,6 @@
       if (!mod.exports) {
         initExports(mod, {
           uri: uri,
-          deps: mod.dependencies,
           parent: sandbox
         });
       }
@@ -63,15 +72,12 @@
     var ret;
     var factory = mod.factory;
 
-    // Attaches members to module instance.
-    //mod.dependencies
-    mod.id = sandbox.uri;
     mod.exports = {};
-    delete mod.factory; // free
-    delete mod.ready; // free
+    delete mod.factory;
+    delete mod.ready;
 
     if (util.isFunction(factory)) {
-      checkPotentialErrors(factory, mod.uri);
+      checkPotentialErrors(factory, mod.id);
       ret = factory(createRequire(sandbox), mod.exports, mod);
       if (ret !== undefined) {
         mod.exports = ret;

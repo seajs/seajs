@@ -14,6 +14,11 @@
   };
 
 
+  util.isObject = function(val) {
+    return toString.call(val) === '[object Object]';
+  };
+
+
   util.isFunction = function(val) {
     return toString.call(val) === '[object Function]';
   };

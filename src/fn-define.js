@@ -13,16 +13,21 @@
    */
   fn.define = function(id, deps, factory) {
 
-    // define(factory)
+    // define(fn)
     if (arguments.length === 1) {
       factory = id;
       id = '';
     }
-    // define([], factory)
+    // define([], fn)
     else if (util.isArray(id)) {
       factory = deps;
       deps = id;
       id = '';
+    }
+    // define(id, fn)
+    else if (util.isFunction(deps)) {
+      factory = deps;
+      deps = '';
     }
 
     // parse deps

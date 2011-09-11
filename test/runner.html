@@ -21,13 +21,18 @@
       start = document.getElementById('start');
       start.setAttribute('autocomplete', 'off');
 
-      start['onclick'] = function() {
-        start.setAttribute('disabled', 'true');
-        reset();
-        testNext();
+      start['onclick'] = startRun;
 
-      };
+      if (location.search.indexOf('autorun') !== -1) {
+        startRun();
+      }
     };
+
+    function startRun() {
+      start.setAttribute('disabled', 'true');
+      reset();
+      testNext();
+    }
 
     window.testNext = function() {
       var test = tests[currentTest++];

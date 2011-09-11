@@ -51,6 +51,6 @@ define(function(require, exports) {
     ,'bootstrap/index'
   ];
 
-  //exports.testCases = ['modules/exports'];
+  //exports.testCases = ['modules/inline'];
 
 });

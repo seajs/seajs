@@ -55,7 +55,7 @@
         });
 
         var args = util.map(uris, function(uri) {
-          return require(uri);
+          return require(data.memoizedMods[uri]);
         });
 
         if (callback) {
