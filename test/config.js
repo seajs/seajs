@@ -8,7 +8,8 @@ if (typeof define !== 'function') {
 define(function(require, exports) {
 
   exports.testCases = [
-    'modules/math'
+    'modules/simplest'
+    ,'modules/math'
     ,'modules/cyclic'
     ,'modules/relative'
     ,'modules/determinism'

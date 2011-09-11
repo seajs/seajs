@@ -39,7 +39,6 @@
       head.appendChild(node); // keep order
     }
     else {
-      node.async = true;
       node.src = url;
       head.insertBefore(node, head.firstChild);
     }

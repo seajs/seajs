@@ -159,12 +159,12 @@
     var ret;
 
     // Converts inline id to relative id: '~/xx' -> './xx'
-    if (isInlineMod(id)) {
+    if (isInlinePath(id)) {
       id = '.' + id.substring(1);
     }
 
     // absolute id
-    if (id.indexOf('://') !== -1) {
+    if (isAbsolutePath(id)) {
       ret = id;
     }
     // relative id
@@ -174,7 +174,7 @@
       ret = dirname(refUrl) + id;
     }
     // root id
-    else if (id.indexOf('/') === 0) {
+    else if (id.charAt(0) === '/') {
       ret = getHost(refUrl) + id;
     }
     // top-level id
@@ -313,12 +313,18 @@
 
 
   /**
+   * Determines whether the id is absolute.
+   */
+  function isAbsolutePath(id) {
+    return id.indexOf('://') !== -1;
+  }
+
+
+  /**
    * define module in html page:
    *   define('~/init', deps, fn)
-   *
-   * @param {string} id The module id.
    */
-  function isInlineMod(id) {
+  function isInlinePath(id) {
     return id.charAt(0) === '~';
   }
 
@@ -332,7 +338,8 @@
   util.setReadyState = setReadyState;
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
-  util.isInlineMod = isInlineMod;
+  util.isAbsolutePath = isAbsolutePath;
+  util.isInlinePath = isInlinePath;
   util.pageUrl = pageUrl;
 
   if (config.debug) {

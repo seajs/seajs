@@ -38,7 +38,7 @@
     var mod = new fn.Module(id, deps, factory);
     var url;
 
-    if (util.isInlineMod(id)) {
+    if (util.isInlinePath(id)) {
       url = util.pageUrl;
     }
     else if (document.attachEvent && !global['opera']) {
