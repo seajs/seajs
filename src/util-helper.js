@@ -151,17 +151,15 @@
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
+   * @param {boolean=} aliasParsed When set to true, alias is parsed already.
    */
-  function id2Uri(id, refUrl) {
-    id = parseAlias(id);
-    refUrl = refUrl || pageUrl;
-
-    var ret;
-
-    // Converts inline id to relative id: '~/xx' -> './xx'
-    if (isInlinePath(id)) {
-      id = '.' + id.substring(1);
+  function id2Uri(id, refUrl, aliasParsed) {
+    if (!aliasParsed) {
+      id = parseAlias(id);
     }
+
+    refUrl = refUrl || pageUrl;
+    var ret;
 
     // absolute id
     if (isAbsolutePath(id)) {
@@ -223,8 +221,9 @@
 
     // define('id', [], fn)
     if (id) {
-      uri = id2Uri(id, url);
-    } else {
+      uri = id2Uri(id, url, true);
+    }
+    else {
       uri = url;
     }
 
@@ -316,21 +315,13 @@
    * Determines whether the id is absolute.
    */
   function isAbsolutePath(id) {
-    return id.indexOf('://') !== -1;
-  }
-
-
-  /**
-   * define module in html page:
-   *   define('~/init', deps, fn)
-   */
-  function isInlinePath(id) {
-    return id.charAt(0) === '~';
+    return id.indexOf('://') !== -1 || id.indexOf('//') === 0;
   }
 
 
   util.dirname = dirname;
 
+  util.parseAlias = parseAlias;
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;
 
@@ -339,13 +330,10 @@
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
   util.isAbsolutePath = isAbsolutePath;
-  util.isInlinePath = isInlinePath;
-  util.pageUrl = pageUrl;
 
   if (config.debug) {
     util.realpath = realpath;
     util.normalize = normalize;
-    util.parseAlias = parseAlias;
     util.getHost = getHost;
   }
 

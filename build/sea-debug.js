@@ -1,4 +1,4 @@
-/* SeaJS v1.0.1 | seajs.com | MIT Licensed */
+/* SeaJS v1.0.2dev | seajs.com | MIT Licensed */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
@@ -16,7 +16,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.0.1';
+seajs.version = '1.0.2dev';
 
 
 // Module status:
@@ -355,20 +355,18 @@ seajs._fn = {};
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
+   * @param {boolean=} aliasParsed When set to true, alias is parsed already.
    */
-  function id2Uri(id, refUrl) {
-    id = parseAlias(id);
-    refUrl = refUrl || pageUrl;
-
-    var ret;
-
-    // Converts inline id to relative id: '~/xx' -> './xx'
-    if (isInlineMod(id)) {
-      id = '.' + id.substring(1);
+  function id2Uri(id, refUrl, aliasParsed) {
+    if (!aliasParsed) {
+      id = parseAlias(id);
     }
 
+    refUrl = refUrl || pageUrl;
+    var ret;
+
     // absolute id
-    if (id.indexOf('://') !== -1) {
+    if (isAbsolutePath(id)) {
       ret = id;
     }
     // relative id
@@ -378,7 +376,7 @@ seajs._fn = {};
       ret = dirname(refUrl) + id;
     }
     // root id
-    else if (id.indexOf('/') === 0) {
+    else if (id.charAt(0) === '/') {
       ret = getHost(refUrl) + id;
     }
     // top-level id
@@ -427,8 +425,9 @@ seajs._fn = {};
 
     // define('id', [], fn)
     if (id) {
-      uri = id2Uri(id, url);
-    } else {
+      uri = id2Uri(id, url, true);
+    }
+    else {
       uri = url;
     }
 
@@ -517,18 +516,16 @@ seajs._fn = {};
 
 
   /**
-   * define module in html page:
-   *   define('~/init', deps, fn)
-   *
-   * @param {string} id The module id.
+   * Determines whether the id is absolute.
    */
-  function isInlineMod(id) {
-    return id.charAt(0) === '~';
+  function isAbsolutePath(id) {
+    return id.indexOf('://') !== -1 || id.indexOf('//') === 0;
   }
 
 
   util.dirname = dirname;
 
+  util.parseAlias = parseAlias;
   util.id2Uri = id2Uri;
   util.ids2Uris = ids2Uris;
 
@@ -536,13 +533,11 @@ seajs._fn = {};
   util.setReadyState = setReadyState;
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
-  util.isInlineMod = isInlineMod;
-  util.pageUrl = pageUrl;
+  util.isAbsolutePath = isAbsolutePath;
 
   if (config.debug) {
     util.realpath = realpath;
     util.normalize = normalize;
-    util.parseAlias = parseAlias;
     util.getHost = getHost;
   }
 
@@ -588,7 +583,6 @@ seajs._fn = {};
       head.appendChild(node); // keep order
     }
     else {
-      node.async = true;
       node.src = url;
       head.insertBefore(node, head.firstChild);
     }
@@ -964,11 +958,17 @@ seajs._fn = {};
       deps = parseDependencies(factory.toString());
     }
 
+    // parse alias in id
+    if (id) {
+      id = util.parseAlias(id);
+    }
+
     var mod = new fn.Module(id, deps, factory);
     var url;
 
-    if (util.isInlineMod(id)) {
-      url = util.pageUrl;
+    // id is absolute.
+    if (id && util.isAbsolutePath(id)) {
+      url = id;
     }
     else if (document.attachEvent && !global['opera']) {
       // For IE6-9 browsers, the script onload event may not fire right
@@ -1251,7 +1251,7 @@ seajs._fn = {};
 
     // Make sure config.base is absolute path.
     var base = config.base;
-    if (base.indexOf('://') === -1) {
+    if (!util.isAbsolutePath(base)) {
       config.base = util.id2Uri(base + '#');
     }
 

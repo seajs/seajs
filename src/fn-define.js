@@ -35,11 +35,17 @@
       deps = parseDependencies(factory.toString());
     }
 
+    // parse alias in id
+    if (id) {
+      id = util.parseAlias(id);
+    }
+
     var mod = new fn.Module(id, deps, factory);
     var url;
 
-    if (util.isInlinePath(id)) {
-      url = util.pageUrl;
+    // id is absolute.
+    if (id && util.isAbsolutePath(id)) {
+      url = id;
     }
     else if (document.attachEvent && !global['opera']) {
       // For IE6-9 browsers, the script onload event may not fire right
