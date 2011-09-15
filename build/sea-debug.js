@@ -87,7 +87,7 @@ seajs._fn = {};
 
 
   util.isObject = function(val) {
-    return toString.call(val) === '[object Object]';
+    return val === Object(val);
   };
 
 
