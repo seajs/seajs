@@ -177,6 +177,6 @@
 
 /**
  * references:
- *  - http://lifesinger.org/lab/2011/load-js-css/
+ *  - http://lifesinger.github.com/lab/2011/load-js-css/
  *  - ./test/issues/load-css/test.html
  */

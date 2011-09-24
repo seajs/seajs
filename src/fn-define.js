@@ -103,7 +103,7 @@
   }
 
 
-  // http://lifesinger.org/lab/2011/remove-comments-safely/
+  // http://lifesinger.github.com/lab/2011/remove-comments-safely/
   function removeComments(code) {
     return code
         .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
