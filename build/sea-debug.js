@@ -721,7 +721,7 @@ seajs._fn = {};
 
 /**
  * references:
- *  - http://lifesinger.org/lab/2011/load-js-css/
+ *  - http://lifesinger.github.com/lab/2011/load-js-css/
  *  - ./test/issues/load-css/test.html
  */
 
@@ -1026,7 +1026,7 @@ seajs._fn = {};
   }
 
 
-  // http://lifesinger.org/lab/2011/remove-comments-safely/
+  // http://lifesinger.github.com/lab/2011/remove-comments-safely/
   function removeComments(code) {
     return code
         .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
