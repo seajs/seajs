@@ -84,14 +84,18 @@
 
     var parts = id.split('/');
     var last = parts.length - 1;
+    var parsed = false;
 
     parse(parts, 0);
-    if (last) parse(parts, last);
+    if (!parsed && last) {
+      parse(parts, last);
+    }
 
     function parse(parts, i) {
       var part = parts[i];
       if (alias && alias.hasOwnProperty(part)) {
         parts[i] = alias[part];
+        parsed = true;
       }
     }
 
