@@ -338,7 +338,6 @@
   if (config.debug) {
     util.realpath = realpath;
     util.normalize = normalize;
-    util.getHost = getHost;
   }
 
 })(seajs._util, seajs._data, this);
