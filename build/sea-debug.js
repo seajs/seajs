@@ -886,15 +886,6 @@ seajs._fn = {};
         delete fetchingMods[uri];
       }
 
-      if (!memoizedMods[uri]) {
-        util.error({
-          message: 'can not memoized',
-          from: 'load',
-          uri: uri,
-          type: 'warn'
-        });
-      }
-
       if (callback) {
         callback();
       }
