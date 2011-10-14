@@ -347,8 +347,21 @@ seajs._fn = {};
   }
 
 
+  /**
+   * Normalizes pathname to start with '/'
+   * Ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
+   */
+  function normalizePathname(pathname) {
+    if (pathname.charAt(0) !== '/') {
+      pathname = '/' + pathname;
+    }
+    return pathname;
+  }
+
+
   var loc = global['location'];
-  var pageUrl = loc.protocol + '//' + loc.host + loc.pathname;
+  var pageUrl = loc.protocol + '//' + loc.host +
+      normalizePathname(loc.pathname);
 
   // local file in IE: C:\path\to\xx.js
   if (pageUrl.indexOf('\\') !== -1) {
