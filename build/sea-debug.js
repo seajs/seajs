@@ -288,14 +288,18 @@ seajs._fn = {};
 
     var parts = id.split('/');
     var last = parts.length - 1;
+    var parsed = false;
 
     parse(parts, 0);
-    if (last) parse(parts, last);
+    if (!parsed && last) {
+      parse(parts, last);
+    }
 
     function parse(parts, i) {
       var part = parts[i];
       if (alias && alias.hasOwnProperty(part)) {
         parts[i] = alias[part];
+        parsed = true;
       }
     }
 
@@ -935,22 +939,23 @@ seajs._fn = {};
    * @param {function()|Object} factory The module factory function.
    */
   fn.define = function(id, deps, factory) {
+    var argsLen = arguments.length;
 
-    // define(fn)
-    if (arguments.length === 1) {
+    // define(factory)
+    if (argsLen === 1) {
       factory = id;
-      id = '';
+      id = undefined;
     }
-    // define([], fn)
-    else if (util.isArray(id)) {
+    // define(id || deps, factory)
+    else if (argsLen === 2) {
       factory = deps;
-      deps = id;
-      id = '';
-    }
-    // define(id, fn)
-    else if (util.isFunction(deps)) {
-      factory = deps;
-      deps = '';
+      deps = undefined;
+
+      // define(deps, factory)
+      if (util.isArray(id)) {
+        deps = id;
+        id = undefined;
+      }
     }
 
     // parse deps

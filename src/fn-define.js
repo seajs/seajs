@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Module authoring format.
  */

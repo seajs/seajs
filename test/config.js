@@ -28,6 +28,7 @@ define(function(require, exports) {
     ,'modules/checkPotentialErrors'
     ,'modules/extend'
     ,'modules/configMap'
+    ,'modules/define'
 
     ,'packages/math'
 
