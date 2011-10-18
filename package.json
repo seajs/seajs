@@ -1,5 +1,5 @@
 {
-  "name"          : "SeaJS",
+  "name"          : "seajs",
   "description"   : "SeaJS is a new kind of JavaScript Loader that makes it easy to build scalable web applications. SeaJS is designed to change the way you organize JavaScript.",
   "homepage"      : "https://seajs.com/",
   "keywords"      : ["loader", "modular", "CommonJS", "browser", "framework"],
