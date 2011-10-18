@@ -49,7 +49,6 @@ define(function(require, exports) {
     ,'issues/preload'
     ,'issues/inline-module'
     ,'issues/anywhere'
-    //,'issues/modules'
 
     ,'bootstrap/index'
   ];
