@@ -105,13 +105,14 @@ math.js        -- 数学计算库
 
 <pre>
  $ cd path/to/demo/calculator
- $ spm build init.js --combo
+ $ spm build init.js --combine
+   Building init.js
    ... process init.js
    ... process stdin.js
    ... process calculator.js
    ... process stdout.js
    ... process math.js
-   Successfully combo to __build/init.js
+   Combined to __build/init.js
 </pre>
 
   <p>
@@ -152,19 +153,20 @@ math.js        -- 数学计算库
   </p>
 
   <p>
-    还可以用 <code>--combo all</code> 选项把所有依赖的模块合并到单个文件:
+    还可以用 <code>--combine_all</code> 选项把所有依赖的模块合并到单个文件:
   </p>
 
 <pre>
  $ cd path/to/demo/calculator
- $ spm build init.js --combo all
+ $ spm build init.js --combine_all
+   Building init.js
    ... process init.js
    ... process stdin.js
-   ... process jquery.js
+   ... process ../../../../spm/modules/jquery/1.6.4/jquery.js
    ... process calculator.js
    ... process stdout.js
    ... process math.js
-   Successfully combo to __build/init.js
+   Combined to __build/init.js
 </pre>
 
   <p>

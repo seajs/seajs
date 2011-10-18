@@ -111,13 +111,14 @@ math.js        -- math lib
 
 <pre>
  $ cd path/to/demo/calculator
- $ spm build init.js --combo
+ $ spm build init.js --combine
+   Building init.js
    ... process init.js
    ... process stdin.js
    ... process calculator.js
    ... process stdout.js
    ... process math.js
-   Successfully combo to __build/init.js
+   Combined to __build/init.js
 </pre>
 
   <p>
@@ -160,20 +161,21 @@ math.js        -- math lib
   </p>
 
   <p>
-    We can even use the <code>--combo all</code> option to combine all
+    We can even use the <code>--combine_all</code> option to combine all
     dependent modules to one file:
   </p>
 
 <pre>
  $ cd path/to/demo/calculator
- $ spm build init.js --combo all
+ $ spm build init.js --combine_all
+   Building init.js
    ... process init.js
    ... process stdin.js
-   ... process jquery.js
+   ... process ../../../../spm/modules/jquery/1.6.4/jquery.js
    ... process calculator.js
    ... process stdout.js
    ... process math.js
-   Successfully combo to __build/init.js
+   Combined to __build/init.js
 </pre>
 
   <p>

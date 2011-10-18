@@ -1,9 +1,9 @@
 
 seajs.config({
   alias: {
-    'jquery': 'jquery/1.6.2/jquery',
-    'backbone': 'backbone/0.5.1/backbone',
-    'underscore': 'underscore/1.1.6/underscore'
+    'jquery': 'jquery/1.6.4/jquery',
+    'backbone': 'backbone/0.5.3/backbone',
+    'underscore': 'underscore/1.2.0/underscore'
   }
 });
 
