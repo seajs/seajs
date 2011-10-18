@@ -17,7 +17,9 @@ define(function(require) {
 
   test.assert($('#blue').width() !== 200, '#blue width should not be 200');
   require.async('./blue.css', function() {
-    test.assert($('#blue').width() === 200, '#blue width should be 200 now');
+    setTimeout(function() {
+      test.assert($('#blue').width() === 200, '#blue width should be 200 now');
+    }, 500);
   });
 
   require.async('./notExisted.css', function() {
