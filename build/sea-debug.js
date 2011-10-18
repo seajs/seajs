@@ -1,4 +1,4 @@
-/* SeaJS v1.0.2dev | seajs.com | MIT Licensed */
+/* SeaJS v1.0.2 | seajs.com | MIT Licensed */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
@@ -16,7 +16,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.0.2dev';
+seajs.version = '1.0.2';
 
 
 // Module status:
@@ -310,17 +310,17 @@ seajs._fn = {};
   /**
    * Maps the module id.
    * @param {string} url The url string.
-   * @param {Array=} map The optional map array.
+   * @param {Array=} opt_map The optional map array.
    */
-  function parseMap(url, map) {
+  function parseMap(url, opt_map) {
     // config.map: [[match, replace], ...]
-    map = map || config['map'] || [];
-    if (!map.length) return url;
+    opt_map = opt_map || config['map'] || [];
+    if (!opt_map.length) return url;
 
     // [match, replace, -1]
     var last = [];
 
-    util.forEach(map, function(rule) {
+    util.forEach(opt_map, function(rule) {
       if (rule && rule.length > 1) {
         if (rule[2] === -1) {
           last.push([rule[0], rule[1]]);
@@ -371,15 +371,15 @@ seajs._fn = {};
   /**
    * Converts id to uri.
    * @param {string} id The module id.
-   * @param {string=} refUrl The referenced uri for relative id.
-   * @param {boolean=} aliasParsed When set to true, alias is parsed already.
+   * @param {string=} opt_refUrl The referenced uri for relative id.
+   * @param {boolean=} opt_aliasParsed When set to true, alias has been parsed.
    */
-  function id2Uri(id, refUrl, aliasParsed) {
-    if (!aliasParsed) {
+  function id2Uri(id, opt_refUrl, opt_aliasParsed) {
+    if (!opt_aliasParsed) {
       id = parseAlias(id);
     }
 
-    refUrl = refUrl || pageUrl;
+    opt_refUrl = opt_refUrl || pageUrl;
     var ret;
 
     // absolute id
@@ -390,11 +390,11 @@ seajs._fn = {};
     else if (id.indexOf('./') === 0 || id.indexOf('../') === 0) {
       // Converts './a' to 'a', to avoid unnecessary loop in realpath.
       id = id.replace(/^\.\//, '');
-      ret = dirname(refUrl) + id;
+      ret = dirname(opt_refUrl) + id;
     }
     // root id
     else if (id.charAt(0) === '/') {
-      ret = getHost(refUrl) + id;
+      ret = getHost(opt_refUrl) + id;
     }
     // top-level id
     else {
@@ -423,11 +423,11 @@ seajs._fn = {};
   /**
    * Converts ids to uris.
    * @param {Array.<string>} ids The module ids.
-   * @param {string=} refUri The referenced uri for relative id.
+   * @param {string=} opt_refUri The referenced uri for relative id.
    */
-  function ids2Uris(ids, refUri) {
+  function ids2Uris(ids, opt_refUri) {
     return util.map(ids, function(id) {
-      return id2Uri(id, refUri);
+      return id2Uri(id, opt_refUri);
     });
   }
 
@@ -782,27 +782,27 @@ seajs._fn = {};
   /**
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
-   * @param {function(*)=} callback The callback function.
-   * @param {string=} refUrl The referenced uri for relative id.
+   * @param {function(*)=} opt_callback The callback function.
+   * @param {string=} opt_refUrl The referenced uri for relative id.
    */
-  fn.load = function(ids, callback, refUrl) {
+  fn.load = function(ids, opt_callback, opt_refUrl) {
     if (util.isString(ids)) {
       ids = [ids];
     }
-    var uris = util.ids2Uris(ids, refUrl);
+    var uris = util.ids2Uris(ids, opt_refUrl);
 
     provide(uris, function() {
       fn.preload(function() {
         var require = fn.createRequire({
-          uri: refUrl
+          uri: opt_refUrl
         });
 
         var args = util.map(uris, function(uri) {
           return require(data.memoizedMods[uri]);
         });
 
-        if (callback) {
-          callback.apply(global, args);
+        if (opt_callback) {
+          opt_callback.apply(global, args);
         }
       });
     });
@@ -812,9 +812,9 @@ seajs._fn = {};
   /**
    * Provides modules to the environment.
    * @param {Array.<string>} uris An array composed of module uri.
-   * @param {function()=} callback The callback function.
+   * @param {function()=} opt_callback The callback function.
    */
-  function provide(uris, callback) {
+  function provide(uris, opt_callback) {
     var unReadyUris = util.getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
@@ -857,7 +857,7 @@ seajs._fn = {};
 
     function onProvide() {
       util.setReadyState(unReadyUris);
-      callback();
+      opt_callback();
     }
   }
 
@@ -916,14 +916,14 @@ seajs._fn = {};
   /**
    * Module constructor.
    * @constructor
-   * @param {string=} id The module id.
-   * @param {Array.<string>|string=} deps The module dependencies.
+   * @param {string=} opt_id The module id.
+   * @param {Array.<string>|string=} opt_deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.Module = function(id, deps, factory) {
+  fn.Module = function(opt_id, opt_deps, factory) {
 
-    this.id = id;
-    this.dependencies = deps || [];
+    this.id = opt_id;
+    this.dependencies = opt_deps || [];
     this.factory = factory;
 
   };
@@ -938,46 +938,46 @@ seajs._fn = {};
 
   /**
    * Defines a module.
-   * @param {string=} id The module id.
-   * @param {Array.<string>|string=} deps The module dependencies.
+   * @param {string=} opt_id The module id.
+   * @param {Array.<string>|string=} opt_deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  fn.define = function(opt_id, opt_deps, factory) {
     var argsLen = arguments.length;
 
     // define(factory)
     if (argsLen === 1) {
-      factory = id;
-      id = undefined;
+      factory = opt_id;
+      opt_id = undefined;
     }
     // define(id || deps, factory)
     else if (argsLen === 2) {
-      factory = deps;
-      deps = undefined;
+      factory = opt_deps;
+      opt_deps = undefined;
 
       // define(deps, factory)
-      if (util.isArray(id)) {
-        deps = id;
-        id = undefined;
+      if (util.isArray(opt_id)) {
+        opt_deps = opt_id;
+        opt_id = undefined;
       }
     }
 
     // parse deps
-    if (!util.isArray(deps) && util.isFunction(factory)) {
-      deps = parseDependencies(factory.toString());
+    if (!util.isArray(opt_deps) && util.isFunction(factory)) {
+      opt_deps = parseDependencies(factory.toString());
     }
 
     // parse alias in id
-    if (id) {
-      id = util.parseAlias(id);
+    if (opt_id) {
+      opt_id = util.parseAlias(opt_id);
     }
 
-    var mod = new fn.Module(id, deps, factory);
+    var mod = new fn.Module(opt_id, opt_deps, factory);
     var url;
 
     // id is absolute.
-    if (id && util.isAbsolutePath(id)) {
-      url = id;
+    if (opt_id && util.isAbsolutePath(opt_id)) {
+      url = opt_id;
     }
     else if (document.attachEvent && !global['opera']) {
       // For IE6-9 browsers, the script onload event may not fire right
@@ -1003,7 +1003,7 @@ seajs._fn = {};
     }
 
     if (url) {
-      util.memoize(id, url, mod);
+      util.memoize(opt_id, url, mod);
     }
     else {
       // Saves information for "real" work in the onload event.
@@ -1305,11 +1305,11 @@ seajs._fn = {};
   /**
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
-   * @param {function(*)=} callback The callback function.
+   * @param {function(*)=} opt_callback The callback function.
    */
-  fn.use = function(ids, callback) {
+  fn.use = function(ids, opt_callback) {
     fn.preload(function() {
-      fn.load(ids, callback);
+      fn.load(ids, opt_callback);
     });
   };
 

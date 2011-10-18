@@ -8,5 +8,5 @@
   "dependencies"  : [],
   "repository"    : {"type": "git", "url": "git://github.com/lifesinger/seajs.git"},
   "main"          : "build/sea.js",
-  "version"       : "1.0.1"
+  "version"       : "1.0.2"
 }
