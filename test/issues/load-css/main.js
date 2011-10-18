@@ -1,13 +1,16 @@
 
 seajs.config({
-  timeout: 5000
+  timeout: 5000,
+  alias: {
+    'jquery': 'http://modules.seajs.com/jquery/1.6.4/jquery.js'
+  }
 });
 
 
 define(function(require) {
 
   var test = require('../../test');
-  var $ = require('http://modules.seajs.com/jquery/1.6.2/jquery');
+  var $ = require('jquery');
 
   require('./red.css');
   test.assert($('#red').width() === 200, '#red width should be 200');
