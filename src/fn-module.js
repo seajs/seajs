@@ -8,14 +8,14 @@
   /**
    * Module constructor.
    * @constructor
-   * @param {string=} id The module id.
-   * @param {Array.<string>|string=} deps The module dependencies.
+   * @param {string=} opt_id The module id.
+   * @param {Array.<string>|string=} opt_deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.Module = function(id, deps, factory) {
+  fn.Module = function(opt_id, opt_deps, factory) {
 
-    this.id = id;
-    this.dependencies = deps || [];
+    this.id = opt_id;
+    this.dependencies = opt_deps || [];
     this.factory = factory;
 
   };

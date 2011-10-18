@@ -106,17 +106,17 @@
   /**
    * Maps the module id.
    * @param {string} url The url string.
-   * @param {Array=} map The optional map array.
+   * @param {Array=} opt_map The optional map array.
    */
-  function parseMap(url, map) {
+  function parseMap(url, opt_map) {
     // config.map: [[match, replace], ...]
-    map = map || config['map'] || [];
-    if (!map.length) return url;
+    opt_map = opt_map || config['map'] || [];
+    if (!opt_map.length) return url;
 
     // [match, replace, -1]
     var last = [];
 
-    util.forEach(map, function(rule) {
+    util.forEach(opt_map, function(rule) {
       if (rule && rule.length > 1) {
         if (rule[2] === -1) {
           last.push([rule[0], rule[1]]);
@@ -167,15 +167,15 @@
   /**
    * Converts id to uri.
    * @param {string} id The module id.
-   * @param {string=} refUrl The referenced uri for relative id.
-   * @param {boolean=} aliasParsed When set to true, alias is parsed already.
+   * @param {string=} opt_refUrl The referenced uri for relative id.
+   * @param {boolean=} opt_aliasParsed When set to true, alias has been parsed.
    */
-  function id2Uri(id, refUrl, aliasParsed) {
-    if (!aliasParsed) {
+  function id2Uri(id, opt_refUrl, opt_aliasParsed) {
+    if (!opt_aliasParsed) {
       id = parseAlias(id);
     }
 
-    refUrl = refUrl || pageUrl;
+    opt_refUrl = opt_refUrl || pageUrl;
     var ret;
 
     // absolute id
@@ -186,11 +186,11 @@
     else if (id.indexOf('./') === 0 || id.indexOf('../') === 0) {
       // Converts './a' to 'a', to avoid unnecessary loop in realpath.
       id = id.replace(/^\.\//, '');
-      ret = dirname(refUrl) + id;
+      ret = dirname(opt_refUrl) + id;
     }
     // root id
     else if (id.charAt(0) === '/') {
-      ret = getHost(refUrl) + id;
+      ret = getHost(opt_refUrl) + id;
     }
     // top-level id
     else {
@@ -219,11 +219,11 @@
   /**
    * Converts ids to uris.
    * @param {Array.<string>} ids The module ids.
-   * @param {string=} refUri The referenced uri for relative id.
+   * @param {string=} opt_refUri The referenced uri for relative id.
    */
-  function ids2Uris(ids, refUri) {
+  function ids2Uris(ids, opt_refUri) {
     return util.map(ids, function(id) {
-      return id2Uri(id, refUri);
+      return id2Uri(id, opt_refUri);
     });
   }
 

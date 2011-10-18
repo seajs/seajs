@@ -39,27 +39,27 @@
   /**
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
-   * @param {function(*)=} callback The callback function.
-   * @param {string=} refUrl The referenced uri for relative id.
+   * @param {function(*)=} opt_callback The callback function.
+   * @param {string=} opt_refUrl The referenced uri for relative id.
    */
-  fn.load = function(ids, callback, refUrl) {
+  fn.load = function(ids, opt_callback, opt_refUrl) {
     if (util.isString(ids)) {
       ids = [ids];
     }
-    var uris = util.ids2Uris(ids, refUrl);
+    var uris = util.ids2Uris(ids, opt_refUrl);
 
     provide(uris, function() {
       fn.preload(function() {
         var require = fn.createRequire({
-          uri: refUrl
+          uri: opt_refUrl
         });
 
         var args = util.map(uris, function(uri) {
           return require(data.memoizedMods[uri]);
         });
 
-        if (callback) {
-          callback.apply(global, args);
+        if (opt_callback) {
+          opt_callback.apply(global, args);
         }
       });
     });
@@ -69,9 +69,9 @@
   /**
    * Provides modules to the environment.
    * @param {Array.<string>} uris An array composed of module uri.
-   * @param {function()=} callback The callback function.
+   * @param {function()=} opt_callback The callback function.
    */
-  function provide(uris, callback) {
+  function provide(uris, opt_callback) {
     var unReadyUris = util.getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
@@ -114,7 +114,7 @@
 
     function onProvide() {
       util.setReadyState(unReadyUris);
-      callback();
+      opt_callback();
     }
   }
 

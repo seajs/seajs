@@ -8,11 +8,11 @@
   /**
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
-   * @param {function(*)=} callback The callback function.
+   * @param {function(*)=} opt_callback The callback function.
    */
-  fn.use = function(ids, callback) {
+  fn.use = function(ids, opt_callback) {
     fn.preload(function() {
-      fn.load(ids, callback);
+      fn.load(ids, opt_callback);
     });
   };
 

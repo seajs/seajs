@@ -7,46 +7,46 @@
 
   /**
    * Defines a module.
-   * @param {string=} id The module id.
-   * @param {Array.<string>|string=} deps The module dependencies.
+   * @param {string=} opt_id The module id.
+   * @param {Array.<string>|string=} opt_deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  fn.define = function(opt_id, opt_deps, factory) {
     var argsLen = arguments.length;
 
     // define(factory)
     if (argsLen === 1) {
-      factory = id;
-      id = undefined;
+      factory = opt_id;
+      opt_id = undefined;
     }
     // define(id || deps, factory)
     else if (argsLen === 2) {
-      factory = deps;
-      deps = undefined;
+      factory = opt_deps;
+      opt_deps = undefined;
 
       // define(deps, factory)
-      if (util.isArray(id)) {
-        deps = id;
-        id = undefined;
+      if (util.isArray(opt_id)) {
+        opt_deps = opt_id;
+        opt_id = undefined;
       }
     }
 
     // parse deps
-    if (!util.isArray(deps) && util.isFunction(factory)) {
-      deps = parseDependencies(factory.toString());
+    if (!util.isArray(opt_deps) && util.isFunction(factory)) {
+      opt_deps = parseDependencies(factory.toString());
     }
 
     // parse alias in id
-    if (id) {
-      id = util.parseAlias(id);
+    if (opt_id) {
+      opt_id = util.parseAlias(opt_id);
     }
 
-    var mod = new fn.Module(id, deps, factory);
+    var mod = new fn.Module(opt_id, opt_deps, factory);
     var url;
 
     // id is absolute.
-    if (id && util.isAbsolutePath(id)) {
-      url = id;
+    if (opt_id && util.isAbsolutePath(opt_id)) {
+      url = opt_id;
     }
     else if (document.attachEvent && !global['opera']) {
       // For IE6-9 browsers, the script onload event may not fire right
@@ -72,7 +72,7 @@
     }
 
     if (url) {
-      util.memoize(id, url, mod);
+      util.memoize(opt_id, url, mod);
     }
     else {
       // Saves information for "real" work in the onload event.
