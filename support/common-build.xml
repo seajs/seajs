@@ -16,7 +16,7 @@
   <!-- 用 gslint 检查 -->
   <target name="gjslint">
     <exec executable="/usr/local/bin/gjslint" os="Mac OS X" failonerror="true">
-      <arg line="--strict *.js"/>
+      <arg line="*.js"/>
     </exec>
   </target>
 
