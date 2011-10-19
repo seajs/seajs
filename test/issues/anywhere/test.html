@@ -18,12 +18,15 @@
     }
   });
 
+  define('x', function() {
+    return { name: 'x' };
+  });
+
   define('biz/d', function(require, exports) {
     exports.name = 'd';
   });
 
   seajs.use('./main');
-
 
   function printResults(txt, style) {
     var d = document.createElement('div');

@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview The utils for the framework.
  */
@@ -179,17 +178,17 @@
     var ret;
 
     // absolute id
-    if (isAbsolutePath(id)) {
+    if (isAbsolute(id)) {
       ret = id;
     }
     // relative id
-    else if (id.indexOf('./') === 0 || id.indexOf('../') === 0) {
+    else if (isRelative(id)) {
       // Converts './a' to 'a', to avoid unnecessary loop in realpath.
       id = id.replace(/^\.\//, '');
       ret = dirname(refUrl) + id;
     }
     // root id
-    else if (id.charAt(0) === '/') {
+    else if (isRoot(id)) {
       ret = getHost(refUrl) + id;
     }
     // top-level id
@@ -236,7 +235,7 @@
   function memoize(id, url, mod) {
     var uri;
 
-    // define('id', [], fn)
+    // define(id, ...)
     if (id) {
       uri = id2Uri(id, url, true);
     }
@@ -328,11 +327,24 @@
   }
 
 
-  /**
-   * Determines whether the id is absolute.
-   */
-  function isAbsolutePath(id) {
+  function isAbsolute(id) {
     return id.indexOf('://') !== -1 || id.indexOf('//') === 0;
+  }
+
+
+  function isRelative(id) {
+    return id.indexOf('./') === 0 || id.indexOf('../') === 0;
+  }
+
+
+  function isRoot(id) {
+    return id.charAt(0) === '/' && id.charAt(1) !== '/';
+  }
+
+
+  function isTopLevel(id) {
+    var c = id.charAt(0);
+    return id.indexOf('://') === -1 && c !== '.' && c !== '/';
   }
 
 
@@ -346,7 +358,8 @@
   util.setReadyState = setReadyState;
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
-  util.isAbsolutePath = isAbsolutePath;
+  util.isAbsolute = isAbsolute;
+  util.isTopLevel = isTopLevel;
 
   if (config.debug) {
     util.realpath = realpath;

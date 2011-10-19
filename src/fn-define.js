@@ -42,11 +42,11 @@
     }
 
     var mod = new fn.Module(id, deps, factory);
-    var url;
+    var url, immediate;
 
-    // id is absolute.
-    if (id && util.isAbsolutePath(id)) {
-      url = id;
+    // id is absolute or top-level.
+    if (id && (util.isAbsolute(id) || util.isTopLevel(id))) {
+      immediate = true;
     }
     else if (document.attachEvent && !global['opera']) {
       // For IE6-9 browsers, the script onload event may not fire right
@@ -71,7 +71,7 @@
       // to use onload event to get the module uri.
     }
 
-    if (url) {
+    if (immediate || url) {
       util.memoize(id, url, mod);
     }
     else {
