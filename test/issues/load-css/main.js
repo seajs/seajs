@@ -1,8 +1,13 @@
+var MODULES_PATH = 'http://modules.seajs.com/';
+
+if (location.href.indexOf('/localhost/~lifesinger/') > 0) {
+  MODULES_PATH = 'http://localhost/~lifesinger/spm/modules/';
+}
 
 seajs.config({
-  timeout: 5000,
+  timeout: 10000,
   alias: {
-    'jquery': 'http://modules.seajs.com/jquery/1.6.4/jquery.js'
+    'jquery': MODULES_PATH + 'jquery/1.6.4/jquery.js'
   }
 });
 
