@@ -128,7 +128,7 @@ math.js        -- math lib
 
 <pre>
  $ cat __build/init.js
-   seajs.config({alias: {"jquery":"jquery/1.6.2/jquery"}});define("./init"...
+   seajs.config({alias: {"jquery":"jquery/1.6.4/jquery"}});define("./init"...
    define("./stdin",["jquery","./calculator"],function(a,b){...
    define("./calculator",["./stdout","./math"],function(a,b){...
    define("./stdout",["jquery"],function(a,b){...
@@ -171,7 +171,7 @@ math.js        -- math lib
    Building init.js
    ... process init.js
    ... process stdin.js
-   ... process ../../../../spm/modules/jquery/1.6.4/jquery.js
+   ... process jquery.js
    ... process calculator.js
    ... process stdout.js
    ... process math.js
