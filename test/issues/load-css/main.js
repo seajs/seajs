@@ -5,7 +5,10 @@ if (location.href.indexOf('/localhost/~lifesinger/') > 0) {
 }
 
 seajs.config({
+  base: MODULES_PATH,
+
   timeout: 10000,
+
   alias: {
     'jquery': MODULES_PATH + 'jquery/1.6.4/jquery.js'
   }

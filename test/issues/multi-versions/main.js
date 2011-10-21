@@ -21,5 +21,7 @@ define(function(require) {
 
   test.assert(require('jq163').fn.jquery === '1.6.3', 'jq163 is ok');
   test.assert(require('jq164').fn.jquery === '1.6.4', 'jq164 is ok');
-  test.assert(require('jquery').fn.jquery === '1.6.3', 'jquery is ok');
+  test.assert(require('jquery').fn.jquery === '1.6.4', 'jquery is ok');
+
+  test.done();
 });
