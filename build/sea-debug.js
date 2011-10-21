@@ -279,30 +279,29 @@ seajs._fn = {};
 
 
   /**
-   * Parses alias in the module id. Only parse the prefix and suffix.
+   * Parses alias in the module id. Only parse the first part.
    */
   function parseAlias(id) {
     var alias = config['alias'];
-    if (!alias) return id;
 
-    var parts = id.split('/');
-    var last = parts.length - 1;
-    var parsed = false;
-
-    parse(parts, 0);
-    if (!parsed && last) {
-      parse(parts, last);
+    // #xxx means xxx is parsed
+    var c = id.charAt(0);
+    if (c === '#') {
+      id = id.substring(1);
     }
+    // no need to parse relative id
+    else if (alias && c !== '.') {
+      var parts = id.split('/');
+      var first = parts[0];
 
-    function parse(parts, i) {
-      var part = parts[i];
-      if (alias && alias.hasOwnProperty(part)) {
-        parts[i] = alias[part];
-        parsed = true;
+      var has = alias.hasOwnProperty(first);
+      if (has) {
+        parts[0] = alias[first];
+        id = parts.join('/');
       }
     }
 
-    return parts.join('/');
+    return id;
   }
 
 
