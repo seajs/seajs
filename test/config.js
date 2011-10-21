@@ -49,6 +49,7 @@ define(function(require, exports) {
     ,'issues/preload'
     ,'issues/inline-module'
     ,'issues/anywhere'
+    ,'issues/multi-versions'
 
     ,'bootstrap/index'
   ];
