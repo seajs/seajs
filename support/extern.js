@@ -3,6 +3,3 @@ var seajs;
 
 
 var console;
-
-
-var define;
