@@ -16,8 +16,8 @@
 
       <path path="util-lang.js"/>
       <path path="util-error.js"/>
-      <path path="util-helper.js"/>
-      <path path="util-dom.js"/>
+      <path path="util-core.js"/>
+      <path path="util-fetch.js"/>
 
       <path path="fn-load.js"/>
       <path path="fn-module.js"/>

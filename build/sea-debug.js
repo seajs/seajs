@@ -203,7 +203,7 @@ seajs._fn = {};
 
 })(seajs._util, seajs._data);
 /**
- * @fileoverview The utils for the framework.
+ * @fileoverview Core utilities for the framework.
  */
 
 (function(util, data, global) {
@@ -573,7 +573,7 @@ seajs._fn = {};
 })(seajs._util, seajs._data, this);
 
 /**
- * @fileoverview DOM utils for fetching script etc.
+ * @fileoverview Utilities for fetching js ans css files.
  */
 
 (function(util, data) {
