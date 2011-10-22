@@ -32,7 +32,7 @@ define(function(require, exports) {
 
     ,'packages/math'
 
-    ,'unit/util-helper'
+    ,'unit/util-core'
 
     ,'issues/config-base'
     ,'issues/ie-cache'

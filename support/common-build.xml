@@ -72,8 +72,8 @@
       <fileset dir="${tmp.dir}" includes="*-pkg.js"/>
       <arg line="-jar"/>
       <arg path="${gcc.jar}"/>
-      <arg line="--compilation_level SIMPLE_OPTIMIZATIONS"/>
-      <!--<arg line="-compilation_level ADVANCED_OPTIMIZATIONS"/>-->
+      <!--<arg line="-compilation_level SIMPLE_OPTIMIZATIONS"/>-->
+      <arg line="--compilation_level ADVANCED_OPTIMIZATIONS"/>
 
       <!-- http://code.google.com/p/closure-compiler/wiki/Warnings -->
       <arg line="--warning_level VERBOSE"/>
