@@ -8,6 +8,6 @@ SIZE_SRC=$(cat build/$SRC | wc -c)
 SIZE_MIN=$(cat build/$MIN | wc -c)
 SIZE_GZIP=$(gzip -nfc --best build/$MIN | wc -c)
 
-echo "$SIZE_SRC bytes $SRC"
-echo "$SIZE_MIN bytes $MIN"
-echo "$SIZE_GZIP bytes $MIN gzipped"
+echo "    `echo "scale=3;$SIZE_SRC/1024" | bc -l` bytes $SRC"
+echo "     `echo "scale=3;$SIZE_MIN/1024" | bc -l` bytes $MIN"
+echo "     `echo "scale=3;$SIZE_GZIP/1024" | bc -l` bytes $MIN gzipped"
