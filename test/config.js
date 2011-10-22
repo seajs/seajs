@@ -50,6 +50,7 @@ define(function(require, exports) {
     ,'issues/inline-module'
     ,'issues/anywhere'
     ,'issues/multi-versions'
+    ,'issues/data-main'
 
     ,'bootstrap/index'
   ];

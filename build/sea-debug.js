@@ -1203,7 +1203,14 @@ seajs._fn = {};
   // When script is inline code, src is empty.
 
 
-  config.main = loaderScript.getAttribute('data-main') || '';
+  var mainAttr = loaderScript.getAttribute('data-main');
+  if (mainAttr) {
+    // data-main="abc" is equivalent to data-main="./abc"
+    if (util.isTopLevel(mainAttr)) {
+      mainAttr = './' + mainAttr;
+    }
+    config.main = mainAttr;
+  }
 
 
   // The max time to load a script file.
