@@ -1161,7 +1161,7 @@ seajs._fn = {};
         message: 'found invalid setter: exports = {...}',
         from: 'require',
         uri: uri,
-        type: 'error'
+        type: 'warn'
       });
     }
   }
