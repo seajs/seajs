@@ -3,7 +3,7 @@
  * @fileoverview Prepare for plugins environment.
  */
 
-(function(util, data, fn, global) {
+(function(util, data, global) {
 
   var config = data.config;
   var loaderDir = util.loaderDir;
@@ -22,8 +22,8 @@
   if (~global.location.search.indexOf('seajs-debug') ||
       ~document.cookie.indexOf('seajs=1')) {
     config.debug = true;
-    config.preload.push(loaderDir + 'plugin-map');
+    config.preload.push('plugin-map');
   }
 
 
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._data, this);

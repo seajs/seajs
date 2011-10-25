@@ -11,7 +11,7 @@
     document.getElementById('out').appendChild(d);
   }
 </script>
-<script src="../../../build/sea.js" data-main="main"></script>
+<script src="../../../build/sea-debug.js"></script>
 </head>
 <body>
 
@@ -20,6 +20,18 @@
 </p>
 
 <div id="out"></div>
+
+<script>
+
+  seajs.config({
+    preload: ['plugin-coffee']
+  });
+
+  seajs.use('./main');
+
+</script>
+
+
 
 </body>
 </html>

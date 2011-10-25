@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Core utilities for the framework.
  */
@@ -327,7 +328,7 @@
 
   function isTopLevel(id) {
     var c = id.charAt(0);
-    return ~id.indexOf('://') && c !== '.' && c !== '/';
+    return id.indexOf('://') === -1 && c !== '.' && c !== '/';
   }
 
 
