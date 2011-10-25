@@ -26,6 +26,7 @@
 
       <path path="fn-config.js"/>
       <path path="fn-bootstrap.js"/>
+      <path path="fn-plugins.js"/>
 
       <path path="sea-api.js"/>
 
@@ -39,7 +40,7 @@
     </delete>
 
     <copy todir="${root.dir}/build/">
-      <fileset dir="${module.dir}" includes="plugin-*.js"/>
+      <fileset dir="${module.dir}/plugins" includes="plugin-*.js;xdr.php"/>
     </copy>
   </target>
 
