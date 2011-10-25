@@ -83,19 +83,19 @@
 
     // 1. #xxx means xxx is parsed.
     // 2. No need to parse relative id.
-    if (!alias || c === '#' || c === '.') {
-      return (c === '#' ? '' : '#') + id;
+    if (alias && c !== '#' && c !== '.') {
+
+      var parts = id.split('/');
+      var first = parts[0];
+
+      var has = alias.hasOwnProperty(first);
+      if (has) {
+        parts[0] = alias[first];
+        id = parts.join('/');
+      }
     }
 
-    var parts = id.split('/');
-    var first = parts[0];
-
-    var has = alias.hasOwnProperty(first);
-    if (has) {
-      parts[0] = alias[first];
-      id = parts.join('/');
-    }
-    return id;
+    return (c === '#' ? '' : '#') + id;
   }
 
 
