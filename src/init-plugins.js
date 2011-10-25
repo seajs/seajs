@@ -6,15 +6,19 @@
 (function(data, util, fn, global) {
 
   var config = data.config;
-  var loaderDir = util.loaderDir;
 
 
   // register plugin names
+  var alias = {};
+  var loaderDir = util.loaderDir;
+
+  util.forEach(['map', 'coffee', 'less'], function(name) {
+    name = 'plugin-' + name;
+    alias[name] = loaderDir + name;
+  });
+
   fn.config({
-    alias: {
-      'plugin-map': loaderDir + 'plugin-map',
-      'plugin-coffee': loaderDir + 'plugin-coffee'
-    }
+    alias: alias
   });
 
 

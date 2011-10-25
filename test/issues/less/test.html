@@ -16,8 +16,11 @@
 <body>
 
 <p>
-  <a href="https://github.com/seajs/seajs/issues/104">https://github.com/seajs/seajs/issues/104</a>
+  <a href="https://github.com/seajs/seajs/issues/106">https://github.com/seajs/seajs/issues/106</a>
 </p>
+
+<p class="red">This paragraph should be red.</p>
+<p class="blue">This paragraph should be blue.</p>
 
 <div id="out"></div>
 
@@ -34,18 +37,17 @@
     base: MODULES_PATH,
 
     alias: {
-      'coffee':  'coffee/1.1.2/coffee-script'
+      'less':  'less/1.1.4/less-debug',
+      'jquery': 'jquery/1.6.4/jquery'
     },
 
-    preload: ['plugin-coffee']
+    preload: ['plugin-less']
   });
-  
+
 
   seajs.use('./main');
 
 </script>
-
-
 
 </body>
 </html>
