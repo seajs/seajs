@@ -3,7 +3,7 @@
  * @fileoverview Loads a module and gets it ready to be require()d.
  */
 
-(function(util, data, fn, global) {
+(function(util, data, fn) {
 
   /**
    * Modules that are being downloaded.
@@ -40,26 +40,24 @@
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
    * @param {function(*)=} callback The callback function.
-   * @param {string=} refUrl The referenced uri for relative id.
+   * @param {Object=} context The context of current executing environment.
    */
-  fn.load = function(ids, callback, refUrl) {
+  fn.load = function(ids, callback, context) {
     if (util.isString(ids)) {
       ids = [ids];
     }
-    var uris = util.ids2Uris(ids, refUrl);
+    var uris = fn.Require.prototype._batchResolve(ids, context);
 
     provide(uris, function() {
       fn.preload(function() {
-        var require = fn.createRequire({
-          uri: refUrl
-        });
+        var require = fn.createRequire(context);
 
         var args = util.map(uris, function(uri) {
           return require(data.memoizedMods[uri]);
         });
 
         if (callback) {
-          callback.apply(global, args);
+          callback.apply(null, args);
         }
       });
     });
@@ -162,4 +160,4 @@
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._data, seajs._fn);

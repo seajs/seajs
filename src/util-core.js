@@ -2,7 +2,7 @@
  * @fileoverview Core utilities for the framework.
  */
 
-(function(util, data, global) {
+(function(util, data, fn, global) {
 
   var config = data.config;
 
@@ -79,24 +79,22 @@
    */
   function parseAlias(id) {
     var alias = config['alias'];
-
-    // #xxx means xxx is parsed
     var c = id.charAt(0);
-    if (c === '#') {
-      id = id.substring(1);
-    }
-    // no need to parse relative id
-    else if (alias && c !== '.') {
-      var parts = id.split('/');
-      var first = parts[0];
 
-      var has = alias.hasOwnProperty(first);
-      if (has) {
-        parts[0] = alias[first];
-        id = parts.join('/');
-      }
+    // 1. #xxx means xxx is parsed.
+    // 2. No need to parse relative id.
+    if (!alias || c === '#' || c === '.') {
+      return (c === '#' ? '' : '#') + id;
     }
 
+    var parts = id.split('/');
+    var first = parts[0];
+
+    var has = alias.hasOwnProperty(first);
+    if (has) {
+      parts[0] = alias[first];
+      id = parts.join('/');
+    }
     return id;
   }
 
@@ -166,13 +164,9 @@
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
-   * @param {boolean=} aliasParsed When set to true, alias has been parsed.
    */
-  function id2Uri(id, refUrl, aliasParsed) {
-    if (!aliasParsed) {
-      id = parseAlias(id);
-    }
-
+  function id2Uri(id, refUrl) {
+    id = parseAlias(id).substring(1); // strip #
     refUrl = refUrl || pageUrl;
     var ret;
 
@@ -214,18 +208,6 @@
   }
 
 
-  /**
-   * Converts ids to uris.
-   * @param {Array.<string>} ids The module ids.
-   * @param {string=} refUri The referenced uri for relative id.
-   */
-  function ids2Uris(ids, refUri) {
-    return util.map(ids, function(id) {
-      return id2Uri(id, refUri);
-    });
-  }
-
-
   var memoizedMods = data.memoizedMods;
 
   /**
@@ -236,14 +218,16 @@
 
     // define(id, ...)
     if (id) {
-      uri = id2Uri(id, url, true);
+      uri = id2Uri(id, url);
     }
     else {
       uri = url;
     }
 
     mod.id = uri; // change id to absolute path.
-    mod.dependencies = ids2Uris(mod.dependencies, uri);
+    mod.dependencies = fn.Require.prototype._batchResolve(mod.dependencies, {
+      uri: uri
+    });
     memoizedMods[uri] = mod;
 
     // guest module in package
@@ -351,7 +335,6 @@
 
   util.parseAlias = parseAlias;
   util.id2Uri = id2Uri;
-  util.ids2Uris = ids2Uris;
 
   util.memoize = memoize;
   util.setReadyState = setReadyState;
@@ -366,4 +349,4 @@
     util.getHost = getHost;
   }
 
-})(seajs._util, seajs._data, this);
+})(seajs._util, seajs._data, seajs._fn, this);
