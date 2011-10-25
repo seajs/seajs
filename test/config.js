@@ -53,6 +53,7 @@ define(function(require, exports) {
     ,'issues/data-main'
     ,'issues/require-extend'
     ,'issues/coffee'
+    ,'issues/less'
 
     ,'bootstrap/index'
   ];
