@@ -1151,9 +1151,11 @@ seajs._fn = {};
 
     for (var p in proto) {
       if (proto.hasOwnProperty(p) && p.charAt(0) !== '_') {
-        require[p] = function() {
-          return proto[p].apply(that, slice.call(arguments));
-        }
+        (function(name) {
+          require[name] = function() {
+            return proto[name].apply(that, slice.call(arguments));
+          };
+        })(p);
       }
     }
 
