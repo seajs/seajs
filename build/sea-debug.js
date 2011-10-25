@@ -202,6 +202,7 @@ seajs._fn = {};
   }
 
 })(seajs._util, seajs._data);
+
 /**
  * @fileoverview Core utilities for the framework.
  */
@@ -360,7 +361,7 @@ seajs._fn = {};
       normalizePathname(loc.pathname);
 
   // local file in IE: C:\path\to\xx.js
-  if (pageUrl.indexOf('\\') !== -1) {
+  if (~pageUrl.indexOf('\\')) {
     pageUrl = pageUrl.replace(/\\/g, '/');
   }
 
@@ -482,7 +483,7 @@ seajs._fn = {};
 
     var deps = mod.dependencies || [];
     if (deps.length) {
-      if (util.indexOf(deps, uri) !== -1) {
+      if (~util.indexOf(deps, uri)) {
         return true;
       } else {
         for (var i = 0; i < deps.length; i++) {
@@ -515,7 +516,7 @@ seajs._fn = {};
 
 
   function isAbsolute(id) {
-    return id.indexOf('://') !== -1 || id.indexOf('//') === 0;
+    return ~id.indexOf('://') || id.indexOf('//') === 0;
   }
 
 
@@ -562,7 +563,7 @@ seajs._fn = {};
 (function(util, data) {
 
   var head = document.getElementsByTagName('head')[0];
-  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') !== -1;
+  var isWebKit = ~navigator.userAgent.indexOf('AppleWebKit');
 
 
   util.getAsset = function(url, callback, charset) {
@@ -1196,7 +1197,7 @@ seajs._fn = {};
 
 
   function checkPotentialErrors(factory, uri) {
-    if (factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
+    if (~factory.toString().search(/\sexports\s*=\s*[^=]/)) {
       util.error({
         message: 'found invalid setter: exports = {...}',
         from: 'require',
@@ -1216,7 +1217,7 @@ seajs._fn = {};
  * @fileoverview The configuration.
  */
 
-(function(util, data, fn, global) {
+(function(util, data, fn) {
 
   var config = data.config;
   var noCacheTimeStamp = 'seajs-ts=' + util.now();
@@ -1231,9 +1232,11 @@ seajs._fn = {};
     loaderScript = scripts[scripts.length - 1];
   }
 
-  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript), loaderDir;
+  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript);
   if (loaderSrc) {
-    var base = loaderDir = util.dirname(loaderSrc);
+    var base = util.dirname(loaderSrc);
+    util.loaderDir = base;
+
     // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
     // to "http://test.com/libs/"
     var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
@@ -1257,15 +1260,6 @@ seajs._fn = {};
 
   // The max time to load a script file.
   config.timeout = 20000;
-
-
-  // seajs-debug
-  if (loaderDir &&
-      (global.location.search.indexOf('seajs-debug') !== -1 ||
-          document.cookie.indexOf('seajs=1') !== -1)) {
-    config.debug = true;
-    config.preload.push(loaderDir + 'plugin-map');
-  }
 
 
   /**
@@ -1355,7 +1349,7 @@ seajs._fn = {};
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._data, seajs._fn);
 
 /**
  * @fileoverview The bootstrap and entrances.
@@ -1441,3 +1435,32 @@ seajs._fn = {};
   }
 
 })(seajs, seajs._data, seajs._fn, this);
+
+/**
+ * @fileoverview Prepare for plugins environment.
+ */
+
+(function(util, data, global) {
+
+  var config = data.config;
+  var loaderDir = util.loaderDir;
+
+
+  // register plugin names
+  seajs.config({
+    alias: {
+      'plugin-map': loaderDir + 'plugin-map',
+      'plugin-coffee': loaderDir + 'plugin-coffee'
+    }
+  });
+
+
+  // handle seajs-debug
+  if (~global.location.search.indexOf('seajs-debug') ||
+      ~document.cookie.indexOf('seajs=1')) {
+    config.debug = true;
+    config.preload.push('plugin-map');
+  }
+
+
+})(seajs._util, seajs._data, this);
