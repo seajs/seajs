@@ -19,10 +19,10 @@
       <path path="util-core.js"/>
       <path path="util-fetch.js"/>
 
-      <path path="fn-load.js"/>
       <path path="fn-module.js"/>
       <path path="fn-define.js"/>
       <path path="fn-require.js"/>
+      <path path="fn-load.js"/>
       <path path="fn-config.js"/>
       <path path="fn-bootstrap.js"/>
 
