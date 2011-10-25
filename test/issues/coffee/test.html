@@ -29,9 +29,12 @@
   }
 
   seajs.config({
+    base: MODULES_PATH,
+
     alias: {
-      'coffee': MODULES_PATH + 'coffee/1.1.2/coffee-script'
+      'coffee':  'coffee/1.1.2/coffee-script'
     },
+    
     preload: ['plugin-coffee']
   });
 

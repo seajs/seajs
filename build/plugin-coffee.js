@@ -6,7 +6,6 @@
 define(function(require) {
 
   var CoffeeScript = require('coffee');
-  debugger
   var RP = require.constructor.prototype;
 
 
