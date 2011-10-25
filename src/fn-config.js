@@ -3,7 +3,7 @@
  * @fileoverview The configuration.
  */
 
-(function(util, data, fn, global) {
+(function(util, data, fn) {
 
   var config = data.config;
   var noCacheTimeStamp = 'seajs-ts=' + util.now();
@@ -18,9 +18,11 @@
     loaderScript = scripts[scripts.length - 1];
   }
 
-  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript), loaderDir;
+  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript);
   if (loaderSrc) {
-    var base = loaderDir = util.dirname(loaderSrc);
+    var base = util.dirname(loaderSrc);
+    util.loaderDir = base;
+
     // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
     // to "http://test.com/libs/"
     var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
@@ -44,15 +46,6 @@
 
   // The max time to load a script file.
   config.timeout = 20000;
-
-
-  // seajs-debug
-  if (loaderDir &&
-      (global.location.search.indexOf('seajs-debug') !== -1 ||
-          document.cookie.indexOf('seajs=1') !== -1)) {
-    config.debug = true;
-    config.preload.push(loaderDir + 'plugin-map');
-  }
 
 
   /**
@@ -142,4 +135,4 @@
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._data, seajs._fn);

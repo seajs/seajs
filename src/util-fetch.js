@@ -6,7 +6,7 @@
 (function(util, data) {
 
   var head = document.getElementsByTagName('head')[0];
-  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') !== -1;
+  var isWebKit = ~navigator.userAgent.indexOf('AppleWebKit');
 
 
   util.getAsset = function(url, callback, charset) {

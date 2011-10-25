@@ -155,7 +155,7 @@
 
 
   function checkPotentialErrors(factory, uri) {
-    if (factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
+    if (~factory.toString().search(/\sexports\s*=\s*[^=]/)) {
       util.error({
         message: 'found invalid setter: exports = {...}',
         from: 'require',

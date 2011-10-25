@@ -156,7 +156,7 @@
       normalizePathname(loc.pathname);
 
   // local file in IE: C:\path\to\xx.js
-  if (pageUrl.indexOf('\\') !== -1) {
+  if (~pageUrl.indexOf('\\')) {
     pageUrl = pageUrl.replace(/\\/g, '/');
   }
 
@@ -278,7 +278,7 @@
 
     var deps = mod.dependencies || [];
     if (deps.length) {
-      if (util.indexOf(deps, uri) !== -1) {
+      if (~util.indexOf(deps, uri)) {
         return true;
       } else {
         for (var i = 0; i < deps.length; i++) {
@@ -311,7 +311,7 @@
 
 
   function isAbsolute(id) {
-    return id.indexOf('://') !== -1 || id.indexOf('//') === 0;
+    return ~id.indexOf('://') || id.indexOf('//') === 0;
   }
 
 
@@ -327,7 +327,7 @@
 
   function isTopLevel(id) {
     var c = id.charAt(0);
-    return id.indexOf('://') === -1 && c !== '.' && c !== '/';
+    return ~id.indexOf('://') && c !== '.' && c !== '/';
   }
 
 
