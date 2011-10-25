@@ -23,12 +23,11 @@
       <path path="fn-module.js"/>
       <path path="fn-define.js"/>
       <path path="fn-require.js"/>
-
       <path path="fn-config.js"/>
       <path path="fn-bootstrap.js"/>
-      <path path="fn-plugins.js"/>
 
       <path path="sea-api.js"/>
+      <path path="init-plugins.js"/>
 
     </concat>
   </target>
@@ -39,8 +38,8 @@
       <fileset dir="${module.dir}" includes="${module.files}"/>
     </delete>
 
-    <copy todir="${root.dir}/build/">
-      <fileset dir="${module.dir}/plugins" includes="plugin-*.js;xdr.php"/>
+    <copy todir="${root.dir}/build/" overwrite="true">
+      <fileset dir="${module.dir}/plugins" includes="plugin-*.js"/>
     </copy>
   </target>
 
