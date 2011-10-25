@@ -51,6 +51,7 @@ define(function(require, exports) {
     ,'issues/anywhere'
     ,'issues/multi-versions'
     ,'issues/data-main'
+    ,'issues/require-extend'
 
     ,'bootstrap/index'
   ];
