@@ -6,6 +6,7 @@
 (function(util, data, fn) {
 
   var slice = Array.prototype.slice;
+  var RP = Require.prototype;
 
 
   /**
@@ -23,7 +24,7 @@
     }
     // NOTICE: id maybe undefined in 404 etc cases.
     else if (util.isString(id)) {
-      uri = Require.prototype.resolve(id, context);
+      uri = RP.resolve(id, context);
       mod = data.memoizedMods[uri];
     }
 
@@ -66,14 +67,14 @@
    * @param {string} id The module id to be resolved.
    * @param {Object=} context The context of require function.
    */
-  Require.prototype.resolve = function(id, context) {
+  RP.resolve = function(id, context) {
     return util.id2Uri(id, (context || this.context).uri);
   };
 
 
-  Require.prototype._batchResolve = function(ids, context) {
+  RP._batchResolve = function(ids, context) {
     return util.map(ids, function(id) {
-      return Require.prototype.resolve(id, context || {});
+      return RP.resolve(id, context || {});
     });
   };
 
@@ -84,9 +85,15 @@
    * @param {Array.<string>} ids The specified modules.
    * @param {function(*)=} callback The optional callback function.
    */
-  Require.prototype.async = function(ids, callback) {
+  RP.async = function(ids, callback) {
     fn.load(ids, callback, this.context);
   };
+
+
+  /**
+   * Plugin can override this method to add custom loading.
+   */
+  RP.load = util.getAsset;
 
 
   /**
@@ -106,13 +113,12 @@
     }
 
     require.constructor = Require;
-    var proto = Require.prototype;
 
-    for (var p in proto) {
-      if (proto.hasOwnProperty(p) && p.charAt(0) !== '_') {
+    for (var p in RP) {
+      if (RP.hasOwnProperty(p) && p.charAt(0) !== '_') {
         (function(name) {
           require[name] = function() {
-            return proto[name].apply(that, slice.call(arguments));
+            return RP[name].apply(that, slice.call(arguments));
           };
         })(p);
       }

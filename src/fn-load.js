@@ -12,8 +12,9 @@
   var fetchingMods = {};
 
   var memoizedMods = data.memoizedMods;
-
   var config = data.config;
+  var RP = fn.Require.prototype;
+
 
 
   /**
@@ -46,7 +47,7 @@
     if (util.isString(ids)) {
       ids = [ids];
     }
-    var uris = fn.Require.prototype._batchResolve(ids, context);
+    var uris = RP._batchResolve(ids, context);
 
     provide(uris, function() {
       fn.preload(function() {
@@ -131,7 +132,7 @@
       // See fn-define.js: "uri = data.pendingModIE"
       data.pendingModIE = uri;
 
-      fetchingMods[uri] = util.getAsset(
+      fetchingMods[uri] = RP.load(
           uri,
           cb,
           data.config.charset

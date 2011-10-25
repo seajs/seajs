@@ -5,19 +5,42 @@
 
 define(function(require) {
 
-  resolveCoffeeId(require.constructor);
+  var CoffeeScript = require('coffee');
+  debugger
+  var RP = require.constructor.prototype;
+
+
+  // extend loader
+  extendCoffeeResolve();
+  extendCoffeeLoad();
+
+
+  function extendCoffeeResolve() {
+    var _resolve = RP.resolve;
+
+    RP.resolve = function(id, context) {
+      if (isCoffee(id)) {
+        id += '#';
+      }
+      return _resolve.call(this, id, context);
+    };
+  }
+
+
+  function extendCoffeeLoad() {
+    var _load = RP.load;
+
+    RP.load = function(url, callback, charset) {
+      if (isCoffee(url)) {
+        return CoffeeScript.load(url, callback);
+      }
+      return _load(url, callback, charset);
+    };
+  }
+
+
+  function isCoffee(filepath) {
+    return /\.coffee(?:$|\?)/.test(filepath);
+  }
 
 });
-
-
-function resolveCoffeeId(Require) {
-  var _resolve = Require.prototype.resolve;
-
-  Require.prototype.resolve = function(id, context) {
-    if (/\.coffee$/.test(id)) {
-      id += '#';
-    }
-
-    return _resolve.call(this, id, context);
-  };
-}
