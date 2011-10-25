@@ -29,9 +29,9 @@ define(function(require) {
           ,'router': 'router.js?t=20110525'
         }
       });
-  test.assert(util.parseAlias('jquery') === 'jquery/1.6.1/jquery-debug', 'parseAlias');
-  test.assert(util.parseAlias('app') === 'app/1.2/app', 'parseAlias');
-  test.assert(util.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias');
+  test.assert(util.parseAlias('jquery') === '#jquery/1.6.1/jquery-debug', 'parseAlias');
+  test.assert(util.parseAlias('app') === '#app/1.2/app', 'parseAlias');
+  test.assert(util.parseAlias('http://test.com/router') === '#http://test.com/router', 'parseAlias');
 
   test.assert(util.getHost('http://test.com/path/page.html?t=2011') === 'http://test.com', 'getHost');
   test.assert(util.getHost('https://test.com:8080/path/page.html?t=2011') === 'https://test.com:8080', 'getHost');

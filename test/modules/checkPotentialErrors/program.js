@@ -4,10 +4,10 @@ define(function(require) {
 
   try {
     require('./e');
-    test.print('[FAIL] ' + 'should throw error.', 'fail');
+    test.print('[PASS] ' + 'should not throw error.', 'pass');
   }
   catch(x) {
-    test.print('[PASS] ' + 'should throw error.', 'pass');
+    test.print('[FAIL] ' + 'should not throw error.', 'fail');
   }
 
   test.done();
