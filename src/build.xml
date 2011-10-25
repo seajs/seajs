@@ -26,8 +26,8 @@
       <path path="fn-config.js"/>
       <path path="fn-bootstrap.js"/>
 
-      <path path="sea-api.js"/>
       <path path="init-plugins.js"/>
+      <path path="sea-api.js"/>
 
     </concat>
   </target>
