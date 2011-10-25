@@ -3,14 +3,14 @@
  * @fileoverview Prepare for plugins environment.
  */
 
-(function(util, data, global) {
+(function(data, util, fn, global) {
 
   var config = data.config;
   var loaderDir = util.loaderDir;
 
 
   // register plugin names
-  seajs.config({
+  fn.config({
     alias: {
       'plugin-map': loaderDir + 'plugin-map',
       'plugin-coffee': loaderDir + 'plugin-coffee'
@@ -26,4 +26,4 @@
   }
 
 
-})(seajs._util, seajs._data, this);
+})(seajs._data, seajs._util, seajs._fn, this);
