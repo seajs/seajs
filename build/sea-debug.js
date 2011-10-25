@@ -206,7 +206,7 @@ seajs._fn = {};
  * @fileoverview Core utilities for the framework.
  */
 
-(function(util, data, global) {
+(function(util, data, fn, global) {
 
   var config = data.config;
 
@@ -283,14 +283,12 @@ seajs._fn = {};
    */
   function parseAlias(id) {
     var alias = config['alias'];
-
-    // #xxx means xxx is parsed
     var c = id.charAt(0);
-    if (c === '#') {
-      id = id.substring(1);
-    }
-    // no need to parse relative id
-    else if (alias && c !== '.') {
+
+    // 1. #xxx means xxx is parsed.
+    // 2. No need to parse relative id.
+    if (alias && c !== '#' && c !== '.') {
+
       var parts = id.split('/');
       var first = parts[0];
 
@@ -301,7 +299,7 @@ seajs._fn = {};
       }
     }
 
-    return id;
+    return (c === '#' ? '' : '#') + id;
   }
 
 
@@ -370,13 +368,9 @@ seajs._fn = {};
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
-   * @param {boolean=} aliasParsed When set to true, alias has been parsed.
    */
-  function id2Uri(id, refUrl, aliasParsed) {
-    if (!aliasParsed) {
-      id = parseAlias(id);
-    }
-
+  function id2Uri(id, refUrl) {
+    id = parseAlias(id).substring(1); // strip #
     refUrl = refUrl || pageUrl;
     var ret;
 
@@ -418,18 +412,6 @@ seajs._fn = {};
   }
 
 
-  /**
-   * Converts ids to uris.
-   * @param {Array.<string>} ids The module ids.
-   * @param {string=} refUri The referenced uri for relative id.
-   */
-  function ids2Uris(ids, refUri) {
-    return util.map(ids, function(id) {
-      return id2Uri(id, refUri);
-    });
-  }
-
-
   var memoizedMods = data.memoizedMods;
 
   /**
@@ -440,14 +422,16 @@ seajs._fn = {};
 
     // define(id, ...)
     if (id) {
-      uri = id2Uri(id, url, true);
+      uri = id2Uri(id, url);
     }
     else {
       uri = url;
     }
 
     mod.id = uri; // change id to absolute path.
-    mod.dependencies = ids2Uris(mod.dependencies, uri);
+    mod.dependencies = fn.Require.prototype._batchResolve(mod.dependencies, {
+      uri: uri
+    });
     memoizedMods[uri] = mod;
 
     // guest module in package
@@ -555,7 +539,6 @@ seajs._fn = {};
 
   util.parseAlias = parseAlias;
   util.id2Uri = id2Uri;
-  util.ids2Uris = ids2Uris;
 
   util.memoize = memoize;
   util.setReadyState = setReadyState;
@@ -570,7 +553,7 @@ seajs._fn = {};
     util.getHost = getHost;
   }
 
-})(seajs._util, seajs._data, this);
+})(seajs._util, seajs._data, seajs._fn, this);
 
 /**
  * @fileoverview Utilities for fetching js ans css files.
@@ -758,7 +741,7 @@ seajs._fn = {};
  * @fileoverview Loads a module and gets it ready to be require()d.
  */
 
-(function(util, data, fn, global) {
+(function(util, data, fn) {
 
   /**
    * Modules that are being downloaded.
@@ -795,26 +778,24 @@ seajs._fn = {};
    * Loads modules to the environment.
    * @param {Array.<string>} ids An array composed of module id.
    * @param {function(*)=} callback The callback function.
-   * @param {string=} refUrl The referenced uri for relative id.
+   * @param {Object=} context The context of current executing environment.
    */
-  fn.load = function(ids, callback, refUrl) {
+  fn.load = function(ids, callback, context) {
     if (util.isString(ids)) {
       ids = [ids];
     }
-    var uris = util.ids2Uris(ids, refUrl);
+    var uris = fn.Require.prototype._batchResolve(ids, context);
 
     provide(uris, function() {
       fn.preload(function() {
-        var require = fn.createRequire({
-          uri: refUrl
-        });
+        var require = fn.createRequire(context);
 
         var args = util.map(uris, function(uri) {
           return require(data.memoizedMods[uri]);
         });
 
         if (callback) {
-          callback.apply(global, args);
+          callback.apply(null, args);
         }
       });
     });
@@ -917,7 +898,7 @@ seajs._fn = {};
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._data, seajs._fn);
 
 /**
  * @fileoverview Module Constructor.
@@ -979,16 +960,19 @@ seajs._fn = {};
       deps = parseDependencies(factory.toString());
     }
 
+
+    var pureId, mod, immediate, url;
+
     // parse alias in id
     if (id) {
       id = util.parseAlias(id);
+      pureId = id.substring(1); // strip #
     }
 
-    var mod = new fn.Module(id, deps, factory);
-    var url, immediate;
+    mod = new fn.Module(id, deps, factory);
 
     // id is absolute or top-level.
-    if (id && (util.isAbsolute(id) || util.isTopLevel(id))) {
+    if (pureId && (util.isAbsolute(pureId) || util.isTopLevel(pureId))) {
       immediate = true;
     }
     else if (document.attachEvent && !global['opera']) {
@@ -1062,70 +1046,122 @@ seajs._fn = {};
 
 (function(util, data, fn) {
 
+  var slice = Array.prototype.slice;
+
+
   /**
-   * The factory of "require" function.
-   * @param {Object} sandbox The data related to "require" instance.
+   * the require constructor function
+   * @param {string} id The module id.
    */
-  function createRequire(sandbox) {
-    // sandbox: {
-    //   uri: '',
-    //   deps: [],
-    //   parent: sandbox
-    // }
+  function Require(id) {
+    var context = this.context;
+    var uri, mod;
 
-    function require(id) {
-      var uri, mod;
+    // require(mod) ** inner use ONLY.
+    if (util.isObject(id)) {
+      mod = id;
+      uri = mod.id;
+    }
+    // NOTICE: id maybe undefined in 404 etc cases.
+    else if (util.isString(id)) {
+      uri = Require.prototype.resolve(id, context);
+      mod = data.memoizedMods[uri];
+    }
 
-      // require(mod) ** inner use ONLY.
-      if (util.isObject(id)) {
-        mod = id;
-        uri = mod.id;
-      }
-      // NOTICE: id maybe undefined in 404 etc cases.
-      else if (util.isString(id)) {
-        uri = util.id2Uri(id, sandbox.uri);
-        mod = data.memoizedMods[uri];
-      }
+    // Just return null when:
+    //  1. the module file is 404.
+    //  2. the module file is not written with valid module format.
+    //  3. other error cases.
+    if (!mod) {
+      return null;
+    }
 
-      // Just return null when:
-      //  1. the module file is 404.
-      //  2. the module file is not written with valid module format.
-      //  3. other error cases.
-      if (!mod) {
-        return null;
-      }
-
-      // Checks cyclic dependencies.
-      if (isCyclic(sandbox, uri)) {
-        util.error({
-          message: 'found cyclic dependencies',
-          from: 'require',
-          uri: uri,
-          type: 'warn'
-        });
-
-        return mod.exports;
-      }
-
-      // Initializes module exports.
-      if (!mod.exports) {
-        initExports(mod, {
-          uri: uri,
-          parent: sandbox
-        });
-      }
+    // Checks cyclic dependencies.
+    if (isCyclic(context, uri)) {
+      util.error({
+        message: 'found cyclic dependencies',
+        from: 'require',
+        uri: uri,
+        type: 'warn'
+      });
 
       return mod.exports;
     }
 
-    require.async = function(ids, callback) {
-      fn.load(ids, callback, sandbox.uri);
-    };
+    // Initializes module exports.
+    if (!mod.exports) {
+      initExports(mod, {
+        uri: uri,
+        parent: context
+      });
+    }
+
+    return mod.exports;
+  }
+
+
+  /**
+   * Use the internal require() machinery to look up the location of a module,
+   * but rather than loading the module, just return the resolved filepath.
+   *
+   * @param {string} id The module id to be resolved.
+   * @param {Object=} context The context of require function.
+   */
+  Require.prototype.resolve = function(id, context) {
+    return util.id2Uri(id, (context || this.context).uri);
+  };
+
+
+  Require.prototype._batchResolve = function(ids, context) {
+    return util.map(ids, function(id) {
+      return Require.prototype.resolve(id, context || {});
+    });
+  };
+
+
+  /**
+   * Loads the specified modules asynchronously and execute the optional
+   * callback when complete.
+   * @param {Array.<string>} ids The specified modules.
+   * @param {function(*)=} callback The optional callback function.
+   */
+  Require.prototype.async = function(ids, callback) {
+    fn.load(ids, callback, this.context);
+  };
+
+
+  /**
+   * The factory of "require" function.
+   * @param {Object} context The data related to "require" instance.
+   */
+  function createRequire(context) {
+    // context: {
+    //   uri: '',
+    //   deps: [],
+    //   parent: context
+    // }
+    var that = { context: context || {} };
+
+    function require(id) {
+      return Require.call(that, id);
+    }
+
+    require.constructor = Require;
+    var proto = Require.prototype;
+
+    for (var p in proto) {
+      if (proto.hasOwnProperty(p) && p.charAt(0) !== '_') {
+        require[p] = function() {
+          return proto[p].apply(that, slice.call(arguments));
+        }
+      }
+    }
 
     return require;
   }
 
-  function initExports(mod, sandbox) {
+
+  function initExports(mod, context) {
     var ret;
     var factory = mod.factory;
 
@@ -1135,7 +1171,7 @@ seajs._fn = {};
 
     if (util.isFunction(factory)) {
       checkPotentialErrors(factory, mod.id);
-      ret = factory(createRequire(sandbox), mod.exports, mod);
+      ret = factory(createRequire(context), mod.exports, mod);
       if (ret !== undefined) {
         mod.exports = ret;
       }
@@ -1145,15 +1181,17 @@ seajs._fn = {};
     }
   }
 
-  function isCyclic(sandbox, uri) {
-    if (sandbox.uri === uri) {
+
+  function isCyclic(context, uri) {
+    if (context.uri === uri) {
       return true;
     }
-    if (sandbox.parent) {
-      return isCyclic(sandbox.parent, uri);
+    if (context.parent) {
+      return isCyclic(context.parent, uri);
     }
     return false;
   }
+
 
   function checkPotentialErrors(factory, uri) {
     if (factory.toString().search(/\sexports\s*=\s*[^=]/) !== -1) {
@@ -1166,6 +1204,8 @@ seajs._fn = {};
     }
   }
 
+
+  fn.Require = Require;
   fn.createRequire = createRequire;
 
 })(seajs._util, seajs._data, seajs._fn);
