@@ -36,16 +36,19 @@
       deps = parseDependencies(factory.toString());
     }
 
+
+    var pureId, mod, immediate, url;
+
     // parse alias in id
     if (id) {
       id = util.parseAlias(id);
+      pureId = id.substring(1); // strip #
     }
 
-    var mod = new fn.Module(id, deps, factory);
-    var url, immediate;
+    mod = new fn.Module(id, deps, factory);
 
     // id is absolute or top-level.
-    if (id && (util.isAbsolute(id) || util.isTopLevel(id))) {
+    if (pureId && (util.isAbsolute(pureId) || util.isTopLevel(pureId))) {
       immediate = true;
     }
     else if (document.attachEvent && !global['opera']) {
