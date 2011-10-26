@@ -57,6 +57,13 @@ body {
 
 #reporter h3 {
   font: bold 15px Arial;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+#reporter h3 a {
+  color: #333;
+  text-decoration: none;
 }
 
 .pass {

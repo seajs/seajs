@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<script src="config.js?20110808"></script>
+<script src="config.js?20111026"></script>
 <script>
   (function() {
 
@@ -14,19 +14,21 @@
     var currentTest, count;
     var tests = this['testCases'];
 
-    window['onload'] = function() {
+
+    window.onload = function() {
       container = document.getElementById('container');
       reporter = document.getElementById('reporter');
       summary = document.getElementById('summary');
+
       start = document.getElementById('start');
       start.setAttribute('autocomplete', 'off');
-
-      start['onclick'] = startRun;
+      start.onclick = startRun;
 
       if (location.search.indexOf('autorun') !== -1) {
         startRun();
       }
     };
+
 
     function startRun() {
       start.setAttribute('disabled', 'true');
@@ -34,30 +36,40 @@
       testNext();
     }
 
+
     window.testNext = function() {
       var test = tests[currentTest++];
+
       if (test) {
-        printHeader(test);
-        load(test);
+        var url = getUrl(test);
+
+        printHeader(test, url);
+        load(url);
         summary.innerHTML = currentTest + ' / ' + tests.length +
             ' Running ' + test + ' ... ';
-      } else {
+      }
+      else {
         printSummary();
         start.removeAttribute('disabled');
       }
     };
 
-    window['printResults'] = function(txt, style) {
+
+    window.printResults = function(txt, style) {
       var d = document.createElement('div');
       d.innerHTML = txt;
       d.className = style;
+
       reporter.appendChild(d);
       reporter.scrollTop = reporter.scrollHeight;
+
       if (style in count) count[style] += 1;
     };
 
-    function load(test) {
+
+    function getUrl(test) {
       var url = '';
+
       if (test.indexOf('issues/') === 0) {
         url = test + '/test.html';
       }
@@ -71,27 +83,32 @@
         url = 'sandbox.html?' + encodeURIComponent(test + '/program.js');
         url += '&t=' + new Date().getTime();
       }
-      createFrame().src = url;
+
+      return url;
     }
 
-    function createFrame() {
-      var testFrame = document.createElement('iframe');
-      container.appendChild(testFrame);
-      return testFrame;
+
+    function load(url) {
+      var frame = document.createElement('iframe');
+      container.appendChild(frame);
+      frame.src = url;
     }
 
-    function printHeader(test) {
+
+    function printHeader(test, url) {
       var h = document.createElement('h3');
-      h.appendChild(document.createTextNode(test));
+      h.innerHTML = '<a href="' + url + '">' + test + '</a>';
       reporter.appendChild(h);
     }
 
+
     function printSummary() {
       summary.innerHTML =
-          'Passed: <span class="pass">' + count.pass + '<' + '/span> ' +
-              'Failed: <span class="fail">' + count.fail + '<' + '/span> ' +
-              'Errors: <span class="error">' + count.error + '<' + '/span>';
+          'Passed: <span class="pass">' + count.pass + '</span> ' +
+          'Failed: <span class="fail">' + count.fail + '</span> ' +
+          'Errors: <span class="error">' + count.error + '</span>';
     }
+
 
     function reset() {
       reporter.innerHTML = '';
@@ -101,6 +118,7 @@
 
   })();
 </script>
+
 <div id="container">
   <div id="banner">
     <div id="logo">Test Suite for sea.js</div>
@@ -109,5 +127,6 @@
   <div id="reporter"></div>
   <button id="start">Start</button>
 </div>
+
 </body>
 </html>
