@@ -3,49 +3,24 @@
  * @fileoverview The LESS plugin.
  */
 
-define('plugin-less', function(require) {
+define('plugin-less', ['plugin-base', 'less'], function(require) {
 
+  var plugin = require('plugin-base');
   var less = require('less');
-  var RP = require.constructor.prototype;
 
 
-  // extend loader
-  extendLESSResolve();
-  extendLESSLoad();
+  plugin.add({
+    name: 'less',
 
+    ext: ['.less', '#less'],
 
-  function extendLESSResolve() {
-    var _resolve = RP.resolve;
-
-    RP.resolve = function(id, context) {
-      if (isLESS(id)) {
-        id += '#';
-      }
-      return _resolve.call(this, id, context);
-    };
-  }
-
-
-  function extendLESSLoad() {
-    var _load = RP.load;
-
-    RP.load = function(url, callback, charset) {
-
-      if (isLESS(url)) {
-        return less.Parser.importer(url, [], function(tree) {
-          createCSS(tree.toCSS(), url.replace(/[^\w]/g, '_'));
-          callback();
-        }, {});
-      }
-
-      return _load(url, callback, charset);
-    };
-  }
-
-
-  function isLESS(filepath) {
-    return /\.less(?:$|\?)/.test(filepath);
-  }
+    load: function(url, callback) {
+      return less.Parser.importer(url, [], function(tree) {
+        createCSS(tree.toCSS(), url.replace(/[^\w]/g, '_'));
+        callback();
+      }, {});
+    }
+  });
 
 
   function createCSS(cssText, id) {
