@@ -30,7 +30,8 @@ define('plugin-base', [], function(require, exports) {
 
         if (e !== s) {
           for (var name in meta) {
-            if (~meta[name].ext.join('|').indexOf(e)) {
+            if (meta.hasOwnProperty(name) &&
+                ~meta[name].ext.join('|').indexOf(e)) {
               // a#xxx -> a#xxx##
               if (e.charAt(0) === '#') {
                 s += '##';
