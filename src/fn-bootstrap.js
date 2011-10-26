@@ -11,9 +11,7 @@
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    fn.preload(function() {
-      fn.load(ids, callback);
-    });
+    fn.load(ids, callback);
   };
 
 

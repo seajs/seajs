@@ -1078,20 +1078,20 @@ seajs._fn = {};
    * Loads preload modules before callback.
    * @param {function()} callback The callback function.
    */
-  fn.preload = function(callback) {
+  function preload(callback) {
     var preloadMods = config.preload;
     var len = preloadMods.length;
 
     if (len) {
       config.preload = preloadMods.slice(len);
-      fn.load(preloadMods, function() {
-        fn.preload(callback);
+      load(preloadMods, function() {
+        preload(callback);
       });
     }
     else {
       callback();
     }
-  };
+  }
 
 
   /**
@@ -1100,26 +1100,24 @@ seajs._fn = {};
    * @param {function(*)=} callback The callback function.
    * @param {Object=} context The context of current executing environment.
    */
-  fn.load = function(ids, callback, context) {
+  function load(ids, callback, context) {
     if (util.isString(ids)) {
       ids = [ids];
     }
     var uris = RP._batchResolve(ids, context);
 
     provide(uris, function() {
-      fn.preload(function() {
-        var require = fn.createRequire(context);
+      var require = fn.createRequire(context);
 
-        var args = util.map(uris, function(uri) {
-          return require(data.memoizedMods[uri]);
-        });
-
-        if (callback) {
-          callback.apply(null, args);
-        }
+      var args = util.map(uris, function(uri) {
+        return require(data.memoizedMods[uri]);
       });
+
+      if (callback) {
+        callback.apply(null, args);
+      }
     });
-  };
+  }
 
 
   /**
@@ -1128,6 +1126,13 @@ seajs._fn = {};
    * @param {function()=} callback The callback function.
    */
   function provide(uris, callback) {
+    preload(function() {
+      _provide(uris, callback);
+    });
+  }
+
+
+  function _provide(uris, callback) {
     var unReadyUris = util.getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
@@ -1199,8 +1204,8 @@ seajs._fn = {};
     }
 
     function cb() {
-
       if (data.pendingMods) {
+
         util.forEach(data.pendingMods, function(pendingMod) {
           util.memoize(pendingMod.id, uri, pendingMod);
         });
@@ -1217,6 +1222,9 @@ seajs._fn = {};
       }
     }
   }
+
+
+  fn.load = load;
 
 })(seajs._util, seajs._data, seajs._fn);
 
@@ -1370,9 +1378,7 @@ seajs._fn = {};
    * @param {function(*)=} callback The callback function.
    */
   fn.use = function(ids, callback) {
-    fn.preload(function() {
-      fn.load(ids, callback);
-    });
+    fn.load(ids, callback);
   };
 
 
