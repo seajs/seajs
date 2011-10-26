@@ -29,6 +29,7 @@ define(function(require, exports) {
     ,'modules/extend'
     ,'modules/configMap'
     ,'modules/define'
+    ,'modules/preload'
 
     ,'packages/math'
 
