@@ -3,7 +3,7 @@
  * @fileoverview The map plugin for auto responder.
  */
 
-define(function() {
+define('plugin-map', function() {
 
   var config = getConfig();
   var loc = this.location;

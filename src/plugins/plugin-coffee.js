@@ -1,9 +1,10 @@
 
+
 /**
  * @fileoverview The CoffeeScript plugin.
  */
 
-define(function(require) {
+define('plugin-coffee', function(require) {
 
   var CoffeeScript = require('coffee');
   var RP = require.constructor.prototype;
@@ -15,14 +16,7 @@ define(function(require) {
 
 
   function extendCoffeeResolve() {
-    var _resolve = RP.resolve;
 
-    RP.resolve = function(id, context) {
-      if (isCoffee(id)) {
-        id += '#';
-      }
-      return _resolve.call(this, id, context);
-    };
   }
 
 

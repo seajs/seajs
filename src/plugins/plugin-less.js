@@ -3,7 +3,7 @@
  * @fileoverview The LESS plugin.
  */
 
-define(function(require) {
+define('plugin-less', function(require) {
 
   var less = require('less');
   var RP = require.constructor.prototype;
@@ -34,7 +34,7 @@ define(function(require) {
       if (isLESS(url)) {
         return less.Parser.importer(url, [], function(tree) {
           createCSS(tree.toCSS(), url.replace(/[^\w]/g, '_'));
-          callback && callback();
+          callback();
         }, {});
       }
 
