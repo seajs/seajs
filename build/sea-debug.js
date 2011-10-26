@@ -1414,7 +1414,7 @@ seajs._fn = {};
   var alias = {};
   var loaderDir = util.loaderDir;
 
-  util.forEach(['map', 'coffee', 'less'], function(name) {
+  util.forEach(['base', 'map', 'text', 'coffee', 'less'], function(name) {
     name = 'plugin-' + name;
     alias[name] = loaderDir + name;
   });

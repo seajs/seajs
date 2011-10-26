@@ -8,6 +8,7 @@ define('plugin-coffee', ['plugin-base', 'coffee'], function(require) {
   var plugin = require('plugin-base');
   var CoffeeScript = require('coffee');
 
+
   plugin.add({
     name: 'coffee',
 

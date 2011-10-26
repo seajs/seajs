@@ -52,8 +52,9 @@ define(function(require, exports) {
     ,'issues/multi-versions'
     ,'issues/data-main'
     ,'issues/require-extend'
-    ,'issues/coffee'
-    ,'issues/less'
+    ,'issues/plugin-coffee'
+    ,'issues/plugin-less'
+    ,'issues/plugin-text'
 
     ,'bootstrap/index'
   ];
