@@ -83,8 +83,8 @@
     var c = id.charAt(0);
 
     // 1. #xxx means xxx is parsed.
-    // 2. No need to parse relative id.
-    if (alias && c !== '#' && c !== '.') {
+    // 2. Only top-level id needs to parse alias.
+    if (c !== '#' && isTopLevel(id) && alias) {
 
       var parts = id.split('/');
       var first = parts[0];
@@ -225,7 +225,7 @@
       uri = url;
     }
 
-    mod.id = uri; // change id to absolute path.
+    mod.id = uri; // change id to the absolute path.
     mod.dependencies = fn.Require.prototype._batchResolve(mod.dependencies, {
       uri: uri
     });
@@ -296,7 +296,7 @@
 
   /**
    * For example:
-   *  sbuild host.js --combo
+   *  sbuild host.js --combine
    *   define('./host', ['./guest'], ...)
    *   define('./guest', ['jquery'], ...)
    * The jquery is not combined to host.js, so we should add jquery
