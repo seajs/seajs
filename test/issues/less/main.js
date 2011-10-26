@@ -8,7 +8,7 @@ define(function(require) {
 
 
   function find(flag) {
-    var styles = document.getElementsByTagName('styles');
+    var styles = document.getElementsByTagName('style');
 
     for (var i = 0, len = styles.length; i < len; i++) {
       var s = styles[i];
