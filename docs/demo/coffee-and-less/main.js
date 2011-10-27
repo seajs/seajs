@@ -11,6 +11,6 @@ seajs.config({
 define(function(require) {
   require('./style.less');
 
-  var print = require('./print.coffee');
-  print('I come from CoffeeScript.');
+  var test = require('./test.coffee');
+  test.print('I come from CoffeeScript.');
 });
