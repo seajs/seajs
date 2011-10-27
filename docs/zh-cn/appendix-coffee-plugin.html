@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>CoffeeScript 插件 - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js 手册与文档</h1>
+    <div id="gtoc">
+      <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#coffee-plugin">CoffeeScript 插件</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="coffee-plugin">CoffeeScript 插件</h2>
+
+  <blockquote>
+    <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript</a>
+    是一门能编译成 JavaScript 代码的小巧语言。在大量花括弧和分号的外衣下，JavaScript
+    内心深处一直拥有一个漂亮的对象模型。CoffeeScript 将尝试用简单的方式，将 JavaScript
+    好的方面展现给大家。
+  </blockquote>
+
+  <p>
+    有了 SeaJS, 可以让你非常方便的使用 CoffeeScript 的语法来写代码。来看一个例子。
+  </p>
+
+  <p>
+    首先，通过 <code>seajs.config</code> 指定 CoffeeScript 编译器的路径，然后在
+    <code>preload</code> 里激活 coffee 插件：
+  </p>
+
+<pre>
+  seajs.config({
+    alias: {
+      'coffee': 'coffee/1.1.2/coffee-script'
+    },
+    preload: ['plugin-coffee']
+  });
+</pre>
+
+  <p>
+    接下来，写好 coffee 脚本，使用 <code>require</code> 引入即可：
+  </p>
+
+  <p>a.coffee:</p>
+
+<pre>
+  define (require, exports) ->
+    exports.foo = 'bar'
+    return
+</pre>
+
+  <p>main.js:</p>
+
+<pre>
+  define(function(require) {
+    var a = require('./a.coffee');
+    console.log(a.foo);
+  });
+</pre>
+
+  <p>
+    就这么简单，无需更多解释。
+  </p>
+
+  <p>
+    在线演示：<a href="http://seajs.com/docs/demo/coffee-and-less/">Coffee and LESS in SeaJS</a>
+  </p>
+
+</div>
+
+<script src="../../build/sea.js" data-main="../assets/init"></script>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>文本插件 - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="../assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js 手册与文档</h1>
+    <div id="gtoc">
+      <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">目录</h2>
+
+    <ul>
+      <li><a href="#text-plugin">文本插件</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="text-plugin">文本插件</h2>
+
+  <p>
+    在 JavaScript 中嵌入 HTML 模板很不方便，特别是当模板内容有多行时。有了 SeaJS, 一切迎刃而解。
+  </p>
+
+  <p>
+    首先，使用 <code>seajs.config</code> 激活文本插件：
+  </p>
+
+<pre>
+  seajs.config({
+    preload: ['plugin-text']
+  });
+</pre>
+
+  <p>
+    接下来，通过 <code>require</code> 加载文本文件就行：
+  </p>
+
+  <p>a.tpl:</p>
+
+<pre>
+  &lt;div&gt;I am {{name}}.&lt;/div&gt;
+</pre>
+
+  <p>main.js:</p>
+
+<pre>
+  define(function(require) {
+    var tpl = require('./a.tpl');
+    // do sth.
+  });
+</pre>
+
+  <p>
+    除了 <code>.tpl</code> 后缀, 还可以使用 <code>.htm</code>,
+    <code>.html</code>, <code>.json</code> 或 <code>#text</code> 来指明文本文件。
+  </p>
+
+  <p>
+    SeaJS 是通过 XHR 来加载文本文件的，因此只能从同域获取。在开发完成后，可以通过 spm
+    (SeaJS 包管理器) 来将文本文件转换为 jsonp 代码。这样，上线后可以从任何域加载。
+  </p>
+
+  <p>
+    在线开发调试时，如果想跨域加载文本文件，可以通过 proxy 的方式来实现：
+  </p>
+
+<pre>
+  seajs.config({
+    map: [
+      [ /^(.*\.tpl)$/, 'http://path/to/proxy.php?q=$1' ]
+    ]
+  });
+</pre>
+
+  <p>
+    <code>proxy.php</code> 内容很简单：
+  </p>
+
+<pre>
+  &lt;?php
+    echo file_get_contents($_GET['q']);
+</pre>
+
+  <p>
+    可以在本地 php 环境中部署 <code>proxy.php</code>, 再结合 SeaJS 的 map 功能，就可以随心所欲地开发了。
+  </p>
+
+  <p>
+    测试用例：<a href="http://seajs.com/test/issues/plugin-text/test.html">test.html</a>
+  </p>
+
+</div>
+
+<script src="../../build/sea.js" data-main="../assets/init"></script>
+
+</body>
+</html>

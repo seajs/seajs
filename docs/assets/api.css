@@ -239,3 +239,9 @@ pre.wrong {
   background: #fff6f6 !important;
   border-color: #ffc6c6;
 }
+
+blockquote {
+  margin: 1em 20px;
+  padding-left: 50px;
+  background: transparent url(quote.gif) no-repeat;
+}

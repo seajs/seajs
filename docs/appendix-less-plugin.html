@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta charset="utf-8"/>
+<title>LESS Plugin - Sea.js Manual &amp; Documentation</title>
+<link rel="stylesheet" href="assets/api.css"/>
+</head>
+<body>
+<div id="container">
+
+  <header>
+    <h1>Sea.js Manual &amp; Documentation</h1>
+    <div id="gtoc">
+      <p><a href="../">Home</a> | <a href="index.html">Index</a></p>
+    </div>
+    <hr/>
+  </header>
+
+  <div id="toc">
+    <h2 id="table_of_Contents">Table of Contents</h2>
+
+    <ul>
+      <li><a href="#less-plugin">LESS Plugin</a></li>
+    </ul>
+    <hr/>
+  </div>
+
+
+  <h2 id="less-plugin">LESS Plugin</h2>
+
+  <blockquote>
+    <a href="http://lesscss.org/">LESS</a> is a dynamic stylesheet language.
+    LESS extends CSS with dynamic behavior such as variables, mixins, operations
+    and functions. LESS runs on both the client-side (IE 6+, Webkit, Firefox)
+    and server-side, with Node.js.
+  </blockquote>
+
+  <p>
+    With SeaJS, it is easy to code in LESS in the browser. Let's take
+    a example.
+  </p>
+
+  <p>
+    First, using <code>seajs.config</code> to specify the path of less compiler
+    and enable the less plugin through <code>preload</code>:
+  </p>
+
+<pre>
+  seajs.config({
+    alias: {
+      'less': 'less/1.1.4/less'
+    },
+    preload: ['plugin-less']
+  });
+</pre>
+
+  <p>
+    Then, just write your less files, and load them using <code>require</code>:
+  </p>
+
+  <p>style.less:</p>
+
+<pre>
+  @red: #f00;
+  @blue: #00f;
+
+  .red {
+    color: @red;
+  }
+
+  .blue {
+    color: @blue;
+  }
+</pre>
+
+  <p>main.js:</p>
+
+<pre>
+  define(function(require) {
+    require('./style.less');
+  });
+</pre>
+
+  <p>
+    There is no more words of explanation.
+  </p>
+
+  <p>
+    Please see the online example: <a href="http://seajs.com/docs/demo/coffee-and-less/">Coffee and LESS in SeaJS</a>
+  </p>
+
+</div>
+
+<script src="../build/sea.js" data-main="assets/init"></script>
+
+</body>
+</html>
