@@ -1,3 +1,22 @@
+
+var MODULES_PATH = 'http://modules.seajs.com/';
+
+if (location.href.indexOf('/localhost/~lifesinger/') > 0) {
+  MODULES_PATH = 'http://localhost/~lifesinger/spm/modules/';
+}
+
+
+seajs.config({
+  base: MODULES_PATH,
+
+  alias: {
+    'coffee':  'coffee/1.1.2/coffee-script'
+  },
+
+  preload: ['plugin-coffee']
+});
+
+
 define(function(require) {
 
   var test = require('../../test');

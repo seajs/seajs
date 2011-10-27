@@ -1,3 +1,22 @@
+
+var MODULES_PATH = 'http://modules.seajs.com/';
+
+if (location.href.indexOf('/localhost/~lifesinger/') > 0) {
+  MODULES_PATH = 'http://localhost/~lifesinger/spm/modules/';
+}
+
+
+seajs.config({
+  base: MODULES_PATH,
+
+  alias: {
+    'less':  'less/1.1.4/less'
+  },
+
+  preload: ['plugin-less']
+});
+
+
 define(function(require) {
 
   var test = require('../../test');

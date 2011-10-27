@@ -56,6 +56,7 @@ define(function(require, exports) {
     ,'issues/plugin-coffee'
     ,'issues/plugin-less'
     ,'issues/plugin-text'
+    ,'issues/load-deps'
 
     ,'bootstrap/index'
   ];

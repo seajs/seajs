@@ -11,7 +11,7 @@
     document.getElementById('out').appendChild(d);
   }
 </script>
-<script src="../../../build/sea.js"></script>
+<script src="../../../build/sea-debug.js" data-main="main"></script>
 </head>
 <body>
 
@@ -20,32 +20,6 @@
 </p>
 
 <div id="out"></div>
-
-<script>
-
-  var MODULES_PATH = 'http://modules.seajs.com/';
-
-  if (location.href.indexOf('/localhost/~lifesinger/') > 0) {
-    MODULES_PATH = 'http://localhost/~lifesinger/spm/modules/';
-  }
-
-
-  seajs.config({
-    base: MODULES_PATH,
-
-    alias: {
-      'coffee':  'coffee/1.1.2/coffee-script'
-    },
-
-    preload: ['plugin-coffee']
-  });
-  
-
-  seajs.use('./main');
-
-</script>
-
-
 
 </body>
 </html>

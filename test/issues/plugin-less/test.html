@@ -11,7 +11,7 @@
     document.getElementById('out').appendChild(d);
   }
 </script>
-<script src="../../../build/sea.js"></script>
+<script src="../../../build/sea.js" data-main="main"></script>
 </head>
 <body>
 
@@ -23,30 +23,6 @@
 <p class="blue">This paragraph should be blue.</p>
 
 <div id="out"></div>
-
-<script>
-
-  var MODULES_PATH = 'http://modules.seajs.com/';
-
-  if (location.href.indexOf('/localhost/~lifesinger/') > 0) {
-    MODULES_PATH = 'http://localhost/~lifesinger/spm/modules/';
-  }
-
-
-  seajs.config({
-    base: MODULES_PATH,
-
-    alias: {
-      'less':  'less/1.1.4/less'
-    },
-
-    preload: ['plugin-less']
-  });
-
-
-  seajs.use('./main');
-
-</script>
 
 </body>
 </html>
