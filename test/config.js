@@ -58,6 +58,7 @@ define(function(require, exports) {
     ,'issues/plugin-less'
     ,'issues/plugin-text'
     ,'issues/load-deps'
+    ,'issues/multi-map'
 
     ,'bootstrap/index'
   ];
