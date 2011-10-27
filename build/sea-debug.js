@@ -287,8 +287,8 @@ seajs._fn = {};
     var c = id.charAt(0);
 
     // 1. #xxx means xxx is parsed.
-    // 2. No need to parse relative id.
-    if (alias && c !== '#' && c !== '.') {
+    // 2. Only top-level id needs to parse alias.
+    if (c !== '#' && isTopLevel(id) && alias) {
 
       var parts = id.split('/');
       var first = parts[0];
@@ -429,19 +429,11 @@ seajs._fn = {};
       uri = url;
     }
 
-    mod.id = uri; // change id to absolute path.
+    mod.id = uri; // change id to the absolute path.
     mod.dependencies = fn.Require.prototype._batchResolve(mod.dependencies, {
       uri: uri
     });
     memoizedMods[uri] = mod;
-
-    // guest module in package
-    if (id && url !== uri) {
-      var host = memoizedMods[url];
-      if (host) {
-        augmentPackageHostDeps(host.dependencies, mod.dependencies);
-      }
-    }
   }
 
   /**
@@ -495,23 +487,6 @@ seajs._fn = {};
       }
     }
     return false;
-  }
-
-
-  /**
-   * For example:
-   *  sbuild host.js --combo
-   *   define('./host', ['./guest'], ...)
-   *   define('./guest', ['jquery'], ...)
-   * The jquery is not combined to host.js, so we should add jquery
-   * to host.dependencies
-   */
-  function augmentPackageHostDeps(hostDeps, guestDeps) {
-    util.forEach(guestDeps, function(guestDep) {
-      if (util.indexOf(hostDeps, guestDep) === -1) {
-        hostDeps.push(guestDep);
-      }
-    });
   }
 
 

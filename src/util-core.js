@@ -230,14 +230,6 @@
       uri: uri
     });
     memoizedMods[uri] = mod;
-
-    // guest module in package
-    if (id && url !== uri) {
-      var host = memoizedMods[url];
-      if (host) {
-        augmentPackageHostDeps(host.dependencies, mod.dependencies);
-      }
-    }
   }
 
   /**
@@ -291,23 +283,6 @@
       }
     }
     return false;
-  }
-
-
-  /**
-   * For example:
-   *  sbuild host.js --combine
-   *   define('./host', ['./guest'], ...)
-   *   define('./guest', ['jquery'], ...)
-   * The jquery is not combined to host.js, so we should add jquery
-   * to host.dependencies
-   */
-  function augmentPackageHostDeps(hostDeps, guestDeps) {
-    util.forEach(guestDeps, function(guestDep) {
-      if (util.indexOf(hostDeps, guestDep) === -1) {
-        hostDeps.push(guestDep);
-      }
-    });
   }
 
 
