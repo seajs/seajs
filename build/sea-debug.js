@@ -1179,22 +1179,26 @@ seajs._fn = {};
     }
 
     function cb() {
-      if (data.pendingMods) {
+      var pendingMods = data.pendingMods;
+      data.pendingMods = [];
 
-        util.forEach(data.pendingMods, function(pendingMod) {
-          util.memoize(pendingMod.id, uri, pendingMod);
-        });
+      // Preload here to make sure that RP.resolve modified by some preload
+      // plugins can be used immediately in memoize logic.
+      // Ref: issues/plugin-coffee
+      preload(function() {
 
-        data.pendingMods = [];
-      }
+        if (pendingMods) {
+          util.forEach(pendingMods, function(pendingMod) {
+            util.memoize(pendingMod.id, uri, pendingMod);
+          });
+        }
 
-      if (fetchingMods[uri]) {
-        delete fetchingMods[uri];
-      }
+        if (fetchingMods[uri]) {
+          delete fetchingMods[uri];
+        }
 
-      if (callback) {
         callback();
-      }
+      });
     }
   }
 
