@@ -69,13 +69,6 @@
    * @param {function()=} callback The callback function.
    */
   function provide(uris, callback) {
-    preload(function() {
-      _provide(uris, callback);
-    });
-  }
-
-
-  function _provide(uris, callback) {
     var unReadyUris = util.getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
@@ -92,25 +85,46 @@
         }
 
         function onLoad() {
-          var deps = (memoizedMods[uri] || 0).dependencies || [];
-          var m = deps.length;
+          // Preload here to make sure that:
+          // 1. RP.resolve etc. modified by some preload plugins can be used
+          //    immediately in the id resolving logic.
+          //    Ref: issues/plugin-coffee
+          // 2. The functions provided by the preload modules can be used
+          //    immediately in factories of the following modules.
+          preload(function() {
+            var mod = memoizedMods[uri];
 
-          if (m) {
-            // if a -> [b -> [c -> [a, e], d]]
-            // when use(['a', 'b'])
-            // should remove a from c.deps
-            deps = util.removeCyclicWaitingUris(uri, deps);
-            m = deps.length;
-          }
+            if (mod) {
+              var deps = mod.dependencies;
 
-          if (m) {
-            remain += m;
-            provide(deps, function() {
-              remain -= m;
-              if (remain === 0) onProvide();
-            });
-          }
-          if (--remain === 0) onProvide();
+              if (deps.length) {
+                // Converts deps to absolute id.
+                deps = mod.dependencies = RP._batchResolve(deps, {
+                  uri: mod.id
+                });
+              }
+
+              var m = deps.length;
+
+              if (m) {
+                // if a -> [b -> [c -> [a, e], d]]
+                // when use(['a', 'b'])
+                // should remove a from c.deps
+                deps = util.removeCyclicWaitingUris(uri, deps);
+                m = deps.length;
+              }
+
+              if (m) {
+                remain += m;
+                provide(deps, function() {
+                  remain -= m;
+                  if (remain === 0) onProvide();
+                });
+              }
+            }
+
+            if (--remain === 0) onProvide();
+          });
         }
 
       })(unReadyUris[i]);
@@ -148,25 +162,18 @@
 
     function cb() {
       var pendingMods = data.pendingMods;
-      data.pendingMods = [];
 
-      // Preload here to make sure that RP.resolve modified by some preload
-      // plugins can be used immediately in memoize logic.
-      // Ref: issues/plugin-coffee
-      preload(function() {
+      if (pendingMods.length) {
+        util.forEach(pendingMods, function(pendingMod) {
+          util.memoize(pendingMod.id, uri, pendingMod);
+        });
+        data.pendingMods = [];
+      }
 
-        if (pendingMods) {
-          util.forEach(pendingMods, function(pendingMod) {
-            util.memoize(pendingMod.id, uri, pendingMod);
-          });
-        }
-
-        if (fetchingMods[uri]) {
-          delete fetchingMods[uri];
-        }
-
-        callback();
-      });
+      if (fetchingMods[uri]) {
+        delete fetchingMods[uri];
+      }
+      callback();
     }
   }
 

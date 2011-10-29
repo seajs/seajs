@@ -226,9 +226,6 @@
     }
 
     mod.id = uri; // change id to the absolute path.
-    mod.dependencies = fn.Require.prototype._batchResolve(mod.dependencies, {
-      uri: uri
-    });
     memoizedMods[uri] = mod;
   }
 
