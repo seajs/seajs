@@ -26,7 +26,7 @@
       <path path="fn-config.js"/>
       <path path="fn-bootstrap.js"/>
 
-      <path path="init-plugins.js"/>
+      <path path="plugins/plugin-init.js"/>
       <path path="sea-api.js"/>
 
     </concat>
@@ -39,7 +39,9 @@
     </delete>
 
     <copy todir="${root.dir}/build/" overwrite="true">
-      <fileset dir="${module.dir}/plugins" includes="plugin-*.js"/>
+      <fileset dir="${module.dir}/plugins"
+               includes="plugin-*.js"
+               excludes="plugin-init.js"/>
     </copy>
   </target>
 
