@@ -14,6 +14,12 @@ define('plugin-base', [], function(require, exports) {
   };
 
 
+  exports.util = {
+    xhr: xhr,
+    globalEval: globalEval
+  };
+
+
   extendResolve();
   extendLoad();
 
@@ -68,6 +74,34 @@ define('plugin-base', [], function(require, exports) {
 
       return _load(url, callback, charset);
     };
+  }
+
+
+  function xhr(url, callback) {
+    var r = new (window.ActiveXObject || XMLHttpRequest)('Microsoft.XMLHTTP');
+    r.open('GET', url, true);
+
+    r.onreadystatechange = function() {
+      if (r.readyState === 4) {
+        if (r.status === 200) {
+          callback(r.responseText);
+        }
+        else {
+          throw 'Could not load: ' + url + ', status = ' + r.status;
+        }
+      }
+    };
+
+    return r.send(null);
+  }
+
+
+  function globalEval(data) {
+    if (data && /\S/.test(data)) {
+      ( window.execScript || function(data) {
+        window['eval'].call(window, data);
+      } )(data);
+    }
   }
 
 });

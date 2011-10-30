@@ -6,39 +6,22 @@
 define('plugin-text', ['plugin-base'], function(require) {
 
   var plugin = require('plugin-base');
+  var util = plugin.util;
 
 
   plugin.add({
     name: 'text',
 
-    ext: ['.tpl', '.htm', '.html', '.json', '#text'],
+    ext: ['.tpl', '.htm', '.html', '#text'],
 
     load: function(url, callback) {
-      return xhr(url, callback);
+      util.xhr(url, function(data) {
+        var str = jsEscape(data);
+        util.globalEval('define("' + url + '#text##", [], "' + str + '")');
+        callback();
+      });
     }
   });
-
-
-  function xhr(url, callback) {
-    var r = new (window.ActiveXObject || XMLHttpRequest)('Microsoft.XMLHTTP');
-    r.open('GET', url, true);
-
-    r.onreadystatechange = function() {
-      if (r.readyState === 4) {
-        if (r.status === 200) {
-          var str = jsEscape(r.responseText);
-          var code = 'define("' + url + '#text##", [], "' + str + '")';
-          globalEval(code);
-
-        }
-        else {
-          throw 'Could not load ' + url;
-        }
-        callback();
-      }
-    };
-    return r.send(null);
-  }
 
 
   function jsEscape(s) {
@@ -47,15 +30,6 @@ define('plugin-text', ['plugin-base'], function(require) {
         .replace(/\n/g, "\\n")
         .replace(/\t/g, "\\t")
         .replace(/\f/g, "\\f");
-  }
-
-
-  function globalEval(data) {
-    if (data && /\S/.test(data)) {
-      ( window.execScript || function(data) {
-        window['eval'].call(window, data);
-      } )(data);
-    }
   }
 
 });
