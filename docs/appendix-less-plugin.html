@@ -47,12 +47,12 @@
   </p>
 
 <pre>
-  seajs.config({
-    alias: {
-      'less': 'less/1.1.4/less'
-    },
-    preload: ['plugin-less']
-  });
+seajs.config({
+  alias: {
+    'less': 'less/1.1.4/less'
+  },
+  preload: ['plugin-less']
+});
 </pre>
 
   <p>
@@ -62,24 +62,24 @@
   <p>style.less:</p>
 
 <pre>
-  @red: #f00;
-  @blue: #00f;
+@red: #f00;
+@blue: #00f;
 
-  .red {
-    color: @red;
-  }
+.red {
+  color: @red;
+}
 
-  .blue {
-    color: @blue;
-  }
+.blue {
+  color: @blue;
+}
 </pre>
 
   <p>main.js:</p>
 
 <pre>
-  define(function(require) {
-    require('./style.less');
-  });
+define(function(require) {
+  require('./style.less');
+});
 </pre>
 
   <p>

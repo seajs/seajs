@@ -9,83 +9,84 @@
 <body>
 <div id="container">
 
-  <header>
-    <h1>Sea.js 手册与文档</h1>
-    <div id="gtoc">
-      <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
-    </div>
-    <hr/>
-  </header>
-
-  <div id="toc">
-    <h2 id="table_of_Contents">目录</h2>
-
-    <ul>
-      <li><a href="#less-plugin">LESS 插件</a></li>
-    </ul>
-    <hr/>
+<header>
+  <h1>Sea.js 手册与文档</h1>
+  <div id="gtoc">
+    <p><a href="../../">首页</a> | <a href="index.html">索引</a></p>
   </div>
+  <hr/>
+</header>
 
-  <h2 id="less-plugin">LESS 插件</h2>
+<div id="toc">
+  <h2 id="table_of_Contents">目录</h2>
 
-  <blockquote>
-    <a href="http://lesscss.org/">LESS</a> 是一门动态样式语言。LESS 给 CSS
-    增加了变量、混合、计算和函数的动态功能。LESS 可以运作在客户端（IE 6+, Webkit, Firefox），
-    使用 Node.js 还可运行在服务端。
-  </blockquote>
+  <ul>
+    <li><a href="#less-plugin">LESS 插件</a></li>
+  </ul>
+  <hr/>
+</div>
 
-   <p>
-    有了 SeaJS, 可以让你非常方便的使用 LESS 的语法来写样式代码。来看一个例子。
-  </p>
+<h2 id="less-plugin">LESS 插件</h2>
 
-  <p>
-    首先，通过 <code>seajs.config</code> 指定 LESS 编译器的路径，然后在
-    <code>preload</code> 里激活 less 插件：
-  </p>
+<blockquote>
+  <a href="http://lesscss.org/">LESS</a> 是一门动态样式语言。LESS 给 CSS
+  增加了变量、混合、计算和函数的动态功能。LESS 可以运作在客户端（IE 6+, Webkit, Firefox），
+  使用 Node.js 还可运行在服务端。
+</blockquote>
 
-<pre>
-  seajs.config({
-    alias: {
-      'less': 'less/1.1.4/less'
-    },
-    preload: ['plugin-less']
-  });
-</pre>
+<p>
+  有了 SeaJS, 可以让你非常方便的使用 LESS 的语法来写样式代码。来看一个例子。
+</p>
 
-  <p>
-    接下来，写好 less 代码，使用 <code>require</code> 引入即可：
-  </p>
-
-  <p>style.less:</p>
+<p>
+  首先，通过 <code>seajs.config</code> 指定 LESS 编译器的路径，然后在
+  <code>preload</code> 里激活 less 插件：
+</p>
 
 <pre>
-  @red: #f00;
-  @blue: #00f;
-
-  .red {
-    color: @red;
-  }
-
-  .blue {
-    color: @blue;
-  }
+seajs.config({
+  alias: {
+    'less': 'less/1.1.4/less'
+  },
+  preload: ['plugin-less']
+});
 </pre>
 
-  <p>main.js:</p>
+<p>
+  接下来，写好 less 代码，使用 <code>require</code> 引入即可：
+</p>
+
+<p>style.less:</p>
 
 <pre>
-  define(function(require) {
-    require('./style.less');
-  });
+@red: #f00;
+@blue: #00f;
+
+.red {
+  color: @red;
+}
+
+.blue {
+  color: @blue;
+}
 </pre>
 
-  <p>
-    就这么简单，无需更多解释。
-  </p>
+<p>main.js:</p>
 
-  <p>
-    在线演示：<a href="http://seajs.com/docs/demo/coffee-and-less/">Coffee and LESS in SeaJS</a>
-  </p>
+<pre>
+define(function(require) {
+  require('./style.less');
+});
+</pre>
+
+<p>
+  就这么简单，无需更多解释。
+</p>
+
+<p>
+  在线演示：<a href="http://seajs.com/docs/demo/coffee-and-less/">Coffee and LESS
+  in SeaJS</a>
+</p>
 
 </div>
 

@@ -46,12 +46,12 @@
   </p>
 
 <pre>
-  seajs.config({
-    alias: {
-      'coffee': 'coffee/1.1.2/coffee-script'
-    },
-    preload: ['plugin-coffee']
-  });
+seajs.config({
+  alias: {
+    'coffee': 'coffee/1.1.2/coffee-script'
+  },
+  preload: ['plugin-coffee']
+});
 </pre>
 
   <p>
@@ -61,18 +61,18 @@
   <p>a.coffee:</p>
 
 <pre>
-  define (require, exports) ->
-    exports.foo = 'bar'
-    return
+define (require, exports) ->
+  exports.foo = 'bar'
+  return
 </pre>
 
   <p>main.js:</p>
 
 <pre>
-  define(function(require) {
-    var a = require('./a.coffee');
-    console.log(a.foo);
-  });
+define(function(require) {
+  var a = require('./a.coffee');
+  console.log(a.foo);
+});
 </pre>
 
   <p>

@@ -44,9 +44,9 @@
   </p>
 
 <pre>
-  seajs.config({
-    preload: ['plugin-text']
-  });
+seajs.config({
+  preload: ['plugin-text']
+});
 </pre>
 
   <p>
@@ -56,21 +56,21 @@
   <p>a.tpl:</p>
 
 <pre>
-  &lt;div&gt;I am {{name}}.&lt;/div&gt;
+&lt;div&gt;I am {{name}}.&lt;/div&gt;
 </pre>
 
   <p>main.js:</p>
 
 <pre>
-  define(function(require) {
-    var tpl = require('./a.tpl');
-    // do sth.
-  });
+define(function(require) {
+  var tpl = require('./a.tpl');
+  // do sth.
+});
 </pre>
 
   <p>
     Except <code>.tpl</code> extension, you can also use <code>.htm</code>,
-    <code>.html</code>, <code>.json</code> or <code>#text</code> to specify a
+    <code>.html</code>, or <code>#text</code> to specify a
     text resource.
   </p>
 
@@ -91,11 +91,11 @@
   </p>
 
 <pre>
-  seajs.config({
-    map: [
-      [ /^(.*\.tpl)$/, 'http://path/to/proxy.php?q=$1' ]
-    ]
-  });
+seajs.config({
+  map: [
+    [ /^(.*\.tpl)$/, 'http://path/to/proxy.php?q=$1' ]
+  ]
+});
 </pre>
 
   <p>
@@ -103,8 +103,8 @@
   </p>
 
 <pre>
-  &lt;?php
-    echo file_get_contents($_GET['q']);
+&lt;?php
+  echo file_get_contents($_GET['q']);
 </pre>
 
   <p>
