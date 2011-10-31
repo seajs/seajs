@@ -12,12 +12,12 @@ define('plugin-text', ['plugin-base'], function(require) {
   plugin.add({
     name: 'text',
 
-    ext: ['.tpl', '.htm', '.html', '#text'],
+    ext: ['.tpl', '.htm', '.html'],
 
     load: function(url, callback) {
       util.xhr(url, function(data) {
         var str = jsEscape(data);
-        util.globalEval('define("' + url + '#text##", [], "' + str + '")');
+        util.globalEval('define("' + str + '")');
         callback();
       });
     }
