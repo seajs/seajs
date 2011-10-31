@@ -12,7 +12,7 @@ define('plugin-less', ['plugin-base', 'less'], function(require) {
   plugin.add({
     name: 'less',
 
-    ext: ['.less', '#less'],
+    ext: ['.less'],
 
     load: function(url, callback) {
       return less.Parser.importer(url, [], function(tree) {

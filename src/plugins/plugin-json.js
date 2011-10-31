@@ -12,11 +12,11 @@ define('plugin-json', ['plugin-base'], function(require) {
   plugin.add({
     name: 'json',
 
-    ext: ['.json', '#json'],
+    ext: ['.json'],
 
     load: function(url, callback) {
       util.xhr(url, function(code) {
-        util.globalEval('define("' + url + '#json##", [], ' + code + ')');
+        util.globalEval('define(' + code + ')');
         callback();
       });
     }

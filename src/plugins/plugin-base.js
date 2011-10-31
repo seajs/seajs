@@ -7,6 +7,7 @@ define('plugin-base', [], function(require, exports) {
 
   var RP = require.constructor.prototype;
   var meta = {};
+  var cache = {};
 
 
   exports.add = function(o) {
@@ -28,33 +29,41 @@ define('plugin-base', [], function(require, exports) {
     var _resolve = RP.resolve;
 
     RP.resolve = function(id, context) {
-      if (/(?:\.|#)\w/.test(id)) {
+      var flag;
 
-        var q = id.replace(/.*?(\?.*)?$/, '$1');
-        var s = id.replace(q, ''); // strip ?xx
-        var e = s.replace(/.*((?:\.|#)\w+)$/, '$1'); // get .xxx or #xxx
+      if (/\.\w|^\w+!/.test(id)) {
+        var m;
 
-        if (e !== s) {
-          for (var name in meta) {
-            if (meta.hasOwnProperty(name) &&
-                ~meta[name].ext.join('|').indexOf(e)) {
-              // a#xxx -> a#xxx##
-              if (e.charAt(0) === '#') {
-                s += '##';
-              }
-              // a.xxx -> a.xxx#name##
-              else {
-                s += '#' + name + '##';
-              }
+        // id = text!path/to/some
+        if ((m = id.match(/^(\w+)!(.*)$/))) {
+          flag = m[1];
+          id = m[2];
+        }
 
-              id = s + q;
+        // id = abc.xyz?t=123
+        else if ((m = id.match(/[^?]*(\.\w+)/))) {
+          var ext = m[1];
+          for (var type in meta) {
+            if (meta.hasOwnProperty(type) &&
+                ~meta[type].ext.join('|').indexOf(ext)) {
+              flag = type;
               break;
             }
           }
         }
+
+        // don't add .js
+        if (flag && !/\?|#$/.test(id)) {
+          id += '#';
+        }
       }
 
-      return _resolve.call(this, id, context);
+      var url = _resolve.call(this, id, context);
+
+      if (flag && meta[flag] && !cache[url]) {
+        cache[url] = flag;
+      }
+      return url;
     };
   }
 
@@ -63,13 +72,9 @@ define('plugin-base', [], function(require, exports) {
     var _load = RP.load;
 
     RP.load = function(url, callback, charset) {
-      var m = url.match(/^.*(?:#(\w+)#).*$/);
-      var name;
-      if (m) name = m[1];
-
-      if (name && meta[name]) {
-        url = url.replace('#' + name + '#', '');
-        return meta[name].load(url, callback);
+      var type = cache[url];
+      if (type) {
+        return meta[type].load(url, callback);
       }
 
       return _load(url, callback, charset);
