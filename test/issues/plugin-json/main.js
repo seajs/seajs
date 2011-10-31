@@ -1,10 +1,13 @@
 define(function(require) {
 
   var test = require('../../test');
-  var json = require('./b.json');
+  var b = require('./b.json');
+  var c = require('./c.json?t=30222');
 
-  test.assert(json.name === 'b', json.name);
-  test.assert(json.foo === "'bar'\"", json.foo);
+  test.assert(b.name === 'b', b.name);
+  test.assert(b.foo === "'bar'\"", b.foo);
+  test.assert(c.name === 'c', c.name);
+  test.assert(typeof c.n === 'number', typeof c.n);
 
   test.done();
 });
