@@ -79,12 +79,15 @@
    * Parses alias in the module id. Only parse the first part.
    */
   function parseAlias(id) {
-    var alias = config['alias'];
-    var c = id.charAt(0);
+    // #xxx means xxx is parsed.
+    if (id.charAt(0) === '#') {
+      return id;
+    }
 
-    // 1. #xxx means xxx is parsed.
+    var alias;
+
     // 2. Only top-level id needs to parse alias.
-    if (c !== '#' && isTopLevel(id) && alias) {
+    if (isTopLevel(id) && (alias = config.alias)) {
 
       var parts = id.split('/');
       var first = parts[0];
@@ -96,7 +99,7 @@
       }
     }
 
-    return (c === '#' ? '' : '#') + id;
+    return '#' + id;
   }
 
 
@@ -161,6 +164,7 @@
     pageUrl = pageUrl.replace(/\\/g, '/');
   }
 
+  
   /**
    * Converts id to uri.
    * @param {string} id The module id.
