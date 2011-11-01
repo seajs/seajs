@@ -103,6 +103,8 @@
   }
 
 
+  var mapCache = {};
+
   /**
    * Maps the module id.
    * @param {string} url The url string.
@@ -112,14 +114,24 @@
     // config.map: [[match, replace], ...]
     map = map || config['map'] || [];
     if (!map.length) return url;
+    var ret = url;
 
     util.forEach(map, function(rule) {
       if (rule && rule.length > 1) {
-        url = url.replace(rule[0], rule[1]);
+        ret = ret.replace(rule[0], rule[1]);
       }
     });
 
-    return url;
+    mapCache[ret] = url;
+    return ret;
+  }
+
+  /**
+   * Gets the original url.
+   * @param {string} url The url string.
+   */
+  function unParseMap(url) {
+    return mapCache[url] || url;
   }
 
 
@@ -298,6 +310,7 @@
 
   util.parseAlias = parseAlias;
   util.parseMap = parseMap;
+  util.unParseMap = unParseMap;
   util.id2Uri = id2Uri;
 
   util.memoize = memoize;

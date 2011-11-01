@@ -307,6 +307,8 @@ seajs._fn = {};
   }
 
 
+  var mapCache = {};
+
   /**
    * Maps the module id.
    * @param {string} url The url string.
@@ -316,26 +318,24 @@ seajs._fn = {};
     // config.map: [[match, replace], ...]
     map = map || config['map'] || [];
     if (!map.length) return url;
-
-    // [match, replace, -1]
-    var last = [];
+    var ret = url;
 
     util.forEach(map, function(rule) {
       if (rule && rule.length > 1) {
-        if (rule[2] === -1) {
-          last.push([rule[0], rule[1]]);
-        }
-        else {
-          url = url.replace(rule[0], rule[1]);
-        }
+        ret = ret.replace(rule[0], rule[1]);
       }
     });
 
-    if (last.length) {
-      url = parseMap(url, last);
-    }
+    mapCache[ret] = url;
+    return ret;
+  }
 
-    return url;
+  /**
+   * Gets the original url.
+   * @param {string} url The url string.
+   */
+  function unParseMap(url) {
+    return mapCache[url] || url;
   }
 
 
@@ -399,10 +399,7 @@ seajs._fn = {};
       ret = getConfigBase() + '/' + id;
     }
 
-    ret = normalize(ret);
-    ret = parseMap(ret);
-
-    return ret;
+    return normalize(ret);
   }
 
 
@@ -516,6 +513,8 @@ seajs._fn = {};
   util.dirname = dirname;
 
   util.parseAlias = parseAlias;
+  util.parseMap = parseMap;
+  util.unParseMap = unParseMap;
   util.id2Uri = id2Uri;
 
   util.memoize = memoize;
@@ -799,6 +798,7 @@ seajs._fn = {};
       var script = util.getInteractiveScript();
       if (script) {
         url = util.getScriptAbsoluteSrc(script);
+        url = util.unParseMap(url);
       }
 
       // In IE6-9, if the script is in the cache, the "interactive" mode
@@ -1189,7 +1189,7 @@ seajs._fn = {};
       data.pendingModIE = uri;
 
       fetchingMods[uri] = RP.load(
-          uri,
+          util.parseMap(uri),
           cb,
           data.config.charset
           );
@@ -1324,6 +1324,9 @@ seajs._fn = {};
     // Make sure config.base is absolute path.
     var base = config.base;
     if (!util.isAbsolute(base)) {
+      if (util.isTopLevel(base)) {
+        base = './' + base;
+      }
       config.base = util.id2Uri(base + '#');
     }
 
@@ -1337,7 +1340,7 @@ seajs._fn = {};
               url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
             }
             return url;
-          }, -1]
+          }]
         ]
       });
     }

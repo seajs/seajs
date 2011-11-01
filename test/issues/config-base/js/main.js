@@ -1,6 +1,6 @@
 define(function(require) {
 
-  var test = require('../../test');
+  var test = require('../../../test');
 
   var a = require('a');
   var b = require('biz/b');

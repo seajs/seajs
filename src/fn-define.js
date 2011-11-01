@@ -60,6 +60,7 @@
       var script = util.getInteractiveScript();
       if (script) {
         url = util.getScriptAbsoluteSrc(script);
+        url = util.unParseMap(url);
       }
 
       // In IE6-9, if the script is in the cache, the "interactive" mode

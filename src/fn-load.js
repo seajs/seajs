@@ -154,7 +154,7 @@
       data.pendingModIE = uri;
 
       fetchingMods[uri] = RP.load(
-          uri,
+          util.parseMap(uri),
           cb,
           data.config.charset
           );

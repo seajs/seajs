@@ -1,0 +1,1 @@
+define('b', { name: 'b' });
