@@ -113,23 +113,11 @@
     map = map || config['map'] || [];
     if (!map.length) return url;
 
-    // [match, replace, -1]
-    var last = [];
-
     util.forEach(map, function(rule) {
       if (rule && rule.length > 1) {
-        if (rule[2] === -1) {
-          last.push([rule[0], rule[1]]);
-        }
-        else {
-          url = url.replace(rule[0], rule[1]);
-        }
+        url = url.replace(rule[0], rule[1]);
       }
     });
-
-    if (last.length) {
-      url = parseMap(url, last);
-    }
 
     return url;
   }
@@ -195,10 +183,7 @@
       ret = getConfigBase() + '/' + id;
     }
 
-    ret = normalize(ret);
-    ret = parseMap(ret);
-
-    return ret;
+    return normalize(ret);
   }
 
 
@@ -312,6 +297,7 @@
   util.dirname = dirname;
 
   util.parseAlias = parseAlias;
+  util.parseMap = parseMap;
   util.id2Uri = id2Uri;
 
   util.memoize = memoize;

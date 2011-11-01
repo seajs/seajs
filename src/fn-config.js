@@ -117,7 +117,7 @@
               url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
             }
             return url;
-          }, -1]
+          }]
         ]
       });
     }
