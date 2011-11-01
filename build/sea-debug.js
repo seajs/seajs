@@ -1073,21 +1073,23 @@ seajs._fn = {};
    * @param {Object=} context The context of current executing environment.
    */
   function load(ids, callback, context) {
-    if (util.isString(ids)) {
-      ids = [ids];
-    }
-    var uris = RP._batchResolve(ids, context);
-
-    provide(uris, function() {
-      var require = fn.createRequire(context);
-
-      var args = util.map(uris, function(uri) {
-        return require(data.memoizedMods[uri]);
-      });
-
-      if (callback) {
-        callback.apply(null, args);
+    preload(function() {
+      if (util.isString(ids)) {
+        ids = [ids];
       }
+      var uris = RP._batchResolve(ids, context);
+
+      provide(uris, function() {
+        var require = fn.createRequire(context);
+
+        var args = util.map(uris, function(uri) {
+          return require(data.memoizedMods[uri]);
+        });
+
+        if (callback) {
+          callback.apply(null, args);
+        }
+      });
     });
   }
 
@@ -1215,10 +1217,12 @@ seajs._fn = {};
  * @fileoverview The configuration.
  */
 
-(function(util, data, fn) {
+(function(host, util, data, fn) {
 
   var config = data.config;
-  var noCacheTimeStamp = 'seajs-ts=' + util.now();
+
+  var noCachePrefix = 'seajs-ts=';
+  var noCacheTimeStamp = noCachePrefix + util.now();
 
 
   // Async inserted script.
@@ -1317,18 +1321,24 @@ seajs._fn = {};
       config.base = util.id2Uri(base + '#');
     }
 
-    // use map to implement nocache
+    // Use map to implement nocache
     if (config.debug === 2) {
       config.debug = 1;
       fn.config({
         map: [
           [/.*/, function(url) {
-            return url +
-                (url.indexOf('?') === -1 ? '?' : '&') +
-                noCacheTimeStamp;
+            if (url.indexOf(noCachePrefix) === -1) {
+              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
+            }
+            return url;
           }, -1]
         ]
       });
+    }
+
+    // Sync
+    if (config.debug) {
+      host.debug = config.debug;
     }
 
     return this;
@@ -1347,7 +1357,7 @@ seajs._fn = {};
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs, seajs._util, seajs._data, seajs._fn);
 
 /**
  * @fileoverview The bootstrap and entrances.
@@ -1416,7 +1426,7 @@ seajs._fn = {};
   // handle seajs-debug
   if (~global.location.search.indexOf('seajs-debug') ||
       ~document.cookie.indexOf('seajs=1')) {
-    config.debug = true;
+    fn.config({ debug: 2 });
     config.preload.push('plugin-map');
   }
 
@@ -1455,8 +1465,13 @@ seajs._fn = {};
   };
 
 
+  var debug = data.config.debug;
+
+  if (debug) {
+    host.debug = debug;
+  }
   // Keeps clean!
-  if (!data.config.debug) {
+  else {
     delete host._util;
     delete host._data;
     delete host._fn;

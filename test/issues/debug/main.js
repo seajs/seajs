@@ -1,4 +1,7 @@
 
+var debugInitialValue = seajs.debug;
+
+
 seajs.config({
   debug: 2
 });
@@ -15,7 +18,8 @@ define(function(require) {
 
   var timestamp = (new Date().getTime() + '').substring(0, 8);
 
-  test.assert(seajs.debug, seajs.debug);
+  test.assert(debugInitialValue === undefined, 'initial debug value is undefined');
+  test.assert(seajs.debug === 1, 'seajs.debug should be 1');
   test.assert(a.id.indexOf(timestamp) > 0, 'a is ok');
   test.assert(b.id.indexOf(timestamp) > 0, 'b is ok');
   test.assert(c.id.indexOf(timestamp) > 0, 'c is ok');

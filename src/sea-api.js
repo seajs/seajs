@@ -31,10 +31,13 @@
   };
 
 
-  host.debug = data.config.debug;
+  var debug = data.config.debug;
 
+  if (debug) {
+    host.debug = debug;
+  }
   // Keeps clean!
-  if (!host.debug) {
+  else {
     delete host._util;
     delete host._data;
     delete host._fn;

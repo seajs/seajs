@@ -123,7 +123,9 @@
     }
 
     // Sync
-    host.debug = config.debug;
+    if (config.debug) {
+      host.debug = config.debug;
+    }
 
     return this;
   };
