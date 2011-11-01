@@ -104,10 +104,7 @@
     // Make sure config.base is absolute path.
     var base = config.base;
     if (!util.isAbsolute(base)) {
-      if (util.isTopLevel(base)) {
-        base = './' + base;
-      }
-      config.base = util.id2Uri(base + '#');
+      config.base = util.id2Uri('./' + base + '#');
     }
 
     // Use map to implement nocache

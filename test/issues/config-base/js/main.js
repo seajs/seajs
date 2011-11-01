@@ -12,6 +12,17 @@ define(function(require) {
   test.assert(c.c === 'c', 'c is ok');
   test.assert(xxlib.name === 'xxlib', 'xxlib is ok');
 
+
+  seajs.config({
+    base: 'xx'
+  });
+
+  test.assert(
+      require.resolve('z').indexOf('/config-base/xx/z.js') > 0,
+      require.resolve('z')
+  );
+
+
   test.done();
 
 });
