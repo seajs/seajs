@@ -3,10 +3,12 @@
  * @fileoverview The configuration.
  */
 
-(function(util, data, fn) {
+(function(host, util, data, fn) {
 
   var config = data.config;
-  var noCacheTimeStamp = 'seajs-ts=' + util.now();
+
+  var noCachePrefix = 'seajs-ts=';
+  var noCacheTimeStamp = noCachePrefix + util.now();
 
 
   // Async inserted script.
@@ -105,19 +107,23 @@
       config.base = util.id2Uri(base + '#');
     }
 
-    // use map to implement nocache
+    // Use map to implement nocache
     if (config.debug === 2) {
       config.debug = 1;
       fn.config({
         map: [
           [/.*/, function(url) {
-            return url +
-                (url.indexOf('?') === -1 ? '?' : '&') +
-                noCacheTimeStamp;
+            if (url.indexOf(noCachePrefix) === -1) {
+              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
+            }
+            return url;
           }, -1]
         ]
       });
     }
+
+    // Sync
+    host.debug = config.debug;
 
     return this;
   };
@@ -135,4 +141,4 @@
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs, seajs._util, seajs._data, seajs._fn);

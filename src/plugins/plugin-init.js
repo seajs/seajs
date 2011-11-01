@@ -25,7 +25,7 @@
   // handle seajs-debug
   if (~global.location.search.indexOf('seajs-debug') ||
       ~document.cookie.indexOf('seajs=1')) {
-    config.debug = true;
+    fn.config({ debug: 2 });
     config.preload.push('plugin-map');
   }
 
