@@ -17,7 +17,7 @@ define(function(require) {
 
   test.assert(a && a.name === 'a', 'relative id in sub/a.js');
   test.assert(b && b.name === 'b', 'toplevel id in sub/b.js');
-  test.assert(c && b.name === 'c', 'no id in sub/c.js');
+  test.assert(c && c.name === 'c', 'no id in sub/c.js');
 
   test.done();
 
