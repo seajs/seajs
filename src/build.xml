@@ -24,9 +24,9 @@
       <path path="fn-require.js"/>
       <path path="fn-load.js"/>
       <path path="fn-config.js"/>
-      <path path="fn-bootstrap.js"/>
 
       <path path="plugins/plugin-init.js"/>
+      <path path="fn-bootstrap.js"/>
       <path path="sea-api.js"/>
 
     </concat>
