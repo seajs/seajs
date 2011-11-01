@@ -44,21 +44,23 @@
    * @param {Object=} context The context of current executing environment.
    */
   function load(ids, callback, context) {
-    if (util.isString(ids)) {
-      ids = [ids];
-    }
-    var uris = RP._batchResolve(ids, context);
-
-    provide(uris, function() {
-      var require = fn.createRequire(context);
-
-      var args = util.map(uris, function(uri) {
-        return require(data.memoizedMods[uri]);
-      });
-
-      if (callback) {
-        callback.apply(null, args);
+    preload(function() {
+      if (util.isString(ids)) {
+        ids = [ids];
       }
+      var uris = RP._batchResolve(ids, context);
+
+      provide(uris, function() {
+        var require = fn.createRequire(context);
+
+        var args = util.map(uris, function(uri) {
+          return require(data.memoizedMods[uri]);
+        });
+
+        if (callback) {
+          callback.apply(null, args);
+        }
+      });
     });
   }
 
