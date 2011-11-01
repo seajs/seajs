@@ -31,7 +31,7 @@
       }
     }
 
-    // parse deps
+    // Parse deps
     if (!util.isArray(deps) && util.isFunction(factory)) {
       deps = parseDependencies(factory.toString());
     }
@@ -39,10 +39,11 @@
 
     var pureId, mod, immediate, url;
 
-    // parse alias in id
+    // Parse alias
     if (id) {
-      id = util.parseAlias(id);
-      pureId = id.substring(1); // strip #
+      pureId = id;
+      // Use prefix # to indicate that alias is parsed.
+      id = '#' + util.parseAlias(id);
     }
 
     mod = new fn.Module(id, deps, factory);

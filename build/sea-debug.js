@@ -283,12 +283,15 @@ seajs._fn = {};
    * Parses alias in the module id. Only parse the first part.
    */
   function parseAlias(id) {
-    var alias = config['alias'];
-    var c = id.charAt(0);
+    // #xxx means xxx is parsed.
+    if (id.charAt(0) === '#') {
+      return id.substring(1);
+    }
 
-    // 1. #xxx means xxx is parsed.
+    var alias;
+
     // 2. Only top-level id needs to parse alias.
-    if (c !== '#' && isTopLevel(id) && alias) {
+    if (isTopLevel(id) && (alias = config.alias)) {
 
       var parts = id.split('/');
       var first = parts[0];
@@ -300,7 +303,7 @@ seajs._fn = {};
       }
     }
 
-    return (c === '#' ? '' : '#') + id;
+    return id;
   }
 
 
@@ -365,14 +368,16 @@ seajs._fn = {};
     pageUrl = pageUrl.replace(/\\/g, '/');
   }
 
+
   /**
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
    */
   function id2Uri(id, refUrl) {
-    id = parseAlias(id).substring(1); // strip #
+    id = parseAlias(id);
     refUrl = refUrl || pageUrl;
+
     var ret;
 
     // absolute id
@@ -765,7 +770,7 @@ seajs._fn = {};
       }
     }
 
-    // parse deps
+    // Parse deps
     if (!util.isArray(deps) && util.isFunction(factory)) {
       deps = parseDependencies(factory.toString());
     }
@@ -773,10 +778,11 @@ seajs._fn = {};
 
     var pureId, mod, immediate, url;
 
-    // parse alias in id
+    // Parse alias
     if (id) {
-      id = util.parseAlias(id);
-      pureId = id.substring(1); // strip #
+      pureId = id;
+      // Use prefix # to indicate that alias is parsed.
+      id = '#' + util.parseAlias(id);
     }
 
     mod = new fn.Module(id, deps, factory);
@@ -1360,6 +1366,39 @@ seajs._fn = {};
 })(seajs, seajs._util, seajs._data, seajs._fn);
 
 /**
+ * @fileoverview Prepare for plugins environment.
+ */
+
+(function(data, util, fn, global) {
+
+  var config = data.config;
+
+
+  // register plugin names
+  var alias = {};
+  var loaderDir = util.loaderDir;
+
+  util.forEach(['base', 'map', 'text', 'json', 'coffee', 'less'], function(name) {
+    name = 'plugin-' + name;
+    alias[name] = loaderDir + name;
+  });
+
+  fn.config({
+    alias: alias
+  });
+
+
+  // handle seajs-debug
+  if (~global.location.search.indexOf('seajs-debug') ||
+      ~document.cookie.indexOf('seajs=1')) {
+    fn.config({ debug: 2 });
+    config.preload.push('plugin-map');
+  }
+
+
+})(seajs._data, seajs._util, seajs._fn, this);
+
+/**
  * @fileoverview The bootstrap and entrances.
  */
 
@@ -1399,39 +1438,6 @@ seajs._fn = {};
   })((host._seajs || 0)['args']);
 
 })(seajs, seajs._data, seajs._fn);
-
-/**
- * @fileoverview Prepare for plugins environment.
- */
-
-(function(data, util, fn, global) {
-
-  var config = data.config;
-
-
-  // register plugin names
-  var alias = {};
-  var loaderDir = util.loaderDir;
-
-  util.forEach(['base', 'map', 'text', 'json', 'coffee', 'less'], function(name) {
-    name = 'plugin-' + name;
-    alias[name] = loaderDir + name;
-  });
-
-  fn.config({
-    alias: alias
-  });
-
-
-  // handle seajs-debug
-  if (~global.location.search.indexOf('seajs-debug') ||
-      ~document.cookie.indexOf('seajs=1')) {
-    fn.config({ debug: 2 });
-    config.preload.push('plugin-map');
-  }
-
-
-})(seajs._data, seajs._util, seajs._fn, this);
 
 /**
  * @fileoverview The public api of seajs.

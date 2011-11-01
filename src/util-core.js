@@ -81,7 +81,7 @@
   function parseAlias(id) {
     // #xxx means xxx is parsed.
     if (id.charAt(0) === '#') {
-      return id;
+      return id.substring(1);
     }
 
     var alias;
@@ -99,7 +99,7 @@
       }
     }
 
-    return '#' + id;
+    return id;
   }
 
 
@@ -164,15 +164,16 @@
     pageUrl = pageUrl.replace(/\\/g, '/');
   }
 
-  
+
   /**
    * Converts id to uri.
    * @param {string} id The module id.
    * @param {string=} refUrl The referenced uri for relative id.
    */
   function id2Uri(id, refUrl) {
-    id = parseAlias(id).substring(1); // strip #
+    id = parseAlias(id);
     refUrl = refUrl || pageUrl;
+
     var ret;
 
     // absolute id
