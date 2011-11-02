@@ -53,6 +53,7 @@ define(function(require, exports) {
     ,'issues/plugin-coffee'
     ,'issues/plugin-json'
     ,'issues/plugin-less'
+    ,'issues/plugin-map'
     ,'issues/plugin-text'
     ,'issues/preload'
     ,'issues/remove-comments'
