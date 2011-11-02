@@ -3,17 +3,15 @@
 <head>
 <meta charset="utf-8"/>
 <title>Issue Test</title>
-
-<script>
-
-  document.cookie = 'seajs=1``1';
-
-</script>
-
-<script src="../../../build/sea.js" data-main="main"></script>
 </head>
 
 <body>
+
+<script>
+  document.cookie = 'seajs=1``1';
+</script>
+
+<script src="../../../build/sea.js" data-main="main"></script>
 
 <p>
   <a href="https://github.com/seajs/seajs/issues/119">#119</a>
@@ -22,14 +20,12 @@
 <div id="out"></div>
 
 <script>
-
   function printResults(txt, style) {
     var d = document.createElement('div');
     d.innerHTML = txt;
     d.className = style;
     document.getElementById('out').appendChild(d);
   }
-
 </script>
 </body>
 </html>

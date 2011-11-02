@@ -46,8 +46,11 @@ define('plugin-map', [], function() {
         '  float: right; margin: 6px 0 0 10px;' +
         '  padding: 2px 10px;' +
         '  color: #211922; background: #f9f9f9;' +
-        '  background-image: -webkit-linear-gradient(top, #fefeff, #efefef);' +
-        '  background-image: -moz-linear-gradient(top, #fefeff, #efefef);' +
+
+        // the stupid Opera will throw error when finding unrecognized css code.
+        //'  background-image: -webkit-linear-gradient(top, #fefeff, #efefef);' +
+        //'  background-image: -moz-linear-gradient(top, #fefeff, #efefef);' +
+
         '  text-shadow: 0 1px #eaeaea;' +
         '  border: 1px solid #bbb;' +
         '  border-radius: 3px;' +
