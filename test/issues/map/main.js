@@ -19,6 +19,9 @@ define(function(require) {
   test.assert(b && b.name === 'b', 'toplevel id in sub/b.js');
   test.assert(c && c.name === 'c', 'no id in sub/c.js');
 
-  test.done();
+  require.async('./d', function(d) {
+    test.assert(d.name === 'd', 'require.async is ok');
+    test.done();
+  });
 
 });
