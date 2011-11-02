@@ -7,6 +7,8 @@ if (location.href.indexOf('/~lifesinger/') > 0) {
 
 
 seajs.config({
+  debug: 2,
+
   base: MODULES_PATH,
 
   alias: {

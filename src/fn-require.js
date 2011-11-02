@@ -93,7 +93,9 @@
   /**
    * Plugin can override this method to add custom loading.
    */
-  RP.load = util.getAsset;
+  RP.load = function(uri, callback, charset) {
+    return util.getAsset(util.parseMap(uri), callback, charset);
+  };
 
 
   /**
