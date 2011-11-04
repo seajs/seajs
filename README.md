@@ -1,9 +1,6 @@
 
-SeaJS: A Module Loader for the Web
----
-
-
-## Documentation
+A Module Loader for the Web
+===
 
 Please go to <http://seajs.com/>
 
