@@ -1,12 +1,11 @@
 
-SeaJS is a new kind of JavaScript module loader that makes it easy to build scalable web applications. SeaJS is designed to change the way that you organize JavaScript.
+SeaJS: A Module Loader for the Web
+---
 
-<http://seajs.com/>
 
+## Documentation
 
-## Slogan
-
-The sea, holding water from thousands of rivers, is huge owing to its capacity.
+Please go to <http://seajs.com/>
 
 
 ## License
