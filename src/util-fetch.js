@@ -108,7 +108,7 @@
       return;
     }
 
-    var isLoaded = false;
+    var isLoaded;
 
     if (isWebKit) {
       if (node['sheet']) {
@@ -129,17 +129,14 @@
       }
     }
 
-    if (isLoaded) {
-      // give time to render.
-      setTimeout(function() {
+    setTimeout(function() {
+      if (isLoaded) {
+        // place callback in here due to giving time to render.
         callback();
-      }, 1);
-    }
-    else {
-      setTimeout(function() {
+      } else {
         poll(node, callback);
-      }, 1);
-    }
+      }
+    }, 1);
   }
 
   util.assetOnload = assetOnload;
