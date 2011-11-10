@@ -50,6 +50,7 @@ define(function(require, exports) {
     ,'issues/multi-use'
     ,'issues/multi-versions'
     ,'issues/no-conflict'
+    ,'issues/onload'
     ,'issues/plugin-coffee'
     ,'issues/plugin-json'
     ,'issues/plugin-less'
