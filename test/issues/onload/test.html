@@ -26,7 +26,7 @@
 </script>
 
 
-<script src="../../../build/sea.js"></script>
+<script src="../../test.js"></script>
 <script src="a.js"></script>
 <script src="b.js"></script>
 <script src="c.js"></script>
@@ -39,79 +39,71 @@
 
   var outEl = document.getElementById('out');
   var out = [];
+  var n = 0;
+  var N = 9;
 
 
-  seajs.use('../../test', function(test) {
-    global.fetch = fetch;
-    global.printOnload = printOnload;
-
-    var n = 0;
-    var N = 9;
-
-
-    fetch('a.js', printOnload('a.js'));
-    fetch('d.js', function() {
-      fetch('b.js', printOnload('b.js'));
-      printOnload('d.js')();
-      fetch('g.js', printOnload('g.js'));
-    });
-    fetch('e.js', printOnload('e.js'));
-    fetch('f.js', printOnload('f.js'));
-    fetch('h.js', function() {
-      fetch('i.js', printOnload('i.js'));
-      printOnload('h.js')();
-    });
-
-
-    function done() {
-      if (++n === N) {
-        print('-------------------');
-        
-        var s = out.join('');
-
-        var U = s.replace(/[a-z]/g, '');
-        var L = s.replace(/[A-Z]/g, '');
-        print(U + ' ' + L);
-
-        test.assert(U.length === N, U.length);
-        test.assert(U === L.toUpperCase(), s);
-        test.done();
-      }
-    }
-
-    function fetch(src, callback) {
-      var node = document.createElement('script');
-      addOnload(node, callback);
-      node.src = src;
-      outEl.appendChild(node);
-    }
-
-    function addOnload(node, callback) {
-      if (node.addEventListener) {
-        node.addEventListener('load', callback, false);
-        node.addEventListener('error', function() {
-          print('error: ' + node.src);
-        }, false);
-      }
-      else { // for IE6-8
-        node.attachEvent('onreadystatechange', function() {
-          var rs = node.readyState;
-          if (rs === 'loaded' || rs === 'complete') {
-            callback();
-          }
-        });
-      }
-    }
-
-    function printOnload(file) {
-      return function() {
-        print(file + ' is loaded');
-        out.push(file.split('.')[0]);
-        done();
-      };
-    }
-
+  fetch('a.js', printOnload('a.js'));
+  fetch('d.js', function() {
+    fetch('b.js', printOnload('b.js'));
+    printOnload('d.js')();
+    fetch('g.js', printOnload('g.js'));
   });
+  fetch('e.js', printOnload('e.js'));
+  fetch('f.js', printOnload('f.js'));
+  fetch('h.js', function() {
+    fetch('i.js', printOnload('i.js'));
+    printOnload('h.js')();
+  });
+
+
+  function done() {
+    if (++n === N) {
+      print('-------------------');
+
+      var s = out.join('');
+
+      var U = s.replace(/[a-z]/g, '');
+      var L = s.replace(/[A-Z]/g, '');
+
+      test.assert(U.length === N, U.length);
+      test.assert(U === L.toUpperCase(), s + ' ' + U + ' ' + L);
+      test.done();
+    }
+  }
+
+  function fetch(src, callback) {
+    var node = document.createElement('script');
+    addOnload(node, callback);
+    node.src = src;
+    outEl.appendChild(node);
+  }
+
+  function addOnload(node, callback) {
+    if (node.addEventListener) {
+      node.addEventListener('load', callback, false);
+      node.addEventListener('error', function() {
+        print('error: ' + node.src);
+        out.push(0);
+      }, false);
+    }
+    else { // for IE6-8
+      node.attachEvent('onreadystatechange', function() {
+        var rs = node.readyState;
+        if (rs === 'loaded' || rs === 'complete') {
+          callback();
+        }
+      });
+    }
+  }
+
+  function printOnload(file) {
+    return function() {
+      print(file + ' is loaded');
+      out.push(file.split('.')[0]);
+      done();
+    };
+  }
 
 </script>
 

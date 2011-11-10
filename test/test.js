@@ -1,4 +1,16 @@
-define(function(require, exports) {
+(function(factory) {
+
+  if (typeof define === 'function') {
+    define(factory);
+  }
+  else if (typeof exports !== 'undefined') {
+    factory(require, exports);
+  }
+  else {
+    factory(null, (this['test'] = {}));
+  }
+
+})(function(require, exports) {
 
   function sendMessage(fn, msg, type) {
     var p = this;
