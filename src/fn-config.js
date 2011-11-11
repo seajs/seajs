@@ -103,7 +103,7 @@
 
     // Make sure config.base is absolute path.
     var base = config.base;
-    if (!util.isAbsolute(base)) {
+    if (base && !util.isAbsolute(base)) {
       config.base = util.id2Uri('./' + base + '#');
     }
 
