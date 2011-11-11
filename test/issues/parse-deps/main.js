@@ -20,7 +20,8 @@ require('./a');
   test.assert(require('e').name === 'e', 'e');
   test.assert(module.dependencies.length === 4, module.dependencies);
 
-
+  test.done();
+  
 });
 
 define('b', { name: 'b' });
