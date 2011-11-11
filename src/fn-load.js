@@ -10,6 +10,7 @@
    * { uri: scriptNode, ... }
    */
   var fetchingMods = {};
+  var callbackList = {};
 
   var memoizedMods = data.memoizedMods;
   var config = data.config;
@@ -147,11 +148,12 @@
   function fetch(uri, callback) {
 
     if (fetchingMods[uri]) {
-      util.assetOnload(fetchingMods[uri], cb);
+      callbackList[uri].push(callback);
     }
     else {
       // See fn-define.js: "uri = data.pendingModIE"
       data.pendingModIE = uri;
+      callbackList[uri] = [callback];
 
       fetchingMods[uri] = RP.load(
           uri,
@@ -175,7 +177,12 @@
       if (fetchingMods[uri]) {
         delete fetchingMods[uri];
       }
-      callback();
+
+      // Call callbacks
+      util.forEach(callbackList[uri], function(fn) {
+        fn();
+      });
+      delete callbackList[uri];
     }
   }
 

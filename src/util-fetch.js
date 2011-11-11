@@ -139,8 +139,6 @@
     }, 1);
   }
 
-  util.assetOnload = assetOnload;
-
 
   var interactiveScript = null;
 

@@ -695,8 +695,6 @@ seajs._fn = {};
     }, 1);
   }
 
-  util.assetOnload = assetOnload;
-
 
   var interactiveScript = null;
 
@@ -1067,6 +1065,7 @@ seajs._fn = {};
    * { uri: scriptNode, ... }
    */
   var fetchingMods = {};
+  var callbackList = {};
 
   var memoizedMods = data.memoizedMods;
   var config = data.config;
@@ -1204,11 +1203,12 @@ seajs._fn = {};
   function fetch(uri, callback) {
 
     if (fetchingMods[uri]) {
-      util.assetOnload(fetchingMods[uri], cb);
+      callbackList[uri].push(callback);
     }
     else {
       // See fn-define.js: "uri = data.pendingModIE"
       data.pendingModIE = uri;
+      callbackList[uri] = [callback];
 
       fetchingMods[uri] = RP.load(
           uri,
@@ -1232,7 +1232,12 @@ seajs._fn = {};
       if (fetchingMods[uri]) {
         delete fetchingMods[uri];
       }
-      callback();
+
+      // Call callbacks
+      util.forEach(callbackList[uri], function(fn) {
+        fn();
+      });
+      delete callbackList[uri];
     }
   }
 
@@ -1345,7 +1350,7 @@ seajs._fn = {};
 
     // Make sure config.base is absolute path.
     var base = config.base;
-    if (!util.isAbsolute(base)) {
+    if (base && !util.isAbsolute(base)) {
       config.base = util.id2Uri('./' + base + '#');
     }
 
@@ -1400,10 +1405,12 @@ seajs._fn = {};
   var alias = {};
   var loaderDir = util.loaderDir;
 
-  util.forEach(['base', 'map', 'text', 'json', 'coffee', 'less'], function(name) {
-    name = 'plugin-' + name;
-    alias[name] = loaderDir + name;
-  });
+  util.forEach(
+      ['base', 'map', 'text', 'json', 'coffee', 'less'],
+      function(name) {
+        name = 'plugin-' + name;
+        alias[name] = loaderDir + name;
+      });
 
   fn.config({
     alias: alias
