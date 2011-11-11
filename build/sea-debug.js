@@ -1,4 +1,4 @@
-/* SeaJS v1.0.2 | seajs.com | MIT Licensed */
+/* SeaJS v1.0.3dev | seajs.com | MIT Licensed */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
@@ -16,7 +16,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.0.2';
+seajs.version = '1.0.3dev';
 
 
 // Module status:
@@ -152,6 +152,29 @@ seajs._fn = {};
         });
         return ret;
       };
+
+
+  util.unique = function(arr) {
+    var ret = [];
+    var o = {};
+
+    forEach(arr, function(item) {
+      o[item] = 1;
+    });
+
+    if (Object.keys) {
+      ret = Object.keys(o);
+    }
+    else {
+      for (var p in o) {
+        if (o.hasOwnProperty(p)) {
+          ret.push(p);
+        }
+      }
+    }
+
+    return ret;
+  };
 
 
   util.now = Date.now || function() {
@@ -343,7 +366,7 @@ seajs._fn = {};
    * Gets the host portion from url.
    */
   function getHost(url) {
-    return url.replace(/^(\w+:\/\/[^/]*)\/?.*$/, '$1');
+    return url.replace(/^(\w+:\/\/[^\/]*)\/?.*$/, '$1');
   }
 
 
@@ -641,7 +664,7 @@ seajs._fn = {};
       return;
     }
 
-    var isLoaded = false;
+    var isLoaded;
 
     if (isWebKit) {
       if (node['sheet']) {
@@ -662,17 +685,14 @@ seajs._fn = {};
       }
     }
 
-    if (isLoaded) {
-      // give time to render.
-      setTimeout(function() {
+    setTimeout(function() {
+      if (isLoaded) {
+        // place callback in here due to giving time to render.
         callback();
-      }, 1);
-    }
-    else {
-      setTimeout(function() {
+      } else {
         poll(node, callback);
-      }, 1);
-    }
+      }
+    }, 1);
   }
 
   util.assetOnload = assetOnload;
@@ -833,17 +853,17 @@ seajs._fn = {};
     //   ...
     // Doesn't parse:
     //   someInstance.require(...);
-    var pattern = /[^.]\brequire\s*\(\s*['"]?([^'")]*)/g;
+    var pattern = /(?:^|[^.])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g;
     var ret = [], match;
 
     code = removeComments(code);
     while ((match = pattern.exec(code))) {
-      if (match[1]) {
-        ret.push(match[1]);
+      if (match[2]) {
+        ret.push(match[2]);
       }
     }
 
-    return ret;
+    return util.unique(ret);
   }
 
 

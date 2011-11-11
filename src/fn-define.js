@@ -95,17 +95,17 @@
     //   ...
     // Doesn't parse:
     //   someInstance.require(...);
-    var pattern = /[^.]\brequire\s*\(\s*['"]?([^'")]*)/g;
+    var pattern = /(?:^|[^.])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g;
     var ret = [], match;
 
     code = removeComments(code);
     while ((match = pattern.exec(code))) {
-      if (match[1]) {
-        ret.push(match[1]);
+      if (match[2]) {
+        ret.push(match[2]);
       }
     }
 
-    return ret;
+    return util.unique(ret);
   }
 
 

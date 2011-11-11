@@ -51,6 +51,7 @@ define(function(require, exports) {
     ,'issues/multi-versions'
     ,'issues/no-conflict'
     ,'issues/onload'
+    ,'issues/parse-deps'
     ,'issues/plugin-coffee'
     ,'issues/plugin-json'
     ,'issues/plugin-less'

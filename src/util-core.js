@@ -139,7 +139,7 @@
    * Gets the host portion from url.
    */
   function getHost(url) {
-    return url.replace(/^(\w+:\/\/[^/]*)\/?.*$/, '$1');
+    return url.replace(/^(\w+:\/\/[^\/]*)\/?.*$/, '$1');
   }
 
 
