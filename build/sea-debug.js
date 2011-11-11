@@ -189,39 +189,21 @@ seajs._fn = {};
 
 (function(util, data) {
 
-  var config = data.config;
+
+  util.error = function() {
+      throw join(arguments);
+  };
 
 
-  /**
-   * The function to handle inner errors.
-   *
-   * @param {Object} o The error object.
-   */
-  util.error = function(o) {
-
-    // Throw errors.
-    if (o.type === 'error') {
-      throw 'Error occurs! ' + dump(o);
-    }
-    // Output debug info.
-    else if (config.debug && typeof console !== 'undefined') {
-      console[o.type](dump(o));
+  util.warn = function() {
+    if (data.config.debug && typeof console !== 'undefined') {
+      console.warn(join(arguments));
     }
   };
 
-  function dump(o) {
-    var out = ['{'];
 
-    for (var p in o) {
-      if (typeof o[p] === 'number' || typeof o[p] === 'string') {
-        out.push(p + ': ' + o[p]);
-        out.push(', ');
-      }
-    }
-    out.pop();
-    out.push('}');
-
-    return out.join('');
+  function join(args) {
+    return Array.prototype.join.call(args, ' ');
   }
 
 })(seajs._util, seajs._data);
@@ -268,10 +250,7 @@ seajs._fn = {};
       part = old[i];
       if (part === '..') {
         if (ret.length === 0) {
-          util.error({
-            message: 'invalid path: ' + path,
-            type: 'error'
-          });
+          util.error('Invalid path:', path);
         }
         ret.pop();
       }
@@ -428,11 +407,7 @@ seajs._fn = {};
 
   function getConfigBase() {
     if (!config.base) {
-      util.error({
-        message: 'the config.base is empty',
-        from: 'id2Uri',
-        type: 'error'
-      });
+      util.error('The config.base is empty.');
     }
     return config.base;
   }
@@ -610,12 +585,8 @@ seajs._fn = {};
     }
 
     var timer = setTimeout(function() {
+      util.warn('time is out:', node.src);
       cb();
-      util.error({
-        message: 'time is out',
-        from: 'getAsset',
-        type: 'warn'
-      });
     }, data.config.timeout);
 
     function cb() {
@@ -913,13 +884,7 @@ seajs._fn = {};
 
     // Checks cyclic dependencies.
     if (isCyclic(context, uri)) {
-      util.error({
-        message: 'found cyclic dependencies',
-        from: 'require',
-        uri: uri,
-        type: 'warn'
-      });
-
+      util.warn('Found cyclic dependencies:', uri);
       return mod.exports;
     }
 
@@ -1014,7 +979,6 @@ seajs._fn = {};
     delete mod.ready;
 
     if (util.isFunction(factory)) {
-      checkPotentialErrors(factory, mod.id);
       ret = factory(createRequire(context), mod.exports, mod);
       if (ret !== undefined) {
         mod.exports = ret;
@@ -1034,18 +998,6 @@ seajs._fn = {};
       return isCyclic(context.parent, uri);
     }
     return false;
-  }
-
-
-  function checkPotentialErrors(factory, uri) {
-    if (~factory.toString().search(/\sexports\s*=\s*[^=]/)) {
-      util.error({
-        message: 'found invalid setter: exports = {...}',
-        from: 'require',
-        uri: uri,
-        type: 'warn'
-      });
-    }
   }
 
 
@@ -1379,14 +1331,8 @@ seajs._fn = {};
 
 
   function checkConflict(previous, current) {
-    if (previous !== undefined && previous !== current) {
-      util.error({
-        'message': 'config is conflicted',
-        'previous': previous,
-        'current': current,
-        'from': 'config',
-        'type': 'error'
-      });
+    if (previous && previous !== current) {
+      util.error('Config is conflicted:', previous, current);
     }
   }
 

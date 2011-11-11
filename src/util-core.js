@@ -41,10 +41,7 @@
       part = old[i];
       if (part === '..') {
         if (ret.length === 0) {
-          util.error({
-            message: 'invalid path: ' + path,
-            type: 'error'
-          });
+          util.error('Invalid path:', path);
         }
         ret.pop();
       }
@@ -201,11 +198,7 @@
 
   function getConfigBase() {
     if (!config.base) {
-      util.error({
-        message: 'the config.base is empty',
-        from: 'id2Uri',
-        type: 'error'
-      });
+      util.error('The config.base is empty.');
     }
     return config.base;
   }

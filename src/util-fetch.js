@@ -54,12 +54,8 @@
     }
 
     var timer = setTimeout(function() {
+      util.warn('time is out:', node.src);
       cb();
-      util.error({
-        message: 'time is out',
-        from: 'getAsset',
-        type: 'warn'
-      });
     }, data.config.timeout);
 
     function cb() {

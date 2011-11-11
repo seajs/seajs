@@ -132,14 +132,8 @@
 
 
   function checkConflict(previous, current) {
-    if (previous !== undefined && previous !== current) {
-      util.error({
-        'message': 'config is conflicted',
-        'previous': previous,
-        'current': current,
-        'from': 'config',
-        'type': 'error'
-      });
+    if (previous && previous !== current) {
+      util.error('Config is conflicted:', previous, current);
     }
   }
 

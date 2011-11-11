@@ -38,13 +38,7 @@
 
     // Checks cyclic dependencies.
     if (isCyclic(context, uri)) {
-      util.error({
-        message: 'found cyclic dependencies',
-        from: 'require',
-        uri: uri,
-        type: 'warn'
-      });
-
+      util.warn('Found cyclic dependencies:', uri);
       return mod.exports;
     }
 
@@ -139,7 +133,6 @@
     delete mod.ready;
 
     if (util.isFunction(factory)) {
-      checkPotentialErrors(factory, mod.id);
       ret = factory(createRequire(context), mod.exports, mod);
       if (ret !== undefined) {
         mod.exports = ret;
@@ -159,18 +152,6 @@
       return isCyclic(context.parent, uri);
     }
     return false;
-  }
-
-
-  function checkPotentialErrors(factory, uri) {
-    if (~factory.toString().search(/\sexports\s*=\s*[^=]/)) {
-      util.error({
-        message: 'found invalid setter: exports = {...}',
-        from: 'require',
-        uri: uri,
-        type: 'warn'
-      });
-    }
   }
 
 
