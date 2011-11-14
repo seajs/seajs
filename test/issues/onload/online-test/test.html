@@ -51,30 +51,24 @@
   function complete() {
     var s = res.join('');
 
-    // err = 1 表示触发了 window.onerror
-    // err = 2 表示触发了 node.onerror
-    if (err === 0) {
-      // err = 3 表示信息不完善，比如 s 为 Cca
-      if (s.length !== 6) {
-        err = 3;
-      }
-      else {
-        var L = s.replace(/[A-Z]/g, '');
-        var U = s.replace(/[a-z]/g, '');
+    // err & 1 表示触发了 window.onerror
+    // err & 2 表示触发了 node.onerror
 
-        // err = 4 表示顺序不一致，比如 CcAbBa
-        if (L !== U.toLowerCase()) {
-          err = 4;
-        }
-        // err = 5 表示出现了onload抢先exec的现象，比如 CcaABb
-        else if (
-            s.indexOf('a') < s.indexOf('A') ||
-            s.indexOf('b') < s.indexOf('B') ||
-            s.indexOf('c') < s.indexOf('C'))
-        {
-          err = 5;
-        }
-      }
+    // err & 4 表示信息不完善，比如 s 为 Cca
+    if (s.length !== 6) {
+      err = err | 4;
+    }
+
+    // err & 8 表示顺序不一致，比如 CcAbBa
+    if (s.replace(/[A-Z]/g, '') !== s.replace(/[a-z]/g, '').toLowerCase()) {
+      err = err | 8;
+    }
+
+    // err & 16 表示出现了onload抢先exec的现象，比如 CcaABb
+    if (s.indexOf('a') < s.indexOf('A') ||
+        s.indexOf('b') < s.indexOf('B') ||
+        s.indexOf('c') < s.indexOf('C')) {
+      err = err | 16;
     }
 
     s = err + s;
