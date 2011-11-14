@@ -28,7 +28,7 @@
     if (node.addEventListener) {
       node.addEventListener('load', callback, false);
       node.addEventListener('error', function() {
-        err = 2;
+        err = err | 2;
         callback();
       }, false);
     }
@@ -96,7 +96,7 @@
 
 
   window.onerror = function() {
-    err = 1;
+    err = err | 1;
     complete();
   };
 
