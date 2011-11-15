@@ -73,12 +73,16 @@
       // this case, the callback will be called when time is out.
     }
     else { // for IE6-8
-      node.attachEvent('onreadystatechange', function() {
+      node.attachEvent('onreadystatechange', scriptOnload);
+
+      function scriptOnload() {
         var rs = node.readyState;
         if (rs === 'loaded' || rs === 'complete') {
+          // ensure only call callback once.
+          node.detachEvent('onreadystatechange', scriptOnload);
           callback();
         }
-      });
+      }
     }
   }
 
