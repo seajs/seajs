@@ -37,7 +37,7 @@
         var rs = node.readyState;
         if (rs === 'loaded' || rs === 'complete') {
           node.onreadystatechange = null;
-          callback();
+          setTimeout(callback, 0);
         }
       };
     }

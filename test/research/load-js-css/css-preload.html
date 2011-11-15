@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Preload</title>
+</head>
+<body>
+
+<p id="red">This paragraph should be red.</p>
+<p id="blue">This paragraph should be blue.</p>
+
+<div id="out"></div>
+
+<script>
+
+  // test cases
+  var head = document.getElementsByTagName('head')[0];
+  var timestamp = new Date().getTime();
+  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') !== -1;
+
+  print(navigator.userAgent);
+
+  // 同域
+  getStyle('red.php');
+  // 404
+  getStyle('404.css');
+  // 跨域
+  getStyle('http://127.0.0.1/~lifesinger/seajs/test/research/load-js-css/blue.php');
+
+
+  function getStyle(url) {
+    var s = document.createElement('link');
+    s.rel = 'stylesheet';
+
+    // for IE6-9 and Opera
+    if (window.attachEvent) {
+      s.onload = function() {
+        print('style is loaded. [onload] ' + url);
+      };
+    }
+    // for WebKit and Firefox
+    else {
+      poll(s, url);
+    }
+
+    s.href = url + '?' + timestamp;
+    head.appendChild(s);
+  }
+
+  function poll(node, url) {
+    var isLoaded = false;
+
+    if (isWebKit) {
+      console.log('node.sheet = ' + node.sheet + ' ' + url);
+      if (node.sheet) {
+        isLoaded = true;
+        console.log('node.sheet.cssRules = ' + node.sheet.cssRules + ' ' + url);
+      }
+    }
+    // for Firefox
+    else if(node.sheet) {
+      try {
+        if (node.sheet.cssRules) {
+          console.log(node.sheet.cssRules + ' ' + url);
+          isLoaded = true;
+        }
+      } catch(ex) {
+        console.log(ex.code + ' ' + url);
+        if (ex.code == '1000') {
+          isLoaded = true;
+        }
+      }
+    }
+
+    if (isLoaded) {
+      print('style is loaded. [poll] ' + url);
+    } else {
+      setTimeout(function() {
+        poll(node, url);
+      }, 1000);
+    }
+  }
+
+
+  function print(msg) {
+    var p = document.createElement('P');
+    p.appendChild(document.createTextNode(msg));
+    document.getElementById('out').appendChild(p);
+  }
+
+</script>
+
+
+<h2>Summary</h2>
+
+<pre>
+
+  Chrome / Safari:
+    linkNode.sheet 在 css 文件下载完成并解析好后才有值，之前为 undefined
+    linkNode.sheet.cssRules 同域时返回 CSSRuleList, 跨域时返回 null
+
+  Firefox:
+    linkNode.sheet 在 css 插入 DOM 中后立刻有值，插入前为 undefined
+    linkNode.sheet.cssRules 在文件还未下好时，抛出 NS_ERROR_DOM_INVALID_ACCESS_ERR
+                            在文件下载并解析好后，
+                              同域时返回 cssRuleList
+                              跨域时抛出 NS_ERROR_DOM_SECURITY_ERR
+
+  IE6-9 / Opera:
+    linkNode.sheet 和 cssRules 在 css 插入 DOM 后都立刻可访问，cssRules 为 []
+    当文件下载完成时，cssRules 为 cssRuleList
+    IE 下，无论成功失败，都会触发 onload
+    Opera 只在成功时才触发 onload
+
+  缺陷：Opera 遇到 404 时，需要降级到 timeout
+
+</pre>
+
+
+</body>
+</html>
