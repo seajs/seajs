@@ -1,0 +1,1075 @@
+
+------- ie10 -------
+
+  total		123
+  0		123		100%
+  8		0		0%
+  16		0		0%
+
+  code = 0:	123
+    ABCabc	82
+    CcAaBb	15
+    CcABab	10
+    CcBAba	5
+    CcBbAa	3
+    CBAcba	3
+    CABcab	2
+    CAcaBb	1
+    ACBacb	1
+    Cc	1
+
+  code = 8:	0
+    
+
+  code = 16:	0
+    
+
+
+
+------- ie6 -------
+
+  total		2778116
+  0		2778007		99.99607647772807%
+  8		32		0.001151859749556894%
+  16		77		0.0027716625223712763%
+
+  code = 0:	2778007
+    ABCabc	1954945
+    CcAaBb	442094
+    CcABab	190091
+    CcBAba	70034
+    CcBbAa	69411
+    Cc	20301
+    AaBbCc	4889
+    ACacBb	3099
+    CcAab	2703
+    CAcBab	2489
+    CABcab	1868
+    ABabCc	1662
+    AaBCbc	1432
+    AaCcBb	1340
+    CAcaBb	1327
+    BCbcAa	1311
+    Ccab	1059
+    CcBba	879
+    ACBacb	785
+    AaCBcb	783
+    BbAaCc	659
+    CBAcba	568
+    BAbaCc	511
+    BACbac	469
+    BbCcAa	329
+    CcaBb	312
+    ABaCbc	301
+    CBcAba	249
+    BCAbca	208
+    ACacb	163
+    CBcbAa	136
+    CcbAa	112
+    BbACac	111
+    CAaBbCc	97
+    BbCAca	89
+    CcBab	75
+    c	70
+    ACaBcb	59
+    BAbCac	57
+    abc	54
+    Ccba	44
+    BCbca	41
+    CcAba	39
+    AaBbc	35
+    CABCabc	33
+    CcaABb	31
+    Aabc	29
+    ABabc	28
+    CAaCcBb	26
+    CABabCc	25
+    CBbAaCc	24
+    BCbAca	23
+    CACBacb	21
+    AaCcb	21
+    CBACbac	20
+    AaCBbCc	18
+    BbCca	16
+    CAaCBcb	14
+    BbAac	14
+    ABCabc	13
+    CBbCcAa	13
+    CAaBCbc	12
+    AaCcCBb	12
+    CBAbaCc	11
+    CBCAbca	10
+    aBCbc	10
+    abc	9
+    CcbBAa	9
+    CCBAcba	9
+    CCcAaBb	8
+    CCABcab	8
+    ABabc	8
+    CBbACac	8
+    AB	8
+    CCcBbAa	6
+    CCAcaBb	6
+    aBbCc	6
+    Cc	6
+    Bbac	6
+    AabCc	6
+    ACaBCbc	6
+    BCabc	5
+    ACaCcBb	5
+    CACacBb	5
+    CAcab	5
+    CCcABab	5
+    cAaBb	4
+    ABCCabc	4
+    BAbaCCc	4
+    CBCbcAa	4
+    AaBbCCc	4
+    cba	4
+    CCcBAba	4
+    ACCBacb	4
+    AaBCCbc	4
+    bAaCc	3
+    CBbCAca	3
+    aBbCc	3
+    AaCBCbc	3
+    BbCAaCc	3
+    bac	3
+    BbCcCAa	3
+    CBbCca	3
+    CcAaBb	3
+    acb	3
+    CcAa	2
+    ACBCabc	2
+    CcaBb	2
+    CAaCcb	2
+    AaCCBcb	2
+    BACCbac	2
+    aBbc	2
+    CcAab	2
+    aCcBb	2
+    ABabCCc	2
+    BCCAbca	2
+    BAbac	2
+    BbCCAca	2
+    ACCacBb	2
+    BCbcCAa	2
+    CaBbCc	2
+    Aacb	2
+    aBCbc	2
+    BCbCAca	2
+    CCBcbAa	2
+    ACBaCbc	1
+    AaCCcb	1
+    BbCACac	1
+    BbAaCCc	1
+    cABab	1
+    BCCbAca	1
+    CACacb	1
+    CBcba	1
+    BCCbcAa	1
+    aCbc	1
+    cBba	1
+    BbcAa	1
+    CBacb	1
+    ACbac	1
+    CCcbBAa	1
+    BabCc	1
+    Ccab	1
+    AaBcb	1
+    CCcBba	1
+    BCACbac	1
+    CcBbAa	1
+    ACaCBcb	1
+    BCAbaCc	1
+    Cca	1
+    B	1
+    BbCcCa	1
+    CcBba	1
+    bcAa	1
+    CACaBcb	1
+    C	1
+    BCbACac	1
+    CABaCbc	1
+    bCcAa	1
+    aBcb	1
+    cab	1
+    CcBb	1
+    bAaCc	1
+    AacCBb	1
+    CcCAab	1
+    AaBb	1
+    BbACCac	1
+    CCcab	1
+    BbCac	1
+    CcaBb	1
+    cBbAa	1
+    AaBbc	1
+    CCcaBb	1
+    bca	1
+    AacBb	1
+    CcABab	1
+    cAaBb	1
+    AbCac	1
+    AaCbc	1
+
+  code = 8:	32
+    CcaBAb	5
+    CAacBb	4
+    aBCAbc	2
+    CABbca	2
+    AaCBcCb	2
+    cAaCBb	2
+    CCBacAb	1
+    CABCcab	1
+    cAaBCb	1
+    CACBcab	1
+    ACBCacb	1
+    aCBCAbc	1
+    CAaBcb	1
+    CBCAcba	1
+    CcBCAba	1
+    ABCcab	1
+    BCACbca	1
+    CAaBbc	1
+    CABabc	1
+    ACBabc	1
+    CcAaCBb	1
+
+  code = 16:	77
+    CcaABb	31
+    AaCcCBb	12
+    CcbBAa	9
+    CcaBAb	5
+    BbCcCAa	3
+    aBCAbc	2
+    AaCBcCb	2
+    cAaCBb	2
+    BCbcCAa	2
+    CCBacAb	1
+    cAaBCb	1
+    aCBCAbc	1
+    CCcbBAa	1
+    CcBCAba	1
+    BbCcCa	1
+    AacCBb	1
+    CcCAab	1
+    CcAaCBb	1
+
+
+
+------- ie7 -------
+
+  total		688447
+  0		688218		99.96673672773649%
+  8		196		0.028469874950431913%
+  16		33		0.004793397313082925%
+
+  code = 0:	688218
+    ABCabc	482418
+    CcAaBb	90912
+    CcABab	70025
+    CcBAba	20142
+    CcBbAa	13320
+    Cc	2007
+    AaBbCc	1083
+    ABabCc	870
+    ACacBb	785
+    CABcab	761
+    CAcBab	756
+    CcAab	674
+    CAcaBb	602
+    Ccab	410
+    AaBCbc	389
+    BCbcAa	313
+    ACBacb	290
+    ABaCbc	275
+    CcBba	249
+    BACbac	243
+    AaCcBb	236
+    CBAcba	230
+    BAbaCc	162
+    AaCBcb	149
+    BbAaCc	149
+    BbCcAa	71
+    BCAbca	70
+    CBcAba	66
+    CcaBb	61
+    CBcbAa	49
+    ACacb	31
+    ABabc	31
+    BbACac	31
+    abc	26
+    CcBab	25
+    CcbAa	20
+    BAbCac	16
+    BCbca	15
+    CAaBbCc	15
+    BbCAca	14
+    ACaBcb	13
+    CABCabc	13
+    CcAba	11
+    Ccba	11
+    CAaCcBb	9
+    AaBbc	9
+    Aabc	7
+    cABab	7
+    BCbAca	6
+    bac	5
+    CBACbac	5
+    CcaABb	5
+    CBbAaCc	4
+    CBCAbca	4
+    CAaBCbc	4
+    CCBAcba	4
+    abc	4
+    AaCCcBb	4
+    c	4
+    CCABcab	3
+    acb	3
+    CACBacb	3
+    CABaCbc	3
+    CABabCc	3
+    CcbBAa	3
+    AaCBbCc	3
+    CAcab	3
+    CCcAaBb	3
+    AaCcb	3
+    CAaCBcb	2
+    CBAbaCc	2
+    cBAba	2
+    CBCbca	2
+    CBbCcAa	2
+    AabCc	2
+    CcBab	2
+    ACBCabc	2
+    ABC	2
+    Cc	2
+    aBbCc	2
+    AaCCBcb	2
+    BbAac	2
+    ACCBacb	2
+    BCabc	2
+    ABCabc	2
+    CCBcbAa	1
+    aCBcb	1
+    Aacb	1
+    Cabc	1
+    ABCCabc	1
+    BCCAbca	1
+    Bcba	1
+    BabCc	1
+    CACacb	1
+    CCcBbAa	1
+    CACbac	1
+    CAcab	1
+    CBCbcAa	1
+    ACabc	1
+    aCcBb	1
+    Bbac	1
+    CACacBb	1
+    CBcab	1
+    CCcaAb	1
+    CCcBAba	1
+    BbCca	1
+    BCACbac	1
+    CcAab	1
+    AabBCc	1
+    cBbAa	1
+    BAbca	1
+    cAaBb	1
+    CBbACac	1
+    AaBCCbc	1
+    BbAaCCc	1
+    CBbCAca	1
+    ABacb	1
+    BCCbcAa	1
+    CAaCcb	1
+    CcAab	1
+    CcA	1
+
+  code = 8:	196
+    CcABba	110
+    CcBAab	27
+    ABCbca	12
+    cABCab	5
+    cAaBCb	5
+    CABabc	4
+    CABcba	3
+    BbCcACa	3
+    CcaBAb	3
+    AaBCcb	3
+    aBCAbc	3
+    BACacb	2
+    ABCacb	2
+    CcBaAb	2
+    CACBcab	2
+    ABaCcb	2
+    CAaBcb	1
+    BCAcab	1
+    CAacBb	1
+    CABbca	1
+    ACBcba	1
+    aBbACc	1
+    bAaBCc	1
+    CAcBba	1
+
+  code = 16:	33
+    cABCab	5
+    cAaBCb	5
+    CcaABb	5
+    BbCcACa	3
+    CcaBAb	3
+    CcbBAa	3
+    aBCAbc	3
+    CcBaAb	2
+    CCcaAb	1
+    aBbACc	1
+    AabBCc	1
+    bAaBCc	1
+
+
+
+------- ie8 -------
+
+  total		2114409
+  0		2114323		99.99593266960176%
+  8		36		0.0017026034225166467%
+  16		50		0.0023647269757175646%
+
+  code = 0:	2114323
+    ABCabc	1474772
+    CcAaBb	298024
+    CcABab	202715
+    CcBAba	58770
+    CcBbAa	48560
+    Cc	6716
+    AaBbCc	3374
+    ACacBb	2326
+    CcAab	2254
+    CAcBab	2066
+    ABabCc	1802
+    CABcab	1692
+    CAcaBb	1332
+    BCbcAa	1040
+    Ccab	1010
+    CcBba	848
+    AaBCbc	763
+    AaCcBb	689
+    BACbac	675
+    BAbaCc	554
+    ACBacb	523
+    CBAcba	489
+    BbAaCc	479
+    AaCBcb	359
+    ABaCbc	235
+    CcaBb	223
+    CBcAba	203
+    BbCcAa	198
+    BCAbca	146
+    ABabc	118
+    ACacb	102
+    CcBab	97
+    BbACac	90
+    CBcbAa	88
+    CcbAa	82
+    CAaBbCc	74
+    BCbca	57
+    CcAba	55
+    ACaBcb	52
+    CABCabc	40
+    abc	39
+    BAbCac	37
+    AaBbc	36
+    Ccba	27
+    BbCAca	27
+    Aabc	21
+    AaCcb	19
+    BbCca	17
+    cABab	17
+    CBACbac	17
+    c	16
+    CAaCcBb	16
+    CcaABb	15
+    BCbAca	15
+    AaCBbCc	11
+    CABabCc	11
+    BAbac	10
+    ACabc	10
+    CBAbaCc	9
+    CAaBCbc	9
+    CAaCBcb	8
+    CBbAaCc	8
+    CACBacb	7
+    AabCc	7
+    ACCBacb	7
+    BbaCc	6
+    AaCCcBb	6
+    AaCbc	6
+    CAcab	6
+    CBbCcAa	6
+    BbAac	6
+    ACBCabc	5
+    aBbCc	5
+    CCABcab	5
+    CBCAbca	5
+    BabCc	5
+    ABacb	4
+    bcAa	4
+    CACacBb	4
+    cBbAa	4
+    bac	4
+    acb	4
+    CCcAaBb	4
+    AaCBCbc	4
+    CcbBAa	4
+    CCcABab	4
+    Bbac	4
+    abCc	3
+    BCbac	3
+    CCcBbAa	3
+    Cc	3
+    cab	3
+    AaBbCCc	3
+    CABaCbc	3
+    cBAba	3
+    CBAbCac	3
+    ACaBCbc	2
+    Aacb	2
+    CCcBAba	2
+    BbCCcAa	2
+    cba	2
+    CBcba	2
+    ACaCBcb	2
+    CcA	2
+    ACbac	2
+    ABCCabc	2
+    CcaBb	2
+    BbCAaCc	2
+    CBbCAca	2
+    aCBcb	2
+    CCBcbAa	2
+    AcaBb	2
+    ABCabc	2
+    BCbACac	2
+    Bbca	2
+    CcAab	2
+    BCCAbca	2
+    ABabCCc	2
+    CBbACac	2
+    bca	2
+    AaCCBcb	2
+    BACCbac	1
+    Bacb	1
+    CBacb	1
+    bCcAa	1
+    BbCACac	1
+    AaB	1
+    cAaBb	1
+    AabBCc	1
+    ABCabCc	1
+    BbCac	1
+    Cabc	1
+    BCbc	1
+    CcABab	1
+    CCAbca	1
+    BACbaCc	1
+    ACaCcBb	1
+    CCAcaBb	1
+    BAbCCac	1
+    AaBbc	1
+    BCbCcAa	1
+    CCAcab	1
+    cbAa	1
+    BAba	1
+    BAbac	1
+    AaBcb	1
+    aCcBb	1
+    CCBAcba	1
+    BCbca	1
+    aBbc	1
+    CcbBa	1
+    BbCCAca	1
+    CcaAb	1
+    CBCbcAa	1
+
+  code = 8:	36
+    AabCBc	11
+    CcaBAb	5
+    BCACbca	1
+    aBbACc	1
+    aBCAbc	1
+    BCbcACa	1
+    CcBbCAa	1
+    CBbAac	1
+    BabCAc	1
+    cACaBb	1
+    cAaBCb	1
+    CcBbCa	1
+    CcAbBa	1
+    CcBbACa	1
+    CBCAcba	1
+    CACBcab	1
+    CAaBbc	1
+    CAacBb	1
+    CcBaAb	1
+    CAaBcb	1
+    CABbca	1
+    CcBCAba	1
+
+  code = 16:	50
+    CcaABb	15
+    AabCBc	11
+    CcaBAb	5
+    CcbBAa	4
+    AabBCc	1
+    aBbACc	1
+    aBCAbc	1
+    BCbcACa	1
+    CcBbCAa	1
+    BabCAc	1
+    cACaBb	1
+    cAaBCb	1
+    CcBbCa	1
+    CcAbBa	1
+    CcBbACa	1
+    CcbBa	1
+    CcaAb	1
+    CcBaAb	1
+    CcBCAba	1
+
+
+
+------- ie9 -------
+
+  total		376749
+  0		376728		99.99442599714929%
+  8		13		0.0034505731932931477%
+  16		8		0.0021234296574111676%
+
+  code = 0:	376728
+    ABCabc	267196
+    CcAaBb	42611
+    CcABab	23302
+    CABcab	15469
+    CcBAba	9288
+    CcBbAa	6698
+    CBAcba	6379
+    CAcaBb	2258
+    AaBbCc	456
+    CBcbAa	445
+    ACBacb	301
+    CcAab	285
+    ACacBb	249
+    ABabCc	220
+    Cc	208
+    Ccab	191
+    BCAbca	131
+    BACbac	115
+    AaCcBb	105
+    BCbcAa	92
+    BAbaCc	83
+    BbAaCc	74
+    CcBba	73
+    AaBCbc	66
+    CcAab	58
+    AaCBcb	47
+    BbCcAa	34
+    CcBba	31
+    ACacb	23
+    CAcab	22
+    CcaBb	20
+    BbACac	13
+    BbCAca	12
+    CcBab	12
+    CAaBbCc	12
+    CAcab	11
+    abc	7
+    Ccba	7
+    CBcba	6
+    CcbAa	6
+    CABCabc	6
+    CcbAa	5
+    AaBbc	5
+    CcaABb	5
+    CBcba	5
+    CAcba	5
+    CAaCcBb	5
+    CABabCc	4
+    BCbca	4
+    CBcab	3
+    Aabc	3
+    CAaBCbc	3
+    CcAba	3
+    AaCcb	3
+    ACacb	3
+    CBACbac	2
+    CBCAbca	2
+    CcaBb	2
+    acb	2
+    CBbAaCc	2
+    CCABcab	2
+    BCbca	2
+    bca	1
+    abc	1
+    CCBcbAa	1
+    Ccab	1
+    CcBb	1
+    aBbCc	1
+    CcAba	1
+    BbCca	1
+    AabCc	1
+    ABcab	1
+    ABabc	1
+    ABabc	1
+    CAcBab	1
+    CcbBa	1
+    CACBacb	1
+    AaCcb	1
+    CBbCAca	1
+    c	1
+    CcAab	1
+    BbAac	1
+    CAaCBcb	1
+    CACacBb	1
+    CcBba	1
+    CBbACac	1
+    cab	1
+    ca	1
+    ACBCabc	1
+    AaCBbCc	1
+    BCACbac	1
+    CBbCcAa	1
+    BCbAca	1
+    CBcAba	1
+    CCBAcba	1
+    BbCAaCc	1
+    BbAac	1
+    CcAa	1
+
+  code = 8:	13
+    CcBAab	4
+    CcABba	2
+    CcaBAb	2
+    CABcba	1
+    CBAcab	1
+    CBbAac	1
+    CACBcab	1
+    CBCAcba	1
+
+  code = 16:	8
+    CcaABb	5
+    CcaBAb	2
+    CcbBa	1
+
+
+
+------- firefox -------
+
+  total		130040
+  0		129810		99.82313134420178%
+  8		0		0%
+  16		230		0.17686865579821595%
+
+  code = 0:	129810
+    AaBbCc	102021
+    CcAaBb	22528
+    CcBbAa	3414
+    AaCcBb	438
+    aAbBc	226
+    BbAaCc	103
+    a	99
+    BbCcAa	86
+    ab	84
+    CcAab	72
+    CcAab	69
+    abc	68
+    Aab	58
+    AabCc	52
+    ABCabc	48
+    Ccab	47
+    Cca	47
+    AaBbCc	46
+    CcBba	28
+    CcBba	27
+    Ccb	26
+    Ccba	25
+    AaBbCc	14
+    AaCcb	14
+    AaCcb	14
+    b	12
+    c	11
+    CcBba	11
+    abCc	11
+    aBbCc	9
+    cab	8
+    ba	8
+    ca	8
+    CcAab	8
+    AabCc	7
+    CAaBbCc	5
+    CcABab	4
+    baCc	4
+    CcaBb	3
+    ac	3
+    acb	3
+    CcaABb	3
+    cb	3
+    CcbAa	3
+    CcbAa	2
+    cba	2
+    BbAaCc	2
+    Aabc	2
+    bac	2
+    bCcAa	2
+    CBcAba	1
+    Aa	1
+    AaBbc	1
+    AaBb	1
+    CBbCcAa	1
+    abc	1
+    aAbc	1
+    CcAa	1
+    bca	1
+    AaBbc	1
+    CcaBb	1
+    BbCcAa	1
+    Ccba	1
+    bc	1
+    Aacb	1
+    AaCcb	1
+    AaCcBb	1
+    aBbCc	1
+    bAaCc	1
+    CcAab	1
+
+  code = 8:	0
+    
+
+  code = 16:	230
+    aAbBc	226
+    CcaABb	3
+    aAbc	1
+
+
+
+------- safari -------
+
+  total		885493
+  0		885398		99.98927151315708%
+  8		10		0.0011293144045181611%
+  16		85		0.009599172438404368%
+
+  code = 0:	885398
+    AaBbCc	455755
+    CcAaBb	392672
+    CcBbAa	33618
+    AaCcBb	963
+    BbCcAa	960
+    CcAab	222
+    BbAaCc	198
+    CcBba	133
+    CcAab	109
+    CAaBbCc	74
+    CcAab	61
+    AaBbCc	59
+    cCCAaBb	58
+    CcAaBb	51
+    AaBbCc	35
+    CcBba	30
+    CcaBb	29
+    cAaBb	28
+    CcAaBb	26
+    Ccb	21
+    CcbAa	17
+    Cca	16
+    CcBba	14
+    CcbAa	12
+    c	12
+    CcbAa	11
+    Ccab	11
+    Cc	10
+    AaBbc	10
+    cab	9
+    ca	9
+    CcBbAa	8
+    AaBbc	7
+    CcaABb	6
+    CcBbAa	6
+    CAaCcBb	6
+    AaCcb	6
+    AaBbCCc	6
+    CBbAaCc	5
+    Ccab	5
+    AaCcb	5
+    cBbAa	4
+    CcaBb	4
+    abc	4
+    CcbAa	4
+    AaCBbCc	4
+    CBbCcAa	4
+    a	4
+    AaCcb	4
+    cAaBb	4
+    Aa	4
+    AabCc	4
+    cCCBbAa	3
+    cBba	3
+    CcAa	3
+    ab	3
+    Ccba	3
+    Aac	2
+    cCCAab	2
+    CBbCca	2
+    aBbCc	2
+    CcbBAa	2
+    CcaBb	2
+    BbCca	2
+    BbCAaCc	2
+    cAaBb	2
+    AaBbc	1
+    acb	1
+    cCCBba	1
+    cab	1
+    BbAac	1
+    Ccab	1
+    CcaAb	1
+    AacBb	1
+    Aacb	1
+    Ccba	1
+    cbAa	1
+    CCcAaBb	1
+    Bbac	1
+    CAaCcb	1
+    cAab	1
+    Aabc	1
+    Aab	1
+    BbAaCCc	1
+    AaCcCBb	1
+    CCcBbAa	1
+    caBb	1
+    AaCcCb	1
+    AabCc	1
+    Ccab	1
+    CcAab	1
+    cBbAa	1
+    ac	1
+    cCCaBb	1
+
+  code = 8:	10
+    cAaCCBb	5
+    cBbCCAa	2
+    CcAaCBb	1
+    cCAaCBb	1
+    CAaBbc	1
+
+  code = 16:	85
+    cCCAaBb	58
+    CcaABb	6
+    cAaCCBb	5
+    cCCBbAa	3
+    cCCAab	2
+    CcbBAa	2
+    cBbCCAa	2
+    cCCBba	1
+    CcAaCBb	1
+    CcaAb	1
+    cCAaCBb	1
+    AaCcCBb	1
+    AaCcCb	1
+    cCCaBb	1
+
+
+
+------- opera -------
+
+  total		11321
+  0		11321		100%
+  8		0		0%
+  16		0		0%
+
+  code = 0:	11321
+    AaBbCc	11275
+    ABCabc	29
+    AabCc	8
+    AaBbc	5
+    aBbCc	3
+    CcAaBb	1
+
+  code = 8:	0
+    
+
+  code = 16:	0
+    
+
+
+
+------- unknown -------
+
+  total		461
+  0		459		99.56616052060737%
+  8		0		0%
+  16		2		0.43383947939262474%
+
+  code = 0:	459
+    ABCabc	166
+    AaBbCc	46
+    ABCabc	36
+    CcAaBb	32
+    ABCabc	20
+    CcAaBb	18
+    CcABab	17
+    CcAaBb	15
+    ABCabc	10
+    CcABab	10
+    ABabc	8
+    CcBbAa	8
+    CcABab	6
+    AaBbCc	6
+    ABaCbc	5
+    CcAaBb	5
+    CcABab	4
+    CcBAba	3
+    CcBbAa	3
+    CcAaBb	3
+    ABCabc	3
+    CcBbAa	2
+    CAaBbCc	2
+    Cc	2
+    AaCcBb	2
+    AaCcb	1
+    AaBbc	1
+    CBAcba	1
+    CcAab	1
+    CcBba	1
+    AaCc	1
+    ACCBacb	1
+    CACBacb	1
+    BbCcAa	1
+    ACBacb	1
+    AaBbCc	1
+    CcbBAa	1
+    cCCAaBb	1
+    CcAab	1
+    CcAab	1
+    CcBbAa	1
+    CcBAba	1
+    CcbAa	1
+    CcAab	1
+    BCbca	1
+    CcBbAa	1
+    ACBacb	1
+    CcBb	1
+    AaCcBb	1
+    CcAaBb	1
+    Ccab	1
+    CcBba	1
+
+  code = 8:	0
+    
+
+  code = 16:	2
+    CcbBAa	1
+    cCCAaBb	1
+
+

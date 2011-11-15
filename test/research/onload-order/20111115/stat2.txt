@@ -1,0 +1,250 @@
+
+------- ie10 -------
+
+  total		84
+  0		84		100%
+  8		0		0%
+  16		0		0%
+
+  code = 0:	84
+    CDcd	30
+    Cc	25
+    Dd	17
+    CcDd	6
+    DCdc	4
+    DdCc	2
+
+  code = 8:	0
+    
+
+  code = 16:	0
+    
+
+
+
+------- ie6 -------
+
+  total		2523838
+  0		2523810		99.99889057855536%
+  8		28		0.0011094214446410585%
+  16		0		0%
+
+  code = 0:	2523810
+    CDcd	1004501
+    Cc	631016
+    Dd	630387
+    CcDd	122821
+    DCdc	88576
+    DdCc	41194
+    Ccd	1564
+    c	1469
+    d	1362
+    Ddc	713
+    Dcd	136
+    Cdc	45
+    cd	17
+    Cc	5
+    Dd	3
+    dc	1
+
+  code = 8:	28
+    DCcd	24
+    CDdc	4
+
+  code = 16:	0
+    
+
+
+
+------- ie7 -------
+
+  total		615476
+  0		615363		99.98164022642638%
+  8		113		0.018359773573624318%
+  16		0		0%
+
+  code = 0:	615363
+    CDcd	243386
+    Dd	154163
+    Cc	153338
+    CcDd	29634
+    DCdc	24378
+    DdCc	9077
+    c	420
+    d	382
+    Ccd	364
+    Ddc	183
+    Dcd	26
+    Cdc	8
+    Cc	3
+    CDcd	1
+
+  code = 8:	113
+    CDdc	83
+    DCcd	30
+
+  code = 16:	0
+    
+
+
+
+------- ie8 -------
+
+  total		1903123
+  0		1903097		99.99863382450846%
+  8		26		0.0013661754915473146%
+  16		0		0%
+
+  code = 0:	1903097
+    CDcd	734710
+    Dd	474894
+    Cc	474017
+    CcDd	115865
+    DCdc	68983
+    DdCc	30553
+    Ccd	1161
+    c	1144
+    d	1053
+    Ddc	584
+    Dcd	94
+    Cdc	26
+    dc	4
+    cd	4
+    cd	2
+    Dd	1
+    d	1
+    Cc	1
+
+  code = 8:	26
+    DCcd	23
+    CDdc	3
+
+  code = 16:	0
+    
+
+
+
+------- ie9 -------
+
+  total		337668
+  0		337505		99.95172773256571%
+  8		163		0.04827226743428457%
+  16		0		0%
+
+  code = 0:	337505
+    CDcd	130774
+    Cc	84488
+    Dd	84389
+    CcDd	16500
+    DCdc	15104
+    DdCc	5477
+    c	224
+    Ccd	214
+    d	213
+    Ddc	106
+    Cdc	8
+    Dcd	5
+    Cc	2
+    Dd	1
+
+  code = 8:	163
+    CDdc	138
+    DCcd	25
+
+  code = 16:	0
+    
+
+
+
+------- firefox -------
+
+  total		0
+  0		0		NaN%
+  8		0		NaN%
+  16		0		NaN%
+
+  code = 0:	0
+    
+
+  code = 8:	0
+    
+
+  code = 16:	0
+    
+
+
+
+------- safari -------
+
+  total		0
+  0		0		NaN%
+  8		0		NaN%
+  16		0		NaN%
+
+  code = 0:	0
+    
+
+  code = 8:	0
+    
+
+  code = 16:	0
+    
+
+
+
+------- opera -------
+
+  total		0
+  0		0		NaN%
+  8		0		NaN%
+  16		0		NaN%
+
+  code = 0:	0
+    
+
+  code = 8:	0
+    
+
+  code = 16:	0
+    
+
+
+
+------- unknown -------
+
+  total		374
+  0		374		100%
+  8		0		0%
+  16		0		0%
+
+  code = 0:	374
+    CDcd	149
+    Cc	77
+    Dd	68
+    Dd	12
+    Cc	12
+    CDcd	11
+    CcDd	10
+    DCdc	8
+    Cc	6
+    Dd	4
+    DdCc	3
+    DCdc	2
+    CDcd	2
+    Cc	2
+    DCdc	1
+    DdCc	1
+    Dd	1
+    Ddc	1
+    CcDd	1
+    CDc	1
+    Dd	1
+    D	1
+
+  code = 8:	0
+    
+
+  code = 16:	0
+    
+
+
