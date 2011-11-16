@@ -15,7 +15,7 @@ define('plugin-coffee', ['plugin-base', 'coffee'], function(require) {
     ext: ['.coffee'],
 
     load: function(url, callback) {
-      return CoffeeScript.load(url, callback);
+      CoffeeScript.load(url, callback);
     }
   });
 

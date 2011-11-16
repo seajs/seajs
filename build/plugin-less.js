@@ -15,7 +15,7 @@ define('plugin-less', ['plugin-base', 'less'], function(require) {
     ext: ['.less'],
 
     load: function(url, callback) {
-      return less.Parser.importer(url, [], function(tree) {
+      less.Parser.importer(url, [], function(tree) {
         createCSS(tree.toCSS(), url.replace(/[^\w]/g, '_'));
         callback();
       }, {});

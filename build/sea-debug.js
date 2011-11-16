@@ -1,4 +1,4 @@
-/* SeaJS v1.0.3dev | seajs.com | MIT Licensed */
+/* SeaJS v1.1.0 | seajs.com | MIT Licensed */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
@@ -16,7 +16,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.0.3dev';
+seajs.version = '1.1.0';
 
 
 // Module status:
@@ -51,12 +51,7 @@ seajs._data = {
    * Modules that have been memoize()d.
    * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  memoizedMods: {},
-
-  /**
-   * Store the module information for "real" work in the onload event.
-   */
-  pendingMods: []
+  memoizedMods: {}
 };
 
 
@@ -418,17 +413,7 @@ seajs._fn = {};
   /**
    * Caches mod info to memoizedMods.
    */
-  function memoize(id, url, mod) {
-    var uri;
-
-    // define(id, ...)
-    if (id) {
-      uri = id2Uri(id, url);
-    }
-    else {
-      uri = url;
-    }
-
+  function memoize(uri, mod) {
     mod.id = uri; // change id to the absolute path.
     memoizedMods[uri] = mod;
   }
@@ -536,45 +521,41 @@ seajs._fn = {};
 
 (function(util, data) {
 
-  var head = document.getElementsByTagName('head')[0];
-  var isWebKit = ~navigator.userAgent.indexOf('AppleWebKit');
+  var head = document.head ||
+      document.getElementsByTagName('head')[0] ||
+      document.documentElement;
+
+  var UA = navigator.userAgent;
+  var isWebKit = ~UA.indexOf('AppleWebKit');
 
 
   util.getAsset = function(url, callback, charset) {
     var isCSS = /\.css(?:\?|$)/i.test(url);
     var node = document.createElement(isCSS ? 'link' : 'script');
-    if (charset) node.setAttribute('charset', charset);
 
-    assetOnload(node, function() {
-      if (callback) callback.call(node);
-      if (isCSS) return;
+    if (charset) {
+      node.charset = charset;
+    }
 
-      // Don't remove inserted node when debug is on.
-      if (!data.config.debug) {
-        try {
-          // Reduces memory leak.
-          if (node.clearAttributes) {
-            node.clearAttributes();
-          } else {
-            for (var p in node) delete node[p];
-          }
-        } catch (x) {
-        }
-        head.removeChild(node);
-      }
-    });
+    assetOnload(node, callback);
 
     if (isCSS) {
       node.rel = 'stylesheet';
       node.href = url;
-      head.appendChild(node); // keep order
+      head.appendChild(node); // Keep style cascading order
     }
     else {
+      node.async = 'async';
       node.src = url;
-      head.insertBefore(node, head.firstChild);
-    }
 
-    return node;
+      //For some cache cases in IE 6-8, the script executes before the end
+      //of the appendChild execution, so to tie an anonymous define
+      //call to the module name (which is stored on the node), hold on
+      //to a reference to this node, but clear after the DOM insertion.
+      currentlyAddingScript = node;
+      head.insertBefore(node, head.firstChild);
+      currentlyAddingScript = null;
+    }
   };
 
   function assetOnload(node, callback) {
@@ -590,30 +571,56 @@ seajs._fn = {};
     }, data.config.timeout);
 
     function cb() {
-      cb.isCalled = true;
-      callback();
-      clearTimeout(timer);
+      if (!cb.isCalled) {
+        cb.isCalled = true;
+        clearTimeout(timer);
+
+        callback();
+      }
     }
   }
 
   function scriptOnload(node, callback) {
-    if (node.addEventListener) {
-      node.addEventListener('load', callback, false);
-      node.addEventListener('error', callback, false);
-      // NOTICE: Nothing will happen in Opera when the file status is 404. In
-      // this case, the callback will be called when time is out.
-    }
-    else { // for IE6-8
-      node.attachEvent('onreadystatechange', function() {
-        var rs = node.readyState;
-        if (rs === 'loaded' || rs === 'complete') {
-          callback();
-        }
-      });
-    }
+
+    node.onload = node.onerror = node.onreadystatechange =
+        function(_, isAbort) {
+
+          if (isAbort || !node.readyState ||
+              /loaded|complete/.test(node.readyState)) {
+
+            // Ensure only run once
+            node.onload = node.onerror = node.onreadystatechange = null;
+
+            // Reduce memory leak
+            if (node.parentNode) {
+              try {
+                if (node.clearAttributes) {
+                  node.clearAttributes();
+                }
+                else {
+                  for (var p in node) delete node[p];
+                }
+              } catch (x) {
+              }
+
+              // Remove the script
+              head.removeChild(node);
+            }
+
+            // Dereference the node
+            node = undefined;
+
+            callback();
+          }
+        };
+
+    // NOTICE:
+    // Nothing will happen in Opera when the file status is 404. In this case,
+    // the callback will be called when time is out.
   }
 
   function styleOnload(node, callback) {
+
     // for IE6-9 and Opera
     if (node.attachEvent) {
       node.attachEvent('onload', callback);
@@ -622,12 +629,14 @@ seajs._fn = {};
       // this situation, Opera does nothing, so fallback to timeout.
       // 2. "onerror" doesn't fire in any browsers!
     }
-    // polling for Firefox, Chrome, Safari
+
+    // Polling for Firefox, Chrome, Safari
     else {
       setTimeout(function() {
         poll(node, callback);
-      }, 0); // for cache
+      }, 0); // Begin after node insertion
     }
+
   }
 
   function poll(node, callback) {
@@ -658,7 +667,7 @@ seajs._fn = {};
 
     setTimeout(function() {
       if (isLoaded) {
-        // place callback in here due to giving time to render.
+        // Place callback in here due to giving time for style rendering.
         callback();
       } else {
         poll(node, callback);
@@ -667,10 +676,21 @@ seajs._fn = {};
   }
 
 
-  var interactiveScript = null;
+  var currentlyAddingScript;
+  var interactiveScript;
 
-  util.getInteractiveScript = function() {
-    if (interactiveScript && interactiveScript.readyState === 'interactive') {
+  util.getCurrentScript = function() {
+    if (currentlyAddingScript) {
+      return currentlyAddingScript;
+    }
+
+    // For IE6-9 browsers, the script onload event may not fire right
+    // after the the script is evaluated. Kris Zyp found that it
+    // could query the script nodes and the one that is in "interactive"
+    // mode indicates the current script.
+    // Ref: http://goo.gl/JHfFW
+    if (interactiveScript &&
+        interactiveScript.readyState === 'interactive') {
       return interactiveScript;
     }
 
@@ -683,8 +703,6 @@ seajs._fn = {};
         return script;
       }
     }
-
-    return null;
   };
 
 
@@ -695,12 +713,16 @@ seajs._fn = {};
         node.getAttribute('src', 4);
   };
 
+
+  util.isOpera = ~UA.indexOf('Opera');
+
 })(seajs._util, seajs._data);
 
 /**
  * references:
- *  - http://lifesinger.github.com/lab/2011/load-js-css/
- *  - ./test/issues/load-css/test.html
+ *  - http://unixpapa.com/js/dyna.html
+ *  - ../test/research/load-js-css/test.html
+ *  - ../test/issues/load-css/test.html
  */
 
 /**
@@ -730,7 +752,7 @@ seajs._fn = {};
  * @fileoverview Module authoring format.
  */
 
-(function(util, data, fn, global) {
+(function(util, data, fn) {
 
   /**
    * Defines a module.
@@ -758,57 +780,41 @@ seajs._fn = {};
       }
     }
 
-    // Parse deps
+    // Parse dependencies
     if (!util.isArray(deps) && util.isFunction(factory)) {
       deps = parseDependencies(factory.toString());
     }
 
-
-    var pureId, mod, immediate, url;
-
-    // Parse alias
+    // Get url directly for specific modules.
     if (id) {
-      pureId = id;
-      // Use prefix # to indicate that alias is parsed.
-      id = '#' + util.parseAlias(id);
+      var url = util.id2Uri(id);
     }
+    // Try to derive url in IE6-9 for anonymous modules.
+    else if (document.attachEvent && !util.isOpera) {
 
-    mod = new fn.Module(id, deps, factory);
-
-    // id is absolute or top-level.
-    if (pureId && (util.isAbsolute(pureId) || util.isTopLevel(pureId))) {
-      immediate = true;
-    }
-    else if (document.attachEvent && !global['opera']) {
-      // For IE6-9 browsers, the script onload event may not fire right
-      // after the the script is evaluated. Kris Zyp found that it
-      // could query the script nodes and the one that is in "interactive"
-      // mode indicates the current script. Ref: http://goo.gl/JHfFW
-      var script = util.getInteractiveScript();
+      // Try to get the current script
+      var script = util.getCurrentScript();
       if (script) {
-        url = util.getScriptAbsoluteSrc(script);
-        url = util.unParseMap(url);
+        url = util.unParseMap(util.getScriptAbsoluteSrc(script));
       }
 
-      // In IE6-9, if the script is in the cache, the "interactive" mode
-      // sometimes does not work. The script code actually executes *during*
-      // the DOM insertion of the script tag, so we can keep track of which
-      // script is being requested in case define() is called during the DOM
-      // insertion.
-      else {
-        url = data.pendingModIE;
-      }
+      if (!url) {
+        util.warn('Failed to derive url of the following anonymous module:',
+            factory.toString());
 
-      // NOTE: If the id-deriving methods above is failed, then falls back
-      // to use onload event to get the module uri.
+        // NOTE: If the id-deriving methods above is failed, then falls back
+        // to use onload event to get the url.
+      }
     }
 
-    if (immediate || url) {
-      util.memoize(id, url, mod);
+    var mod = new fn.Module(id, deps, factory);
+
+    if (url) {
+      util.memoize(url, mod);
     }
     else {
-      // Saves information for "real" work in the onload event.
-      data.pendingMods.push(mod);
+      // Saves information for "memoizing" work in the onload event.
+      data.anonymousMod = mod;
     }
 
   };
@@ -843,7 +849,7 @@ seajs._fn = {};
         .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
 
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._data, seajs._fn);
 
 /**
  * @fileoverview The factory for "require".
@@ -918,6 +924,8 @@ seajs._fn = {};
     });
   };
 
+  RP._unparseMap = util.unParseMap;
+
 
   /**
    * Loads the specified modules asynchronously and execute the optional
@@ -934,7 +942,7 @@ seajs._fn = {};
    * Plugin can override this method to add custom loading.
    */
   RP.load = function(uri, callback, charset) {
-    return util.getAsset(util.parseMap(uri), callback, charset);
+    util.getAsset(uri, callback, charset);
   };
 
 
@@ -1156,41 +1164,44 @@ seajs._fn = {};
 
     if (fetchingMods[uri]) {
       callbackList[uri].push(callback);
-    }
-    else {
-      // See fn-define.js: "uri = data.pendingModIE"
-      data.pendingModIE = uri;
-      callbackList[uri] = [callback];
-
-      fetchingMods[uri] = RP.load(
-          uri,
-          cb,
-          data.config.charset
-          );
-
-      data.pendingModIE = null;
+      return;
     }
 
-    function cb() {
-      var pendingMods = data.pendingMods;
+    callbackList[uri] = [callback];
+    fetchingMods[uri] = true;
 
-      if (pendingMods.length) {
-        util.forEach(pendingMods, function(pendingMod) {
-          util.memoize(pendingMod.id, uri, pendingMod);
-        });
-        data.pendingMods = [];
-      }
+    RP.load(
+        util.parseMap(uri),
 
-      if (fetchingMods[uri]) {
-        delete fetchingMods[uri];
-      }
+        function() {
 
-      // Call callbacks
-      util.forEach(callbackList[uri], function(fn) {
-        fn();
-      });
-      delete callbackList[uri];
-    }
+          // Memoize anonymous module
+          var mod = data.anonymousMod;
+          if (mod) {
+            // Don't override existed module
+            if (!memoizedMods[uri]) {
+              util.memoize(uri, mod);
+            }
+            data.anonymousMod = null;
+          }
+
+          // Clear
+          if (fetchingMods[uri]) {
+            delete fetchingMods[uri];
+          }
+
+          // Call callbackList
+          if (callbackList[uri]) {
+            util.forEach(callbackList[uri], function(fn) {
+              fn();
+            });
+            delete callbackList[uri];
+          }
+
+        },
+
+        data.config.charset
+    );
   }
 
 
@@ -1390,7 +1401,7 @@ seajs._fn = {};
   };
 
 
-  // main
+  // data-main
   var mainModuleId = data.config.main;
   if (mainModuleId) {
     fn.use([mainModuleId]);
