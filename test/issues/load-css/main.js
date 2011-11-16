@@ -1,6 +1,6 @@
 var MODULES_PATH = 'http://modules.seajs.com/';
 
-if (location.href.indexOf('/localhost/~lifesinger/') > 0) {
+if (location.href.indexOf('/~lifesinger/') > 0) {
   MODULES_PATH = 'http://' + location.host + '/~lifesinger/spm/modules/';
 }
 

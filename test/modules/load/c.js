@@ -1,3 +1,3 @@
 if(this.console) {
-  console.log('./c.js is loaded.');
+  console.log('c.js is loaded.');
 }

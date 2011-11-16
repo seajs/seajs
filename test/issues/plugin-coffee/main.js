@@ -15,6 +15,10 @@ seajs.config({
     'coffee':  'coffee/1.1.2/coffee-script'
   },
 
+  map: [
+      ['a2.coffee', 'a.coffee']
+  ],
+
   preload: ['plugin-coffee']
 });
 
@@ -23,7 +27,7 @@ define(function(require) {
 
   var test = require('../../test');
 
-  var a = require('./a.coffee');
+  var a = require('./a2.coffee');
   var b = require('./b.coffee');
   var c = require('coffee!./c.coffee');
 

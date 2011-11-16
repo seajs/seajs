@@ -4,12 +4,14 @@
 <meta charset="utf-8"/>
 <title>SeaJS Bootstrapping</title>
 <style>
-  iframe { width: 500px; height: 200px; border: 1px solid #666; }
+  iframe { width: 500px; height: 400px; margin: 10px; border: 1px solid #666; }
 </style>
 </head>
 <body>
 
 <div id="out"></div>
+
+<script src="../../build/sea.js"></script>
 
 <script>
 
@@ -26,30 +28,38 @@
       document.getElementById('out').appendChild(d);
     }
   }
-</script>
 
-<iframe src="sync-1.html" style="height: 120px"></iframe><br/>
-<iframe src="sync-2.html" style="height: 160px"></iframe><br/>
-
-<iframe src="async-1.html" style="height: 360px"></iframe><br/>
-<iframe src="async-2.html" style="height: 400px"></iframe><br/>
-
-<iframe src="inline-1.html" style="height: 180px"></iframe><br/>
-<iframe src="inline-2.html" style="height: 200px"></iframe><br/>
-
-<iframe src="multi-1.html" style="height: 280px"></iframe><br/>
-<iframe src="multi-2.html" style="height: 280px"></iframe><br/>
-<iframe src="multi-3.html" style="height: 280px"></iframe><br/>
+  function createIframe(src) {
+    var iframe = document.createElement('iframe');
+    iframe.src = src;
+    document.body.appendChild(iframe);
+  }
 
 
-<script src="../../build/sea.js"></script>
-<script>
-  window.onload = function() {
-    seajs.use('../test', function(test) {
-      test.assert(testCount !== undefined, 'The test cases of bootstrap.');
-      test.done();
-    });
-  };
+  seajs.use('../test', function(test) {
+    var n = 9;
+
+    window.next = function() {
+      if (--n === 0) {
+        test.assert(testCount === 12, testCount);
+        test.done();
+      }
+    };
+
+    createIframe('sync-1.html');
+    createIframe('sync-2.html');
+
+    createIframe('async-1.html');
+    createIframe('async-2.html');
+
+    createIframe('inline-1.html');
+    createIframe('inline-2.html');
+
+    createIframe('multi-1.html');
+    createIframe('multi-2.html');
+    createIframe('multi-3.html');
+  });
+
 </script>
 </body>
 </html>

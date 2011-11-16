@@ -1,4 +1,4 @@
 define (require, exports) ->
   exports.name = 'b'
-  exports.a = require('./a.coffee')
+  exports.a = require('./a2.coffee')
   return
