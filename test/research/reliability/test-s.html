@@ -30,8 +30,6 @@
   function req(s) {
     s += location.href.charAt(location.href.length - 1); // UA
     var img = new Image();
-    img.onload = function() {
-    };
     img.src = 'http://stats.tudou.com/e/tmp/a10/?v=1&s=16015||||||' + s + '|||';
   }
 
@@ -49,9 +47,9 @@
     s += (b || 0).name ? b.name : 'x';
     s += (c || 0).name ? c.name : 'x';
     s += (d || 0).name ? d.name : 'x';
-    s = 's-' + (s === 'abcd' ? 0 : 1) + '-' + s;
+    s = (s === 'abcd' ? 0 : 1) + '-' + s;
 
-    complete(s);
+    complete('s-' + s);
   });
 
 })(this);
