@@ -1,1 +1,1 @@
-define('./e', { name: 'e' });
+define('e', { name: 'e' });

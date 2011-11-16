@@ -1,3 +1,3 @@
-define('./a', [], function(require, exports) {
+define('a', [], function(require, exports) {
   exports.name = 'a';
 });
