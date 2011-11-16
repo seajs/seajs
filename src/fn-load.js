@@ -153,8 +153,12 @@
     }
 
     callbackList[uri] = [callback];
+    fetchingMods[uri] = true;
 
-    fetchingMods[uri] = RP.load(uri, function() {
+    RP.load(
+        util.parseMap(uri),
+
+        function() {
 
           // Memoize anonymous module
           var mod = data.anonymousMod;
@@ -172,14 +176,17 @@
           }
 
           // Call callbackList
-          util.forEach(callbackList[uri], function(fn) {
-            fn();
-          });
-
-          delete callbackList[uri];
+          if (callbackList[uri]) {
+            util.forEach(callbackList[uri], function(fn) {
+              fn();
+            });
+            delete callbackList[uri];
+          }
 
         },
-        data.config.charset);
+
+        data.config.charset
+    );
   }
 
 

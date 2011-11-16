@@ -40,8 +40,6 @@
       head.insertBefore(node, head.firstChild);
       currentlyAddingScript = null;
     }
-
-    return node;
   };
 
   function assetOnload(node, callback) {

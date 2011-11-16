@@ -72,6 +72,8 @@
     });
   };
 
+  RP._unparseMap = util.unParseMap;
+
 
   /**
    * Loads the specified modules asynchronously and execute the optional
@@ -88,7 +90,7 @@
    * Plugin can override this method to add custom loading.
    */
   RP.load = function(uri, callback, charset) {
-    return util.getAsset(util.parseMap(uri), callback, charset);
+    util.getAsset(uri, callback, charset);
   };
 
 

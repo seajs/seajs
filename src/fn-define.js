@@ -36,35 +36,38 @@
       deps = parseDependencies(factory.toString());
     }
 
-    var mod = new fn.Module(id, deps, factory);
-
-    // Memoize specific modules immediately
+    // Get url directly for specific modules.
     if (id) {
-      util.memoize(util.id2Uri(id), mod);
-      return;
+      var url = util.id2Uri(id);
     }
-
-    // Handle anonymous modules
-    if (document.attachEvent && !util.isOpera) {
+    // Try to derive url in IE6-9 for anonymous modules.
+    else if (document.attachEvent && !util.isOpera) {
 
       // Try to get the current script
       var script = util.getCurrentScript();
       if (script) {
-        var url = util.unParseMap(util.getScriptAbsoluteSrc(script));
+        url = util.unParseMap(util.getScriptAbsoluteSrc(script));
       }
 
-      if (url) {
-        util.memoize(url, mod);
-      }
-      else {
+      if (!url) {
         util.warn('Failed to derive url of the following anonymous module:',
             factory.toString());
+
+        // NOTE: If the id-deriving methods above is failed, then falls back
+        // to use onload event to get the url.
       }
+    }
+
+    var mod = new fn.Module(id, deps, factory);
+
+    if (url) {
+      util.memoize(url, mod);
     }
     else {
       // Saves information for "memoizing" work in the onload event.
       data.anonymousMod = mod;
     }
+
   };
 
 

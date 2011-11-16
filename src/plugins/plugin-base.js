@@ -58,12 +58,12 @@ define('plugin-base', [], function(require, exports) {
         }
       }
 
-      var url = _resolve.call(this, id, context);
+      var uri = _resolve.call(this, id, context);
 
-      if (flag && meta[flag] && !cache[url]) {
-        cache[url] = flag;
+      if (flag && meta[flag] && !cache[uri]) {
+        cache[uri] = flag;
       }
-      return url;
+      return uri;
     };
   }
 
@@ -72,12 +72,13 @@ define('plugin-base', [], function(require, exports) {
     var _load = RP.load;
 
     RP.load = function(url, callback, charset) {
-      var type = cache[url];
+      var type = cache[RP._unparseMap(url)];
       if (type) {
-        return meta[type].load(url, callback);
+        meta[type].load(url, callback);
       }
-
-      return _load(url, callback, charset);
+      else {
+        _load(url, callback, charset);
+      }
     };
   }
 
