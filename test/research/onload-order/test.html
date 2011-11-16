@@ -14,7 +14,7 @@
   var outEl = document.getElementById('o');
   var res = [];
   var err = 0;
-  var n = 3;
+  var n = 4;
 
 
   function fetch(src, callback) {
@@ -22,6 +22,9 @@
     addOnload(node, callback);
     node.src = src;
     outEl.appendChild(node);
+    setTimeout(function() {
+      node.src = '';
+    }, 0);
   }
 
   function addOnload(node, callback) {
@@ -33,11 +36,16 @@
       }, false);
     }
     else { // for IE6-8
-      node.onreadystatechange = function() {
+      node.onreadystatechange = function(_, isAbort) {
         var rs = node.readyState;
+        print(rs + ': ' + node.src);
+        print(isAbort + ': ' + node.src);
+
+
         if (rs === 'loaded' || rs === 'complete') {
-          node.onreadystatechange = null;
-          setTimeout(callback, 0);
+          callback();
+          //node.onreadystatechange = null;
+          //setTimeout(callback, 0);
         }
       };
     }
@@ -83,6 +91,7 @@
   fetch('a.js', function() { done('a'); });
   fetch('b.js', function() { done('b'); });
   fetch('c.js', function() { done('c'); });
+  fetch('d.php', function() { done('d'); });
 
 </script>
 </body>

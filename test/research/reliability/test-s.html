@@ -8,16 +8,15 @@
 
 <div id="o"></div>
 
-<script src="../../../build/sea.js"></script>
-
 <!-- for testing cache -->
 <script src="c.js"></script>
 <script src="d.js"></script>
 
+<script src="../../../build/sea.js"></script>
+
 <script>
 (function(g) {
-  // make sure cache is ok.
-  if (!g['cDone'] || !g['dDone']) return;
+  if (!g['cDone'] || !g['dDone'] || !g['define']) return;
 
   function complete(s) {
     if (self.top != self) {
@@ -55,8 +54,6 @@
     complete(s);
   });
 
-
-  
 })(this);
 </script>
 </body>
