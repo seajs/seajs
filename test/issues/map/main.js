@@ -2,7 +2,7 @@
 seajs.config({
   base: './libs',
   map: [
-      [/(\/\w\.js)/, '/_xx$1']
+      [/(\/\w\.js)/, '/build$1']
   ]
 });
 
