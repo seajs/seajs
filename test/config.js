@@ -33,6 +33,7 @@ define(function(require, exports) {
     ,'modules/transitive'
     ,'modules/version'
 
+    ,'issues/anonymous'
     ,'issues/anywhere'
     ,'issues/config-base'
     ,'issues/config-conflict'
