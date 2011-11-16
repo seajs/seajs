@@ -5,42 +5,40 @@
 
 (function(util, data) {
 
-  var head = document.getElementsByTagName('head')[0];
-  var isWebKit = ~navigator.userAgent.indexOf('AppleWebKit');
+  var head = document.head ||
+      document.getElementsByTagName('head')[0] ||
+      document.documentElement;
+
+  var UA = navigator.userAgent;
+  var isWebKit = ~UA.indexOf('AppleWebKit');
 
 
   util.getAsset = function(url, callback, charset) {
     var isCSS = /\.css(?:\?|$)/i.test(url);
     var node = document.createElement(isCSS ? 'link' : 'script');
-    if (charset) node.setAttribute('charset', charset);
 
-    assetOnload(node, function() {
-      if (callback) callback.call(node);
-      if (isCSS) return;
+    if (charset) {
+      node.charset = charset;
+    }
 
-      // Don't remove inserted node when debug is on.
-      if (!data.config.debug) {
-        try {
-          // Reduces memory leak.
-          if (node.clearAttributes) {
-            node.clearAttributes();
-          } else {
-            for (var p in node) delete node[p];
-          }
-        } catch (x) {
-        }
-        head.removeChild(node);
-      }
-    });
+    assetOnload(node, callback);
 
     if (isCSS) {
       node.rel = 'stylesheet';
       node.href = url;
-      head.appendChild(node); // keep order
+      head.appendChild(node); // Keep style cascading order
     }
     else {
+      node.async = 'async';
       node.src = url;
+
+      //For some cache cases in IE 6-8, the script executes before the end
+      //of the appendChild execution, so to tie an anonymous define
+      //call to the module name (which is stored on the node), hold on
+      //to a reference to this node, but clear after the DOM insertion.
+      currentlyAddingScript = node;
       head.insertBefore(node, head.firstChild);
+      currentlyAddingScript = null;
     }
 
     return node;
@@ -59,34 +57,56 @@
     }, data.config.timeout);
 
     function cb() {
-      cb.isCalled = true;
-      callback();
-      clearTimeout(timer);
-    }
-  }
+      if (!cb.isCalled) {
+        cb.isCalled = true;
+        clearTimeout(timer);
 
-  function scriptOnload(node, callback) {
-    if (node.addEventListener) {
-      node.addEventListener('load', callback, false);
-      node.addEventListener('error', callback, false);
-      // NOTICE: Nothing will happen in Opera when the file status is 404. In
-      // this case, the callback will be called when time is out.
-    }
-    else { // for IE6-8
-      node.attachEvent('onreadystatechange', fn);
-
-      function fn() {
-        var rs = node.readyState;
-        if (rs === 'loaded' || rs === 'complete') {
-          // ensure only call callback once.
-          node.detachEvent('onreadystatechange', fn);
-          callback();
-        }
+        callback();
       }
     }
   }
 
+  function scriptOnload(node, callback) {
+
+    node.onload = node.onerror = node.onreadystatechange =
+        function(_, isAbort) {
+
+          if (isAbort || !node.readyState ||
+              /loaded|complete/.test(node.readyState)) {
+
+            // Ensure only run once
+            node.onload = node.onerror = node.onreadystatechange = null;
+
+            // Reduce memory leak
+            if (node.parentNode) {
+              try {
+                if (node.clearAttributes) {
+                  node.clearAttributes();
+                }
+                else {
+                  for (var p in node) delete node[p];
+                }
+              } catch (x) {
+              }
+
+              // Remove the script
+              head.removeChild(node);
+            }
+
+            // Dereference the node
+            node = undefined;
+
+            callback();
+          }
+        };
+
+    // NOTICE:
+    // Nothing will happen in Opera when the file status is 404. In this case,
+    // the callback will be called when time is out.
+  }
+
   function styleOnload(node, callback) {
+
     // for IE6-9 and Opera
     if (node.attachEvent) {
       node.attachEvent('onload', callback);
@@ -95,12 +115,14 @@
       // this situation, Opera does nothing, so fallback to timeout.
       // 2. "onerror" doesn't fire in any browsers!
     }
-    // polling for Firefox, Chrome, Safari
+
+    // Polling for Firefox, Chrome, Safari
     else {
       setTimeout(function() {
         poll(node, callback);
-      }, 0); // for cache
+      }, 0); // Begin after node insertion
     }
+
   }
 
   function poll(node, callback) {
@@ -131,7 +153,7 @@
 
     setTimeout(function() {
       if (isLoaded) {
-        // place callback in here due to giving time to render.
+        // Place callback in here due to giving time for style rendering.
         callback();
       } else {
         poll(node, callback);
@@ -140,10 +162,21 @@
   }
 
 
-  var interactiveScript = null;
+  var currentlyAddingScript;
+  var interactiveScript;
 
-  util.getInteractiveScript = function() {
-    if (interactiveScript && interactiveScript.readyState === 'interactive') {
+  util.getCurrentScript = function() {
+    if (currentlyAddingScript) {
+      return currentlyAddingScript;
+    }
+
+    // For IE6-9 browsers, the script onload event may not fire right
+    // after the the script is evaluated. Kris Zyp found that it
+    // could query the script nodes and the one that is in "interactive"
+    // mode indicates the current script.
+    // Ref: http://goo.gl/JHfFW
+    if (interactiveScript &&
+        interactiveScript.readyState === 'interactive') {
       return interactiveScript;
     }
 
@@ -156,8 +189,6 @@
         return script;
       }
     }
-
-    return null;
   };
 
 
@@ -168,11 +199,14 @@
         node.getAttribute('src', 4);
   };
 
+
+  util.isOpera = ~UA.indexOf('Opera');
+
 })(seajs._util, seajs._data);
 
 /**
  * references:
  *  - http://unixpapa.com/js/dyna.html
- *  - http://lifesinger.github.com/lab/2011/load-js-css/
- *  - ./test/issues/load-css/test.html
+ *  - ../test/research/load-js-css/test.html
+ *  - ../test/issues/load-css/test.html
  */

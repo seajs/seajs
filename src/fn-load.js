@@ -149,41 +149,37 @@
 
     if (fetchingMods[uri]) {
       callbackList[uri].push(callback);
-    }
-    else {
-      // See fn-define.js: "uri = data.pendingModIE"
-      data.pendingModIE = uri;
-      callbackList[uri] = [callback];
-
-      fetchingMods[uri] = RP.load(
-          uri,
-          cb,
-          data.config.charset
-          );
-
-      data.pendingModIE = null;
+      return;
     }
 
-    function cb() {
-      var pendingMods = data.pendingMods;
+    callbackList[uri] = [callback];
 
-      if (pendingMods.length) {
-        util.forEach(pendingMods, function(pendingMod) {
-          util.memoize(pendingMod.id, uri, pendingMod);
-        });
-        data.pendingMods = [];
-      }
+    fetchingMods[uri] = RP.load(uri, function() {
 
-      if (fetchingMods[uri]) {
-        delete fetchingMods[uri];
-      }
+          // Memoize anonymous module
+          var mod = data.anonymousMod;
+          if (mod) {
+            // Don't override existed module
+            if (!memoizedMods[uri]) {
+              util.memoize(uri, mod);
+            }
+            data.anonymousMod = null;
+          }
 
-      // Call callbacks
-      util.forEach(callbackList[uri], function(fn) {
-        fn();
-      });
-      delete callbackList[uri];
-    }
+          // Clear
+          if (fetchingMods[uri]) {
+            delete fetchingMods[uri];
+          }
+
+          // Call callbackList
+          util.forEach(callbackList[uri], function(fn) {
+            fn();
+          });
+
+          delete callbackList[uri];
+
+        },
+        data.config.charset);
   }
 
 

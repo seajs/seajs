@@ -15,7 +15,7 @@
   };
 
 
-  // main
+  // data-main
   var mainModuleId = data.config.main;
   if (mainModuleId) {
     fn.use([mainModuleId]);

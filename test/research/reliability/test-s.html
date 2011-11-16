@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Reliability Test</title>
+</head>
+<body>
+
+<div id="o"></div>
+
+<script src="../../../build/sea.js"></script>
+
+<!-- for testing cache -->
+<script src="c.js"></script>
+<script src="d.js"></script>
+
+<script>
+(function(g) {
+  // make sure cache is ok.
+  if (!g['cDone'] || !g['dDone']) return;
+
+  function complete(s) {
+    if (self.top != self) {
+      req(s);
+    }
+    else {
+      print(s);
+    }
+  }
+
+  function req(s) {
+    s += location.href.charAt(location.href.length - 1); // UA
+    var img = new Image();
+    img.onload = function() {
+    };
+    img.src = 'http://stats.tudou.com/e/tmp/a10/?v=1&s=16015||||||' + s + '|||';
+  }
+
+  function print(txt) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    document.getElementById('o').appendChild(d);
+  }
+
+  // test
+  seajs.use(['./a', './b', './c', './d'], function(a, b, c, d) {
+    var s = '';
+
+    s += (a || 0).name ? a.name : 'x';
+    s += (b || 0).name ? b.name : 'x';
+    s += (c || 0).name ? c.name : 'x';
+    s += (d || 0).name ? d.name : 'x';
+    s = 's-' + (s === 'abcd' ? 0 : 1) + '-' + s;
+
+    complete(s);
+  });
+
+
+  
+})(this);
+</script>
+</body>
+</html>

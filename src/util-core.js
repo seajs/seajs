@@ -209,17 +209,7 @@
   /**
    * Caches mod info to memoizedMods.
    */
-  function memoize(id, url, mod) {
-    var uri;
-
-    // define(id, ...)
-    if (id) {
-      uri = id2Uri(id, url);
-    }
-    else {
-      uri = url;
-    }
-
+  function memoize(uri, mod) {
     mod.id = uri; // change id to the absolute path.
     memoizedMods[uri] = mod;
   }

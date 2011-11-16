@@ -3,7 +3,7 @@
  * @fileoverview Module authoring format.
  */
 
-(function(util, data, fn, global) {
+(function(util, data, fn) {
 
   /**
    * Defines a module.
@@ -31,59 +31,40 @@
       }
     }
 
-    // Parse deps
+    // Parse dependencies
     if (!util.isArray(deps) && util.isFunction(factory)) {
       deps = parseDependencies(factory.toString());
     }
 
+    var mod = new fn.Module(id, deps, factory);
 
-    var pureId, mod, immediate, url;
-
-    // Parse alias
+    // Memoize specific modules immediately
     if (id) {
-      pureId = id;
-      // Use prefix # to indicate that alias is parsed.
-      id = '#' + util.parseAlias(id);
+      util.memoize(util.id2Uri(id), mod);
+      return;
     }
 
-    mod = new fn.Module(id, deps, factory);
+    // Handle anonymous modules
+    if (document.attachEvent && !util.isOpera) {
 
-    // id is absolute or top-level.
-    if (pureId && (util.isAbsolute(pureId) || util.isTopLevel(pureId))) {
-      immediate = true;
-    }
-    else if (document.attachEvent && !global['opera']) {
-      // For IE6-9 browsers, the script onload event may not fire right
-      // after the the script is evaluated. Kris Zyp found that it
-      // could query the script nodes and the one that is in "interactive"
-      // mode indicates the current script. Ref: http://goo.gl/JHfFW
-      var script = util.getInteractiveScript();
+      // Try to get the current script
+      var script = util.getCurrentScript();
       if (script) {
-        url = util.getScriptAbsoluteSrc(script);
-        url = util.unParseMap(url);
+        var url = util.unParseMap(util.getScriptAbsoluteSrc(script));
       }
 
-      // In IE6-9, if the script is in the cache, the "interactive" mode
-      // sometimes does not work. The script code actually executes *during*
-      // the DOM insertion of the script tag, so we can keep track of which
-      // script is being requested in case define() is called during the DOM
-      // insertion.
+      if (url) {
+        util.memoize(url, mod);
+      }
       else {
-        url = data.pendingModIE;
+        util.warn('Failed to derive url of the following anonymous module:',
+            factory.toString());
       }
-
-      // NOTE: If the id-deriving methods above is failed, then falls back
-      // to use onload event to get the module uri.
-    }
-
-    if (immediate || url) {
-      util.memoize(id, url, mod);
     }
     else {
-      // Saves information for "real" work in the onload event.
-      data.pendingMods.push(mod);
+      // Saves information for "memoizing" work in the onload event.
+      data.anonymousMod = mod;
     }
-
   };
 
 
@@ -116,4 +97,4 @@
         .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
 
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._data, seajs._fn);
