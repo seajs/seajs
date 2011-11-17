@@ -123,6 +123,7 @@
     return ret;
   }
 
+
   /**
    * Gets the original url.
    * @param {string} url The url string.
@@ -189,82 +190,10 @@
     }
     // top-level id
     else {
-      ret = getConfigBase() + '/' + id;
+      ret = config.base + '/' + id;
     }
 
     return normalize(ret);
-  }
-
-
-  function getConfigBase() {
-    if (!config.base) {
-      util.error('The config.base is empty.');
-    }
-    return config.base;
-  }
-
-
-  var memoizedMods = data.memoizedMods;
-
-  /**
-   * Caches mod info to memoizedMods.
-   */
-  function memoize(uri, mod) {
-    mod.id = uri; // change id to the absolute path.
-    memoizedMods[uri] = mod;
-  }
-
-  /**
-   * Set mod.ready to true when all the requires of the module is loaded.
-   */
-  function setReadyState(uris) {
-    util.forEach(uris, function(uri) {
-      if (memoizedMods[uri]) {
-        memoizedMods[uri].ready = true;
-      }
-    });
-  }
-
-  /**
-   * Removes the "ready = true" uris from input.
-   */
-  function getUnReadyUris(uris) {
-    return util.filter(uris, function(uri) {
-      var mod = memoizedMods[uri];
-      return !mod || !mod.ready;
-    });
-  }
-
-  /**
-   * if a -> [b -> [c -> [a, e], d]]
-   * call removeMemoizedCyclicUris(c, [a, e])
-   * return [e]
-   */
-  function removeCyclicWaitingUris(uri, deps) {
-    return util.filter(deps, function(dep) {
-      return !isCyclicWaiting(memoizedMods[dep], uri);
-    });
-  }
-
-  function isCyclicWaiting(mod, uri) {
-    if (!mod || mod.ready) {
-      return false;
-    }
-
-    var deps = mod.dependencies || [];
-    if (deps.length) {
-      if (~util.indexOf(deps, uri)) {
-        return true;
-      } else {
-        for (var i = 0; i < deps.length; i++) {
-          if (isCyclicWaiting(memoizedMods[deps[i]], uri)) {
-            return true;
-          }
-        }
-        return false;
-      }
-    }
-    return false;
   }
 
 
@@ -290,23 +219,17 @@
 
 
   util.dirname = dirname;
+  util.realpath = realpath;
+  util.normalize = normalize;
 
   util.parseAlias = parseAlias;
   util.parseMap = parseMap;
   util.unParseMap = unParseMap;
-  util.id2Uri = id2Uri;
 
-  util.memoize = memoize;
-  util.setReadyState = setReadyState;
-  util.getUnReadyUris = getUnReadyUris;
-  util.removeCyclicWaitingUris = removeCyclicWaitingUris;
+  util.id2Uri = id2Uri;
   util.isAbsolute = isAbsolute;
   util.isTopLevel = isTopLevel;
 
-  if (config.debug) {
-    util.realpath = realpath;
-    util.normalize = normalize;
-    util.getHost = getHost;
-  }
+  util.pageUrl = pageUrl;
 
 })(seajs._util, seajs._data, seajs._fn, this);
