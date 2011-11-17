@@ -1,2 +1,3 @@
 if(this.define) define({ name: 'c' });
-var cDone = true;
+
+if (typeof scriptsNum == 'number') scriptsNum++;

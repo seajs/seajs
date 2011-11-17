@@ -2,57 +2,52 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>Reliability Test</title>
+<title>test-r</title>
 </head>
 <body>
-
 <div id="o"></div>
+
+<script>var scriptsNum = 0;</script>
 
 <!-- for testing cache -->
 <script src="c.js"></script>
 <script src="d.js"></script>
+<script src="f.js"></script>
 
-<script src="libs/require.js"></script>
+<script src="util.js"></script>
+<script src="require.js"></script>
 
 <script>
-(function(g) {
-  if (!g['cDone'] || !g['dDone'] || !g['define']) return;
+(function() {
+  if (scriptsNum !== 4 || typeof define === 'undefined') return;
+  complete('r-init');
 
-  function complete(s) {
-    if (self.top != self) {
-      req(s);
-    }
-    else {
-      print(s);
-    }
-  }
+  window.onerror = function() {
+    complete('r-error');
+  };
 
-  function req(s) {
-    s += location.href.charAt(location.href.length - 1); // UA
-    var img = new Image();
-    img.src = 'http://stats.tudou.com/e/tmp/a10/?v=1&s=16015||||||' + s + '|||';
-  }
+  require.onError = function() {
+    complete('r-______');
+  };
 
-  function print(txt) {
-    var d = document.createElement('div');
-    d.innerHTML = txt;
-    document.getElementById('o').appendChild(d);
-  }
 
   // test
-  require(['a.js', 'b.js', 'c.js', 'd.js'], function(a, b, c, d) {
+  require(['a.js', 'b.js', 'c.js', 'd.js', 'e.js', 'f.js'], function() {
     var s = '';
 
-    s += (a || 0).name ? a.name : 'x';
-    s += (b || 0).name ? b.name : 'x';
-    s += (c || 0).name ? c.name : 'x';
-    s += (d || 0).name ? d.name : 'x';
-    s = (s === 'abcd' ? 0 : 1) + '-' + s;
+    for (var i = 0; i < arguments.length; i++) {
+      s += (arguments[i] || 0).name ? arguments[i].name : '_';
+    }
 
     complete('r-' + s);
   });
 
-})(this);
+  // 注：
+  // 假设 b.js 请求时 404 了，RequireJS 里：
+  //  1. 在 IE 浏览器下会走正常回调，只是 b 为 null，因此结果为 r-1-a_cd
+  //  2. 在非 IE 浏览器下，会走 timeout 流程触发 onError, 结果为 r-1-____
+  // 在 SeaJS 里，都是走正常回调。
+})();
 </script>
 </body>
 </html>
