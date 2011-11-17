@@ -1,7 +1,7 @@
 define(function(require) {
 
   var test = require('../test');
-  var util = seajs._util;
+  var util = seajs.pluginSDK.util;
 
   test.assert(util.dirname('a/b/c.js') === 'a/b/', 'dirname');
   test.assert(util.dirname('d.js') === './', 'dirname');
@@ -34,10 +34,6 @@ define(function(require) {
   test.assert(util.parseAlias('app') === 'app/1.2/app', 'parseAlias');
   test.assert(util.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias');
   test.assert(util.parseAlias('#jquery') === 'jquery', 'parseAlias');
-
-  test.assert(util.getHost('http://test.com/path/page.html?t=2011') === 'http://test.com', 'getHost');
-  test.assert(util.getHost('https://test.com:8080/path/page.html?t=2011') === 'https://test.com:8080', 'getHost');
-  test.assert(util.getHost('file:///path/page.html?t=2011') === 'file://', 'getHost');
 
   test.done();
 });

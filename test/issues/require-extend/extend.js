@@ -4,7 +4,7 @@ define(function(require) {
   var _resolve = Require.prototype.resolve;
 
   Require.prototype.resolve = function(id, context) {
-    if (/\.coffee$/.test(id)) {
+    if (typeof id === 'string' && /\.coffee$/.test(id)) {
       id += '#';
     }
     return _resolve.call(this, id, context);

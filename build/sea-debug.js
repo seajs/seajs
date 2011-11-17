@@ -190,9 +190,9 @@ seajs._fn = {};
   };
 
 
-  util.warn = function() {
+  util.log = function() {
     if (data.config.debug && typeof console !== 'undefined') {
-      console.warn(join(arguments));
+      console.log(join(arguments));
     }
   };
 
@@ -327,6 +327,7 @@ seajs._fn = {};
     return ret;
   }
 
+
   /**
    * Gets the original url.
    * @param {string} url The url string.
@@ -393,82 +394,10 @@ seajs._fn = {};
     }
     // top-level id
     else {
-      ret = getConfigBase() + '/' + id;
+      ret = config.base + '/' + id;
     }
 
     return normalize(ret);
-  }
-
-
-  function getConfigBase() {
-    if (!config.base) {
-      util.error('The config.base is empty.');
-    }
-    return config.base;
-  }
-
-
-  var memoizedMods = data.memoizedMods;
-
-  /**
-   * Caches mod info to memoizedMods.
-   */
-  function memoize(uri, mod) {
-    mod.id = uri; // change id to the absolute path.
-    memoizedMods[uri] = mod;
-  }
-
-  /**
-   * Set mod.ready to true when all the requires of the module is loaded.
-   */
-  function setReadyState(uris) {
-    util.forEach(uris, function(uri) {
-      if (memoizedMods[uri]) {
-        memoizedMods[uri].ready = true;
-      }
-    });
-  }
-
-  /**
-   * Removes the "ready = true" uris from input.
-   */
-  function getUnReadyUris(uris) {
-    return util.filter(uris, function(uri) {
-      var mod = memoizedMods[uri];
-      return !mod || !mod.ready;
-    });
-  }
-
-  /**
-   * if a -> [b -> [c -> [a, e], d]]
-   * call removeMemoizedCyclicUris(c, [a, e])
-   * return [e]
-   */
-  function removeCyclicWaitingUris(uri, deps) {
-    return util.filter(deps, function(dep) {
-      return !isCyclicWaiting(memoizedMods[dep], uri);
-    });
-  }
-
-  function isCyclicWaiting(mod, uri) {
-    if (!mod || mod.ready) {
-      return false;
-    }
-
-    var deps = mod.dependencies || [];
-    if (deps.length) {
-      if (~util.indexOf(deps, uri)) {
-        return true;
-      } else {
-        for (var i = 0; i < deps.length; i++) {
-          if (isCyclicWaiting(memoizedMods[deps[i]], uri)) {
-            return true;
-          }
-        }
-        return false;
-      }
-    }
-    return false;
   }
 
 
@@ -494,24 +423,18 @@ seajs._fn = {};
 
 
   util.dirname = dirname;
+  util.realpath = realpath;
+  util.normalize = normalize;
 
   util.parseAlias = parseAlias;
   util.parseMap = parseMap;
   util.unParseMap = unParseMap;
-  util.id2Uri = id2Uri;
 
-  util.memoize = memoize;
-  util.setReadyState = setReadyState;
-  util.getUnReadyUris = getUnReadyUris;
-  util.removeCyclicWaitingUris = removeCyclicWaitingUris;
+  util.id2Uri = id2Uri;
   util.isAbsolute = isAbsolute;
   util.isTopLevel = isTopLevel;
 
-  if (config.debug) {
-    util.realpath = realpath;
-    util.normalize = normalize;
-    util.getHost = getHost;
-  }
+  util.pageUrl = pageUrl;
 
 })(seajs._util, seajs._data, seajs._fn, this);
 
@@ -566,7 +489,7 @@ seajs._fn = {};
     }
 
     var timer = setTimeout(function() {
-      util.warn('time is out:', node.src);
+      util.log('time is out:', node.src);
       cb();
     }, data.config.timeout);
 
@@ -760,7 +683,7 @@ seajs._fn = {};
    * @param {Array.<string>|string=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  function define(id, deps, factory) {
     var argsLen = arguments.length;
 
     // define(factory)
@@ -799,7 +722,7 @@ seajs._fn = {};
       }
 
       if (!url) {
-        util.warn('Failed to derive url of the following anonymous module:',
+        util.log('Failed to derive url of the following anonymous module:',
             factory.toString());
 
         // NOTE: If the id-deriving methods above is failed, then falls back
@@ -817,7 +740,7 @@ seajs._fn = {};
       data.anonymousMod = mod;
     }
 
-  };
+  }
 
 
   function parseDependencies(code) {
@@ -848,6 +771,12 @@ seajs._fn = {};
         .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
         .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
+
+
+  // Common Module Definition
+  define.cmd = {};
+
+  fn.define = define;
 
 })(seajs._util, seajs._data, seajs._fn);
 
@@ -890,7 +819,7 @@ seajs._fn = {};
 
     // Checks cyclic dependencies.
     if (isCyclic(context, uri)) {
-      util.warn('Found cyclic dependencies:', uri);
+      util.log('Found cyclic dependencies:', uri);
       return mod.exports;
     }
 
@@ -910,21 +839,18 @@ seajs._fn = {};
    * Use the internal require() machinery to look up the location of a module,
    * but rather than loading the module, just return the resolved filepath.
    *
-   * @param {string} id The module id to be resolved.
+   * @param {string|Array.<string>} ids The module ids to be resolved.
    * @param {Object=} context The context of require function.
    */
-  RP.resolve = function(id, context) {
-    return util.id2Uri(id, (context || this.context).uri);
-  };
+  RP.resolve = function(ids, context) {
+    if (util.isString(ids)) {
+      return util.id2Uri(ids, (context || this.context || {}).uri);
+    }
 
-
-  RP._batchResolve = function(ids, context) {
     return util.map(ids, function(id) {
-      return RP.resolve(id, context || {});
+      return RP.resolve(id, context);
     });
   };
-
-  RP._unparseMap = util.unParseMap;
 
 
   /**
@@ -1064,7 +990,7 @@ seajs._fn = {};
       if (util.isString(ids)) {
         ids = [ids];
       }
-      var uris = RP._batchResolve(ids, context);
+      var uris = RP.resolve(ids, context);
 
       provide(uris, function() {
         var require = fn.createRequire(context);
@@ -1087,7 +1013,7 @@ seajs._fn = {};
    * @param {function()=} callback The callback function.
    */
   function provide(uris, callback) {
-    var unReadyUris = util.getUnReadyUris(uris);
+    var unReadyUris = getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
       return onProvide();
@@ -1117,7 +1043,7 @@ seajs._fn = {};
 
               if (deps.length) {
                 // Converts deps to absolute id.
-                deps = mod.dependencies = RP._batchResolve(deps, {
+                deps = mod.dependencies = RP.resolve(deps, {
                   uri: mod.id
                 });
               }
@@ -1128,7 +1054,7 @@ seajs._fn = {};
                 // if a -> [b -> [c -> [a, e], d]]
                 // when use(['a', 'b'])
                 // should remove a from c.deps
-                deps = util.removeCyclicWaitingUris(uri, deps);
+                deps = removeCyclicWaitingUris(uri, deps);
                 m = deps.length;
               }
 
@@ -1149,7 +1075,7 @@ seajs._fn = {};
     }
 
     function onProvide() {
-      util.setReadyState(unReadyUris);
+      setReadyState(unReadyUris);
       callback();
     }
   }
@@ -1180,7 +1106,7 @@ seajs._fn = {};
           if (mod) {
             // Don't override existed module
             if (!memoizedMods[uri]) {
-              util.memoize(uri, mod);
+              memoize(uri, mod);
             }
             data.anonymousMod = null;
           }
@@ -1205,6 +1131,73 @@ seajs._fn = {};
   }
 
 
+  // Helpers
+
+  /**
+   * Caches mod info to memoizedMods.
+   */
+  function memoize(uri, mod) {
+    mod.id = uri; // change id to the absolute path.
+    memoizedMods[uri] = mod;
+  }
+
+  /**
+   * Set mod.ready to true when all the requires of the module is loaded.
+   */
+  function setReadyState(uris) {
+    util.forEach(uris, function(uri) {
+      if (memoizedMods[uri]) {
+        memoizedMods[uri].ready = true;
+      }
+    });
+  }
+
+  /**
+   * Removes the "ready = true" uris from input.
+   */
+  function getUnReadyUris(uris) {
+    return util.filter(uris, function(uri) {
+      var mod = memoizedMods[uri];
+      return !mod || !mod.ready;
+    });
+  }
+
+  /**
+   * if a -> [b -> [c -> [a, e], d]]
+   * call removeMemoizedCyclicUris(c, [a, e])
+   * return [e]
+   */
+  function removeCyclicWaitingUris(uri, deps) {
+    return util.filter(deps, function(dep) {
+      return !isCyclicWaiting(memoizedMods[dep], uri);
+    });
+  }
+
+  function isCyclicWaiting(mod, uri) {
+    if (!mod || mod.ready) {
+      return false;
+    }
+
+    var deps = mod.dependencies || [];
+    if (deps.length) {
+      if (~util.indexOf(deps, uri)) {
+        return true;
+      } else {
+        for (var i = 0; i < deps.length; i++) {
+          if (isCyclicWaiting(memoizedMods[deps[i]], uri)) {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+    return false;
+  }
+
+
+  // Public API
+
+  util.memoize = memoize;
   fn.load = load;
 
 })(seajs._util, seajs._data, seajs._fn);
@@ -1230,20 +1223,20 @@ seajs._fn = {};
     loaderScript = scripts[scripts.length - 1];
   }
 
-  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript);
-  if (loaderSrc) {
-    var base = util.dirname(loaderSrc);
-    util.loaderDir = base;
+  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript) ||
+      util.pageUrl; // When sea.js is inline, set base to pageUrl.
 
-    // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
-    // to "http://test.com/libs/"
-    var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
-    if (match) {
-      base = match[1];
-    }
-    config.base = base;
+  var base = util.dirname(loaderSrc);
+  util.loaderDir = base;
+
+  // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
+  // to "http://test.com/libs/"
+  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+  if (match) {
+    base = match[1];
   }
-  // When script is inline code, src is empty.
+
+  config.base = base;
 
 
   var mainAttr = loaderScript.getAttribute('data-main');
@@ -1457,17 +1450,24 @@ seajs._fn = {};
   };
 
 
-  var debug = data.config.debug;
+  // Keep for plugin developers.
+  host.pluginSDK = {
+    util: host._util,
+    data: host._data
+  };
 
+
+  // For debug mode.
+  var debug = data.config.debug;
   if (debug) {
-    host.debug = debug;
+    host.debug = !!debug;
   }
+
+
   // Keeps clean!
-  else {
-    delete host._util;
-    delete host._data;
-    delete host._fn;
-    delete host._seajs;
-  }
+  delete host._util;
+  delete host._data;
+  delete host._fn;
+  delete host._seajs;
 
 })(seajs, seajs._data, seajs._fn, this);
