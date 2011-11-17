@@ -31,17 +31,24 @@
   };
 
 
-  var debug = data.config.debug;
+  // Keep for plugin developers.
+  host.pluginSDK = {
+    util: host._util,
+    data: host._data
+  };
 
+
+  // For debug mode.
+  var debug = data.config.debug;
   if (debug) {
-    host.debug = debug;
+    host.debug = !!debug;
   }
+
+
   // Keeps clean!
-  else {
-    delete host._util;
-    delete host._data;
-    delete host._fn;
-    delete host._seajs;
-  }
+  delete host._util;
+  delete host._data;
+  delete host._fn;
+  delete host._seajs;
 
 })(seajs, seajs._data, seajs._fn, this);

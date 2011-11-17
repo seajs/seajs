@@ -49,7 +49,7 @@
       if (util.isString(ids)) {
         ids = [ids];
       }
-      var uris = RP._batchResolve(ids, context);
+      var uris = RP.resolve(ids, context);
 
       provide(uris, function() {
         var require = fn.createRequire(context);
@@ -72,7 +72,7 @@
    * @param {function()=} callback The callback function.
    */
   function provide(uris, callback) {
-    var unReadyUris = util.getUnReadyUris(uris);
+    var unReadyUris = getUnReadyUris(uris);
 
     if (unReadyUris.length === 0) {
       return onProvide();
@@ -102,7 +102,7 @@
 
               if (deps.length) {
                 // Converts deps to absolute id.
-                deps = mod.dependencies = RP._batchResolve(deps, {
+                deps = mod.dependencies = RP.resolve(deps, {
                   uri: mod.id
                 });
               }
@@ -113,7 +113,7 @@
                 // if a -> [b -> [c -> [a, e], d]]
                 // when use(['a', 'b'])
                 // should remove a from c.deps
-                deps = util.removeCyclicWaitingUris(uri, deps);
+                deps = removeCyclicWaitingUris(uri, deps);
                 m = deps.length;
               }
 
@@ -134,7 +134,7 @@
     }
 
     function onProvide() {
-      util.setReadyState(unReadyUris);
+      setReadyState(unReadyUris);
       callback();
     }
   }
@@ -165,7 +165,7 @@
           if (mod) {
             // Don't override existed module
             if (!memoizedMods[uri]) {
-              util.memoize(uri, mod);
+              memoize(uri, mod);
             }
             data.anonymousMod = null;
           }
@@ -190,6 +190,73 @@
   }
 
 
+  // Helpers
+
+  /**
+   * Caches mod info to memoizedMods.
+   */
+  function memoize(uri, mod) {
+    mod.id = uri; // change id to the absolute path.
+    memoizedMods[uri] = mod;
+  }
+
+  /**
+   * Set mod.ready to true when all the requires of the module is loaded.
+   */
+  function setReadyState(uris) {
+    util.forEach(uris, function(uri) {
+      if (memoizedMods[uri]) {
+        memoizedMods[uri].ready = true;
+      }
+    });
+  }
+
+  /**
+   * Removes the "ready = true" uris from input.
+   */
+  function getUnReadyUris(uris) {
+    return util.filter(uris, function(uri) {
+      var mod = memoizedMods[uri];
+      return !mod || !mod.ready;
+    });
+  }
+
+  /**
+   * if a -> [b -> [c -> [a, e], d]]
+   * call removeMemoizedCyclicUris(c, [a, e])
+   * return [e]
+   */
+  function removeCyclicWaitingUris(uri, deps) {
+    return util.filter(deps, function(dep) {
+      return !isCyclicWaiting(memoizedMods[dep], uri);
+    });
+  }
+
+  function isCyclicWaiting(mod, uri) {
+    if (!mod || mod.ready) {
+      return false;
+    }
+
+    var deps = mod.dependencies || [];
+    if (deps.length) {
+      if (~util.indexOf(deps, uri)) {
+        return true;
+      } else {
+        for (var i = 0; i < deps.length; i++) {
+          if (isCyclicWaiting(memoizedMods[deps[i]], uri)) {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+    return false;
+  }
+
+
+  // Public API
+
+  util.memoize = memoize;
   fn.load = load;
 
 })(seajs._util, seajs._data, seajs._fn);

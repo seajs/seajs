@@ -11,7 +11,7 @@
    * @param {Array.<string>|string=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  fn.define = function(id, deps, factory) {
+  function define(id, deps, factory) {
     var argsLen = arguments.length;
 
     // define(factory)
@@ -50,7 +50,7 @@
       }
 
       if (!url) {
-        util.warn('Failed to derive url of the following anonymous module:',
+        util.log('Failed to derive url of the following anonymous module:',
             factory.toString());
 
         // NOTE: If the id-deriving methods above is failed, then falls back
@@ -68,7 +68,7 @@
       data.anonymousMod = mod;
     }
 
-  };
+  }
 
 
   function parseDependencies(code) {
@@ -99,5 +99,11 @@
         .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
         .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
+
+
+  // Common Module Definition
+  define.cmd = {};
+
+  fn.define = define;
 
 })(seajs._util, seajs._data, seajs._fn);

@@ -38,7 +38,7 @@
 
     // Checks cyclic dependencies.
     if (isCyclic(context, uri)) {
-      util.warn('Found cyclic dependencies:', uri);
+      util.log('Found cyclic dependencies:', uri);
       return mod.exports;
     }
 
@@ -58,21 +58,18 @@
    * Use the internal require() machinery to look up the location of a module,
    * but rather than loading the module, just return the resolved filepath.
    *
-   * @param {string} id The module id to be resolved.
+   * @param {string|Array.<string>} ids The module ids to be resolved.
    * @param {Object=} context The context of require function.
    */
-  RP.resolve = function(id, context) {
-    return util.id2Uri(id, (context || this.context).uri);
-  };
+  RP.resolve = function(ids, context) {
+    if (util.isString(ids)) {
+      return util.id2Uri(ids, (context || this.context || {}).uri);
+    }
 
-
-  RP._batchResolve = function(ids, context) {
     return util.map(ids, function(id) {
-      return RP.resolve(id, context || {});
+      return RP.resolve(id, context);
     });
   };
-
-  RP._unparseMap = util.unParseMap;
 
 
   /**

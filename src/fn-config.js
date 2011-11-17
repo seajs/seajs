@@ -20,20 +20,20 @@
     loaderScript = scripts[scripts.length - 1];
   }
 
-  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript);
-  if (loaderSrc) {
-    var base = util.dirname(loaderSrc);
-    util.loaderDir = base;
+  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript) ||
+      util.pageUrl; // When sea.js is inline, set base to pageUrl.
 
-    // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
-    // to "http://test.com/libs/"
-    var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
-    if (match) {
-      base = match[1];
-    }
-    config.base = base;
+  var base = util.dirname(loaderSrc);
+  util.loaderDir = base;
+
+  // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
+  // to "http://test.com/libs/"
+  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+  if (match) {
+    base = match[1];
   }
-  // When script is inline code, src is empty.
+
+  config.base = base;
 
 
   var mainAttr = loaderScript.getAttribute('data-main');

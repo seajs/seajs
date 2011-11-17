@@ -11,9 +11,9 @@
   };
 
 
-  util.warn = function() {
+  util.log = function() {
     if (data.config.debug && typeof console !== 'undefined') {
-      console.warn(join(arguments));
+      console.log(join(arguments));
     }
   };
 

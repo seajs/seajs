@@ -50,7 +50,7 @@
     }
 
     var timer = setTimeout(function() {
-      util.warn('time is out:', node.src);
+      util.log('time is out:', node.src);
       cb();
     }, data.config.timeout);
 

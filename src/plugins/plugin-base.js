@@ -5,6 +5,7 @@
 
 define('plugin-base', [], function(require, exports) {
 
+  var util = seajs.pluginSDK.util;
   var RP = require.constructor.prototype;
   var meta = {};
   var cache = {};
@@ -29,6 +30,10 @@ define('plugin-base', [], function(require, exports) {
     var _resolve = RP.resolve;
 
     RP.resolve = function(id, context) {
+      if (util.isArray(id)) {
+        return _resolve(id, context);
+      }
+
       var flag;
 
       if (/\.\w|^\w+!/.test(id)) {
@@ -72,7 +77,7 @@ define('plugin-base', [], function(require, exports) {
     var _load = RP.load;
 
     RP.load = function(url, callback, charset) {
-      var type = cache[RP._unparseMap(url)];
+      var type = cache[util.unParseMap(url)];
       if (type) {
         meta[type].load(url, callback);
       }
