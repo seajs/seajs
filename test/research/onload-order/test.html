@@ -22,9 +22,6 @@
     addOnload(node, callback);
     node.src = src;
     outEl.appendChild(node);
-    setTimeout(function() {
-      node.src = '';
-    }, 0);
   }
 
   function addOnload(node, callback) {
