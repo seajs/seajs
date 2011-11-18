@@ -67,10 +67,9 @@
   function scriptOnload(node, callback) {
 
     node.onload = node.onerror = node.onreadystatechange =
-        function(_, isAbort) {
+        function() {
 
-          if (isAbort || !node.readyState ||
-              /loaded|complete/.test(node.readyState)) {
+          if (/loaded|complete|undefined/.test(node.readyState)) {
 
             // Ensure only run once
             node.onload = node.onerror = node.onreadystatechange = null;
