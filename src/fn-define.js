@@ -101,9 +101,6 @@
   }
 
 
-  // Common Module Definition
-  define.cmd = {};
-
   fn.define = define;
 
 })(seajs._util, seajs._data, seajs._fn);
