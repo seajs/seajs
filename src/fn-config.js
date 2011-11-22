@@ -133,7 +133,7 @@
 
   function checkConflict(previous, current) {
     if (previous && previous !== current) {
-      util.error('Config is conflicted:', previous, current);
+      util.error('Config is conflicted:', current);
     }
   }
 
