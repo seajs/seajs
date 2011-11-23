@@ -48,7 +48,7 @@
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/seajs/1.0.2/sea.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.com/libs/seajs/1.1.0/sea.js"&gt;&lt;/script&gt;
 </pre>
 
   <p>
@@ -57,28 +57,31 @@
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/sea-jquery.js"&gt;&lt;/script&gt;
+http://example.com/libs/sea-jquery.js
 </pre>
 
   <p>
-    <a href="http://code.taobao.org/svn/nginx_concat_module/trunk/README" target="_blank">Nginx concat module</a> is recommended for automatically combination.
+    It is recommended to use
+    <a href="http://code.taobao.org/svn/nginx_concat_module/trunk/README" target="_blank">Nginx concat module</a>
+    for automatically combination.
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/??seajs/1.0.2/sea.js,jquery/1.6.4/jquery.js"&gt;&lt;/script&gt;
+http://example.com/libs/??seajs/1.1.0/sea.js,jquery/1.7.1/jquery.js
 </pre>
 
   <p>
     ** NOTICE: When using the combo service, the <code>base</code> path should
-    be set manually.
+    be set manually in config or a combo plugin should be enabled to parse the
+    base path.
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/??seajs/1.0.2/sea.js,jquery/1.6.4/jquery.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.com/libs/??seajs/1.1.0/sea.js,jquery/1.7.1/jquery.js"&gt;&lt;/script&gt;
 &lt;script&gt;
 seajs.config({ 'base': 'http://example.com/libs/' });
 seajs.use('underscore/1.1.6/underscore');
-// =&gt; http://example.com/libs/underscore/1.1.6/underscore.js
+  //=&gt; http://example.com/libs/underscore/1.1.6/underscore.js
 &lt;/script&gt;
 </pre>
 
@@ -104,7 +107,7 @@ seajs.use('underscore/1.1.6/underscore');
   m.define = f(2);
   u = o.createElement('script');
   u.id = d + 'node';
-  u.src = 'http://example.com/libs/seajs/1.0.2/sea.js';
+  u.src = 'http://example.com/libs/seajs/1.1.0/sea.js';
   l = o.getElementsByTagName('head')[0];
   l.insertBefore(u, l.firstChild);
 })(window, document, 'seajs');
@@ -129,11 +132,11 @@ seajs.use('./init', function(init) {
   </p>
 
 <pre>
-&lt;script src="http://example.comlibs/seajs/1.0.2/sea.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.comlibs/seajs/1.1.0/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   seajs.use('path/to/init', function(init) {
-    init.somethingA(/* You can pass config as parameters here. */);
-    init.somethingB(/* You can pass config as parameters here. */);
+    init.somethingA();
+    init.somethingB();
   });
 &lt;/script&gt;
 </pre>
@@ -143,7 +146,7 @@ seajs.use('./init', function(init) {
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/seajs/1.0.2/sea.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.com/libs/seajs/1.1.0/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   seajs.use('path/to/init');
 &lt;/script&gt;
@@ -155,21 +158,13 @@ seajs.use('./init', function(init) {
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/seajs/1.0.2/sea.js"
+&lt;script src="http://example.com/libs/seajs/1.1.0/sea.js"
         data-main="path/to/init" &gt;&lt;/script&gt;
 </pre>
 
 
   <p>
     For more usages, see <a href="../test/bootstrap/">bootstrap/index.html</a>
-  </p>
-
-  <p>
-    You can also use the <code>defer</code> or <code>async</code> attribute to
-    adjust the download start time of <code>sea.js</code>. But the two
-    attributes are not implemented by all major browsers now, so just keep
-    these attributes away from <code>sea.js</code>, unless you know what are
-    you doing.
   </p>
 
 </div>
