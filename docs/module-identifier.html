@@ -23,10 +23,9 @@
     <ul>
       <li><a href="#module-identifier">Module Identifier</a>
         <ul>
-          <li><a href="#absolute-paths">Absolute Paths</a></li>
-          <li><a href="#root-paths">Root Paths</a></li>
-          <li><a href="#relative-paths">Relative Paths</a></li>
-          <li><a href="#top-level-paths">Top-level Paths</a></li>
+          <li><a href="#relative-id">Relative Identifier</a></li>
+          <li><a href="#top-level-id">Top-Level Identifier</a></li>
+          <li><a href="#normal-path">Normal Path</a></li>
         </ul>
       </li>
       <li><a href="#tips">Tips About File Extensions</a></li>
@@ -38,72 +37,75 @@
   <h2 id="module-identifier">Module Identifier</h2>
 
   <p>
-    The <code>require</code> function take module identifier as the parameter.
-    For illustration purposes, let's assume that we have these files:
+    Module identifiers can be used to identify the current module being defined.
+    Loading functions such as <code>require</code>, <code>require.async</code>
+    take module id as their first parameter, and module identifiers are
+    also used in the <code>dependencies</code> argument.
   </p>
-
-<pre>
-http://example.com/js/a.js
-http://example.com/libs/seajs/1.0.0/sea.js
-http://example.com/libs/jquery/1.6.2/jquery.js
-</pre>
-
-
-  <h3 id="absolute-paths">Absolute Paths</h3>
 
   <p>
-    Although not a feature of the CommonJS Modules specification, SeaJS can
-    load modules referenced with an absolute URL.
+    Module identifiers in SeaJS are a superset of what is allowed in
+    <a href="http://wiki.commonjs.org/wiki/Modules/1.1.1">CommonJS Module Identifiers</a>:
   </p>
 
-<pre>
-require('http://example.com/js/a');
-  // =&gt; http://example.com/js/a.js
-</pre>
+  <blockquote>
+  <ol>
+    <li>
+      A module identifier is a String of "terms" delimited by forward
+      slashes.
+    </li>
+    <li>
+      A term must be a camelCase identifier, ".", or "..".
+    </li>
+    <li>
+      Module identifiers may not have file-name extensions like ".js".
+    </li>
+    <li>
+      Module identifiers may be "relative" or "top-level". A module
+      identifier is "relative" if the first term is "." or "..".
+    </li>
+    <li>
+      Top-level identifiers are resolved off the conceptual module name space
+      root.
+    </li>
+    <li>
+      Relative identifiers are resolved relative to the identifier of the
+      module in which "require" is written and called.
+    </li>
+  </ol>
+  </blockquote>
 
 
-  <h3 id="root-paths">Root Paths</h3>
+  <h3 id="relative-id">Relative Identifier</h3>
 
   <p>
-    Root paths start with a slash (<code>"/"</code>). They are resolved
-    relative to the containing file:
+    Relative identifiers start with a dot (<code>"."</code>), and MUST be in
+    a module environment. They are resolved relative to the uri of the current
+    module:
   </p>
 
-  <p>a.js: </p>
-
 <pre>
-require('/js/b');
-  // =&gt; http://example.com/js/b.js
-</pre>
-
-
-  <h3 id="relative-paths">Relative Paths</h3>
-
-  <p>
-    Relative paths start with a dot (<code>"."</code>). They are resolved
-    relative to the containing file:
-  </p>
-
-  <p>a.js:</p>
-
-<pre>
+// In http://example.com/js/a.js:
 require('./b');
   // =&gt; http://example.com/js/b.js
 </pre>
 
 
-  <h3 id="top-level-paths">Top-level Paths</h3>
+  <h3 id="top-level-id">Top-Level Identifier</h3>
 
   <p>
-    Top-level paths do not start with a dot (<code>"."</code>) or a slash (
-    <code>"/"</code>). They are resolved relative to the conceptual namespace
+    Top-level identifiers do not start with a dot (<code>"."</code>) or a slash
+    (<code>"/"</code>). They are resolved relative to the conceptual namespace
     root. SeaJS will attempt to locate modules referenced with top-level paths
     relative to the <code>base</code> path.
   </p>
 
 <pre>
-require('jquery/1.6.2/jquery');
-  // =&gt; http://example.com/libs/jquery/1.6.2/jquery.js
+// Assume base path is: http://example.com/js/libs/
+
+// In some module factory:
+require('jquery/1.7.1/jquery');
+  // =&gt; http://example.com/libs/jquery/1.7.1/jquery.js
 </pre>
 
   <p>
@@ -138,10 +140,38 @@ seajs.config({
   base: 'http://code.jquery.com/'
 });
 
+// In some module factory:
 require('jquery');
   // =&gt; http://code.jquery.com/jquery.js
 </pre>
 
+
+  <h3 id="normal-path">Normal Path</h3>
+
+  <p>
+    All identifiers except relative and top-level identifiers are normal paths.
+    They are resolved just like the <code>script.src</code> in html files.
+  </p>
+
+<pre>
+// In http://example.com/js/main.js:
+require('http://example.com/js/a');
+  // =&gt; http://example.com/js/a.js
+
+// In http://example.com/js/a.js:
+require('/js/b');
+  // =&gt; http://example.com/js/b.js
+
+// In any where:
+seajs.use('./c');
+  // =&gt; http://example.com/path/to/page/c.js
+</pre>
+
+  <p>
+    The module identifiers in the <code>seajs.use(ids, ...)</code> and
+    <code>define(id, ...)</code> are always normal paths, because those
+    functions are designed to work in the global environment.
+  </p>
 
 
 <h2 id="tips">Tips About File Extensions</h2>
