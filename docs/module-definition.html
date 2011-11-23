@@ -34,12 +34,15 @@
           <li><a href="#require">require</a>
             <ul>
               <li><a href="#require-async">require.async</a></li>
+              <li><a href="#require-resolve">require.resolve</a></li>
+              <li><a href="#require-load">require.load</a></li>
+              <li><a href="#require-constructor">require.constructor</a></li>
             </ul>
           </li>
           <li><a href="#module">module</a>
             <ul>
               <li><a href="#module-id">module.id</a></li>
-              <li><a href="#module-deps">module.dependencies</a></li>
+              <li><a href="#module-dependencies">module.dependencies</a></li>
               <li><a href="#module-exports">module.exports</a></li>
               <li><a href="#module-constructor">module.constructor</a></li>
             </ul>
@@ -63,7 +66,7 @@
 
   <p>
     A global function "define" is available to define modules. The signature of
-    the function is:
+    this function is:
   </p>
 
 <pre>
@@ -76,26 +79,41 @@ define(id?, dependencies?, factory);
   <p>
     The unique identifier for the current module. This argument is optional,
     and if it is not present, the loader will set the module id to the request
-    uri of this module file automatically. When present, the module id MUST be
-    a "top-level" or absolute id (relative ids are NOT allowed).
+    uri of this module file. When present, the module id MUST be a top-level
+    or absolute id (relative ids are NOT allowed).
   </p>
 
 
   <h4 id="define-dependencies">dependencies</h4>
 
   <p>
-    The module’s dependency array which is an Array of module identifiers. This
+    The module’s dependency array which is an array of module identifiers. This
     argument is optional. If it is not present, the loader will parse the
-    factory.toString() to extract the dependency automatically.
+    <code>factory.toString()</code> to extract the dependency.
   </p>
 
 
   <p>
-    It is highly recommended to ignore the <code>id</code> and
-    <code>dependencies</code> arguments in the development phase. You can use
-    
+    ** NOTICE: It is highly recommended to ignore the <code>id</code> and
+    <code>dependencies</code> arguments in the define statement. The
+    optimization tool will generate these arguments automatically in the
+    deployment phase.
   </p>
 
+
+  <h4 id="define-factory">factory</h4>
+
+  <p>
+    A function that will be executed only once to initialize the module. In
+    addition to a function, the factory argument can also be an object, a
+    string, or any other value, and in those case, the module exports are set to
+    the factory value directly.
+  </p>
+
+  <p>
+    Three symbols are available in the function body of factory to every module:
+    <code>require</code>, <code>exports</code>, and <code>module</code>.
+  </p>
 
 <pre>
 define(function(require, exports, module) {
@@ -104,11 +122,6 @@ define(function(require, exports, module) {
   
 });
 </pre>
-
-  <p>
-    Three symbols are available to every module: <code>require</code>,
-    <code>exports</code>, and <code>module</code>.
-  </p>
 
 
   <h3 id="exports">exports</h3>
@@ -126,7 +139,7 @@ define(function(require, exports) {
 </pre>
 
   <p>
-    Except adding members to <code>exports</code> object, you can also use
+    Except adding members to the <code>exports</code> object, you can also use
     <code>return</code> to provide the API directly.
   </p>
 
@@ -153,11 +166,11 @@ define({
 </pre>
 
   <p>
-    The above writing format is especially suited for defining JSON data.
+    The above authoring format is especially suited for defining JSON data.
   </p>
 
   <p>
-    ** ATTENTION: the following code DOES NOT work!
+    ** ATTENTION:The following code DOES NOT work!
   </p>
 
 <pre class="wrong">
@@ -198,8 +211,9 @@ define(function(require) {
 
   <p>
     Keep in mind that you'll need to follow a few simple
-    <a href="authoring-rules.html">rules</a> to make sure that static analysis
-    will be able to detect the dependencies within your module.
+    <a href="rules.html">rules</a> to make sure that static analysis
+    will be able to detect the dependencies within your module in the
+    development phase.
   </p>
 
 
@@ -223,6 +237,33 @@ define(function(require, exports) {
   });
 });
 </pre>
+
+
+  <h4 id="require-resolve">require.resolve</h4>
+
+  <p>
+    Use the internal <code>require()</code> machinery to look up the location
+    of a module, but rather than loading the module, just return the resolved
+    uri.
+  </p>
+
+
+  <h4 id="require-load">require.load</h4>
+
+  <p>
+    Use this function to fetch the specified uris asynchronously and execute
+    the optional callback when complete. You can override this function to
+    implement custom fetching method.
+  </p>
+
+
+  <h4 id="require-constructor">require.constructor</h4>
+
+  <p>
+    Occasionally, we want to add some members to the <code>require</code>
+    argument in all module factories. In this case, using
+    <code>require.constructor</code> is very convenient.
+  </p>
 
 
   <h3 id="module">module</h3>
