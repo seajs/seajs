@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta charset="utf-8"/>
-<title>Module Environment - Sea.js Manual &amp; Documentation</title>
+<title>Module Definition - Sea.js Manual &amp; Documentation</title>
 <link rel="stylesheet" href="assets/api.css"/>
 </head>
 <body>
@@ -21,8 +21,15 @@
     <h2 id="table_of_Contents">Table of Contents</h2>
 
     <ul>
-      <li><a href="#authoring-format">Module Environment</a>
+      <li><a href="#module-definition">Module Definition</a>
         <ul>
+          <li><a href="#define">define</a>
+            <ul>
+              <li><a href="#define-id">id</a></li>
+              <li><a href="#define-dependencies">dependencies</a></li>
+              <li><a href="#define-factory">factory</a></li>
+            </ul>
+          </li>
           <li><a href="#exports">exports</a></li>
           <li><a href="#require">require</a>
             <ul>
@@ -44,11 +51,51 @@
   </div>
 
 
-  <h2 id="authoring-format">Module Environment</h2>
+  <h2 id="module-definition">Module Definition</h2>
 
   <p>
-    In SeaJS, any JavaScript file should be written in module format.
+    In SeaJS, any JavaScript file should be written in module format, and files
+    and modules are in one-to-one correspondence.
   </p>
+
+  
+  <h3 id="define">define</h3>
+
+  <p>
+    A global function "define" is available to define modules. The signature of
+    the function is:
+  </p>
+
+<pre>
+define(id?, dependencies?, factory);
+</pre>
+
+
+  <h4 id="define-id">id</h4>
+
+  <p>
+    The unique identifier for the current module. This argument is optional,
+    and if it is not present, the loader will set the module id to the request
+    uri of this module file automatically. When present, the module id MUST be
+    a "top-level" or absolute id (relative ids are NOT allowed).
+  </p>
+
+
+  <h4 id="define-dependencies">dependencies</h4>
+
+  <p>
+    The module’s dependency array which is an Array of module identifiers. This
+    argument is optional. If it is not present, the loader will parse the
+    factory.toString() to extract the dependency automatically.
+  </p>
+
+
+  <p>
+    It is highly recommended to ignore the <code>id</code> and
+    <code>dependencies</code> arguments in the development phase. You can use
+    
+  </p>
+
 
 <pre>
 define(function(require, exports, module) {
@@ -84,7 +131,7 @@ define(function(require, exports) {
   </p>
 
 <pre>
-define(function(require, exports) {
+define(function(require) {
   // snip...
   return {
     foo: 'bar'，
@@ -110,7 +157,7 @@ define({
   </p>
 
   <p>
-    ** ATTENTION: the following code is WRONG!
+    ** ATTENTION: the following code DOES NOT work!
   </p>
 
 <pre class="wrong">
@@ -134,7 +181,7 @@ define(function(require, exports) {
 
   <p>
     The <code>require</code> function is used to access the exported API of
-    other modules.
+    foreign modules.
   </p>
 
 <pre>
@@ -151,8 +198,8 @@ define(function(require) {
 
   <p>
     Keep in mind that you'll need to follow a few simple
-    <a href="rules.html">rules</a> to make sure that static analysis will be
-    able to detect the dependencies within your module.
+    <a href="authoring-rules.html">rules</a> to make sure that static analysis
+    will be able to detect the dependencies within your module.
   </p>
 
 
@@ -164,7 +211,7 @@ define(function(require) {
   </p>
 
 <pre>
-define(function(require, exports, module) {
+define(function(require, exports) {
   // load one module
   require.async('./b', function(b) {
     b.doSomething();
@@ -201,7 +248,7 @@ define(function(require, exports, module) {
 </pre>
 
 
-  <h4 id="module-deps">module.dependencies</h4>
+  <h4 id="module-dependencies">module.dependencies</h4>
 
   <p>
     <code>module.dependencies</code> is a reference to the module’s dependency

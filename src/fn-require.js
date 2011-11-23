@@ -98,7 +98,6 @@
   function createRequire(context) {
     // context: {
     //   uri: '',
-    //   deps: [],
     //   parent: context
     // }
     var that = { context: context || {} };
@@ -110,7 +109,7 @@
     require.constructor = Require;
 
     for (var p in RP) {
-      if (RP.hasOwnProperty(p) && p.charAt(0) !== '_') {
+      if (RP.hasOwnProperty(p)) {
         (function(name) {
           require[name] = function() {
             return RP[name].apply(that, slice.call(arguments));
