@@ -65,8 +65,7 @@
    *   preload: [],
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
-   *   debug: false,
-   *   main: './init'
+   *   debug: false
    * });
    *
    * @param {Object} o The config object.
