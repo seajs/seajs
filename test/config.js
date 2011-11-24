@@ -63,7 +63,9 @@ define(function(require, exports) {
     ,'issues/require-extend'
     ,'issues/seajs-map'
     ,'issues/timestamp'
+    ,'issues/un-correspondence'
 
+    ,'packages/base'
     ,'packages/math'
 
     ,'bootstrap/index'

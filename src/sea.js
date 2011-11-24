@@ -50,7 +50,12 @@ seajs._data = {
    * Modules that have been memoize()d.
    * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  memoizedMods: {}
+  memoizedMods: {},
+
+  /**
+   * Modules in current fetching package.
+   */
+  packageMods: []
 };
 
 

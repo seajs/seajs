@@ -62,6 +62,7 @@
 
     if (url) {
       util.memoize(url, mod);
+      data.packageMods.push(mod);
     }
     else {
       // Saves information for "memoizing" work in the onload event.

@@ -170,6 +170,14 @@
             data.anonymousMod = null;
           }
 
+          // Assign the first module in package to memoizeMos[uri]
+          // See: test/issues/un-correspondence
+          mod = data.packageMods[0];
+          if (mod && !memoizedMods[uri]) {
+            memoizedMods[uri] = mod;
+          }
+          data.packageMods = [];
+
           // Clear
           if (fetchingMods[uri]) {
             delete fetchingMods[uri];

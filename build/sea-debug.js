@@ -51,7 +51,12 @@ seajs._data = {
    * Modules that have been memoize()d.
    * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
    */
-  memoizedMods: {}
+  memoizedMods: {},
+
+  /**
+   * Modules in current fetching package.
+   */
+  packageMods: []
 };
 
 
@@ -733,6 +738,7 @@ seajs._fn = {};
 
     if (url) {
       util.memoize(url, mod);
+      data.packageMods.push(mod);
     }
     else {
       // Saves information for "memoizing" work in the onload event.
@@ -771,9 +777,6 @@ seajs._fn = {};
         .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
   }
 
-
-  // Common Module Definition
-  define.cmd = {};
 
   fn.define = define;
 
@@ -878,7 +881,6 @@ seajs._fn = {};
   function createRequire(context) {
     // context: {
     //   uri: '',
-    //   deps: [],
     //   parent: context
     // }
     var that = { context: context || {} };
@@ -890,7 +892,7 @@ seajs._fn = {};
     require.constructor = Require;
 
     for (var p in RP) {
-      if (RP.hasOwnProperty(p) && p.charAt(0) !== '_') {
+      if (RP.hasOwnProperty(p)) {
         (function(name) {
           require[name] = function() {
             return RP[name].apply(that, slice.call(arguments));
@@ -1110,6 +1112,14 @@ seajs._fn = {};
             data.anonymousMod = null;
           }
 
+          // Assign the first module in package to memoizeMos[uri]
+          // See: test/issues/un-correspondence
+          mod = data.packageMods[0];
+          if (mod && !memoizedMods[uri]) {
+            memoizedMods[uri] = mod;
+          }
+          data.packageMods = [];
+
           // Clear
           if (fetchingMods[uri]) {
             delete fetchingMods[uri];
@@ -1267,8 +1277,7 @@ seajs._fn = {};
    *   preload: [],
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
-   *   debug: false,
-   *   main: './init'
+   *   debug: false
    * });
    *
    * @param {Object} o The config object.
@@ -1335,7 +1344,7 @@ seajs._fn = {};
 
   function checkConflict(previous, current) {
     if (previous && previous !== current) {
-      util.error('Config is conflicted:', previous, current);
+      util.error('Config is conflicted:', current);
     }
   }
 

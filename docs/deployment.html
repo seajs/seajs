@@ -126,22 +126,12 @@ math.js        -- math lib
     <code>init.js</code>:
   </p>
 
-<pre>
- $ cat __build/init.js
-   seajs.config({alias: {"jquery":"jquery/1.6.4/jquery"}});define("./init"...
-   define("./stdin",["jquery","./calculator"],function(a,b){...
-   define("./calculator",["./stdout","./math"],function(a,b){...
-   define("./stdout",["jquery"],function(a,b){...
-   define("./math",[],function(a,b){..
-</pre>
-
   <p>
-    Finally, push files to online environment:
+    Finally, push the combined files to online environment:
   </p>
 
 <pre>
- $ publish
-   Successfully push local/calculator/__build/*.js to online/calculator/*.js
+ $ use your deploy tools to push local/calculator/__build/*.js to online/calculator/*.js
 </pre>
 
   <p>
@@ -181,7 +171,7 @@ math.js        -- math lib
   <p>
     In this way, <code>__build/init.js</code> will also include
     <code>jquery.js</code>, and HTTP requests of scripts will reduce to only
-    one.
+    two.
   </p>
 
   <p>
@@ -197,8 +187,9 @@ math.js        -- math lib
   </p>
 
   <p>
-    For more information, please see
-    <a href="https://github.com/seajs/spm/">spm project</a>.
+    See
+    <a href="https://github.com/seajs/spm/">spm project</a>
+    to obtain details for optimization tools.
   </p>
 
 

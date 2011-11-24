@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Issue Test</title>
+<script src="../../../build/sea.js"></script>
+</head>
+
+<body>
+
+<div id="out"></div>
+
+<p>
+  <a href="https://github.com/seajs/seajs/issues/137">#137</a>
+</p>
+
+<script>
+
+  seajs.use('../../test', function(test) {
+    window.test = test;
+    seajs.use('./main');
+  });
+
+  function printResults(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+    document.getElementById('out').appendChild(d);
+  }
+
+</script>
+</body>
+</html>
