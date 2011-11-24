@@ -40,7 +40,6 @@
           <li><a href="#require-async">require.async</a></li>
           <li><a href="#exports">exports</a></li>
           <li><a href="#module-exports">module.exports</a></li>
-          <li><a href="#no-conflict">seajs.noConflict</a></li>
         </ul>
       </li>
     </ul>
@@ -77,23 +76,22 @@ seajs.use(['./a', './b'], function(a, b) {
 
 <pre>
 seajs.config({
-  base: 'http://path/to/libs/',
   alias: {
-    'app': 'path/to/app/'
+    'es5-safe': 'es5-safe/0.9.2/es5-safe',
+    'json': 'json/1.0.1/json',
+    'jquery': 'jquery/1.7.1/jquery'
   },
-  map: [
-    ['http://example.com/', 'http://localhost/']
-  ],
-  charset: 'utf-8',
-  timeout: 20000,
-  debug: 0
+  preload: [
+    Function.prototype.bind ? '' : 'es5-safe',
+    this.JSON ? '' : 'json'
+  ]
 });
 </pre>
 
 
   <h3 id="define">
     define
-    <a href="module-environment.html#authoring-format">define</a>
+    <a href="module-definition.html#define">define</a>
   </h3>
 
 <pre>
@@ -107,7 +105,7 @@ define(function(require, exports, module) {
 
   <h3 id="require">
     require
-    <a href="module-environment.html#require">require</a>
+    <a href="module-definition.html#require">require</a>
   </h3>
 
 <pre>
@@ -120,7 +118,7 @@ define(function(require) {
 
   <h3 id="require-async">
     require.async
-    <a href="module-environment.html#require-async">require.async</a>
+    <a href="module-definition.html#require-async">require.async</a>
   </h3>
 
 <pre>
@@ -140,7 +138,7 @@ define(function(require, exports, module) {
 
   <h3 id="exports">
     exports
-    <a href="module-environment.html#exports">exports</a>
+    <a href="module-definition.html#exports">exports</a>
   </h3>
 
 <pre>
@@ -155,7 +153,7 @@ define(function(require, exports) {
 
   <h3 id="module-exports">
     module.exports
-    <a href="module-environment.html#module-exports">module.exports</a>
+    <a href="module-definition.html#module-exports">module.exports</a>
   </h3>
 
 <pre>
@@ -168,21 +166,6 @@ define(function(require, exports, module) {
 });
 </pre>
 
-
-  <h3 id="no-conflict">
-    seajs.noConflict
-    <a href="configuration.html#no-conflict">seajs.noConflict</a>
-  </h3>
-
-<pre>
-var myLoader = seajs.noConflict(true);
-myLoader.use('./main');
-
-/* main.js */
-myLoader.define(function(require, exports, module) {
-  // snip...
-});
-</pre>
 
 </div>
 
