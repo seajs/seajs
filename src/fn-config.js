@@ -78,7 +78,7 @@
       if (previous && k === 'alias') {
         for (var p in current) {
           if (current.hasOwnProperty(p)) {
-            checkConflict(previous[p], current[p]);
+            checkAliasConflict(previous[p], current[p]);
             previous[p] = current[p];
           }
         }
@@ -130,9 +130,9 @@
   };
 
 
-  function checkConflict(previous, current) {
+  function checkAliasConflict(previous, current) {
     if (previous && previous !== current) {
-      util.error('Config is conflicted:', current);
+      util.error('Alias is conflicted:', current);
     }
   }
 

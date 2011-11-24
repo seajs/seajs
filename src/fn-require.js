@@ -36,9 +36,9 @@
       return null;
     }
 
-    // Checks cyclic dependencies.
-    if (isCyclic(context, uri)) {
-      util.log('Found cyclic dependencies:', uri);
+    // Checks circular dependencies.
+    if (isCircular(context, uri)) {
+      util.log('Found circular dependencies:', uri);
       return mod.exports;
     }
 
@@ -142,12 +142,12 @@
   }
 
 
-  function isCyclic(context, uri) {
+  function isCircular(context, uri) {
     if (context.uri === uri) {
       return true;
     }
     if (context.parent) {
-      return isCyclic(context.parent, uri);
+      return isCircular(context.parent, uri);
     }
     return false;
   }

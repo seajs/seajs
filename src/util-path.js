@@ -83,7 +83,7 @@
 
     var alias;
 
-    // 2. Only top-level id needs to parse alias.
+    // Only top-level id needs to parse alias.
     if (isTopLevel(id) && (alias = config.alias)) {
 
       var parts = id.split('/');

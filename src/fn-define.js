@@ -50,7 +50,7 @@
       }
 
       if (!url) {
-        util.log('Failed to derive url of the following anonymous module:',
+        util.log('Failed to derive URL from interactive script for:',
             factory.toString());
 
         // NOTE: If the id-deriving methods above is failed, then falls back
