@@ -2,7 +2,7 @@
 seajs.config({
   alias: {
     'coffee': 'coffee/1.1.2/coffee-script',
-    'less': 'less/1.1.4/less'
+    'less': 'less/1.1.5/less'
   },
   preload: ['plugin-coffee', 'plugin-less']
 });
