@@ -101,12 +101,25 @@ math.js        -- math lib
   </p>
 
   <p>
-    First, let's install spm tool:
+    First, let's install the optimization tool:
     <a href="https://github.com/seajs/spm/" target="_blank">spm</a>
   </p>
 
   <p>
-    Then do the following commands:
+    Then edit the <code>build-config.js</code> file:
+  </p>
+
+<pre>
+  module.exports = {
+    "loader_config": "./init.js",
+
+    "base_path": "path/to/libs/",
+    "app_url": "http://seajs.com/docs/demo/calculator/online"
+  };
+</pre>
+
+  <p>
+    And do the following commands:
   </p>
 
 <pre>
@@ -123,19 +136,16 @@ math.js        -- math lib
 
   <p>
     We get the compressed and combined version of
-    <code>init.js</code>:
-  </p>
-
-  <p>
-    Finally, push the combined files to online environment:
+    <code>init.js</code> and publish those files to online environment:
   </p>
 
 <pre>
- $ use your deploy tools to push local/calculator/__build/*.js to online/calculator/*.js
+ $ use your deployment tools to
+ $ push local/calculator/__build/*.js to online/calculator/*.js
 </pre>
 
   <p>
-    So, we get the online version:
+    Finally, we get the online version:
     <a href="demo/calculator/online/" target="_blank">online calculator</a>.
   </p>
 
@@ -151,7 +161,7 @@ math.js        -- math lib
   </p>
 
   <p>
-    We can even use the <code>--combine_all</code> option to combine all
+    We can even turn on the <code>--combine_all</code> option to combine all
     dependent modules to one file:
   </p>
 
@@ -175,12 +185,7 @@ math.js        -- math lib
   </p>
 
   <p>
-    Let's see the standalone version:
-    <a href="demo/calculator/standalone/">standalone calculator</a>.
-  </p>
-
-  <p>
-    NOTICE: Less HTTP requests DOES NOT necessarily guarantee better
+    ** NOTICE: Less HTTP requests DOES NOT necessarily guarantee better
     performance. The browser cache should also be considered. It's advise to
     adopt suitable packaging strategy according to practical situation in
     your projects.
@@ -189,7 +194,7 @@ math.js        -- math lib
   <p>
     See
     <a href="https://github.com/seajs/spm/">spm project</a>
-    to obtain details for optimization tools.
+    to obtain details for optimization.
   </p>
 
 
