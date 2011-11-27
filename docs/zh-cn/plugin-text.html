@@ -63,12 +63,12 @@ define(function(require) {
 </pre>
 
 <p>
-  除了 <code>.tpl</code> 后缀, 还可以使用 <code>.htm</code>,
+  除了 <code>.tpl</code> 后缀, 还可以使用 <code>.htm</code>、
   <code>.html</code> 后缀，或 <code>text!</code> 前缀来指明文本文件。
 </p>
 
 <p>
-  SeaJS 是通过 XHR 来加载文本文件的，因此只能从同域获取。在开发完成后，可以通过 spm
+  SeaJS 通过 XHR 来加载文本文件，受同源策略限制。在开发完成后，可以通过 spm
   (SeaJS 包管理器) 来将文本文件转换为 jsonp 代码。这样，上线后可以从任何域加载。
 </p>
 
@@ -94,7 +94,7 @@ seajs.config({
 </pre>
 
 <p>
-  可以在本地 php 环境中部署 <code>proxy.php</code>, 再结合 SeaJS 的 map 功能，就可以随心所欲地开发了。
+  可以在本地 php 环境中部署 <code>proxy.php</code>, 再结合 SeaJS 的 map 功能，就可以很方便地开发调试。
 </p>
 
 <p>

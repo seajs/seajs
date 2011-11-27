@@ -1,5 +1,5 @@
 
-The module authoring format in seajs is inspired by the following specifications:
+The module authoring format in SeaJS is inspired by the following specifications:
 
 * http://wiki.commonjs.org/wiki/Modules/1.1.1
 * https://github.com/joyent/node/blob/master/doc/api/modules.markdown

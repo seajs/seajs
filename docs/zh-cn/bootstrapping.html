@@ -36,7 +36,7 @@
   <h2 id="bootstrapping">加载方式</h2>
 
   <p>
-   可以使用同步或异步的方式来加载 <code>sea.js</code>
+   可以使用同步或异步的方式来加载 <code>sea.js</code>。
   </p>
 
 
@@ -47,7 +47,7 @@
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/seajs/1.0.2/sea.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.com/libs/seajs/1.1.0/sea.js"&gt;&lt;/script&gt;
 </pre>
 
   <p>
@@ -63,7 +63,7 @@
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/??seajs/1.0.2/sea.js,jquery/1.6.4/jquery.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.com/libs/??seajs/1.1.0/sea.js,jquery/1.7.1/jquery.js"&gt;&lt;/script&gt;
 </pre>
 
   <p>
@@ -71,7 +71,7 @@
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/??seajs/1.0.2/sea.js,jquery/1.6.4/jquery.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.com/libs/??seajs/1.1.0/sea.js,jquery/1.7.1/jquery.js"&gt;&lt;/script&gt;
 &lt;script&gt;
 seajs.config({ 'base': 'http://example.com/libs/' });
 seajs.use('underscore/1.1.6/underscore');
@@ -122,7 +122,7 @@ seajs.use('./init', function(init) {
   </p>
 
 <pre>
-&lt;script src="http://example.comlibs/seajs/1.0.2/sea.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.comlibs/seajs/1.1.0/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   seajs.use('path/to/init', function(init) {
     init.somethingA(/* You can pass config as parameters here. */);
@@ -136,30 +136,23 @@ seajs.use('./init', function(init) {
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/seajs/1.0.2/sea.js"&gt;&lt;/script&gt;
+&lt;script src="http://example.com/libs/seajs/1.1.0/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   seajs.use('path/to/init');
 &lt;/script&gt;
 </pre>
 
   <p>
-    上例代码还可以通过 <code>data-main</code> 来简化：
+    上面的代码还可以通过 <code>data-main</code> 来简化：
   </p>
 
 <pre>
-&lt;script src="http://example.com/libs/seajs/1.0.2/sea.js"
+&lt;script src="http://example.com/libs/seajs/1.1.0/sea.js"
         data-main="path/to/init" &gt;&lt;/script&gt;
 </pre>
 
-
   <p>
     更多用法，请参考 <a href="../../test/bootstrap/">bootstrap/index.html</a>
-  </p>
-
-  <p>
-    还可以通过 script 元素的 <code>async</code> 和 <code>defer</code> 属性来调整
-    seajs 的下载和执行时机，但目前主流浏览器还未完全一致支持。
-    建议暂时不要添加这两个属性，除非你清楚自己在干什么。
   </p>
 
 </div>

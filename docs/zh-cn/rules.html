@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta charset="utf-8"/>
-<title>require 规则 - Sea.js 手册与文档</title>
+<title>书写规则 - Sea.js 手册与文档</title>
 <link rel="stylesheet" href="../assets/api.css"/>
 </head>
 <body>
@@ -24,27 +24,27 @@
       <li><a href="#rules">require 规则</a>
         <ol>
           <li><a href="#spell-it-right">正确拼写</a></li>
-		  <li><a href="#leave-it-alone">不要碰它</a></li>
-          <li><a href="#use-string-literals">使用字符串字面量</a></li>
+		  <li><a href="#leave-it-alone">不要修改</a></li>
+          <li><a href="#use-string-literals">使用直接量</a></li>
         </ol>
       </li>
-      <li><a href="#note-dynamic-deps">备注</a></li>
+      <li><a href="#note-dynamic-deps">动态依赖的小提示</a></li>
     </ul>
     <hr/>
   </div>
 
 
-  <h2 id="rules">规则</h2>
+  <h2 id="rules">书写规则</h2>
 
   <p>
-    为了让静态分析正常工作，您在使用 <code>require</code> 函数时需要遵循一些简单的规则：
+    使用 SeaJS 书写模块代码时，需要遵循一些简单规则：
   </p>
 
 
   <h3 id="spell-it-right">1. 正确拼写</h3>
 
   <p>
-    在模块代码中，第一个参数 <em>必须</em> 命名为 “<code>require</code>” .
+    在模块代码中，第一个参数 <em>必须</em> 命名为 <code>require</code>.
   </p>
 
 <pre>
@@ -60,59 +60,59 @@ define(function(require) {
 </pre>
 
 
-  <h3 id="leave-it-alone">2. 不要碰它</h3>
+  <h3 id="leave-it-alone">2. 不要修改</h3>
 
   <p>
     不要重命名 <code>require</code> 函数，或在任何作用域中给 <code>require</code> 重新赋值。
   </p>
 
 <pre>
-// 错误 - Renaming "require"!
+// 错误 - 重命名 "require"！
 var req = require, mod = req("./mod");
 
-// 错误 - Redefining "require"!
+// 错误 - 重定义 "require"!
 require = function() {};
 
-// 错误 - Redefining "require" as a function parameter!
+// 错误 - 重定义 "require" 为函数参数！
 function F(require) {}
 
-// 错误 - Redefining "require" in a nested scope!
+// 错误 - 在内嵌作用域内重定义了 "require"！
 function F() {
   var require = function() {};
 }
 </pre>
 
 
-  <h3 id="use-string-literals">3. 使用字符串字面量</h3>
+  <h3 id="use-string-literals">3. 使用直接量</h3>
 
   <p>
-    <code>require</code> 的参数值 <em>必须</em> 是字符串字面量。
+    <code>require</code> 的参数值 <em>必须</em> 是字符串直接量。
   </p>
 
 <pre>
-// 错误!
+// 错误！
 require(myModule);
 
-// 错误!
+// 错误！
 require("my-" + "module");
 
-// 错误!
+// 错误！
 require("MY-MODULE".toLowerCase());
 
-// 正确!
+// 正确！
 require("my-module");
 </pre>
 
   <p>
-    我们必须遵循这些规则。但我敢保证，在这些规则的基础上，我们可以创造出大型、复杂的应用。
-    把 <code>require</code> 看做是语法关键字，而非函数，就释然啦。
+    在书写模块代码时，必须遵循这些规则。其实只要把 <code>require</code>
+    看做是语法关键字就好啦。
   </p>
 
 
-  <h2 id="note-dynamic-deps">备注</h2>
+  <h2 id="note-dynamic-deps">动态依赖的小提示</h2>
 
   <p>
-    偶尔开发者希望可以使用 <code>require</code> 来进行条件加载：
+    偶尔会希望可以使用 <code>require</code> 来进行条件加载：
   </p>
 
 <pre>
@@ -123,7 +123,7 @@ else
 </pre>
 
   <p>
-    但请牢记，从静态分析的角度来看，这个模块同时依赖“play”和“work”两个模块，加载器会把这两个模块文件都下载下来。
+    但请牢记，从静态分析的角度来看，这个模块同时依赖 play 和 work 两个模块，加载器会把这两个模块文件都下载下来。
     这种情况下，推荐使用 <code>require.async</code> 来进行条件加载。
   </p>
 

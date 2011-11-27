@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta charset="utf-8"/>
-<title>全局配置 - Sea.js 手册与文档</title>
+<title>配置选项 - Sea.js 手册与文档</title>
 <link rel="stylesheet" href="../assets/api.css"/>
 </head>
 <body>
@@ -21,7 +21,17 @@
     <h2 id="table_of_Contents">目录</h2>
 
     <ul>
-      <li><a href="#config">config</a></li>
+      <li><a href="#config">config</a>
+        <ul>
+          <li><a href="#config-alias">alias</a></li>
+          <li><a href="#config-preload">preload</a></li>
+          <li><a href="#config-debug">debug</a></li>
+          <li><a href="#config-map">map</a></li>
+          <li><a href="#config-base">base</a></li>
+          <li><a href="#config-charset">charset</a></li>
+          <li><a href="#config-timeout">timeout</a></li>
+        </ul>
+      </li>
       <li><a href="#no-conflict">noConflict</a>
     </ul>
     <hr/>
@@ -31,104 +41,148 @@
   <h2 id="config">config</h2>
 
   <p>
-    您可以使用 <code>config</code> 方法来配置加载器。
+    可以使用 <code>config</code> 方法来配置加载器。
   </p>
 
 <pre>
 seajs.config({
-  base: 'http://path/to/libs/',
   alias: {
-    'app': 'path/to/app/'
+    'es5-safe': 'es5-safe/0.9.2/es5-safe',
+    'json': 'json/1.0.1/json',
+    'jquery': 'jquery/1.7.1/jquery'
   },
-  map: [
-    ['http://example.com/', 'http://localhost/']
+  preload: [
+    Function.prototype.bind ? '' : 'es5-safe',
+    this.JSON ? '' : 'json'
   ],
+  debug: true,
+  map: [
+    ['http://example.com/js/app/', 'http://localhost/js/app/']
+  ],
+  base: 'http://example.com/path/to/libs/',
   charset: 'utf-8',
-  timeout: 20000,
-  debug: 0
+  timeout: 20000
 });
 </pre>
 
   <p>
-    可配置选项如下：
+    支持以下配置选项：
   </p>
 
-  <ul>
-    <li><code>base</code> 基本路径
-      <p>
-	    加载器在加载顶级模块标识时，将基于基本路径来解析。详情请参阅
-        <a href="module-identifier.html#top-level-paths">顶级路径</a>
-		章节。
-      </p>
 
-      <p>
-        警告：一般情况下，请不要修改 base 配置，这样可以保证配套工具发挥最佳作用。
-      </p>
-    </li>
-    <li><code>alias</code> 别名
-	  <p>
-        当模块标识很长时，可以使用 <code>alias</code> 来简化。
-      </p>
+  <h3 id="config-alias">alias</h3>
+
+  <p>
+    当模块标识很长时，可以使用 <code>alias</code> 配置来简化。
+  </p>
+
 <pre>
 seajs.config({
   alias: {
     'app': 'path/to/app',
-    'jquery': 'jquery/1.6.2/jquery'
+    'jquery': 'jquery/1.7.1/jquery'
   }
 });
 </pre>
 
-<p>a.js:</p>
+  <p>a.js:</p>
 
 <pre>
 define(function(require, exports, module) {
     var $ = require('jquery');
-    // parsed to: require('jquery/1.6.2/jquery');
+      //=&gt; http://path/to/base/jquery/1.7.1/jquery.js
 
     var biz = require('app/biz');
-    // parsed to: require('path/to/app/biz');
+      //=&gt; http://path/to/app/biz.js
 });
 </pre>
-    </li>
-    <li><code>map</code> 映射
-      <p>
-	      该配置项可用来将某个文件映射到另一个。该特性可用来做在线调试，非常方便。更多信息，请参考
-        <a href="appendix-map-plugin.html">映射插件</a> 章节。
-      </p>
-    </li>
-    <li><code>preload</code>
-      <p>
-        使用 preload 配置项，可以在普通模板加载前，提前加载并初始化好特定模块。
-      </p>
-    </li>
-    <li><code>charset</code> 字符集
-      <p>
-	    获取模块文件时，<code>&lt;script&gt;</code> 标签的 charset 属性值。
-      </p>
-    </li>
-    <li><code>timeout</code> 超时时长
-      <p>
-	    加载器等待一个脚本加载的最长时间。单位毫秒，超时即认为不可用。默认 20000（20秒）。
-      </p>
-    </li>
-    <li><code>debug</code>
-      <p>
-	    值为 <code>true</code> 时，加载器会使用 <code>console.log</code> 输出所有警告和错误。
-	    默认为 <code>false</code>, 加载器只会抛出异常。
-      </p>
-	  <p>
-	    另外，还可以将 <code>debug</code> 的值设为 <code>2</code> . 这种情况下，
-		  每个脚本的请求都会加上唯一时间戳。这在测试期间很有用，可以强制浏览器每次都请求最新版本。
-      </p>
-    </li>
-  </ul>
+
+  <p>
+    解析某个模块标识时，如果不想解析别名，可以在标识前面添加一个井号（<code>#</code>）：
+  </p>
+
+<pre>
+define(function(require, exports, module) {
+    var $ = require('#jquery');
+      //=&gt; http://path/to/base/jquery.js
+});
+</pre>
+
+
+  <h3 id="config-preload">preload</h3>
+
+  <p>
+    使用 <code>preload</code> 配置项，可以在普通模块加载前，提前加载并初始化好特定模块。
+  </p>
+
+<pre>
+// 在老浏览器中，提前加载好 ES5 和 json 模块：
+seajs.config({
+  preload: [
+    Function.prototype.bind ? '' : 'es5-safe',
+    this.JSON ? '' : 'json'
+  ]
+});
+</pre>
+
+  <p>
+    preload 中的空字符串会被忽略掉。
+  </p>
+
+
+  <h3 id="config-debug">debug</h3>
+
+  <p>
+    值为 <code>true</code> 时，加载器会使用 <code>console.log</code> 输出所有警告和错误。
+    默认为 <code>false</code>, 加载器只抛出异常。
+  </p>
+
+  <p>
+    另外，还可以将 <code>debug</code> 值设为 <code>2</code> . 这种情况下，
+    每个脚本请求都会加上唯一时间戳。这在测试期间很有用，可以强制浏览器每次都请求最新版本。
+  </p>
+
+
+  <h3 id="config-map">map</h3>
+
+  <p>
+    该配置可将某个文件映射到另一个。可用于在线调试，非常方便。更多信息，请参考
+    <a href="plugin-map.html">映射插件</a>。
+  </p>
+
+
+  <h3 id="config-base">base</h3>
+  <p>
+    SeaJS 在解析顶级标识时，会相对 <code>base</code> 路径来解析。详情请参阅
+    <a href="module-identifier.html#top-level-id">顶级标识</a>。
+  </p>
+
+  <p>
+    ** 注意：请不要配置 base 路径，除非加载器无法自动获取。详情请参考
+    <a href="bootstrapping.html">加载方式</a>。
+  </p>
+
+
+  <h3 id="config-charset">charset</h3>
+
+  <p>
+    获取模块文件时，<code>&lt;script&gt;</code> 标签的 <code>charset</code> 属性。
+    默认是 <code>utf-8</code>。
+  </p>
+
+
+  <h3 id="config-timeout">timeout</h3>
+
+  <p>
+    加载器等待脚本加载的最长时间。单位为毫秒，默认值是 20000（20秒）。
+  </p>
 
 
   <h2 id="no-conflict">noConflict</h2>
 
   <p>
-    为了避免冲突，或者需要定制全局命名空间以符合自己的口味时，可以使用 <code>noConflict</code>
-	方法来实现。
+    为了避免冲突，或者需要定制全局命名空间以符合自己的口味时，可以使用
+    <code>noConflict</code> 方法来实现。
   </p>
 
 <pre>
@@ -142,8 +196,8 @@ define(function(require, exports, module) {
 </pre>
 
   <p>
-    如果有必要，还可以通过给该方法传递 <code>true</code> 参数，来释放 <code>define</code> 方法。
-    很少会有这么做的必要，请三思而后行。
+    还可以通过给该方法传递 <code>true</code>，来释放 define 方法。 很少会有这么做的必要，
+    请三思而后行。
   </p>
 
 <pre>
