@@ -1,8 +1,8 @@
 {
   "name"          : "seajs",
-  "description"   : "SeaJS is a new kind of JavaScript Loader that makes it easy to build scalable web applications. SeaJS is designed to change the way you organize JavaScript.",
+  "description"   : "SeaJS is a module loader for the web. It is designed to change the way that you organize JavaScript.",
   "homepage"      : "https://seajs.com/",
-  "keywords"      : ["loader", "modular", "CommonJS", "browser", "framework"],
+  "keywords"      : ["loader", "module", "CommonJS", "browser", "framework", "NodeJS"],
   "author"        : "Frank Wang <lifesinger@gmail.com>",
   "contributors"  : [],
   "dependencies"  : [],
