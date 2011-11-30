@@ -1,12 +1,16 @@
 {
   "name"          : "seajs",
+  "version"       : "1.1.0",
   "description"   : "SeaJS is a module loader for the web. It is designed to change the way that you organize JavaScript.",
   "homepage"      : "https://seajs.com/",
   "keywords"      : ["loader", "module", "CommonJS", "browser", "framework", "NodeJS"],
-  "author"        : "Frank Wang <lifesinger@gmail.com>",
+  "authors"       : "Frank Wang <lifesinger@gmail.com>",
   "contributors"  : [],
+  "main"          : "./lib/sea-node.js",
+  "engines"       : {
+                      "node": ">= 0.6.3"
+                    },
   "dependencies"  : [],
   "repository"    : {"type": "git", "url": "git://github.com/lifesinger/seajs.git"},
-  "main"          : "build/sea.js",
-  "version"       : "1.1.0"
+  "preferGlobal"  : true
 }
