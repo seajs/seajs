@@ -3,19 +3,15 @@
   "version"       : "1.1.0",
   "description"   : "A Module Loader for the Web",
   "homepage"      : "https://seajs.com/",
-  "keywords"      : ["loader", "module", "commonjs", "browser", "framework", "nodejs"],
+  "keywords"      : ["loader", "module", "commonjs", "browser", "nodejs"],
   "author"        : "Frank Wang <lifesinger@gmail.com>",
-  "main"          : "./lib/sea-node.js",
-  "directories"   : {
-                      "lib": "./lib"
-                    },
-  "engines"       : {
-                      "node": ">= 0.6.3"
-                    },
+  "engines"       : {"node": ">= 0.6.3"},
   "dependencies"  : [],
   "repository"    : {
                       "type": "git",
                       "url": "git://github.com/seajs/seajs.git"
                     },
+  "files"         : ["lib"],
+  "main"          : "./lib/sea-node.js",
   "preferGlobal"  : true
 }
