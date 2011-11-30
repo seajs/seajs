@@ -4,8 +4,8 @@
  */
 
 var test = require('./test');
-
 var testCases = require('./config').testCases;
+
 var excludes = [
   'modules/alias'
   ,'modules/load'
@@ -13,22 +13,20 @@ var excludes = [
   ,'modules/checkPotentialErrors'
 ];
 
-var currentTest = 0;
+testCases = testCases.filter(function(testCase) {
+  return testCase.indexOf('modules/') === 0 &&
+      excludes.indexOf(testCase) === -1;
+});
 
-// override for node
+
 test.next = function() {
-  var testCase = testCases[currentTest++];
+  var testCase;
 
-  if (testCase) {
-    if (testCase.indexOf('modules/') === 0 &&
-        excludes.indexOf(testCase) === -1) {
-      require('./' + testCase + '/program.js');
-    }
-    else {
-      test.next();
-    }
+  while ((testCase = testCases.shift())) {
+    require(path.join(__dirname, testCase, 'program.js'));
   }
 };
 
-// start first
+
+// go
 test.next();

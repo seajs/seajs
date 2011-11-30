@@ -1,11 +1,14 @@
 
-if (typeof define !== 'function') {
-  this.define = function(fn) {
-    fn(null, this);
-  }
-}
+(function(factory) {
 
-define(function(require, exports) {
+  if (typeof define === 'function') {
+    define(factory);
+  }
+  else if (typeof exports !== 'undefined') {
+    factory(require, exports);
+  }
+
+})(function(require, exports) {
 
   exports.testCases = [
     'unit/util-core'
