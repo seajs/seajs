@@ -5,5 +5,8 @@ support/
 test/
 CNAME
 favicon.ico
-index.html
+*.html
+*.txt
 *.iml
+.*
+*~
