@@ -3,14 +3,17 @@
  * @author lifesinger@gmail.com (Frank Wang)
  */
 
+var path = require('path');
+require('../lib/sea-node');
+
+
 var test = require('./test');
 var testCases = require('./config').testCases;
 
 var excludes = [
-  'modules/alias'
-  ,'modules/load'
-  ,'modules/metadata'
-  ,'modules/checkPotentialErrors'
+  'modules/configMap'
+  ,'modules/define'
+  ,'modules/preload'
 ];
 
 testCases = testCases.filter(function(testCase) {
@@ -23,6 +26,7 @@ test.next = function() {
   var testCase;
 
   while ((testCase = testCases.shift())) {
+    test.print(testCase, 'info');
     require(path.join(__dirname, testCase, 'program.js'));
   }
 };

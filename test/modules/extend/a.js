@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
 
-  exports.filename = module.filename();
+  exports.filename = module._filename();
 
 });

@@ -8,115 +8,115 @@
 <body>
 <script src="config.js?20111026"></script>
 <script>
-  (function() {
+(function() {
 
-    var container, reporter, summary, start;
-    var currentTest, count;
-    var tests = this['testCases'];
-
-
-    window.onload = function() {
-      container = document.getElementById('container');
-      reporter = document.getElementById('reporter');
-      summary = document.getElementById('summary');
-
-      start = document.getElementById('start');
-      start.setAttribute('autocomplete', 'off');
-      start.onclick = startRun;
-
-      if (location.search.indexOf('autorun') !== -1) {
-        startRun();
-      }
-    };
+  var container, reporter, summary, start;
+  var currentTest, count;
+  var tests = this['testCases'];
 
 
-    function startRun() {
-      start.setAttribute('disabled', 'true');
-      reset();
-      testNext();
+  window.onload = function() {
+    container = document.getElementById('container');
+    reporter = document.getElementById('reporter');
+    summary = document.getElementById('summary');
+
+    start = document.getElementById('start');
+    start.setAttribute('autocomplete', 'off');
+    start.onclick = startRun;
+
+    if (location.search.indexOf('autorun') !== -1) {
+      startRun();
+    }
+  };
+
+
+  function startRun() {
+    start.setAttribute('disabled', 'true');
+    reset();
+    testNext();
+  }
+
+
+  window.testNext = function() {
+    var test = tests[currentTest++];
+
+    if (test) {
+      var url = getUrl(test);
+
+      printHeader(test, url);
+      load(url);
+      summary.innerHTML = currentTest + ' / ' + tests.length +
+          ' Running ' + test + ' ... ';
+    }
+    else {
+      printSummary();
+      start.removeAttribute('disabled');
+    }
+  };
+
+
+  window.printResults = function(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+
+    reporter.appendChild(d);
+    reporter.scrollTop = reporter.scrollHeight;
+
+    if (style in count) count[style] += 1;
+  };
+
+
+  function getUrl(test) {
+    var url = '';
+
+    if (test.indexOf('issues/') === 0) {
+      url = test + '/test.html';
+    }
+    else if (test.indexOf('unit/') === 0) {
+      url = 'sandbox.html?' + encodeURIComponent(test);
+    }
+    else if (test.indexOf('bootstrap/') === 0) {
+      url = test + '.html';
+    }
+    else {
+      url = 'sandbox.html?' + encodeURIComponent(test + '/program.js');
+      url += '&t=' + new Date().getTime();
     }
 
-
-    window.testNext = function() {
-      var test = tests[currentTest++];
-
-      if (test) {
-        var url = getUrl(test);
-
-        printHeader(test, url);
-        load(url);
-        summary.innerHTML = currentTest + ' / ' + tests.length +
-            ' Running ' + test + ' ... ';
-      }
-      else {
-        printSummary();
-        start.removeAttribute('disabled');
-      }
-    };
+    return url;
+  }
 
 
-    window.printResults = function(txt, style) {
-      var d = document.createElement('div');
-      d.innerHTML = txt;
-      d.className = style;
-
-      reporter.appendChild(d);
-      reporter.scrollTop = reporter.scrollHeight;
-
-      if (style in count) count[style] += 1;
-    };
+  function load(url) {
+    var frame = document.createElement('iframe');
+    container.appendChild(frame);
+    frame.src = url;
+  }
 
 
-    function getUrl(test) {
-      var url = '';
-
-      if (test.indexOf('issues/') === 0) {
-        url = test + '/test.html';
-      }
-      else if (test.indexOf('unit/') === 0) {
-        url = 'sandbox.html?' + encodeURIComponent(test);
-      }
-      else if (test.indexOf('bootstrap/') === 0) {
-        url = test + '.html';
-      }
-      else {
-        url = 'sandbox.html?' + encodeURIComponent(test + '/program.js');
-        url += '&t=' + new Date().getTime();
-      }
-
-      return url;
-    }
+  function printHeader(test, url) {
+    var h = document.createElement('h3');
+    h.innerHTML = '<a href="' + url + '">' + test + '</a>';
+    reporter.appendChild(h);
+  }
 
 
-    function load(url) {
-      var frame = document.createElement('iframe');
-      container.appendChild(frame);
-      frame.src = url;
-    }
+  function printSummary() {
+    summary.innerHTML =
+        'Passed: <span class="pass">' + count.pass + '</span> ' +
+        'Failed: <span class="fail">' + count.fail + '</span> ' +
+        'Errors: <span class="error">' + count.error + '</span>';
+  }
 
 
-    function printHeader(test, url) {
-      var h = document.createElement('h3');
-      h.innerHTML = '<a href="' + url + '">' + test + '</a>';
-      reporter.appendChild(h);
-    }
+  function reset() {
+    reporter.innerHTML = '';
+    currentTest = 0;
+    count = { pass: 0, fail: 0, error: 0 };
+  }
 
-
-    function printSummary() {
-      summary.innerHTML =
-          'Passed: <span class="pass">' + count.pass + '</span> ' +
-          'Failed: <span class="fail">' + count.fail + '</span> ' +
-          'Errors: <span class="error">' + count.error + '</span>';
-    }
-
-
-    function reset() {
-      reporter.innerHTML = '';
-      currentTest = 0;
-      count = { pass: 0, fail: 0, error: 0 };
-    }
-
-  })();
+})();
 </script>
 
 <div id="container">

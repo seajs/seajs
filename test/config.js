@@ -7,6 +7,9 @@
   else if (typeof exports !== 'undefined') {
     factory(require, exports);
   }
+  else {
+    factory(null, this);
+  }
 
 })(function(require, exports) {
 

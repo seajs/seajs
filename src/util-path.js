@@ -85,12 +85,10 @@
 
     // Only top-level id needs to parse alias.
     if (isTopLevel(id) && (alias = config.alias)) {
-
       var parts = id.split('/');
       var first = parts[0];
 
-      var has = alias.hasOwnProperty(first);
-      if (has) {
+      if (alias.hasOwnProperty(first)) {
         parts[0] = alias[first];
         id = parts.join('/');
       }
