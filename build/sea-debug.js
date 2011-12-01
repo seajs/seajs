@@ -292,14 +292,12 @@ seajs._fn = {};
 
     var alias;
 
-    // 2. Only top-level id needs to parse alias.
+    // Only top-level id needs to parse alias.
     if (isTopLevel(id) && (alias = config.alias)) {
-
       var parts = id.split('/');
       var first = parts[0];
 
-      var has = alias.hasOwnProperty(first);
-      if (has) {
+      if (alias.hasOwnProperty(first)) {
         parts[0] = alias[first];
         id = parts.join('/');
       }
@@ -494,7 +492,7 @@ seajs._fn = {};
     }
 
     var timer = setTimeout(function() {
-      util.log('time is out:', node.src);
+      util.log('Time is out:', node.src);
       cb();
     }, data.config.timeout);
 
@@ -726,7 +724,7 @@ seajs._fn = {};
       }
 
       if (!url) {
-        util.log('Failed to derive url of the following anonymous module:',
+        util.log('Failed to derive URL from interactive script for:',
             factory.toString());
 
         // NOTE: If the id-deriving methods above is failed, then falls back
@@ -819,9 +817,9 @@ seajs._fn = {};
       return null;
     }
 
-    // Checks cyclic dependencies.
-    if (isCyclic(context, uri)) {
-      util.log('Found cyclic dependencies:', uri);
+    // Checks circular dependencies.
+    if (isCircular(context, uri)) {
+      util.log('Found circular dependencies:', uri);
       return mod.exports;
     }
 
@@ -925,12 +923,12 @@ seajs._fn = {};
   }
 
 
-  function isCyclic(context, uri) {
+  function isCircular(context, uri) {
     if (context.uri === uri) {
       return true;
     }
     if (context.parent) {
-      return isCyclic(context.parent, uri);
+      return isCircular(context.parent, uri);
     }
     return false;
   }
@@ -1290,7 +1288,7 @@ seajs._fn = {};
       if (previous && k === 'alias') {
         for (var p in current) {
           if (current.hasOwnProperty(p)) {
-            checkConflict(previous[p], current[p]);
+            checkAliasConflict(previous[p], current[p]);
             previous[p] = current[p];
           }
         }
@@ -1342,9 +1340,9 @@ seajs._fn = {};
   };
 
 
-  function checkConflict(previous, current) {
+  function checkAliasConflict(previous, current) {
     if (previous && previous !== current) {
-      util.error('Config is conflicted:', current);
+      util.error('Alias is conflicted:', current);
     }
   }
 
