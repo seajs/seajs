@@ -45,6 +45,7 @@
     ,'issues/config-conflict'
     ,'issues/data-main'
     ,'issues/debug'
+    ,'issues/duplicate-load'
     ,'issues/ie-cache'
     ,'issues/inline-module'
     ,'issues/jsonp'
