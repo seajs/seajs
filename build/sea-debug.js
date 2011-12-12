@@ -1028,6 +1028,8 @@ seajs._fn = {};
         }
 
         function onLoad() {
+          console.log('onload uri = ' + uri);
+
           // Preload here to make sure that:
           // 1. RP.resolve etc. modified by some preload plugins can be used
           //    immediately in the id resolving logic.
