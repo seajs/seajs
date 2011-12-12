@@ -1,4 +1,4 @@
-/* SeaJS v1.1.0 | seajs.com | MIT Licensed */
+/* SeaJS v1.1.1-dev | seajs.com | MIT Licensed */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
@@ -16,7 +16,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.1.0';
+seajs.version = '1.1.1-dev';
 
 
 // Module status:
@@ -712,7 +712,7 @@ seajs._fn = {};
 
     // Get url directly for specific modules.
     if (id) {
-      var url = util.id2Uri(id);
+      var uri = util.id2Uri(id);
     }
     // Try to derive url in IE6-9 for anonymous modules.
     else if (document.attachEvent && !util.isOpera) {
@@ -720,10 +720,10 @@ seajs._fn = {};
       // Try to get the current script
       var script = util.getCurrentScript();
       if (script) {
-        url = util.unParseMap(util.getScriptAbsoluteSrc(script));
+        uri = util.unParseMap(util.getScriptAbsoluteSrc(script));
       }
 
-      if (!url) {
+      if (!uri) {
         util.log('Failed to derive URL from interactive script for:',
             factory.toString());
 
@@ -734,8 +734,8 @@ seajs._fn = {};
 
     var mod = new fn.Module(id, deps, factory);
 
-    if (url) {
-      util.memoize(url, mod);
+    if (uri) {
+      util.memoize(uri, mod);
       data.packageMods.push(mod);
     }
     else {

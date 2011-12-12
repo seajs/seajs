@@ -38,7 +38,7 @@
 
     // Get url directly for specific modules.
     if (id) {
-      var url = util.id2Uri(id);
+      var uri = util.id2Uri(id);
     }
     // Try to derive url in IE6-9 for anonymous modules.
     else if (document.attachEvent && !util.isOpera) {
@@ -46,10 +46,10 @@
       // Try to get the current script
       var script = util.getCurrentScript();
       if (script) {
-        url = util.unParseMap(util.getScriptAbsoluteSrc(script));
+        uri = util.unParseMap(util.getScriptAbsoluteSrc(script));
       }
 
-      if (!url) {
+      if (!uri) {
         util.log('Failed to derive URL from interactive script for:',
             factory.toString());
 
@@ -60,8 +60,8 @@
 
     var mod = new fn.Module(id, deps, factory);
 
-    if (url) {
-      util.memoize(url, mod);
+    if (uri) {
+      util.memoize(uri, mod);
       data.packageMods.push(mod);
     }
     else {
