@@ -66,6 +66,7 @@
     ,'issues/plugin-map'
     ,'issues/plugin-text'
     ,'issues/preload'
+    ,'issues/preload-ie'
     ,'issues/remove-comments'
     ,'issues/require-extend'
     ,'issues/seajs-map'

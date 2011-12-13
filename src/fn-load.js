@@ -16,24 +16,44 @@
   var config = data.config;
   var RP = fn.Require.prototype;
 
+  var preloadingCount = 0;
+  var preloadCallbacks = [];
+  var preloadMods = {};
 
 
   /**
    * Loads preload modules before callback.
    * @param {function()} callback The callback function.
+   * @param {string=} onloadUri The uri passed from onLoad callback.
    */
-  function preload(callback) {
-    var preloadMods = config.preload;
-    var len = preloadMods.length;
+  function preload(callback, onloadUri) {
+    var mods = config.preload;
+    var len = mods.length, fn;
 
     if (len) {
-      config.preload = preloadMods.slice(len);
-      load(preloadMods, function() {
+      preloadingCount += len;
+      config.preload = [];
+
+      util.forEach(RP.resolve(mods), function(uri) {
+        preloadMods[uri] = 1;
+      });
+
+      load(mods, function() {
+        preloadingCount -= len;
         preload(callback);
       });
     }
-    else {
+    else if (onloadUri && isFromPreload(onloadUri)) {
       callback();
+    }
+    else {
+      preloadCallbacks.push(callback);
+
+      if (preloadingCount === 0) {
+        while (fn = preloadCallbacks.shift()) {
+          fn();
+        }
+      }
     }
   }
 
@@ -45,23 +65,21 @@
    * @param {Object=} context The context of current executing environment.
    */
   function load(ids, callback, context) {
-    preload(function() {
-      if (util.isString(ids)) {
-        ids = [ids];
-      }
-      var uris = RP.resolve(ids, context);
+    if (util.isString(ids)) {
+      ids = [ids];
+    }
+    var uris = RP.resolve(ids, context);
 
-      provide(uris, function() {
-        var require = fn.createRequire(context);
+    provide(uris, function() {
+      var require = fn.createRequire(context);
 
-        var args = util.map(uris, function(uri) {
-          return require(data.memoizedMods[uri]);
-        });
-
-        if (callback) {
-          callback.apply(null, args);
-        }
+      var args = util.map(uris, function(uri) {
+        return require(data.memoizedMods[uri]);
       });
+
+      if (callback) {
+        callback.apply(null, args);
+      }
     });
   }
 
@@ -127,7 +145,7 @@
             }
 
             if (--remain === 0) onProvide();
-          });
+          }, uri);
         }
 
       })(unReadyUris[i]);
@@ -241,15 +259,14 @@
   }
 
   function isCyclicWaiting(mod, uri) {
-    if (!mod || mod.ready) {
-      return false;
-    }
+    if (!mod || mod.ready) return false;
 
     var deps = mod.dependencies || [];
     if (deps.length) {
       if (~util.indexOf(deps, uri)) {
         return true;
-      } else {
+      }
+      else {
         for (var i = 0; i < deps.length; i++) {
           if (isCyclicWaiting(memoizedMods[deps[i]], uri)) {
             return true;
@@ -258,6 +275,20 @@
         return false;
       }
     }
+
+    return false;
+  }
+
+  function isFromPreload(uri) {
+    if (preloadMods[uri]) return true;
+
+    for (var m in preloadMods) {
+      if (memoizedMods[m] &&
+          ~util.indexOf(memoizedMods[m].dependencies, uri)) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -265,6 +296,7 @@
   // Public API
 
   util.memoize = memoize;
+  fn.preload = preload;
   fn.load = load;
 
 })(seajs._util, seajs._data, seajs._fn);
