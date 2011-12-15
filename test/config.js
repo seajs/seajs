@@ -41,6 +41,7 @@
 
     ,'issues/anonymous'
     ,'issues/anywhere'
+    ,'issues/combo-use'
     ,'issues/config-base'
     ,'issues/config-conflict'
     ,'issues/data-main'
