@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview Loads a module and gets it ready to be require()d.
  */
@@ -165,16 +164,18 @@
    */
   function fetch(uri, callback) {
 
-    if (fetchingMods[uri]) {
-      callbackList[uri].push(callback);
+    var mapuri = util.parseMap(uri);
+
+    if (fetchingMods[mapuri]) {
+      callbackList[mapuri].push(callback);
       return;
     }
 
-    callbackList[uri] = [callback];
-    fetchingMods[uri] = true;
+    callbackList[mapuri] = [callback];
+    fetchingMods[mapuri] = true;
 
     RP.load(
-        util.parseMap(uri),
+        mapuri,
 
         function() {
 
@@ -197,16 +198,16 @@
           data.packageMods = [];
 
           // Clear
-          if (fetchingMods[uri]) {
-            delete fetchingMods[uri];
+          if (fetchingMods[mapuri]) {
+            delete fetchingMods[mapuri];
           }
 
           // Call callbackList
-          if (callbackList[uri]) {
-            util.forEach(callbackList[uri], function(fn) {
+          if (callbackList[mapuri]) {
+            util.forEach(callbackList[mapuri], function(fn) {
               fn();
             });
-            delete callbackList[uri];
+            delete callbackList[mapuri];
           }
 
         },
