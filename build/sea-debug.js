@@ -473,6 +473,7 @@ seajs._fn = {};
     else {
       node.async = 'async';
       node.src = url;
+      console.log('get ' + url);
 
       // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
       // the end of the insertBefore execution, so use `currentlyAddingScript`
@@ -938,19 +939,11 @@ seajs._fn = {};
   fn.createRequire = createRequire;
 
 })(seajs._util, seajs._data, seajs._fn);
-
 /**
  * @fileoverview Loads a module and gets it ready to be require()d.
  */
 
 (function(util, data, fn) {
-
-  /**
-   * Modules that are being downloaded.
-   * { uri: scriptNode, ... }
-   */
-  var fetchingMods = {};
-  var callbackList = {};
 
   var memoizedMods = data.memoizedMods;
   var config = data.config;
@@ -1098,23 +1091,27 @@ seajs._fn = {};
   }
 
 
+  var fetchingList = {};
+  var callbackList = {};
+
   /**
    * Fetches a module file.
    * @param {string} uri The module uri.
    * @param {function()} callback The callback function.
    */
   function fetch(uri, callback) {
+    var srcUrl = util.parseMap(uri);
 
-    if (fetchingMods[uri]) {
-      callbackList[uri].push(callback);
+    if (fetchingList[srcUrl]) {
+      callbackList[srcUrl].push(callback);
       return;
     }
 
-    callbackList[uri] = [callback];
-    fetchingMods[uri] = true;
+    callbackList[srcUrl] = [callback];
+    fetchingList[srcUrl] = true;
 
     RP.load(
-        util.parseMap(uri),
+        srcUrl,
 
         function() {
 
@@ -1137,16 +1134,16 @@ seajs._fn = {};
           data.packageMods = [];
 
           // Clear
-          if (fetchingMods[uri]) {
-            delete fetchingMods[uri];
+          if (fetchingList[srcUrl]) {
+            delete fetchingList[srcUrl];
           }
 
           // Call callbackList
-          if (callbackList[uri]) {
-            util.forEach(callbackList[uri], function(fn) {
+          if (callbackList[srcUrl]) {
+            util.forEach(callbackList[srcUrl], function(fn) {
               fn();
             });
-            delete callbackList[uri];
+            delete callbackList[srcUrl];
           }
 
         },

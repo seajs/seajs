@@ -4,13 +4,6 @@
 
 (function(util, data, fn) {
 
-  /**
-   * Modules that are being downloaded.
-   * { uri: scriptNode, ... }
-   */
-  var fetchingMods = {};
-  var callbackList = {};
-
   var memoizedMods = data.memoizedMods;
   var config = data.config;
   var RP = fn.Require.prototype;
@@ -157,25 +150,27 @@
   }
 
 
+  var fetchingList = {};
+  var callbackList = {};
+
   /**
    * Fetches a module file.
    * @param {string} uri The module uri.
    * @param {function()} callback The callback function.
    */
   function fetch(uri, callback) {
+    var srcUrl = util.parseMap(uri);
 
-    var mapuri = util.parseMap(uri);
-
-    if (fetchingMods[mapuri]) {
-      callbackList[mapuri].push(callback);
+    if (fetchingList[srcUrl]) {
+      callbackList[srcUrl].push(callback);
       return;
     }
 
-    callbackList[mapuri] = [callback];
-    fetchingMods[mapuri] = true;
+    callbackList[srcUrl] = [callback];
+    fetchingList[srcUrl] = true;
 
     RP.load(
-        mapuri,
+        srcUrl,
 
         function() {
 
@@ -198,16 +193,16 @@
           data.packageMods = [];
 
           // Clear
-          if (fetchingMods[mapuri]) {
-            delete fetchingMods[mapuri];
+          if (fetchingList[srcUrl]) {
+            delete fetchingList[srcUrl];
           }
 
           // Call callbackList
-          if (callbackList[mapuri]) {
-            util.forEach(callbackList[mapuri], function(fn) {
+          if (callbackList[srcUrl]) {
+            util.forEach(callbackList[srcUrl], function(fn) {
               fn();
             });
-            delete callbackList[mapuri];
+            delete callbackList[srcUrl];
           }
 
         },
