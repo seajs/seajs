@@ -35,6 +35,9 @@ define(function(require) {
   });
   test.print('** 404 will occur after 5 second (timeout) in Opera.');
 
+  require.async('./red.css');
+  require('./blue.css');
+  
   test.done();
 
 });
