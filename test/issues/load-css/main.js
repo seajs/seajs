@@ -37,7 +37,7 @@ define(function(require) {
 
   require.async('./red.css');
   require('./blue.css');
-  
+
   test.done();
 
 });

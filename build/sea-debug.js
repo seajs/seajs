@@ -473,7 +473,6 @@ seajs._fn = {};
     else {
       node.async = 'async';
       node.src = url;
-      console.log('get ' + url);
 
       // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
       // the end of the insertBefore execution, so use `currentlyAddingScript`
