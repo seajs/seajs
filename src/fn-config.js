@@ -36,13 +36,13 @@
   config.base = base;
 
 
-  var mainAttr = loaderScript.getAttribute('data-main');
-  if (mainAttr) {
+  var dataMain = loaderScript.getAttribute('data-main');
+  if (dataMain) {
     // data-main="abc" is equivalent to data-main="./abc"
-    if (util.isTopLevel(mainAttr)) {
-      mainAttr = './' + mainAttr;
+    if (util.isTopLevel(dataMain)) {
+      dataMain = './' + dataMain;
     }
-    config.main = mainAttr;
+    config.main = dataMain;
   }
 
 
