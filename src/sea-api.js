@@ -38,11 +38,12 @@
   };
 
 
-  // For debug mode.
+  // For debug.
   var debug = data.config.debug;
   if (debug) {
     host.debug = !!debug;
   }
+  host.log = host._util.log;
 
 
   // Keeps clean!
