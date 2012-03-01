@@ -43,7 +43,6 @@
   if (debug) {
     host.debug = !!debug;
   }
-  host.log = host._util.log;
 
 
   // Keeps clean!
