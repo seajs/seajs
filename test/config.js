@@ -14,7 +14,7 @@
 })(function(require, exports) {
 
   exports.testCases = [
-    'unit/util-core'
+    'unit/util'
 
     ,'modules/alias'
     ,'modules/checkPotentialErrors'
