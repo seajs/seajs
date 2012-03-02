@@ -69,6 +69,7 @@
     ,'issues/preload'
     ,'issues/preload-ie'
     ,'issues/remove-comments'
+    //,'issues/require-async'
     ,'issues/require-extend'
     ,'issues/seajs-map'
     ,'issues/timestamp'

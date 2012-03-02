@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Issue Test</title>
+<script src="../../../build/sea.js"></script>
+</head>
+
+<body>
+
+<button id="test">click me to test</button>
+
+<div id="out"></div>
+
+<script>
+
+  console = {
+    log: function(txt, style) {
+
+      var d = document.createElement('div');
+      d.innerHTML = txt;
+      d.className = style;
+      document.getElementById('out').appendChild(d);
+    }
+  };
+
+  seajs.use('./main');
+
+</script>
+</body>
+</html>
