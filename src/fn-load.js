@@ -151,6 +151,7 @@
 
 
   var fetchingList = {};
+  var fetchedList = {};
   var callbackList = {};
 
   /**
@@ -161,18 +162,24 @@
   function fetch(uri, callback) {
     var srcUrl = util.parseMap(uri);
 
+    if (fetchedList[srcUrl]) {
+      callback();
+      return;
+    }
+
     if (fetchingList[srcUrl]) {
       callbackList[srcUrl].push(callback);
       return;
     }
 
-    callbackList[srcUrl] = [callback];
     fetchingList[srcUrl] = true;
+    callbackList[srcUrl] = [callback];
 
     RP.load(
         srcUrl,
 
         function() {
+          fetchedList[srcUrl] = true;
 
           // Memoize anonymous module
           var mod = data.anonymousMod;

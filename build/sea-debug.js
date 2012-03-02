@@ -1091,6 +1091,7 @@ seajs._fn = {};
 
 
   var fetchingList = {};
+  var fetchedList = {};
   var callbackList = {};
 
   /**
@@ -1101,18 +1102,24 @@ seajs._fn = {};
   function fetch(uri, callback) {
     var srcUrl = util.parseMap(uri);
 
+    if (fetchedList[srcUrl]) {
+      callback();
+      return;
+    }
+
     if (fetchingList[srcUrl]) {
       callbackList[srcUrl].push(callback);
       return;
     }
 
-    callbackList[srcUrl] = [callback];
     fetchingList[srcUrl] = true;
+    callbackList[srcUrl] = [callback];
 
     RP.load(
         srcUrl,
 
         function() {
+          fetchedList[srcUrl] = true;
 
           // Memoize anonymous module
           var mod = data.anonymousMod;
@@ -1274,13 +1281,13 @@ seajs._fn = {};
   config.base = base;
 
 
-  var mainAttr = loaderScript.getAttribute('data-main');
-  if (mainAttr) {
+  var dataMain = loaderScript.getAttribute('data-main');
+  if (dataMain) {
     // data-main="abc" is equivalent to data-main="./abc"
-    if (util.isTopLevel(mainAttr)) {
-      mainAttr = './' + mainAttr;
+    if (util.isTopLevel(dataMain)) {
+      dataMain = './' + dataMain;
     }
-    config.main = mainAttr;
+    config.main = dataMain;
   }
 
 
@@ -1498,7 +1505,6 @@ seajs._fn = {};
   if (debug) {
     host.debug = !!debug;
   }
-  host.log = host._util.log;
 
 
   // Keeps clean!
