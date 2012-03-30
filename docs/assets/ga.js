@@ -1,5 +1,5 @@
 /**
- * GA module for seajs.com
+ * GA module for seajs.org
  */
 
 define(function(require, exports) {

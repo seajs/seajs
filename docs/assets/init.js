@@ -1,5 +1,5 @@
 /**
- * init module for seajs.com
+ * init module for seajs.org
  */
 
 define(function(require) {

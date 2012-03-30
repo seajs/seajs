@@ -116,7 +116,7 @@
       <sequential>
         <concat destfile="@{file}.tmp" encoding="${charset}"
                 outputencoding="${charset}">
-          <header filtering="no" trimleading="yes">/* SeaJS v${version} | seajs.com | MIT Licensed */
+          <header filtering="no" trimleading="yes">/* SeaJS v${version} | seajs.org | MIT Licensed */
           </header>
           <fileset file="@{file}"/>
         </concat>
