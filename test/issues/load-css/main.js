@@ -10,7 +10,7 @@ seajs.config({
   timeout: 10000,
 
   alias: {
-    'jquery': MODULES_PATH + 'jquery/1.6.4/jquery.js'
+    'jquery': MODULES_PATH + 'jquery/1.7.2/jquery.js'
   }
 });
 
@@ -23,7 +23,7 @@ define(function(require) {
   require('./red.css');
   test.assert($('#red').width() === 200, '#red width should be 200');
 
-  test.assert($('#blue').width() !== 200, '#blue width should not be 200');
+  test.assert($('#blue').width() !== 200, '#blue width should not be 200. ' + $('#blue').width());
   require.async('./blue.css', function() {
     setTimeout(function() {
       test.assert($('#blue').width() === 200, '#blue width should be 200 now');
