@@ -18,7 +18,10 @@
     var node = document.createElement(isCSS ? 'link' : 'script');
 
     if (charset) {
-      node.charset = charset;
+      var cs = util.isFunction(charset) ? charset(url) : charset;
+      if (cs) {
+        node.charset = cs;
+      }
     }
 
     assetOnload(node, callback);

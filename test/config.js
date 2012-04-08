@@ -41,6 +41,7 @@
 
     ,'issues/anonymous'
     ,'issues/anywhere'
+    ,'issues/charset'
     ,'issues/combo-use'
     ,'issues/config-base'
     ,'issues/config-conflict'

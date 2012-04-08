@@ -1,4 +1,4 @@
-/* SeaJS v1.1.1-dev | seajs.org | MIT Licensed */
+/* SeaJS v1.2.0-dev | seajs.org | MIT Licensed */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
@@ -16,7 +16,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.1.1-dev';
+seajs.version = '1.2.0-dev';
 
 
 // Module status:
@@ -460,7 +460,10 @@ seajs._fn = {};
     var node = document.createElement(isCSS ? 'link' : 'script');
 
     if (charset) {
-      node.charset = charset;
+      var cs = util.isFunction(charset) ? charset(url) : charset;
+      if (cs) {
+        node.charset = cs;
+      }
     }
 
     assetOnload(node, callback);
