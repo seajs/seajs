@@ -4,7 +4,7 @@
   <property name="module.name" value="sea"/>
   <property name="module.files" value="*-pkg.js"/>
   <property name="module.dir" location="."/>
-  <import file="../support/common-build.xml"/>
+  <import file="../tools/common-build.xml"/>
 
 
   <target name="concat">
@@ -38,7 +38,7 @@
       <fileset dir="${module.dir}" includes="${module.files}"/>
     </delete>
 
-    <copy todir="${root.dir}/build/" overwrite="true">
+    <copy todir="${root.dir}/dist/" overwrite="true">
       <fileset dir="${module.dir}/plugins"
                includes="plugin-*.js"
                excludes="plugin-init.js"/>

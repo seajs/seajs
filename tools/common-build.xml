@@ -3,7 +3,7 @@
 
   <dirname property="current.dir" file="${ant.file.common-build}"/>
   <property name="root.dir" location="${current.dir}/../"/>
-  <property name="tmp.dir" location="${root.dir}/build/tmp/"/>
+  <property name="tmp.dir" location="${root.dir}/dist/tmp/"/>
   <property name="gcc.jar" location="${current.dir}/compiler.jar"/>
   <property name="yc.jar" location="${current.dir}/yuicompressor.jar"/>
 
