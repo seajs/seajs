@@ -10,7 +10,7 @@ seajs.config({
   base: MODULES_PATH,
 
   alias: {
-    'less':  'less/1.1.4/less'
+    'less':  'less/1.3.0/less'
   },
 
   preload: ['plugin-less']
