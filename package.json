@@ -1,6 +1,6 @@
 {
   "name"          : "seajs",
-  "version"       : "1.2.0-dev",
+  "version"       : "1.1.0",
   "description"   : "A Module Loader for the Web",
   "homepage"      : "https://seajs.org/",
   "keywords"      : ["loader", "module", "commonjs", "browser", "nodejs"],
