@@ -143,8 +143,8 @@
           isLoaded = true;
         }
       } catch (ex) {
-        // NS_ERROR_DOM_SECURITY_ERR
-        if (ex.code === 1000) {
+        if (ex.name === 'SecurityError' || // firefox >= 13.0
+            ex.name === 'NS_ERROR_DOM_SECURITY_ERR') { // old firefox
           isLoaded = true;
         }
       }

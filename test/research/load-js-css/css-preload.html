@@ -25,7 +25,7 @@
   // 404
   getStyle('404.css');
   // 跨域
-  getStyle('http://127.0.0.1/~lifesinger/seajs/test/research/load-js-css/blue.php');
+  getStyle('http://127.0.0.1/~lifesinger/seajs/seajs/test/research/load-js-css/blue.php');
 
 
   function getStyle(url) {
@@ -66,7 +66,8 @@
         }
       } catch(ex) {
         console.log(ex.code + ' ' + url);
-        if (ex.code == '1000') {
+        if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR' ||
+            ex.name === 'SecurityError') {
           isLoaded = true;
         }
       }
