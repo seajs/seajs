@@ -3,7 +3,7 @@
  * @fileoverview Utilities for fetching js ans css files.
  */
 
-(function(util, data) {
+(function(util, data, global) {
 
   var head = document.head ||
       document.getElementsByTagName('head')[0] ||
@@ -107,7 +107,7 @@
   function styleOnload(node, callback) {
 
     // for IE6-9 and Opera
-    if (node.attachEvent) {
+    if (global.hasOwnProperty('attachEvent')) { // see #208
       node.attachEvent('onload', callback);
       // NOTICE:
       // 1. "onload" will be fired in IE6-9 when the file is 404, but in
@@ -201,7 +201,7 @@
 
   util.isOpera = ~UA.indexOf('Opera');
 
-})(seajs._util, seajs._data);
+})(seajs._util, seajs._data, this);
 
 /**
  * References:
