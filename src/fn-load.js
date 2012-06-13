@@ -13,6 +13,13 @@
   var preloadMods = {};
 
 
+  // Module status:
+  //  1. downloaded - The script file has been downloaded to the browser.
+  //  2. define()d - The define() has been executed.
+  //  3. memoize()d - The module info has been added to memoizedMods.
+  //  4. require()d -  The module.exports is available.
+
+
   /**
    * Loads preload modules before callback.
    * @param {function()} callback The callback function.

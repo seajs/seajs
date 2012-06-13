@@ -1,7 +1,7 @@
-/* SeaJS v1.2.0-dev | seajs.org | MIT Licensed */
+/* SeaJS v1.2.0 | seajs.org | MIT Licensed */
 
 /**
- * @fileoverview A CommonJS module loader, focused on web.
+ * @fileoverview A Module Loader for the Web.
  * @author lifesinger@gmail.com (Frank Wang)
  */
 
@@ -16,14 +16,13 @@ var seajs = { _seajs: seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '1.2.0-dev';
+seajs.version = '1.2.0';
 
 
-// Module status:
-//  1. downloaded - The script file has been downloaded to the browser.
-//  2. define()d - The define() has been executed.
-//  3. memoize()d - The module info has been added to memoizedMods.
-//  4. require()d -  The module.exports is available.
+/**
+ * The private utilities. Internal use only.
+ */
+seajs._util = {};
 
 
 /**
@@ -61,12 +60,6 @@ seajs._data = {
 
 
 /**
- * The private utils. Internal use only.
- */
-seajs._util = {};
-
-
-/**
  * The inner namespace for methods. Internal use only.
  */
 seajs._fn = {};
@@ -86,13 +79,18 @@ seajs._fn = {};
   };
 
 
-  util.isObject = function(val) {
-    return val === Object(val);
+  util.isFunction = function(val) {
+    return toString.call(val) === '[object Function]';
   };
 
 
-  util.isFunction = function(val) {
-    return toString.call(val) === '[object Function]';
+  util.isRegExp = function(val) {
+    return toString.call(val) === '[object RegExp]';
+  };
+
+
+  util.isObject = function(val) {
+    return val === Object(val);
   };
 
 
@@ -184,15 +182,10 @@ seajs._fn = {};
 })(seajs._util);
 
 /**
- * @fileoverview The error handler.
+ * @fileoverview The tiny console support.
  */
 
 (function(util, data) {
-
-
-  util.error = function() {
-      throw join(arguments);
-  };
 
 
   util.log = function() {
@@ -202,6 +195,9 @@ seajs._fn = {};
   };
 
 
+  // Helpers
+  // -------
+
   function join(args) {
     return Array.prototype.join.call(args, ' ');
   }
@@ -209,12 +205,17 @@ seajs._fn = {};
 })(seajs._util, seajs._data);
 
 /**
- * @fileoverview Core utilities for the framework.
+ * @fileoverview Path utilities for the framework.
  */
 
 (function(util, data, fn, global) {
 
   var config = data.config;
+
+  var DIRNAME_RE = /.*(?=\/.*$)/;
+  var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g;
+  var FILE_EXT_RE = /\.(?:css|js)$/;
+  var ROOT_RE = /^(.*?\w)(?:\/|$)/;
 
 
   /**
@@ -224,7 +225,7 @@ seajs._fn = {};
    * @see http://jsperf.com/regex-vs-split/2
    */
   function dirname(path) {
-    var s = path.match(/.*(?=\/.*$)/);
+    var s = path.match(DIRNAME_RE);
     return (s ? s[0] : '.') + '/';
   }
 
@@ -236,21 +237,25 @@ seajs._fn = {};
   function realpath(path) {
     // 'file:///a//b/c' ==> 'file:///a/b/c'
     // 'http://a//b/c' ==> 'http://a/b/c'
-    path = path.replace(/([^:\/])\/+/g, '$1\/');
+    if (MULTIPLE_SLASH_RE.test(path)) {
+      MULTIPLE_SLASH_RE.lastIndex = 0;
+      path = path.replace(MULTIPLE_SLASH_RE, '$1\/');
+    }
 
     // 'a/b/c', just return.
     if (path.indexOf('.') === -1) {
       return path;
     }
 
-    var old = path.split('/');
-    var ret = [], part, i = 0, len = old.length;
+    var original = path.split('/');
+    var ret = [], part;
 
-    for (; i < len; i++) {
-      part = old[i];
+    for (var i = 0, len = original.length; i < len; i++) {
+      part = original[i];
+
       if (part === '..') {
         if (ret.length === 0) {
-          util.error('Invalid path:', path);
+          throw new Error('The path is invalid: ' + path);
         }
         ret.pop();
       }
@@ -270,10 +275,11 @@ seajs._fn = {};
     url = realpath(url);
 
     // Adds the default '.js' extension except that the url ends with #.
-    if (/#$/.test(url)) {
+    // ref: http://jsperf.com/get-the-last-character
+    if (url.charAt(url.length - 1) === '#') {
       url = url.slice(0, -1);
     }
-    else if (url.indexOf('?') === -1 && !/\.(?:css|js)$/.test(url)) {
+    else if (url.indexOf('?') === -1 && !FILE_EXT_RE.test(url)) {
       url += '.js';
     }
 
@@ -285,15 +291,15 @@ seajs._fn = {};
    * Parses alias in the module id. Only parse the first part.
    */
   function parseAlias(id) {
-    // #xxx means xxx is parsed.
+    // #xxx means xxx is already alias-parsed.
     if (id.charAt(0) === '#') {
       return id.substring(1);
     }
 
-    var alias;
+    var alias = config.alias;
 
     // Only top-level id needs to parse alias.
-    if (isTopLevel(id) && (alias = config.alias)) {
+    if (alias && isTopLevel(id)) {
       var parts = id.split('/');
       var first = parts[0];
 
@@ -310,23 +316,35 @@ seajs._fn = {};
   var mapCache = {};
 
   /**
-   * Maps the module id.
+   * Converts the url according to the map rules.
    * @param {string} url The url string.
    * @param {Array=} map The optional map array.
    */
   function parseMap(url, map) {
-    // config.map: [[match, replace], ...]
-    map = map || config['map'] || [];
+    // map: [[match, replace], ...]
+    map || (map = config.map || []);
     if (!map.length) return url;
+
     var ret = url;
 
-    util.forEach(map, function(rule) {
-      if (rule && rule.length > 1) {
-        ret = ret.replace(rule[0], rule[1]);
-      }
-    });
+    // Apply all matched rules in sequence.
+    for (var i = 0, len = map.length; i < len; i++) {
+      var rule = map[i];
 
-    mapCache[ret] = url;
+      if (rule && rule.length > 1) {
+        var m = rule[0];
+
+        if (util.isString(m) && ret.indexOf(m) > -1 ||
+            util.isRegExp(m) && m.test(ret)) {
+          ret = ret.replace(m, rule[1]);
+        }
+      }
+    }
+
+    if (ret !== url) {
+      mapCache[ret] = url;
+    }
+
     return ret;
   }
 
@@ -341,10 +359,59 @@ seajs._fn = {};
 
 
   /**
-   * Gets the host portion from url.
+   * Converts id to uri.
+   * @param {string} id The module id.
+   * @param {string=} refUrl The referenced uri for relative id.
    */
-  function getHost(url) {
-    return url.replace(/^(\w+:\/\/[^\/]*)\/?.*$/, '$1');
+  function id2Uri(id, refUrl) {
+    id = parseAlias(id);
+    refUrl || (refUrl = pageUrl);
+
+    var ret;
+
+    // absolute id
+    if (isAbsolute(id)) {
+      ret = id;
+    }
+    // relative id
+    else if (isRelative(id)) {
+      // Converts './a' to 'a', to avoid unnecessary loop in realpath.
+      if (id.indexOf('./') === 0) {
+        id = id.substring(2);
+      }
+      ret = dirname(refUrl) + id;
+    }
+    // root id
+    else if (isRoot(id)) {
+      ret = refUrl.match(ROOT_RE)[1] + id;
+    }
+    // top-level id
+    else {
+      ret = config.base + '/' + id;
+    }
+
+    return normalize(ret);
+  }
+
+
+  function isAbsolute(id) {
+    return id.indexOf('://') > 0 || id.indexOf('//') === 0;
+  }
+
+
+  function isRelative(id) {
+    return id.indexOf('./') === 0 || id.indexOf('../') === 0;
+  }
+
+
+  function isRoot(id) {
+    return id.charAt(0) === '/' && id.charAt(1) !== '/';
+  }
+
+
+  function isTopLevel(id) {
+    var c = id.charAt(0);
+    return id.indexOf('://') === -1 && c !== '.' && c !== '/';
   }
 
 
@@ -365,63 +432,8 @@ seajs._fn = {};
       normalizePathname(loc.pathname);
 
   // local file in IE: C:\path\to\xx.js
-  if (~pageUrl.indexOf('\\')) {
+  if (pageUrl.indexOf('\\') > 0) {
     pageUrl = pageUrl.replace(/\\/g, '/');
-  }
-
-
-  /**
-   * Converts id to uri.
-   * @param {string} id The module id.
-   * @param {string=} refUrl The referenced uri for relative id.
-   */
-  function id2Uri(id, refUrl) {
-    id = parseAlias(id);
-    refUrl = refUrl || pageUrl;
-
-    var ret;
-
-    // absolute id
-    if (isAbsolute(id)) {
-      ret = id;
-    }
-    // relative id
-    else if (isRelative(id)) {
-      // Converts './a' to 'a', to avoid unnecessary loop in realpath.
-      id = id.replace(/^\.\//, '');
-      ret = dirname(refUrl) + id;
-    }
-    // root id
-    else if (isRoot(id)) {
-      ret = getHost(refUrl) + id;
-    }
-    // top-level id
-    else {
-      ret = config.base + '/' + id;
-    }
-
-    return normalize(ret);
-  }
-
-
-  function isAbsolute(id) {
-    return ~id.indexOf('://') || id.indexOf('//') === 0;
-  }
-
-
-  function isRelative(id) {
-    return id.indexOf('./') === 0 || id.indexOf('../') === 0;
-  }
-
-
-  function isRoot(id) {
-    return id.charAt(0) === '/' && id.charAt(1) !== '/';
-  }
-
-
-  function isTopLevel(id) {
-    var c = id.charAt(0);
-    return id.indexOf('://') === -1 && c !== '.' && c !== '/';
   }
 
 
@@ -445,18 +457,23 @@ seajs._fn = {};
  * @fileoverview Utilities for fetching js ans css files.
  */
 
-(function(util, data) {
+(function(util, data, global) {
+
+  var config = data.config;
 
   var head = document.head ||
       document.getElementsByTagName('head')[0] ||
       document.documentElement;
 
   var UA = navigator.userAgent;
-  var isWebKit = ~UA.indexOf('AppleWebKit');
+  var isWebKit = UA.indexOf('AppleWebKit') > 0;
+
+  var IS_CSS_RE = /\.css(?:\?|$)/i;
+  var READY_STATE_RE = /loaded|complete|undefined/;
 
 
   util.getAsset = function(url, callback, charset) {
-    var isCSS = /\.css(?:\?|$)/i.test(url);
+    var isCSS = IS_CSS_RE.test(url);
     var node = document.createElement(isCSS ? 'link' : 'script');
 
     if (charset) {
@@ -496,13 +513,12 @@ seajs._fn = {};
     var timer = setTimeout(function() {
       util.log('Time is out:', node.src);
       cb();
-    }, data.config.timeout);
+    }, config.timeout);
 
     function cb() {
       if (!cb.isCalled) {
         cb.isCalled = true;
         clearTimeout(timer);
-
         callback();
       }
     }
@@ -510,36 +526,36 @@ seajs._fn = {};
 
   function scriptOnload(node, callback) {
 
-    node.onload = node.onerror = node.onreadystatechange =
-        function() {
+    node.onload = node.onerror = node.onreadystatechange = function() {
+      if (READY_STATE_RE.test(node.readyState)) {
 
-          if (/loaded|complete|undefined/.test(node.readyState)) {
+        // Ensure only run once
+        node.onload = node.onerror = node.onreadystatechange = null;
 
-            // Ensure only run once
-            node.onload = node.onerror = node.onreadystatechange = null;
-
-            // Reduce memory leak
-            if (node.parentNode) {
-              try {
-                if (node.clearAttributes) {
-                  node.clearAttributes();
-                }
-                else {
-                  for (var p in node) delete node[p];
-                }
-              } catch (x) {
-              }
-
-              // Remove the script
-              head.removeChild(node);
+        // Reduce memory leak
+        if (node.parentNode) {
+          try {
+            if (node.clearAttributes) {
+              node.clearAttributes();
             }
-
-            // Dereference the node
-            node = undefined;
-
-            callback();
+            else {
+              for (var p in node) delete node[p];
+            }
+          } catch (x) {
           }
-        };
+
+          // Remove the script
+          if (!config.debug) {
+            head.removeChild(node);
+          }
+        }
+
+        // Dereference the node
+        node = undefined;
+
+        callback();
+      }
+    };
 
     // NOTICE:
     // Nothing will happen in Opera when the file status is 404. In this case,
@@ -549,11 +565,11 @@ seajs._fn = {};
   function styleOnload(node, callback) {
 
     // for IE6-9 and Opera
-    if (node.attachEvent) {
+    if (global.hasOwnProperty('attachEvent')) { // see #208
       node.attachEvent('onload', callback);
       // NOTICE:
       // 1. "onload" will be fired in IE6-9 when the file is 404, but in
-      // this situation, Opera does nothing, so fallback to timeout.
+      //    this situation, Opera does nothing, so fallback to timeout.
       // 2. "onerror" doesn't fire in any browsers!
     }
 
@@ -585,8 +601,8 @@ seajs._fn = {};
           isLoaded = true;
         }
       } catch (ex) {
-        // NS_ERROR_DOM_SECURITY_ERR
-        if (ex.code === 1000) {
+        if (ex.name === 'SecurityError' || // firefox >= 13.0
+            ex.name === 'NS_ERROR_DOM_SECURITY_ERR') { // old firefox
           isLoaded = true;
         }
       }
@@ -641,9 +657,9 @@ seajs._fn = {};
   };
 
 
-  util.isOpera = ~UA.indexOf('Opera');
+  util.isOpera = UA.indexOf('Opera') > 0;
 
-})(seajs._util, seajs._data);
+})(seajs._util, seajs._data, this);
 
 /**
  * References:
@@ -954,6 +970,13 @@ seajs._fn = {};
   var preloadingCount = 0;
   var preloadCallbacks = [];
   var preloadMods = {};
+
+
+  // Module status:
+  //  1. downloaded - The script file has been downloaded to the browser.
+  //  2. define()d - The define() has been executed.
+  //  3. memoize()d - The module info has been added to memoizedMods.
+  //  4. require()d -  The module.exports is available.
 
 
   /**
@@ -1380,7 +1403,7 @@ seajs._fn = {};
 
   function checkAliasConflict(previous, current) {
     if (previous && previous !== current) {
-      util.error('Alias is conflicted:', current);
+      throw new Error('Alias is conflicted:' + current);
     }
   }
 

@@ -14,13 +14,18 @@
   };
 
 
-  util.isObject = function(val) {
-    return val === Object(val);
+  util.isFunction = function(val) {
+    return toString.call(val) === '[object Function]';
   };
 
 
-  util.isFunction = function(val) {
-    return toString.call(val) === '[object Function]';
+  util.isRegExp = function(val) {
+    return toString.call(val) === '[object RegExp]';
+  };
+
+
+  util.isObject = function(val) {
+    return val === Object(val);
   };
 
 

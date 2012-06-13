@@ -5,16 +5,21 @@
 
 (function(util, data, global) {
 
+  var config = data.config;
+
   var head = document.head ||
       document.getElementsByTagName('head')[0] ||
       document.documentElement;
 
   var UA = navigator.userAgent;
-  var isWebKit = ~UA.indexOf('AppleWebKit');
+  var isWebKit = UA.indexOf('AppleWebKit') > 0;
+
+  var IS_CSS_RE = /\.css(?:\?|$)/i;
+  var READY_STATE_RE = /loaded|complete|undefined/;
 
 
   util.getAsset = function(url, callback, charset) {
-    var isCSS = /\.css(?:\?|$)/i.test(url);
+    var isCSS = IS_CSS_RE.test(url);
     var node = document.createElement(isCSS ? 'link' : 'script');
 
     if (charset) {
@@ -54,13 +59,12 @@
     var timer = setTimeout(function() {
       util.log('Time is out:', node.src);
       cb();
-    }, data.config.timeout);
+    }, config.timeout);
 
     function cb() {
       if (!cb.isCalled) {
         cb.isCalled = true;
         clearTimeout(timer);
-
         callback();
       }
     }
@@ -68,36 +72,36 @@
 
   function scriptOnload(node, callback) {
 
-    node.onload = node.onerror = node.onreadystatechange =
-        function() {
+    node.onload = node.onerror = node.onreadystatechange = function() {
+      if (READY_STATE_RE.test(node.readyState)) {
 
-          if (/loaded|complete|undefined/.test(node.readyState)) {
+        // Ensure only run once
+        node.onload = node.onerror = node.onreadystatechange = null;
 
-            // Ensure only run once
-            node.onload = node.onerror = node.onreadystatechange = null;
-
-            // Reduce memory leak
-            if (node.parentNode) {
-              try {
-                if (node.clearAttributes) {
-                  node.clearAttributes();
-                }
-                else {
-                  for (var p in node) delete node[p];
-                }
-              } catch (x) {
-              }
-
-              // Remove the script
-              head.removeChild(node);
+        // Reduce memory leak
+        if (node.parentNode) {
+          try {
+            if (node.clearAttributes) {
+              node.clearAttributes();
             }
-
-            // Dereference the node
-            node = undefined;
-
-            callback();
+            else {
+              for (var p in node) delete node[p];
+            }
+          } catch (x) {
           }
-        };
+
+          // Remove the script
+          if (!config.debug) {
+            head.removeChild(node);
+          }
+        }
+
+        // Dereference the node
+        node = undefined;
+
+        callback();
+      }
+    };
 
     // NOTICE:
     // Nothing will happen in Opera when the file status is 404. In this case,
@@ -111,7 +115,7 @@
       node.attachEvent('onload', callback);
       // NOTICE:
       // 1. "onload" will be fired in IE6-9 when the file is 404, but in
-      // this situation, Opera does nothing, so fallback to timeout.
+      //    this situation, Opera does nothing, so fallback to timeout.
       // 2. "onerror" doesn't fire in any browsers!
     }
 
@@ -199,7 +203,7 @@
   };
 
 
-  util.isOpera = ~UA.indexOf('Opera');
+  util.isOpera = UA.indexOf('Opera') > 0;
 
 })(seajs._util, seajs._data, this);
 

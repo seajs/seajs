@@ -1,6 +1,6 @@
 
 /**
- * @fileoverview A CommonJS module loader, focused on web.
+ * @fileoverview A Module Loader for the Web.
  * @author lifesinger@gmail.com (Frank Wang)
  */
 
@@ -18,11 +18,10 @@ var seajs = { _seajs: seajs };
 seajs.version = '%VERSION%';
 
 
-// Module status:
-//  1. downloaded - The script file has been downloaded to the browser.
-//  2. define()d - The define() has been executed.
-//  3. memoize()d - The module info has been added to memoizedMods.
-//  4. require()d -  The module.exports is available.
+/**
+ * The private utilities. Internal use only.
+ */
+seajs._util = {};
 
 
 /**
@@ -57,12 +56,6 @@ seajs._data = {
    */
   packageMods: []
 };
-
-
-/**
- * The private utils. Internal use only.
- */
-seajs._util = {};
 
 
 /**

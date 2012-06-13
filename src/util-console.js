@@ -1,14 +1,9 @@
 
 /**
- * @fileoverview The error handler.
+ * @fileoverview The tiny console support.
  */
 
 (function(util, data) {
-
-
-  util.error = function() {
-      throw join(arguments);
-  };
 
 
   util.log = function() {
@@ -17,6 +12,9 @@
     }
   };
 
+
+  // Helpers
+  // -------
 
   function join(args) {
     return Array.prototype.join.call(args, ' ');

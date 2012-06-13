@@ -15,7 +15,7 @@
       <path path="sea.js"/>
 
       <path path="util-lang.js"/>
-      <path path="util-error.js"/>
+      <path path="util-console.js"/>
       <path path="util-path.js"/>
       <path path="util-fetch.js"/>
 
