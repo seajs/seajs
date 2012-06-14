@@ -1,6 +1,6 @@
 
 /**
- * @fileoverview Module Constructor.
+ * @fileoverview Module constructor.
  */
 
 (function(fn) {

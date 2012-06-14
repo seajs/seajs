@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Loads a module and gets it ready to be require()d.
  */
@@ -7,10 +8,6 @@
   var memoizedMods = data.memoizedMods;
   var config = data.config;
   var RP = fn.Require.prototype;
-
-  var preloadingCount = 0;
-  var preloadCallbacks = [];
-  var preloadMods = {};
 
 
   // Module status:
@@ -23,36 +20,18 @@
   /**
    * Loads preload modules before callback.
    * @param {function()} callback The callback function.
-   * @param {string=} onloadUri The uri passed from onLoad callback.
    */
-  function preload(callback, onloadUri) {
-    var mods = config.preload;
-    var len = mods.length, fn;
+  function preload(callback) {
+    var preloadMods = config.preload;
 
-    if (len) {
-      preloadingCount += len;
-      config.preload = [];
-
-      util.forEach(RP.resolve(mods), function(uri) {
-        preloadMods[uri] = 1;
+    if (preloadMods.length) {
+      load(preloadMods, function() {
+        config.preload = [];
+        callback();
       });
-
-      load(mods, function() {
-        preloadingCount -= len;
-        preload(callback);
-      });
-    }
-    else if (onloadUri && isFromPreload(onloadUri)) {
-      callback();
     }
     else {
-      preloadCallbacks.push(callback);
-
-      if (preloadingCount === 0) {
-        while (fn = preloadCallbacks.shift()) {
-          fn();
-        }
-      }
+      callback();
     }
   }
 
@@ -105,13 +84,6 @@
         }
 
         function onLoad() {
-          // Preload here to make sure that:
-          // 1. RP.resolve etc. modified by some preload plugins can be used
-          //    immediately in the id resolving logic.
-          //    Ref: issues/plugin-coffee
-          // 2. The functions provided by the preload modules can be used
-          //    immediately in factories of the following modules.
-          preload(function() {
             var mod = memoizedMods[uri];
 
             if (mod) {
@@ -144,7 +116,6 @@
             }
 
             if (--remain === 0) onProvide();
-          }, uri);
         }
 
       })(unReadyUris[i]);
@@ -273,7 +244,7 @@
 
     var deps = mod.dependencies || [];
     if (deps.length) {
-      if (~util.indexOf(deps, uri)) {
+      if (util.indexOf(deps, uri) > -1) {
         return true;
       }
       else {
@@ -289,21 +260,6 @@
     return false;
   }
 
-  function isFromPreload(uri) {
-    if (preloadMods[uri]) return true;
-
-    for (var m in preloadMods) {
-      if (memoizedMods[m] &&
-          ~util.indexOf(memoizedMods[m].dependencies, uri)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-
-  // Public API
 
   util.memoize = memoize;
   fn.preload = preload;

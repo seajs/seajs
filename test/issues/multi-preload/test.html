@@ -23,6 +23,10 @@
 
 <script>
 
+  seajs.config({
+    preload: ['./a.js', './b.js']
+  });
+
   seajs.use(['./init', './main']);
 
 </script>

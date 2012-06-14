@@ -1,3 +1,1 @@
-define(function(require, exports) {
-  exports.name = 'b';
-});
+this.B = 'b';

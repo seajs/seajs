@@ -11,7 +11,7 @@
    * @param {Array.<string>|string=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  function define(id, deps, factory) {
+  fn.define = function(id, deps, factory) {
     var argsLen = arguments.length;
 
     // define(factory)
@@ -41,7 +41,7 @@
       var uri = util.id2Uri(id);
     }
     // Try to derive url in IE6-9 for anonymous modules.
-    else if (document.attachEvent && !util.isOpera) {
+    else if (document.attachEvent) {
 
       // Try to get the current script
       var script = util.getCurrentScript();
@@ -72,6 +72,14 @@
   }
 
 
+  // Helpers
+  // -------
+
+  var DEPS_RE = /(?:^|[^.])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g;
+  var BLOCK_COMMENT_RE = /(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g;
+  var LINE_COMMENT_RE = /(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g;
+
+
   function parseDependencies(code) {
     // Parse these `requires`:
     //   var a = require('a');
@@ -80,11 +88,12 @@
     //   ...
     // Doesn't parse:
     //   someInstance.require(...);
-    var pattern = /(?:^|[^.])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g;
     var ret = [], match;
 
     code = removeComments(code);
-    while ((match = pattern.exec(code))) {
+    DEPS_RE.lastIndex = 0;
+
+    while ((match = DEPS_RE.exec(code))) {
       if (match[2]) {
         ret.push(match[2]);
       }
@@ -96,12 +105,12 @@
 
   // http://lifesinger.github.com/lab/2011/remove-comments-safely/
   function removeComments(code) {
+    BLOCK_COMMENT_RE.lastIndex = 0;
+    LINE_COMMENT_RE.lastIndex = 0;
+
     return code
-        .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
-        .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
+        .replace(BLOCK_COMMENT_RE, '\n')
+        .replace(LINE_COMMENT_RE, '\n');
   }
-
-
-  fn.define = define;
 
 })(seajs._util, seajs._data, seajs._fn);

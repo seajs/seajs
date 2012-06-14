@@ -202,9 +202,6 @@
         node.getAttribute('src', 4);
   };
 
-
-  util.isOpera = UA.indexOf('Opera') > 0;
-
 })(seajs._util, seajs._data, this);
 
 /**

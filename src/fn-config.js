@@ -132,7 +132,7 @@
 
   function checkAliasConflict(previous, current) {
     if (previous && previous !== current) {
-      throw new Error('Alias is conflicted:' + current);
+      throw new Error('Alias is conflicted: ' + current);
     }
   }
 

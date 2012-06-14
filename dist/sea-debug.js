@@ -656,9 +656,6 @@ seajs._fn = {};
         node.getAttribute('src', 4);
   };
 
-
-  util.isOpera = UA.indexOf('Opera') > 0;
-
 })(seajs._util, seajs._data, this);
 
 /**
@@ -670,7 +667,7 @@ seajs._fn = {};
  */
 
 /**
- * @fileoverview Module Constructor.
+ * @fileoverview Module constructor.
  */
 
 (function(fn) {
@@ -704,7 +701,7 @@ seajs._fn = {};
    * @param {Array.<string>|string=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
-  function define(id, deps, factory) {
+  fn.define = function(id, deps, factory) {
     var argsLen = arguments.length;
 
     // define(factory)
@@ -734,7 +731,7 @@ seajs._fn = {};
       var uri = util.id2Uri(id);
     }
     // Try to derive url in IE6-9 for anonymous modules.
-    else if (document.attachEvent && !util.isOpera) {
+    else if (document.attachEvent) {
 
       // Try to get the current script
       var script = util.getCurrentScript();
@@ -765,6 +762,14 @@ seajs._fn = {};
   }
 
 
+  // Helpers
+  // -------
+
+  var DEPS_RE = /(?:^|[^.])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g;
+  var BLOCK_COMMENT_RE = /(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g;
+  var LINE_COMMENT_RE = /(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g;
+
+
   function parseDependencies(code) {
     // Parse these `requires`:
     //   var a = require('a');
@@ -773,11 +778,12 @@ seajs._fn = {};
     //   ...
     // Doesn't parse:
     //   someInstance.require(...);
-    var pattern = /(?:^|[^.])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g;
     var ret = [], match;
 
     code = removeComments(code);
-    while ((match = pattern.exec(code))) {
+    DEPS_RE.lastIndex = 0;
+
+    while ((match = DEPS_RE.exec(code))) {
       if (match[2]) {
         ret.push(match[2]);
       }
@@ -789,13 +795,13 @@ seajs._fn = {};
 
   // http://lifesinger.github.com/lab/2011/remove-comments-safely/
   function removeComments(code) {
+    BLOCK_COMMENT_RE.lastIndex = 0;
+    LINE_COMMENT_RE.lastIndex = 0;
+
     return code
-        .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
-        .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
+        .replace(BLOCK_COMMENT_RE, '\n')
+        .replace(LINE_COMMENT_RE, '\n');
   }
-
-
-  fn.define = define;
 
 })(seajs._util, seajs._data, seajs._fn);
 
@@ -957,6 +963,7 @@ seajs._fn = {};
   fn.createRequire = createRequire;
 
 })(seajs._util, seajs._data, seajs._fn);
+
 /**
  * @fileoverview Loads a module and gets it ready to be require()d.
  */
@@ -966,10 +973,6 @@ seajs._fn = {};
   var memoizedMods = data.memoizedMods;
   var config = data.config;
   var RP = fn.Require.prototype;
-
-  var preloadingCount = 0;
-  var preloadCallbacks = [];
-  var preloadMods = {};
 
 
   // Module status:
@@ -982,36 +985,18 @@ seajs._fn = {};
   /**
    * Loads preload modules before callback.
    * @param {function()} callback The callback function.
-   * @param {string=} onloadUri The uri passed from onLoad callback.
    */
-  function preload(callback, onloadUri) {
-    var mods = config.preload;
-    var len = mods.length, fn;
+  function preload(callback) {
+    var preloadMods = config.preload;
 
-    if (len) {
-      preloadingCount += len;
-      config.preload = [];
-
-      util.forEach(RP.resolve(mods), function(uri) {
-        preloadMods[uri] = 1;
+    if (preloadMods.length) {
+      load(preloadMods, function() {
+        config.preload = [];
+        callback();
       });
-
-      load(mods, function() {
-        preloadingCount -= len;
-        preload(callback);
-      });
-    }
-    else if (onloadUri && isFromPreload(onloadUri)) {
-      callback();
     }
     else {
-      preloadCallbacks.push(callback);
-
-      if (preloadingCount === 0) {
-        while (fn = preloadCallbacks.shift()) {
-          fn();
-        }
-      }
+      callback();
     }
   }
 
@@ -1064,13 +1049,6 @@ seajs._fn = {};
         }
 
         function onLoad() {
-          // Preload here to make sure that:
-          // 1. RP.resolve etc. modified by some preload plugins can be used
-          //    immediately in the id resolving logic.
-          //    Ref: issues/plugin-coffee
-          // 2. The functions provided by the preload modules can be used
-          //    immediately in factories of the following modules.
-          preload(function() {
             var mod = memoizedMods[uri];
 
             if (mod) {
@@ -1103,7 +1081,6 @@ seajs._fn = {};
             }
 
             if (--remain === 0) onProvide();
-          }, uri);
         }
 
       })(unReadyUris[i]);
@@ -1232,7 +1209,7 @@ seajs._fn = {};
 
     var deps = mod.dependencies || [];
     if (deps.length) {
-      if (~util.indexOf(deps, uri)) {
+      if (util.indexOf(deps, uri) > -1) {
         return true;
       }
       else {
@@ -1248,21 +1225,6 @@ seajs._fn = {};
     return false;
   }
 
-  function isFromPreload(uri) {
-    if (preloadMods[uri]) return true;
-
-    for (var m in preloadMods) {
-      if (memoizedMods[m] &&
-          ~util.indexOf(memoizedMods[m].dependencies, uri)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-
-  // Public API
 
   util.memoize = memoize;
   fn.preload = preload;
@@ -1403,7 +1365,7 @@ seajs._fn = {};
 
   function checkAliasConflict(previous, current) {
     if (previous && previous !== current) {
-      throw new Error('Alias is conflicted:' + current);
+      throw new Error('Alias is conflicted: ' + current);
     }
   }
 
