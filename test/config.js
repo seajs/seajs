@@ -50,6 +50,7 @@
     ,'issues/duplicate-load'
     ,'issues/ie-cache'
     ,'issues/inline-module'
+    ,'issues/invalid-deps'
     ,'issues/jsonp'
     ,'issues/load-css'
     ,'issues/load-deps'

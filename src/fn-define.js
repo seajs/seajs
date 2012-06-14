@@ -31,9 +31,16 @@
       }
     }
 
-    // Parse dependencies
+    // Parse dependencies.
     if (!util.isArray(deps) && util.isFunction(factory)) {
       deps = parseDependencies(factory.toString());
+    }
+
+    // Remove "", null, undefined in dependencies.
+    if (deps) {
+      deps = util.filter(deps, function(dep) {
+        return util.isString(dep) && dep.length;
+      });
     }
 
     // Get url directly for specific modules.
@@ -43,7 +50,7 @@
     // Try to derive url in IE6-9 for anonymous modules.
     else if (document.attachEvent) {
 
-      // Try to get the current script
+      // Try to get the current script.
       var script = util.getCurrentScript();
       if (script) {
         uri = util.unParseMap(util.getScriptAbsoluteSrc(script));
@@ -69,7 +76,7 @@
       data.anonymousMod = mod;
     }
 
-  }
+  };
 
 
   // Helpers
