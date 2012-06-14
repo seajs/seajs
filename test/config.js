@@ -77,6 +77,7 @@
     ,'issues/slash-in-map'
     ,'issues/timestamp'
     ,'issues/un-correspondence'
+    ,'issues/x-ua-compatible'
 
     ,'packages/base'
     ,'packages/math'

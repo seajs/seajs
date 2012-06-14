@@ -464,6 +464,7 @@ seajs._fn = {};
   var head = document.head ||
       document.getElementsByTagName('head')[0] ||
       document.documentElement;
+  var baseElement = head.getElementsByTagName('base')[0];
 
   var UA = navigator.userAgent;
   var isWebKit = UA.indexOf('AppleWebKit') > 0;
@@ -488,19 +489,23 @@ seajs._fn = {};
     if (isCSS) {
       node.rel = 'stylesheet';
       node.href = url;
-      head.appendChild(node); // Keep style cascading order
     }
     else {
       node.async = 'async';
       node.src = url;
-
-      // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
-      // the end of the insertBefore execution, so use `currentlyAddingScript`
-      // to hold current node, for deriving url in `define`.
-      currentlyAddingScript = node;
-      head.insertBefore(node, head.firstChild);
-      currentlyAddingScript = null;
     }
+
+    // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
+    // the end of the insertBefore execution, so use `currentlyAddingScript`
+    // to hold current node, for deriving url in `define`.
+    currentlyAddingScript = node;
+
+    // ref: #185 & http://dev.jquery.com/ticket/2709
+    baseElement ?
+        head.insertBefore(node, baseElement) :
+        head.appendChild(node);
+
+    currentlyAddingScript = null;
   };
 
   function assetOnload(node, callback) {
