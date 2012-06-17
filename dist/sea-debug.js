@@ -763,7 +763,7 @@ seajs._fn = {};
     var mod = new fn.Module(id, deps, factory);
 
     if (uri) {
-      util.memoize(uri, mod);
+      fn.memoize(uri, mod);
       data.packageMods.push(mod);
     }
     else {
@@ -1139,10 +1139,7 @@ seajs._fn = {};
           // Memoize anonymous module
           var mod = data.anonymousMod;
           if (mod) {
-            // Don't override existed module
-            if (!memoizedMods[uri]) {
-              memoize(uri, mod);
-            }
+            memoize(uri, mod);
             data.anonymousMod = null;
           }
 
@@ -1169,7 +1166,7 @@ seajs._fn = {};
 
         },
 
-        data.config.charset
+        config.charset
     );
   }
 
@@ -1180,8 +1177,11 @@ seajs._fn = {};
    * Caches mod info to memoizedMods.
    */
   function memoize(uri, mod) {
-    mod.id = uri; // change id to the absolute path.
-    memoizedMods[uri] = mod;
+    // Don't override existed module.
+    if (!memoizedMods[uri]) {
+      mod.id = uri; // change id to the absolute path.
+      memoizedMods[uri] = mod;
+    }
   }
 
   /**
@@ -1238,7 +1238,7 @@ seajs._fn = {};
   }
 
 
-  util.memoize = memoize;
+  fn.memoize = memoize;
   fn.preload = preload;
   fn.load = load;
 

@@ -47,6 +47,7 @@
     ,'issues/config-conflict'
     ,'issues/data-main'
     ,'issues/debug'
+    ,'issues/define-override'
     ,'issues/duplicate-load'
     ,'issues/ie-cache'
     ,'issues/inline-module'

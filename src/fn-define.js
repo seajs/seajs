@@ -68,7 +68,7 @@
     var mod = new fn.Module(id, deps, factory);
 
     if (uri) {
-      util.memoize(uri, mod);
+      fn.memoize(uri, mod);
       data.packageMods.push(mod);
     }
     else {
