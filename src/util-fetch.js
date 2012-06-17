@@ -1,6 +1,5 @@
-
 /**
- * @fileoverview Utilities for fetching js ans css files.
+ * @fileoverview Utilities for fetching js and css files.
  */
 
 (function(util, data, global) {
