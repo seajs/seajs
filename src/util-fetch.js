@@ -11,8 +11,7 @@
       document.documentElement;
   var baseElement = head.getElementsByTagName('base')[0];
 
-  var UA = navigator.userAgent;
-  var isWebKit = UA.indexOf('AppleWebKit') > 0;
+  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') > 0;
 
   var IS_CSS_RE = /\.css(?:\?|$)/i;
   var READY_STATE_RE = /loaded|complete|undefined/;
