@@ -1,11 +1,7 @@
-
 /**
- * @fileoverview The configuration.
+ * The configuration
  */
-
-(function(host, util, data, fn) {
-
-  var config = data.config;
+(function(host, util, config, fn) {
 
   var noCachePrefix = 'seajs-ts=';
   var noCacheTimeStamp = noCachePrefix + util.now();
@@ -136,4 +132,4 @@
     }
   }
 
-})(seajs, seajs._util, seajs._data, seajs._fn);
+})(seajs, seajs._util, seajs._config, seajs._fn);

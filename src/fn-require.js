@@ -54,22 +54,7 @@
   }
 
 
-  /**
-   * Use the internal require() machinery to look up the location of a module,
-   * but rather than loading the module, just return the resolved filepath.
-   *
-   * @param {string|Array.<string>} ids The module ids to be resolved.
-   * @param {Object=} context The context of require function.
-   */
-  RP.resolve = function(ids, context) {
-    if (util.isString(ids)) {
-      return util.id2Uri(ids, (context || this.context || {}).uri);
-    }
 
-    return util.map(ids, function(id) {
-      return RP.resolve(id, context);
-    });
-  };
 
 
   /**
@@ -83,12 +68,6 @@
   };
 
 
-  /**
-   * Plugin can override this method to add custom loading.
-   */
-  RP.load = function(uri, callback, charset) {
-    util.getAsset(uri, callback, charset);
-  };
 
 
   /**

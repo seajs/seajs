@@ -1,117 +1,115 @@
-
 /**
- * @fileoverview The minimal language enhancement.
+ * The minimal language enhancement
  */
+;(function(util) {
 
-(function(util) {
-
-  var toString = Object.prototype.toString;
-  var AP = Array.prototype;
+  var toString = Object.prototype.toString
+  var AP = Array.prototype
 
 
   util.isString = function(val) {
-    return toString.call(val) === '[object String]';
-  };
+    return toString.call(val) === '[object String]'
+  }
 
 
   util.isFunction = function(val) {
-    return toString.call(val) === '[object Function]';
-  };
+    return toString.call(val) === '[object Function]'
+  }
 
 
   util.isRegExp = function(val) {
-    return toString.call(val) === '[object RegExp]';
-  };
+    return toString.call(val) === '[object RegExp]'
+  }
 
 
   util.isObject = function(val) {
-    return val === Object(val);
-  };
+    return val === Object(val)
+  }
 
 
   util.isArray = Array.isArray || function(val) {
-    return toString.call(val) === '[object Array]';
-  };
+    return toString.call(val) === '[object Array]'
+  }
 
 
   util.indexOf = AP.indexOf ?
       function(arr, item) {
-        return arr.indexOf(item);
+        return arr.indexOf(item)
       } :
       function(arr, item) {
-        for (var i = 0, len = arr.length; i < len; i++) {
+        for (var i = 0; i < arr.length; i++) {
           if (arr[i] === item) {
-            return i;
+            return i
           }
         }
-        return -1;
-      };
+        return -1
+      }
 
 
   var forEach = util.forEach = AP.forEach ?
       function(arr, fn) {
-        arr.forEach(fn);
+        arr.forEach(fn)
       } :
       function(arr, fn) {
-        for (var i = 0, len = arr.length; i < len; i++) {
-          fn(arr[i], i, arr);
+        for (var i = 0; i < arr.length; i++) {
+          fn(arr[i], i, arr)
         }
-      };
+      }
 
 
   util.map = AP.map ?
       function(arr, fn) {
-        return arr.map(fn);
+        return arr.map(fn)
       } :
       function(arr, fn) {
-        var ret = [];
+        var ret = []
         forEach(arr, function(item, i, arr) {
-          ret.push(fn(item, i, arr));
-        });
-        return ret;
-      };
+          ret.push(fn(item, i, arr))
+        })
+        return ret
+      }
 
 
   util.filter = AP.filter ?
       function(arr, fn) {
-        return arr.filter(fn);
+        return arr.filter(fn)
       } :
       function(arr, fn) {
-        var ret = [];
+        var ret = []
         forEach(arr, function(item, i, arr) {
           if (fn(item, i, arr)) {
-            ret.push(item);
+            ret.push(item)
           }
-        });
-        return ret;
-      };
+        })
+        return ret
+      }
 
 
   util.unique = function(arr) {
-    var ret = [];
-    var o = {};
+    var ret = []
+    var o = {}
 
     forEach(arr, function(item) {
-      o[item] = 1;
-    });
+      o[item] = 1
+    })
 
     if (Object.keys) {
-      ret = Object.keys(o);
+      ret = Object.keys(o)
     }
     else {
       for (var p in o) {
         if (o.hasOwnProperty(p)) {
-          ret.push(p);
+          ret.push(p)
         }
       }
     }
 
-    return ret;
-  };
+    return ret
+  }
 
 
   util.now = Date.now || function() {
-    return new Date().getTime();
-  };
+    return new Date().getTime()
+  }
 
-})(seajs._util);
+})(seajs._util)

@@ -1,9 +1,7 @@
-
 /**
- * @fileoverview Module authoring format.
+ * Module authoring format
  */
-
-(function(util, data, fn) {
+(function(util, config, fn) {
 
   /**
    * Defines a module.
@@ -120,4 +118,4 @@
         .replace(LINE_COMMENT_RE, '\n');
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs._util, seajs._config, seajs._fn);

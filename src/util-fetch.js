@@ -1,74 +1,74 @@
 /**
- * @fileoverview Utilities for fetching js and css files.
+ * Utilities for fetching js and css files.
  */
-
-(function(util, data, global) {
-
-  var config = data.config;
+;(function(util, config, global) {
 
   var head = document.head ||
       document.getElementsByTagName('head')[0] ||
-      document.documentElement;
-  var baseElement = head.getElementsByTagName('base')[0];
+      document.documentElement
 
-  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') > 0;
+  var baseElement = head.getElementsByTagName('base')[0]
+  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') > 0
 
-  var IS_CSS_RE = /\.css(?:\?|$)/i;
-  var READY_STATE_RE = /loaded|complete|undefined/;
+  var IS_CSS_RE = /\.css(?:\?|$)/i
+  var READY_STATE_RE = /loaded|complete|undefined/
+
+  var currentlyAddingScript
+  var interactiveScript
 
 
-  util.getAsset = function(url, callback, charset) {
-    var isCSS = IS_CSS_RE.test(url);
-    var node = document.createElement(isCSS ? 'link' : 'script');
+  util.fetch = function(url, callback, charset) {
+    var isCSS = IS_CSS_RE.test(url)
+    var node = document.createElement(isCSS ? 'link' : 'script')
 
     if (charset) {
-      var cs = util.isFunction(charset) ? charset(url) : charset;
+      var cs = util.isFunction(charset) ? charset(url) : charset
       if (cs) {
-        node.charset = cs;
+        node.charset = cs
       }
     }
 
-    assetOnload(node, callback);
+    assetOnload(node, callback)
 
     if (isCSS) {
-      node.rel = 'stylesheet';
-      node.href = url;
+      node.rel = 'stylesheet'
+      node.href = url
     }
     else {
-      node.async = 'async';
-      node.src = url;
+      node.async = 'async'
+      node.src = url
     }
 
     // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
     // the end of the insertBefore execution, so use `currentlyAddingScript`
     // to hold current node, for deriving url in `define`.
-    currentlyAddingScript = node;
+    currentlyAddingScript = node
 
     // ref: #185 & http://dev.jquery.com/ticket/2709
     baseElement ?
         head.insertBefore(node, baseElement) :
-        head.appendChild(node);
+        head.appendChild(node)
 
-    currentlyAddingScript = null;
-  };
+    currentlyAddingScript = null
+  }
 
   function assetOnload(node, callback) {
     if (node.nodeName === 'SCRIPT') {
-      scriptOnload(node, cb);
+      scriptOnload(node, cb)
     } else {
-      styleOnload(node, cb);
+      styleOnload(node, cb)
     }
 
     var timer = setTimeout(function() {
-      util.log('Time is out:', node.src);
-      cb();
-    }, config.timeout);
+      util.log('Time is out:', node.src)
+      cb()
+    }, config.timeout)
 
     function cb() {
       if (!cb.isCalled) {
-        cb.isCalled = true;
-        clearTimeout(timer);
-        callback();
+        cb.isCalled = true
+        clearTimeout(timer)
+        callback()
       }
     }
   }
@@ -79,32 +79,32 @@
       if (READY_STATE_RE.test(node.readyState)) {
 
         // Ensure only run once
-        node.onload = node.onerror = node.onreadystatechange = null;
+        node.onload = node.onerror = node.onreadystatechange = null
 
         // Reduce memory leak
         if (node.parentNode) {
           try {
             if (node.clearAttributes) {
-              node.clearAttributes();
+              node.clearAttributes()
             }
             else {
-              for (var p in node) delete node[p];
+              for (var p in node) delete node[p]
             }
           } catch (x) {
           }
 
           // Remove the script
           if (!config.debug) {
-            head.removeChild(node);
+            head.removeChild(node)
           }
         }
 
         // Dereference the node
-        node = undefined;
+        node = undefined
 
-        callback();
+        callback()
       }
-    };
+    }
 
     // NOTICE:
     // Nothing will happen in Opera when the file status is 404. In this case,
@@ -115,7 +115,7 @@
 
     // for IE6-9 and Opera
     if (global.hasOwnProperty('attachEvent')) { // see #208
-      node.attachEvent('onload', callback);
+      node.attachEvent('onload', callback)
       // NOTICE:
       // 1. "onload" will be fired in IE6-9 when the file is 404, but in
       //    this situation, Opera does nothing, so fallback to timeout.
@@ -125,34 +125,34 @@
     // Polling for Firefox, Chrome, Safari
     else {
       setTimeout(function() {
-        poll(node, callback);
-      }, 0); // Begin after node insertion
+        poll(node, callback)
+      }, 0) // Begin after node insertion
     }
 
   }
 
   function poll(node, callback) {
     if (callback.isCalled) {
-      return;
+      return
     }
 
-    var isLoaded;
+    var isLoaded
 
     if (isWebKit) {
       if (node['sheet']) {
-        isLoaded = true;
+        isLoaded = true
       }
     }
     // for Firefox
     else if (node['sheet']) {
       try {
         if (node['sheet'].cssRules) {
-          isLoaded = true;
+          isLoaded = true
         }
       } catch (ex) {
         if (ex.name === 'SecurityError' || // firefox >= 13.0
             ex.name === 'NS_ERROR_DOM_SECURITY_ERR') { // old firefox
-          isLoaded = true;
+          isLoaded = true
         }
       }
     }
@@ -160,20 +160,17 @@
     setTimeout(function() {
       if (isLoaded) {
         // Place callback in here due to giving time for style rendering.
-        callback();
+        callback()
       } else {
-        poll(node, callback);
+        poll(node, callback)
       }
-    }, 1);
+    }, 1)
   }
 
 
-  var currentlyAddingScript;
-  var interactiveScript;
-
   util.getCurrentScript = function() {
     if (currentlyAddingScript) {
-      return currentlyAddingScript;
+      return currentlyAddingScript
     }
 
     // For IE6-9 browsers, the script onload event may not fire right
@@ -183,29 +180,28 @@
     // Ref: http://goo.gl/JHfFW
     if (interactiveScript &&
         interactiveScript.readyState === 'interactive') {
-      return interactiveScript;
+      return interactiveScript
     }
 
-    var scripts = head.getElementsByTagName('script');
+    var scripts = head.getElementsByTagName('script')
 
     for (var i = 0; i < scripts.length; i++) {
-      var script = scripts[i];
+      var script = scripts[i]
       if (script.readyState === 'interactive') {
-        interactiveScript = script;
-        return script;
+        interactiveScript = script
+        return script
       }
     }
-  };
-
+  }
 
   util.getScriptAbsoluteSrc = function(node) {
     return node.hasAttribute ? // non-IE6/7
         node.src :
         // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-        node.getAttribute('src', 4);
-  };
+        node.getAttribute('src', 4)
+  }
 
-})(seajs._util, seajs._data, this);
+})(seajs._util, seajs._data, this)
 
 /**
  * References:

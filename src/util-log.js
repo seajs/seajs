@@ -1,23 +1,12 @@
-
 /**
- * @fileoverview The tiny console support.
+ * The tiny console support
  */
-
-(function(util, data) {
-
+;(function(util, config) {
 
   util.log = function() {
-    if (data.config.debug && typeof console !== 'undefined') {
-      console.log(join(arguments));
+    if (config.debug && typeof console !== 'undefined') {
+      console.log(Array.prototype.join.call(arguments, ' '))
     }
-  };
-
-
-  // Helpers
-  // -------
-
-  function join(args) {
-    return Array.prototype.join.call(args, ' ');
   }
 
-})(seajs._util, seajs._data);
+})(seajs._util, seajs._config)

@@ -1,27 +1,32 @@
-
 /**
- * @fileoverview The bootstrap and entrances.
+ * The bootstrap and entrances
  */
+;(function(host, config, fn) {
 
-(function(host, data, fn) {
+  var globalModule = host.globalModule
+
 
   /**
-   * Loads modules to the environment.
-   * @param {Array.<string>} ids An array composed of module id.
-   * @param {function(*)=} callback The callback function.
+   * Loads modules to the environment and executes in callback.
    */
   fn.use = function(ids, callback) {
-    fn.preload(function() {
-      fn.load(ids, callback);
-    });
-  };
+    var preloadMods = config.preload
 
-
-  // data-main
-  var mainModuleId = data.config.main;
-  if (mainModuleId) {
-    fn.use([mainModuleId]);
+    if (preloadMods.length) {
+      // Loads preload modules before all other modules.
+      globalModule._use(preloadMods, function() {
+        config.preload = []
+        globalModule._use(ids, callback)
+      })
+    }
+    else {
+      globalModule._use(ids, callback)
+    }
   }
+
+
+  // Loads the data-main module automatically.
+  config.main && fn.use(config.main)
 
 
   // Parses the pre-call of seajs.config/seajs.use/define.
@@ -32,12 +37,12 @@
         0: 'config',
         1: 'use',
         2: 'define'
-      };
-      for (var i = 0; i < args.length; i += 2) {
-        fn[hash[args[i]]].apply(host, args[i + 1]);
       }
-      delete host._seajs;
+      for (var i = 0; i < args.length; i += 2) {
+        fn[hash[args[i]]].apply(host, args[i + 1])
+      }
+      delete host._seajs
     }
-  })((host._seajs || 0)['args']);
+  })((host._seajs || 0)['args'])
 
-})(seajs, seajs._data, seajs._fn);
+})(seajs, seajs._config, seajs._fn)
