@@ -100,21 +100,6 @@
       return module.exports
     }
 
-    module.exports = {}
-    var factory = module.factory
-
-    if (util.isFunction(factory)) {
-      var ret = factory(require, module.exports, module)
-      if (ret !== undefined) {
-        module.exports = ret
-      }
-    }
-    else if (factory !== undefined) {
-      module.exports = factory
-    }
-
-    module.status = STATUS.COMPILED
-
 
     function require(id) {
       var uri = resolve(id, module.uri)
@@ -148,6 +133,20 @@
     require.cache = cachedModules
 
 
+    module.exports = {}
+    var factory = module.factory
+
+    if (util.isFunction(factory)) {
+      var ret = factory(require, module.exports, module)
+      if (ret !== undefined) {
+        module.exports = ret
+      }
+    }
+    else if (factory !== undefined) {
+      module.exports = factory
+    }
+
+    module.status = STATUS.COMPILED
     return module.exports
   }
 
@@ -180,7 +179,7 @@
     // Removes "", null, undefined in dependencies.
     if (deps) {
       deps = util.filter(deps, function(dep) {
-        return !dep
+        return !!dep
       })
     }
 
