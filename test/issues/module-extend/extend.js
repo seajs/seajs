@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 
     rp.constructor = r;
     r['superclass'] = sp;
-    r['file'] = this.id;
+    r['file'] = this.uri;
 
     // assign constructor property
     if (s !== Object && sp.constructor === Object.prototype.constructor) {

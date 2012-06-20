@@ -73,7 +73,6 @@
     ,'issues/preload'
     ,'issues/remove-comments'
     //,'issues/require-async'
-    ,'issues/require-extend'
     //,'issues/seajs-map'
     ,'issues/slash-in-map'
     ,'issues/timestamp'

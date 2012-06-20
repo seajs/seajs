@@ -712,8 +712,8 @@ seajs._config = {
 
   Module.prototype._load = function(uris, callback) {
     var unLoadedUris = util.filter(uris, function(uri) {
-      return !cachedModules[uri] ||
-          cachedModules[uri].status < STATUS.LOADED
+      return uri && (!cachedModules[uri] ||
+          cachedModules[uri].status < STATUS.LOADED)
     })
 
     if (unLoadedUris.length === 0) {
@@ -843,13 +843,6 @@ seajs._config = {
       deps = util.parseDependencies(factory.toString())
     }
 
-    // Removes "", null, undefined in dependencies.
-    if (deps) {
-      deps = util.filter(deps, function(dep) {
-        return !!dep
-      })
-    }
-
     // Gets url directly for specific modules.
     if (id) {
       var uri = resolve(id)
@@ -876,7 +869,6 @@ seajs._config = {
 
     if (uri) {
       save(uri, module)
-      currentPackageModules.push(module)
     }
     else {
       // Saves information for "memoizing" work in the onload event.
@@ -905,11 +897,11 @@ seajs._config = {
     })
   }
 
+
   var fetchingList = {}
   var fetchedList = {}
   var callbackList = {}
   var anonymousModule = null
-  var currentPackageModules = []
 
   function fetch(uri, callback) {
     var srcUrl = util.parseMap(uri)
@@ -940,14 +932,6 @@ seajs._config = {
             anonymousModule = null
           }
 
-          // Assigns the first module in package to cachedModules[uri]
-          // See: test/issues/un-correspondence
-          module = currentPackageModules[0]
-          if (module && !cachedModules[uri]) {
-            cachedModules[uri] = module
-          }
-          currentPackageModules = []
-
           // Clears
           if (fetchingList[srcUrl]) {
             delete fetchingList[srcUrl]
@@ -971,7 +955,12 @@ seajs._config = {
     // Don't override existed module.
     if (!cachedModules[uri]) {
       module.uri = uri
-      module.dependencies = resolve(module.dependencies, uri)
+
+      module.dependencies = resolve(
+          util.filter(module.dependencies, function(dep) {
+            return !!dep
+          }), uri)
+
       module.status = STATUS.SAVED
       cachedModules[uri] = module
     }

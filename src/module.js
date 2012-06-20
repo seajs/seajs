@@ -44,8 +44,8 @@
 
   Module.prototype._load = function(uris, callback) {
     var unLoadedUris = util.filter(uris, function(uri) {
-      return !cachedModules[uri] ||
-          cachedModules[uri].status < STATUS.LOADED
+      return uri && (!cachedModules[uri] ||
+          cachedModules[uri].status < STATUS.LOADED)
     })
 
     if (unLoadedUris.length === 0) {
@@ -175,13 +175,6 @@
       deps = util.parseDependencies(factory.toString())
     }
 
-    // Removes "", null, undefined in dependencies.
-    if (deps) {
-      deps = util.filter(deps, function(dep) {
-        return !!dep
-      })
-    }
-
     // Gets url directly for specific modules.
     if (id) {
       var uri = resolve(id)
@@ -208,7 +201,6 @@
 
     if (uri) {
       save(uri, module)
-      currentPackageModules.push(module)
     }
     else {
       // Saves information for "memoizing" work in the onload event.
@@ -295,7 +287,12 @@
     // Don't override existed module.
     if (!cachedModules[uri]) {
       module.uri = uri
-      module.dependencies = resolve(module.dependencies, uri)
+
+      module.dependencies = resolve(
+          util.filter(module.dependencies, function(dep) {
+            return !!dep
+          }), uri)
+
       module.status = STATUS.SAVED
       cachedModules[uri] = module
     }

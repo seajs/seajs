@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
 
-  exports.id = module.id;
+  exports.uri = module.uri;
 
 });
