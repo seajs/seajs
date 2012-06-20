@@ -18,6 +18,7 @@
       <path path="util-log.js"/>
       <path path="util-path.js"/>
       <path path="util-fetch.js"/>
+      <path path="util-deps.js"/>
 
       <path path="fn-module.js"/>
       <path path="fn-define.js"/>
