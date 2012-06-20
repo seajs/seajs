@@ -19,11 +19,11 @@ define(function(require) {
   var timestamp = (new Date().getTime() + '').substring(0, 8);
 
   test.assert(debugInitialValue === undefined, 'initial debug value is undefined');
-  test.assert(seajs.debug === 1, 'seajs.debug should be 1');
-  test.assert(a.id.indexOf(timestamp) === -1, a.id);
-  test.assert(b.id.indexOf(timestamp) === -1, b.id);
-  test.assert(c.id.indexOf(timestamp) === -1, c.id);
-  test.assert(d.id.indexOf(timestamp) === -1, d.id);
+  test.assert(seajs.debug === true, 'seajs.debug should be true');
+  test.assert(a.uri.indexOf(timestamp) === -1, a.id);
+  test.assert(b.uri.indexOf(timestamp) === -1, b.id);
+  test.assert(c.uri.indexOf(timestamp) === -1, c.id);
+  test.assert(d.uri.indexOf(timestamp) === -1, d.id);
 
 
   var scripts = document.getElementsByTagName('script');

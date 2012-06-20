@@ -346,7 +346,7 @@ seajs._config = {
     }
     // top-level id
     else {
-      ret = config.base + id
+      ret = config.base + '/' + id
     }
 
     return normalize(ret)
@@ -768,21 +768,6 @@ seajs._config = {
       return module.exports
     }
 
-    module.exports = {}
-    var factory = module.factory
-
-    if (util.isFunction(factory)) {
-      var ret = factory(require, module.exports, module)
-      if (ret !== undefined) {
-        module.exports = ret
-      }
-    }
-    else if (factory !== undefined) {
-      module.exports = factory
-    }
-
-    module.status = STATUS.COMPILED
-
 
     function require(id) {
       var uri = resolve(id, module.uri)
@@ -796,12 +781,11 @@ seajs._config = {
         return null
       }
 
-      child.parent = module
-
       if (isCircular(child)) {
         return child.exports
       }
 
+      child.parent = module
       return child._compile()
     }
 
@@ -816,6 +800,20 @@ seajs._config = {
     require.cache = cachedModules
 
 
+    module.exports = {}
+    var factory = module.factory
+
+    if (util.isFunction(factory)) {
+      var ret = factory(require, module.exports, module)
+      if (ret !== undefined) {
+        module.exports = ret
+      }
+    }
+    else if (factory !== undefined) {
+      module.exports = factory
+    }
+
+    module.status = STATUS.COMPILED
     return module.exports
   }
 
@@ -848,7 +846,7 @@ seajs._config = {
     // Removes "", null, undefined in dependencies.
     if (deps) {
       deps = util.filter(deps, function(dep) {
-        return !dep
+        return !!dep
       })
     }
 
@@ -906,7 +904,6 @@ seajs._config = {
       return resolve(id, refUri)
     })
   }
-
 
   var fetchingList = {}
   var fetchedList = {}
@@ -970,7 +967,6 @@ seajs._config = {
     )
   }
 
-
   function save(uri, module) {
     // Don't override existed module.
     if (!cachedModules[uri]) {
@@ -983,35 +979,43 @@ seajs._config = {
 
 
   function getPureDependencies(module) {
-    var ret = []
+    var uri = module.uri
+    return util.filter(module.dependencies, function(dep) {
+      return !isCircularWaiting(cachedModules[dep], uri)
+    })
+  }
 
-    util.forEach(module.dependencies, function(uri) {
-      var child = cachedModules[uri]
-      var parent = module
+  function isCircularWaiting(module, uri) {
+    if (!module || module.status >= STATUS.LOADED) {
+      return false
+    }
 
-      if (child) {
-        // Removes parent from dependencies to avoid cyclic waiting.
-        while (parent = parent.parent) {
-          if (parent === child) {
-            return
-          }
+    var deps = module.dependencies
+
+    if (deps.length) {
+      if (util.indexOf(deps, uri) > -1) {
+        return true
+      }
+
+      for (var i = 0; i < deps.length; i++) {
+        if (isCircularWaiting(cachedModules[deps[i]], uri)) {
+          return true
         }
       }
 
-      ret.push(uri)
-    })
+      return false
+    }
 
-    return ret
+    return false
   }
-
 
   function isCircular(module) {
     var ret = false
-    var stack = [module.id]
+    var stack = [module.uri]
     var parent = module
 
     while (parent = parent.parent) {
-      stack.unshift(parent.id)
+      stack.unshift(parent.uri)
 
       if (parent === module) {
         ret = true
@@ -1203,7 +1207,7 @@ seajs._config = {
 /**
  * The bootstrap and entrances
  */
-;(function(seajs, config) {
+;(function(seajs, config, global) {
 
   var globalModule = seajs.globalModule
 
@@ -1229,12 +1233,13 @@ seajs._config = {
 
 
   // Loads the data-main module automatically.
+  global.define = seajs.define
   config.main && seajs.use(config.main)
 
 
   // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
-  (function(args) {
+  ;(function(args) {
     if (args) {
       var hash = {
         0: 'config',
@@ -1248,7 +1253,7 @@ seajs._config = {
     }
   })((seajs._seajs || 0)['args'])
 
-})(seajs, seajs._config)
+})(seajs, seajs._config, this)
 /**
  * The public api
  */
@@ -1259,8 +1264,6 @@ seajs._config = {
     global.seajs = seajs._seajs
     return
   }
-
-  global.define = seajs.define
 
 
   // For plugin developers

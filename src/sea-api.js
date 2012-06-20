@@ -9,8 +9,6 @@
     return
   }
 
-  global.define = seajs.define
-
 
   // For plugin developers
   seajs.pluginSDK = {

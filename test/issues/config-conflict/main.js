@@ -15,12 +15,12 @@ define(function(require) {
         'jquery': 'jquery/1.6.2/jquery'
       }
     });
-    passed = false;
-  } catch(ex) {
     passed = true;
+  } catch(ex) {
+    passed = false;
   }
 
-  test.assert(passed, 'throw error when the alias config is conflicted.');
+  test.assert(passed, 'Do not throw error when the alias config is conflicted.');
   test.done();
 
 });

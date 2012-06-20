@@ -113,12 +113,11 @@
         return null
       }
 
-      child.parent = module
-
       if (isCircular(child)) {
         return child.exports
       }
 
+      child.parent = module
       return child._compile()
     }
 
@@ -238,7 +237,6 @@
     })
   }
 
-
   var fetchingList = {}
   var fetchedList = {}
   var callbackList = {}
@@ -301,7 +299,6 @@
     )
   }
 
-
   function save(uri, module) {
     // Don't override existed module.
     if (!cachedModules[uri]) {
@@ -314,35 +311,43 @@
 
 
   function getPureDependencies(module) {
-    var ret = []
+    var uri = module.uri
+    return util.filter(module.dependencies, function(dep) {
+      return !isCircularWaiting(cachedModules[dep], uri)
+    })
+  }
 
-    util.forEach(module.dependencies, function(uri) {
-      var child = cachedModules[uri]
-      var parent = module
+  function isCircularWaiting(module, uri) {
+    if (!module || module.status >= STATUS.LOADED) {
+      return false
+    }
 
-      if (child) {
-        // Removes parent from dependencies to avoid cyclic waiting.
-        while (parent = parent.parent) {
-          if (parent === child) {
-            return
-          }
+    var deps = module.dependencies
+
+    if (deps.length) {
+      if (util.indexOf(deps, uri) > -1) {
+        return true
+      }
+
+      for (var i = 0; i < deps.length; i++) {
+        if (isCircularWaiting(cachedModules[deps[i]], uri)) {
+          return true
         }
       }
 
-      ret.push(uri)
-    })
+      return false
+    }
 
-    return ret
+    return false
   }
-
 
   function isCircular(module) {
     var ret = false
-    var stack = [module.id]
+    var stack = [module.uri]
     var parent = module
 
     while (parent = parent.parent) {
-      stack.unshift(parent.id)
+      stack.unshift(parent.uri)
 
       if (parent === module) {
         ret = true

@@ -178,7 +178,7 @@
     }
     // top-level id
     else {
-      ret = config.base + id
+      ret = config.base + '/' + id
     }
 
     return normalize(ret)

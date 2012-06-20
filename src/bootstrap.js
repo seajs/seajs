@@ -1,7 +1,7 @@
 /**
  * The bootstrap and entrances
  */
-;(function(seajs, config) {
+;(function(seajs, config, global) {
 
   var globalModule = seajs.globalModule
 
@@ -27,12 +27,13 @@
 
 
   // Loads the data-main module automatically.
+  global.define = seajs.define
   config.main && seajs.use(config.main)
 
 
   // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
-  (function(args) {
+  ;(function(args) {
     if (args) {
       var hash = {
         0: 'config',
@@ -46,4 +47,4 @@
     }
   })((seajs._seajs || 0)['args'])
 
-})(seajs, seajs._config)
+})(seajs, seajs._config, this)
