@@ -237,11 +237,11 @@
     })
   }
 
+
   var fetchingList = {}
   var fetchedList = {}
   var callbackList = {}
   var anonymousModule = null
-  var currentPackageModules = []
 
   function fetch(uri, callback) {
     var srcUrl = util.parseMap(uri)
@@ -271,14 +271,6 @@
             save(uri, module)
             anonymousModule = null
           }
-
-          // Assigns the first module in package to cachedModules[uri]
-          // See: test/issues/un-correspondence
-          module = currentPackageModules[0]
-          if (module && !cachedModules[uri]) {
-            cachedModules[uri] = module
-          }
-          currentPackageModules = []
 
           // Clears
           if (fetchingList[srcUrl]) {
