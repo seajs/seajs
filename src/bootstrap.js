@@ -1,15 +1,16 @@
 /**
  * The bootstrap and entrances
  */
-;(function(host, config, fn) {
+;(function(seajs, config) {
 
-  var globalModule = host.globalModule
+  var globalModule = seajs.globalModule
 
 
   /**
    * Loads modules to the environment and executes in callback.
+   * @param {function()=} callback
    */
-  fn.use = function(ids, callback) {
+  seajs.use = function(ids, callback) {
     var preloadMods = config.preload
 
     if (preloadMods.length) {
@@ -26,7 +27,7 @@
 
 
   // Loads the data-main module automatically.
-  config.main && fn.use(config.main)
+  config.main && seajs.use(config.main)
 
 
   // Parses the pre-call of seajs.config/seajs.use/define.
@@ -39,10 +40,10 @@
         2: 'define'
       }
       for (var i = 0; i < args.length; i += 2) {
-        fn[hash[args[i]]].apply(host, args[i + 1])
+        seajs[hash[args[i]]].apply(seajs, args[i + 1])
       }
-      delete host._seajs
+      delete seajs._seajs
     }
-  })((host._seajs || 0)['args'])
+  })((seajs._seajs || 0)['args'])
 
-})(seajs, seajs._config, seajs._fn)
+})(seajs, seajs._config)

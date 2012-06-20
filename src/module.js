@@ -1,7 +1,7 @@
 /**
  * The Module constructor and its methods
  */
-;(function(seajs, util, config, undef) {
+;(function(seajs, util, config) {
 
   var cachedModules = {}
 
@@ -15,12 +15,12 @@
 
   /**
    * The Module constructor
+   * @constructor
    */
-  function Module(id, deps, factory, parent) {
+  function Module(id, deps, factory) {
     this.id = id
     this.dependencies = deps || []
     this.factory = factory
-    this.parent = parent
     this.status = 0
   }
 
@@ -84,6 +84,9 @@
       })(unLoadedUris[i])
     }
 
+    /**
+     * @param {Object=} module
+     */
     function cb(module) {
       module && (module.status = STATUS.LOADED)
       --remain === 0 && callback()
@@ -102,11 +105,11 @@
 
     if (util.isFunction(factory)) {
       var ret = factory(require, module.exports, module)
-      if (ret !== undef) {
+      if (ret !== undefined) {
         module.exports = ret
       }
     }
-    else if (factory !== undef) {
+    else if (factory !== undefined) {
       module.exports = factory
     }
 
@@ -155,17 +158,17 @@
     // define(factory)
     if (argsLength === 1) {
       factory = id
-      id = undef
+      id = undefined
     }
     // define(id || deps, factory)
     else if (argsLength === 2) {
       factory = deps
-      deps = undef
+      deps = undefined
 
       // define(deps, factory)
       if (util.isArray(id)) {
         deps = id
-        id = undef
+        id = undefined
       }
     }
 
@@ -223,6 +226,9 @@
   // Helpers
   // -------
 
+  /**
+   * @param {string=} refUri
+   */
   function resolve(ids, refUri) {
     if (util.isString(ids)) {
       return util.id2Uri(ids, refUri)
@@ -284,7 +290,9 @@
 
           // Calls callbackList
           if (callbackList[srcUrl]) {
-            util.forEach(callbackList[srcUrl], fn)
+            util.forEach(callbackList[srcUrl], function(fn) {
+              fn()
+            })
             delete callbackList[srcUrl]
           }
 
@@ -352,6 +360,7 @@
 
 
   seajs.Module = Module
-  seajs.globalModule = new Module(util.pageUrl)
+  seajs.globalModule = new Module(util.pageUrl, [], {})
+  seajs.define = Module._define
 
 })(seajs, seajs._util, seajs._config)

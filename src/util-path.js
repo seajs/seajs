@@ -64,10 +64,15 @@
    */
   function normalize(url) {
     url = realpath(url)
+    var lastChar = url.charAt(url.length - 1)
+
+    if (lastChar === '/') {
+      return url
+    }
 
     // Adds the default '.js' extension except that the url ends with #.
     // ref: http://jsperf.com/get-the-last-character
-    if (url.charAt(url.length - 1) === '#') {
+    if (lastChar === '#') {
       url = url.slice(0, -1)
     }
     else if (url.indexOf('?') === -1 && !FILE_EXT_RE.test(url)) {
@@ -173,7 +178,7 @@
     }
     // top-level id
     else {
-      ret = config.base + '/' + id
+      ret = config.base + id
     }
 
     return normalize(ret)

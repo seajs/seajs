@@ -22,6 +22,7 @@ define(function(require) {
   test.assert(util.normalize('c?t=20110525') === 'c?t=20110525', 'normalize');
   test.assert(util.normalize('c?t=20110525#') === 'c?t=20110525', 'normalize');
   test.assert(util.normalize('a/b/c.json#') === 'a/b/c.json', 'normalize');
+  test.assert(util.normalize('a/b/') === 'a/b/', 'normalize');
 
   seajs.config({
         alias: {

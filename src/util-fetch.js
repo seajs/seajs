@@ -201,7 +201,7 @@
         node.getAttribute('src', 4)
   }
 
-})(seajs._util, seajs._data, this)
+})(seajs._util, seajs._config, this)
 
 /**
  * References:

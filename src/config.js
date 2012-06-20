@@ -1,53 +1,49 @@
 /**
  * The configuration
  */
-(function(host, util, config, fn) {
+;(function(seajs, util, config) {
 
-  var noCachePrefix = 'seajs-ts=';
-  var noCacheTimeStamp = noCachePrefix + util.now();
+  var noCachePrefix = 'seajs-ts='
+  var noCacheTimeStamp = noCachePrefix + util.now()
 
 
-  // Async inserted script.
-  var loaderScript = document.getElementById('seajsnode');
+  // Async inserted script
+  var loaderScript = document.getElementById('seajs-node')
 
-  // Static script.
+  // Static script
   if (!loaderScript) {
-    var scripts = document.getElementsByTagName('script');
-    loaderScript = scripts[scripts.length - 1];
+    var scripts = document.getElementsByTagName('script')
+    loaderScript = scripts[scripts.length - 1]
   }
 
   var loaderSrc = util.getScriptAbsoluteSrc(loaderScript) ||
-      util.pageUrl; // When sea.js is inline, set base to pageUrl.
+      util.pageUrl // When sea.js is inline, set base to pageUrl.
 
-  var base = util.dirname(loaderSrc);
-  util.loaderDir = base;
+  var base = util.dirname(loaderSrc)
+  util.loaderDir = base
 
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
   // to "http://test.com/libs/"
-  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/)
   if (match) {
-    base = match[1];
+    base = match[1]
   }
 
-  config.base = base;
+  config.base = base
 
 
-  var dataMain = loaderScript.getAttribute('data-main');
+  var dataMain = loaderScript.getAttribute('data-main')
   if (dataMain) {
-    // data-main="abc" is equivalent to data-main="./abc"
-    if (util.isTopLevel(dataMain)) {
-      dataMain = './' + dataMain;
-    }
-    config.main = dataMain;
+    config.main = dataMain
   }
 
 
   // The max time to load a script file.
-  config.timeout = 20000;
+  config.timeout = 20000
 
 
   /**
-   * The function to configure the framework.
+   * The function to configure the framework
    * config({
    *   'base': 'path/to/base',
    *   'alias': {
@@ -62,74 +58,82 @@
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
    *   debug: false
-   * });
+   * })
    *
-   * @param {Object} o The config object.
    */
-  fn.config = function(o) {
+  seajs.config = function(o) {
     for (var k in o) {
-      var previous = config[k];
-      var current = o[k];
+      if (!o.hasOwnProperty(k)) continue
+
+      var previous = config[k]
+      var current = o[k]
 
       if (previous && k === 'alias') {
         for (var p in current) {
           if (current.hasOwnProperty(p)) {
-            checkAliasConflict(previous[p], current[p]);
-            previous[p] = current[p];
+            checkAliasConflict(previous[p], current[p], p)
+            previous[p] = current[p]
           }
         }
       }
       else if (previous && (k === 'map' || k === 'preload')) {
         // for config({ preload: 'some-module' })
-        if (!util.isArray(current)) {
-          current = [current];
+        if (util.isString(current)) {
+          current = [current]
         }
+
         util.forEach(current, function(item) {
-          if (item) { // Ignore empty string.
-            previous.push(item);
+          if (item) {
+            previous.push(item)
           }
-        });
-        // NOTICE: no need to check conflict for map and preload.
+        })
       }
       else {
-        config[k] = current;
+        config[k] = current
       }
     }
 
-    // Make sure config.base is absolute path.
-    var base = config.base;
+    // Makes sure config.base is an absolute path.
+    var base = config.base
     if (base && !util.isAbsolute(base)) {
-      config.base = util.id2Uri('./' + base + '#');
+      config.base = util.id2Uri('./' + base + '/')
     }
 
-    // Use map to implement nocache
+    // Uses map to implement nocache.
     if (config.debug === 2) {
-      config.debug = 1;
-      fn.config({
+      config.debug = 1
+      seajs.config({
         map: [
-          [/.*/, function(url) {
+          [/^.*$/, function(url) {
             if (url.indexOf(noCachePrefix) === -1) {
-              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
+              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
             }
-            return url;
+            return url
           }]
         ]
-      });
+      })
     }
 
-    // Sync
+    debugSync()
+
+    return this
+  }
+
+
+  function debugSync() {
     if (config.debug) {
-      host.debug = config.debug;
-    }
-
-    return this;
-  };
-
-
-  function checkAliasConflict(previous, current) {
-    if (previous && previous !== current) {
-      throw new Error('Alias is conflicted: ' + current);
+      // For convenient reference
+      seajs.debug = !!config.debug
     }
   }
 
-})(seajs, seajs._util, seajs._config, seajs._fn);
+  debugSync()
+
+
+  function checkAliasConflict(previous, current, key) {
+    if (previous && previous !== current) {
+      util.log('Alias is conflicted:', key)
+    }
+  }
+
+})(seajs, seajs._util, seajs._config)

@@ -38,9 +38,3 @@ seajs._config = {
    */
   preload: []
 }
-
-
-/**
- * The inner namespace for methods. Internal use only.
- */
-seajs._fn = {}

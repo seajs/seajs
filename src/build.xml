@@ -20,14 +20,11 @@
       <path path="util-fetch.js"/>
       <path path="util-deps.js"/>
 
-      <path path="fn-module.js"/>
-      <path path="fn-define.js"/>
-      <path path="fn-require.js"/>
-      <path path="fn-load.js"/>
-      <path path="fn-config.js"/>
-
+      <path path="module.js"/>
+      <path path="config.js"/>
       <path path="plugins/plugin-init.js"/>
-      <path path="fn-bootstrap.js"/>
+      <path path="bootstrap.js"/>
+
       <path path="sea-api.js"/>
 
     </concat>
@@ -48,7 +45,7 @@
 
 
   <target name="build"
-          depends="gjslint,concat,common.build,finish">
+          depends="concat,common.build,finish">
   </target>
 
 </project>
