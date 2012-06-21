@@ -869,6 +869,7 @@ seajs._config = {
 
     if (uri) {
       save(uri, module)
+      currentPackageModules.push(module)
     }
     else {
       // Saves information for "memoizing" work in the onload event.
@@ -902,6 +903,7 @@ seajs._config = {
   var fetchedList = {}
   var callbackList = {}
   var anonymousModule = null
+  var currentPackageModules = []
 
   function fetch(uri, callback) {
     var srcUrl = util.parseMap(uri)
@@ -931,6 +933,14 @@ seajs._config = {
             save(uri, module)
             anonymousModule = null
           }
+
+          // Assigns the first module in package to cachedModules[uri]
+          // See: test/issues/un-correspondence
+          module = currentPackageModules[0]
+          if (module && !cachedModules[uri]) {
+            cachedModules[uri] = module
+          }
+          currentPackageModules = []
 
           // Clears
           if (fetchingList[srcUrl]) {
