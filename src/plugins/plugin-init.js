@@ -3,38 +3,16 @@
  */
 ;(function(seajs, util, global) {
 
-  var Module = seajs.Module
-
-
-  var _resolve = Module._resolve
-
-  Module._resolve = function(ids, refUri) {
-    if (util.isString(ids)) {
-
-    }
-  }
-
-  // Registers plugin names.
-  var alias = {}
-  var loaderDir = util.loaderDir
-
-  util.forEach(
-      ['base', 'map', 'text', 'json', 'coffee', 'less'],
-      function(name) {
-        name = 'plugin-' + name
-        alias[name] = loaderDir + name
-      })
-
+  // Sets a alias to `sea.js` directory for loading plugins.
   seajs.config({
-    alias: alias
+    alias: { seajs: util.loaderDir }
   })
 
 
-  // Handles `seajs-debug` switch.
+  // Uses `seajs-debug` flag to turn on debug mode.
   if (global.location.search.indexOf('seajs-debug') > -1 ||
       document.cookie.indexOf('seajs=1') > -1) {
-    seajs.config({ debug: 2, preload: ['plugin-map'] })
+    seajs.config({ debug: 2, preload: ['seajs/plugin-map'] })
   }
-
 
 })(seajs, seajs._util, this)

@@ -212,7 +212,7 @@
 
 
   // For plugin developers
-  Module._resolve = resolve
+  Module._resolve = util.id2Uri
   Module._fetch = util.fetch
   Module._cache = cachedModules
 
@@ -225,7 +225,7 @@
    */
   function resolve(ids, refUri) {
     if (util.isString(ids)) {
-      return util.id2Uri(ids, refUri)
+      return Module._resolve(ids, refUri)
     }
 
     return util.map(ids, function(id) {
