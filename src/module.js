@@ -365,5 +365,6 @@
   seajs.Module = Module
   seajs.globalModule = new Module(util.pageUrl, [], {})
   seajs.define = Module._define
+  Module._cache = cachedModules
 
 })(seajs, seajs._util, seajs._config)
