@@ -3,6 +3,17 @@
  */
 ;(function(seajs, util, global) {
 
+  var Module = seajs.Module
+
+
+  var _resolve = Module._resolve
+
+  Module._resolve = function(ids, refUri) {
+    if (util.isString(ids)) {
+
+    }
+  }
+
   // Registers plugin names.
   var alias = {}
   var loaderDir = util.loaderDir

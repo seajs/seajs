@@ -38,6 +38,9 @@
   }
 
 
+  // The default charset of module file.
+  config.charset = 'utf-8'
+
   // The max time to load a script file.
   config.timeout = 20000
 

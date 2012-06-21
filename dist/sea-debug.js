@@ -879,7 +879,10 @@ seajs._config = {
   }
 
 
+  // For plugin developers
+  Module._resolve = resolve
   Module._fetch = util.fetch
+  Module._cache = cachedModules
 
 
   // Helpers
@@ -1038,7 +1041,6 @@ seajs._config = {
   seajs.Module = Module
   seajs.globalModule = new Module(util.pageUrl, [], {})
   seajs.define = Module._define
-  Module._cache = cachedModules
 
 })(seajs, seajs._util, seajs._config)
 /**
@@ -1080,6 +1082,9 @@ seajs._config = {
     config.main = dataMain
   }
 
+
+  // The default charset of module file.
+  config.charset = 'utf-8'
 
   // The max time to load a script file.
   config.timeout = 20000
@@ -1184,6 +1189,17 @@ seajs._config = {
  * Prepare for plugins environment
  */
 ;(function(seajs, util, global) {
+
+  var Module = seajs.Module
+
+
+  var _resolve = Module._resolve
+
+  Module._resolve = function(ids, refUri) {
+    if (util.isString(ids)) {
+
+    }
+  }
 
   // Registers plugin names.
   var alias = {}
