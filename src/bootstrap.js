@@ -3,8 +3,14 @@
  */
 ;(function(seajs, config, global) {
 
-  var globalModule = seajs.globalModule
+  // Avoids conflicting when sea.js is loaded multi times.
+  if (seajs._seajs) {
+    global.seajs = seajs._seajs
+    return
+  }
 
+
+  var globalModule = seajs.globalModule
 
   /**
    * Loads modules to the environment and executes in callback.
@@ -26,10 +32,19 @@
   }
 
 
-  // Loads the data-main module automatically.
+  // Tweaks public api
   global.define = seajs.define
-  config.main && seajs.use(config.main)
 
+  // For plugin developers
+  seajs.pluginSDK = {
+    Module: seajs.Module,
+    util: seajs._util,
+    config: seajs._config
+  }
+
+
+  // Loads the data-main module automatically.
+  config.main && seajs.use(config.main)
 
   // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
@@ -46,5 +61,14 @@
       delete seajs._seajs
     }
   })((seajs._seajs || 0)['args'])
+
+
+  // Keeps clean!
+  delete seajs.Module
+  delete seajs.define
+  delete seajs.globalModule
+  delete seajs._util
+  delete seajs._config
+  delete seajs._seajs
 
 })(seajs, seajs._config, this)
