@@ -8,7 +8,7 @@
 
 
   // Async inserted script
-  var loaderScript = document.getElementById('seajs-node')
+  var loaderScript = document.getElementById('seajsnode')
 
   // Static script
   if (!loaderScript) {
