@@ -1208,8 +1208,10 @@ seajs._config = {
  */
 ;(function(seajs, config, global) {
 
+  var _seajs = seajs._seajs
+
   // Avoids conflicting when sea.js is loaded multi times.
-  if (seajs._seajs) {
+  if (_seajs && !_seajs.args) {
     global.seajs = seajs._seajs
     return
   }
@@ -1263,9 +1265,8 @@ seajs._config = {
       for (var i = 0; i < args.length; i += 2) {
         seajs[hash[args[i]]].apply(seajs, args[i + 1])
       }
-      delete seajs._seajs
     }
-  })((seajs._seajs || 0)['args'])
+  })((_seajs || 0)['args'])
 
 
   // Keeps clean!
