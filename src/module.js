@@ -298,6 +298,11 @@
     if (!cachedModules[uri]) {
       module.uri = uri
 
+      // Lets anonymous module id equal to its uri.
+      if (!module.id) {
+        module.id = uri
+      }
+
       module.dependencies = resolve(
           util.filter(module.dependencies, function(dep) {
             return !!dep
