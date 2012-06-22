@@ -1,11 +1,15 @@
 /**
- * Prepare for plugins environment
+ * Prepare for debug mode
  */
-;(function(seajs, global) {
+;(function(seajs, util, global) {
+
+  // The safe and consistent version of console.log
+  seajs.log = util.log
+
 
   // Sets a alias to `sea.js` directory for loading plugins.
   seajs.config({
-    alias: { seajs: seajs._util.loaderDir }
+    alias: { seajs: util.loaderDir }
   })
 
 
@@ -20,5 +24,5 @@
     seajs.use = function() { seajs._useArgs.push(arguments); return seajs }
   }
 
-})(seajs, this)
+})(seajs, seajs._util, this)
 

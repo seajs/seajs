@@ -193,8 +193,8 @@
       }
 
       if (!uri) {
-        util.log('** Failed to derive URI from interactive script for:',
-            factory.toString())
+        util.log('Failed to derive URI from interactive script for:',
+            factory.toString(), 'warn')
 
         // NOTE: If the id-deriving methods above is failed, then falls back
         // to use onload event to get the url.
@@ -386,7 +386,7 @@
     }
 
     if (ret) {
-      util.log('** Found circular dependencies:', stack.join(' --> '))
+      util.log('Found circular dependencies:', stack.join(' --> '), 'warn')
     }
 
     return ret

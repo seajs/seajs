@@ -3,9 +3,24 @@
  */
 ;(function(util) {
 
+  var AP = Array.prototype
+
+
+  /**
+   * The safe wrapper of console.log/error/...
+   */
   util.log = function() {
     if (typeof console !== 'undefined') {
-      console.log(Array.prototype.join.call(arguments, ' '))
+      var args = AP.slice.call(arguments)
+
+      var type = 'log'
+      var last = args[args.length - 1]
+      console[last] && (type = args.pop())
+
+      var out = type === 'dir' ? args[0] : AP.join.call(args, ' ')
+      console[type](out)
+
+      return out
     }
   }
 

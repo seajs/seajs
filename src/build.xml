@@ -22,7 +22,7 @@
 
       <path path="module.js"/>
       <path path="config.js"/>
-      <path path="plugins/plugin-init.js"/>
+      <path path="debug.js"/>
       <path path="bootstrap.js"/>
 
     </concat>
@@ -36,8 +36,7 @@
 
     <copy todir="${root.dir}/dist/" overwrite="true">
       <fileset dir="${module.dir}/plugins"
-               includes="plugin-*.js"
-               excludes="plugin-init.js"/>
+               includes="plugin-*.js"/>
     </copy>
   </target>
 

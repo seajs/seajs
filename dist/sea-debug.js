@@ -160,9 +160,24 @@ seajs._config = {
  */
 ;(function(util) {
 
+  var AP = Array.prototype
+
+
+  /**
+   * The safe wrapper of console.log/error/...
+   */
   util.log = function() {
     if (typeof console !== 'undefined') {
-      console.log(Array.prototype.join.call(arguments, ' '))
+      var args = AP.slice.call(arguments)
+
+      var type = 'log'
+      var last = args[args.length - 1]
+      console[last] && (type = args.pop())
+
+      var out = type === 'dir' ? args[0] : AP.join.call(args, ' ')
+      console[type](out)
+
+      return out
     }
   }
 
@@ -476,7 +491,7 @@ seajs._config = {
     }
 
     var timer = setTimeout(function() {
-      util.log('** Time is out:', node.src)
+      util.log('Time is out:', node.src, 'warn')
       cb()
     }, config.timeout)
 
@@ -867,8 +882,8 @@ seajs._config = {
       }
 
       if (!uri) {
-        util.log('** Failed to derive URI from interactive script for:',
-            factory.toString())
+        util.log('Failed to derive URI from interactive script for:',
+            factory.toString(), 'warn')
 
         // NOTE: If the id-deriving methods above is failed, then falls back
         // to use onload event to get the url.
@@ -1060,7 +1075,7 @@ seajs._config = {
     }
 
     if (ret) {
-      util.log('** Found circular dependencies:', stack.join(' --> '))
+      util.log('Found circular dependencies:', stack.join(' --> '), 'warn')
     }
 
     return ret
@@ -1262,22 +1277,28 @@ seajs._config = {
 
   function checkAliasConflict(previous, current, key) {
     if (previous && previous !== current) {
-      util.log('** The alias config is conflicted: key =', '"' + key + '"',
+      util.log('The alias config is conflicted:',
+          'key =', '"' + key + '"',
           'previous =', '"' + previous + '"',
-          'current =', '"' + current + '"')
+          'current =', '"' + current + '"',
+          'warn')
     }
   }
 
 })(seajs, seajs._util, seajs._config)
 
 /**
- * Prepare for plugins environment
+ * Prepare for debug mode
  */
-;(function(seajs, global) {
+;(function(seajs, util, global) {
+
+  // The safe and consistent version of console.log
+  seajs.log = util.log
+
 
   // Sets a alias to `sea.js` directory for loading plugins.
   seajs.config({
-    alias: { seajs: seajs._util.loaderDir }
+    alias: { seajs: util.loaderDir }
   })
 
 
@@ -1292,7 +1313,7 @@ seajs._config = {
     seajs.use = function() { seajs._useArgs.push(arguments); return seajs }
   }
 
-})(seajs, this)
+})(seajs, seajs._util, this)
 
 /**
  * The bootstrap and entrances
