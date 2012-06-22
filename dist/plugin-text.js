@@ -1,12 +1,10 @@
-
 /**
- * @fileoverview The text plugin.
+ * The text plugin to load a module as text content
  */
+define('seajs/plugin-text', function(require) {
 
-define('plugin-text', ['plugin-base'], function(require) {
-
-  var plugin = require('plugin-base');
-  var util = plugin.util;
+  var plugin = require('./plugin-base')
+  var util = plugin.util
 
 
   plugin.add({
@@ -14,14 +12,14 @@ define('plugin-text', ['plugin-base'], function(require) {
 
     ext: ['.tpl', '.htm', '.html'],
 
-    load: function(url, callback) {
+    fetch: function(url, callback) {
       util.xhr(url, function(data) {
-        var str = jsEscape(data);
-        util.globalEval('define("' + str + '")');
-        callback();
-      });
+        var str = jsEscape(data)
+        util.globalEval('define([], "' + str + '")')
+        callback()
+      })
     }
-  });
+  })
 
 
   function jsEscape(s) {
@@ -29,7 +27,7 @@ define('plugin-text', ['plugin-base'], function(require) {
         .replace(/\r/g, "\\r")
         .replace(/\n/g, "\\n")
         .replace(/\t/g, "\\t")
-        .replace(/\f/g, "\\f");
+        .replace(/\f/g, "\\f")
   }
 
 });

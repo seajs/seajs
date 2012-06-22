@@ -1,12 +1,10 @@
-
 /**
- * @fileoverview The json plugin.
+ * The json plugin
  */
+define('seajs/plugin-json', function(require) {
 
-define('plugin-json', ['plugin-base'], function(require) {
-
-  var plugin = require('plugin-base');
-  var util = plugin.util;
+  var plugin = require('./plugin-base')
+  var util = plugin.util
 
 
   plugin.add({
@@ -14,12 +12,12 @@ define('plugin-json', ['plugin-base'], function(require) {
 
     ext: ['.json'],
 
-    load: function(url, callback) {
+    fetch: function(url, callback) {
       util.xhr(url, function(code) {
-        util.globalEval('define(' + code + ')');
-        callback();
-      });
+        util.globalEval('define(' + code + ')')
+        callback()
+      })
     }
-  });
+  })
 
 });

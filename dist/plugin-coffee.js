@@ -1,12 +1,10 @@
-
 /**
- * @fileoverview The CoffeeScript plugin.
+ * The CoffeeScript plugin
  */
+define('seajs/plugin-coffee', function(require) {
 
-define('plugin-coffee', ['plugin-base', 'coffee'], function(require) {
-
-  var plugin = require('plugin-base');
-  var CoffeeScript = require('coffee');
+  var plugin = require('./plugin-base')
+  var CoffeeScript = require('coffee')
 
 
   plugin.add({
@@ -14,9 +12,9 @@ define('plugin-coffee', ['plugin-base', 'coffee'], function(require) {
 
     ext: ['.coffee'],
 
-    load: function(url, callback) {
-      CoffeeScript.load(url, callback);
+    fetch: function(url, callback) {
+      CoffeeScript.load(url, callback)
     }
-  });
+  })
 
 });

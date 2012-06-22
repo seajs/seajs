@@ -1,9 +1,3 @@
-
-seajs.config({
-  preload: ['plugin-text']
-});
-
-
 define(function(require) {
 
   var test = require('../../test');

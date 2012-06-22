@@ -1,28 +1,3 @@
-
-var MODULES_PATH = 'http://modules.seajs.org/';
-
-if (location.href.indexOf('/~lifesinger/') > 0) {
-  MODULES_PATH = 'http://' + location.host + '/~lifesinger/seajs/spm/modules/';
-}
-
-
-seajs.config({
-  debug: 2,
-
-  base: MODULES_PATH,
-
-  alias: {
-    'coffee':  'coffee/1.1.2/coffee-script'
-  },
-
-  map: [
-      ['a2.coffee', 'a.coffee']
-  ],
-
-  preload: ['plugin-coffee']
-});
-
-
 define(function(require) {
 
   var test = require('../../test');

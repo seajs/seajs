@@ -11,7 +11,6 @@
     document.getElementById('out').appendChild(d);
   }
 </script>
-<script src="../../../dist/sea.js" data-main="./main"></script>
 </head>
 <body>
 
@@ -21,5 +20,33 @@
 
 <div id="out"></div>
 
+<script src="../../../dist/sea.js"></script>
+<script>
+
+  var MODULES_PATH = 'http://modules.seajs.org/';
+
+  if (location.href.indexOf('/~lifesinger/') > 0) {
+    MODULES_PATH = 'http://' + location.host + '/~lifesinger/seajs/spm/modules/';
+  }
+
+
+  seajs.config({
+
+    base: MODULES_PATH,
+
+    alias: {
+      'coffee':  'coffee/1.3.3/coffee-script'
+    },
+
+    map: [
+      ['a2.coffee', 'a.coffee']
+    ],
+
+    preload: ['seajs/plugin-coffee']
+  });
+
+  seajs.use('./main');
+
+</script>
 </body>
 </html>
