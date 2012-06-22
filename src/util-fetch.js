@@ -60,7 +60,7 @@
     }
 
     var timer = setTimeout(function() {
-      util.log('Time is out:', node.src)
+      util.log('** Time is out:', node.src)
       cb()
     }, config.timeout)
 

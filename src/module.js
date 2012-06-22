@@ -189,7 +189,7 @@
       }
 
       if (!uri) {
-        util.log('Failed to derive URI from interactive script for:',
+        util.log('** Failed to derive URI from interactive script for:',
             factory.toString())
 
         // NOTE: If the id-deriving methods above is failed, then falls back
@@ -363,7 +363,7 @@
     }
 
     if (ret) {
-      util.log('Found circular dependencies:', stack.join(' --> '))
+      util.log('** Found circular dependencies:', stack.join(' --> '))
     }
 
     return ret

@@ -157,15 +157,15 @@ seajs._config = {
 /**
  * The tiny console support
  */
-;(function(util, config) {
+;(function(util) {
 
   util.log = function() {
-    if (config.debug && typeof console !== 'undefined') {
+    if (typeof console !== 'undefined') {
       console.log(Array.prototype.join.call(arguments, ' '))
     }
   }
 
-})(seajs._util, seajs._config)
+})(seajs._util)
 /**
  * Path utilities for the framework
  */
@@ -473,7 +473,7 @@ seajs._config = {
     }
 
     var timer = setTimeout(function() {
-      util.log('Time is out:', node.src)
+      util.log('** Time is out:', node.src)
       cb()
     }, config.timeout)
 
@@ -857,7 +857,7 @@ seajs._config = {
       }
 
       if (!uri) {
-        util.log('Failed to derive URI from interactive script for:',
+        util.log('** Failed to derive URI from interactive script for:',
             factory.toString())
 
         // NOTE: If the id-deriving methods above is failed, then falls back
@@ -1031,7 +1031,7 @@ seajs._config = {
     }
 
     if (ret) {
-      util.log('Found circular dependencies:', stack.join(' --> '))
+      util.log('** Found circular dependencies:', stack.join(' --> '))
     }
 
     return ret
@@ -1211,8 +1211,9 @@ seajs._config = {
 
   function checkAliasConflict(previous, current, key) {
     if (previous && previous !== current) {
-      util.log('Alias is conflicted:', key,
-          'previous =', previous, 'current =', current)
+      util.log('** The alias config is conflicted: key =', '"' + key + '"',
+          'previous =', '"' + previous + '"',
+          'current =', '"' + current + '"')
     }
   }
 

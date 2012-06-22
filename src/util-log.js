@@ -1,12 +1,12 @@
 /**
  * The tiny console support
  */
-;(function(util, config) {
+;(function(util) {
 
   util.log = function() {
-    if (config.debug && typeof console !== 'undefined') {
+    if (typeof console !== 'undefined') {
       console.log(Array.prototype.join.call(arguments, ' '))
     }
   }
 
-})(seajs._util, seajs._config)
+})(seajs._util)

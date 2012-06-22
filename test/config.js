@@ -39,6 +39,7 @@
     ,'modules/transitive'
     ,'modules/version'
 
+    ,'issues/alias-override'
     ,'issues/anonymous'
     ,'issues/anywhere'
     ,'issues/charset'
@@ -57,6 +58,7 @@
     ,'issues/load-deps'
     ,'issues/local-files'
     ,'issues/map'
+    ,'issues/methods-chain'
     ,'issues/module-extend'
     ,'issues/multi-map'
     ,'issues/multi-preload'
