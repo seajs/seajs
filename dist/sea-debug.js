@@ -669,7 +669,7 @@ seajs._config = {
 /**
  * The Module constructor and its methods
  */
-;(function(seajs, util, config, global) {
+;(function(seajs, util, config) {
 
   var cachedModules = {}
 
@@ -690,6 +690,10 @@ seajs._config = {
     this.dependencies = deps || []
     this.factory = factory
     this.status = 0
+
+    // this.uri is set when saving
+    // this.exports is set when compiling
+    // this.parent is set when compiling
   }
 
 
@@ -1073,7 +1077,7 @@ seajs._config = {
     config: config
   }
 
-})(seajs, seajs._util, seajs._config, this)
+})(seajs, seajs._util, seajs._config)
 /**
  * The configuration
  */

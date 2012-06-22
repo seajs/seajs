@@ -1,7 +1,7 @@
 /**
  * The Module constructor and its methods
  */
-;(function(seajs, util, config, global) {
+;(function(seajs, util, config) {
 
   var cachedModules = {}
 
@@ -22,6 +22,10 @@
     this.dependencies = deps || []
     this.factory = factory
     this.status = 0
+
+    // this.uri is set when saving
+    // this.exports is set when compiling
+    // this.parent is set when compiling
   }
 
 
@@ -405,4 +409,4 @@
     config: config
   }
 
-})(seajs, seajs._util, seajs._config, this)
+})(seajs, seajs._util, seajs._config)

@@ -73,6 +73,7 @@
     ,'issues/plugin-map'
     ,'issues/plugin-text'
     ,'issues/preload'
+    ,'issues/public-api'
     ,'issues/remove-comments'
     ,'issues/require-async'
     ,'issues/seajs-map'
