@@ -76,6 +76,7 @@
     ,'issues/remove-comments'
     ,'issues/require-async'
     ,'issues/seajs-map'
+    ,'issues/seajs-modify'
     ,'issues/slash-in-map'
     ,'issues/timestamp'
     ,'issues/un-correspondence'
