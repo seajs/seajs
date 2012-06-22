@@ -12,37 +12,8 @@
   }
 
 
-  var globalModule = seajs.globalModule
-
-  /**
-   * Loads modules to the environment and executes in callback.
-   * @param {function()=} callback
-   */
-  seajs.use = function(ids, callback) {
-    var preloadMods = config.preload
-
-    if (preloadMods.length) {
-      // Loads preload modules before all other modules.
-      globalModule._use(preloadMods, function() {
-        config.preload = []
-        globalModule._use(ids, callback)
-      })
-    }
-    else {
-      globalModule._use(ids, callback)
-    }
-  }
-
-
-  // Tweaks public api
+  // Assigns to global define.
   global.define = seajs.define
-
-  // For plugin developers
-  seajs.pluginSDK = {
-    Module: seajs.Module,
-    util: seajs._util,
-    config: seajs._config
-  }
 
 
   // Loads the data-main module automatically.
@@ -65,9 +36,7 @@
 
 
   // Keeps clean!
-  delete seajs.Module
   delete seajs.define
-  delete seajs.globalModule
   delete seajs._util
   delete seajs._config
   delete seajs._seajs

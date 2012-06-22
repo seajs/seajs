@@ -1,14 +1,14 @@
 
-(function(factory) {
+;(function(factory) {
 
   if (typeof define === 'function') {
-    define(factory);
+    define(factory)
   }
   else if (typeof exports !== 'undefined') {
-    factory(require, exports);
+    factory(require, exports)
   }
   else {
-    factory(null, this);
+    factory(null, this)
   }
 
 })(function(require, exports) {
@@ -65,15 +65,15 @@
     ,'issues/no-conflict'
     ,'issues/onload'
     ,'issues/parse-deps'
-    //,'issues/plugin-coffee'
-    //,'issues/plugin-json'
-    //,'issues/plugin-less'
-    //,'issues/plugin-map'
-    //,'issues/plugin-text'
+    ,'issues/plugin-coffee'
+    ,'issues/plugin-json'
+    ,'issues/plugin-less'
+    ,'issues/plugin-map'
+    ,'issues/plugin-text'
     ,'issues/preload'
     ,'issues/remove-comments'
-    //,'issues/require-async'
-    //,'issues/seajs-map'
+    ,'issues/require-async'
+    ,'issues/seajs-map'
     ,'issues/slash-in-map'
     ,'issues/timestamp'
     ,'issues/un-correspondence'
@@ -84,8 +84,8 @@
     ,'packages/math'
 
     ,'bootstrap/index'
-  ];
+  ]
 
-  //exports.testCases = ['modules/inline'];
+  //exports.testCases = ['modules/inline']
 
-});
+})

@@ -669,7 +669,7 @@ seajs._config = {
 /**
  * The Module constructor and its methods
  */
-;(function(seajs, util, config) {
+;(function(seajs, util, config, global) {
 
   var cachedModules = {}
 
@@ -1038,11 +1038,42 @@ seajs._config = {
   }
 
 
-  seajs.Module = Module
-  seajs.globalModule = new Module(util.pageUrl, [], {})
+  // Public API
+  // ----------
+
+  var globalModule = new Module(util.pageUrl, [], {})
+
+  /**
+   * Loads modules to the environment and executes in callback.
+   * @param {function()=} callback
+   */
+  seajs.use = function(ids, callback) {
+    var preloadMods = config.preload
+
+    if (preloadMods.length) {
+      // Loads preload modules before all other modules.
+      globalModule._use(preloadMods, function() {
+        config.preload = []
+        globalModule._use(ids, callback)
+      })
+    }
+    else {
+      globalModule._use(ids, callback)
+    }
+
+    return seajs
+  }
+
   seajs.define = Module._define
 
-})(seajs, seajs._util, seajs._config)
+  // For plugin developers
+  seajs.pluginSDK = {
+    Module: Module,
+    util: util,
+    config: config
+  }
+
+})(seajs, seajs._util, seajs._config, this)
 /**
  * The configuration
  */
@@ -1180,7 +1211,8 @@ seajs._config = {
 
   function checkAliasConflict(previous, current, key) {
     if (previous && previous !== current) {
-      util.log('Alias is conflicted:', key)
+      util.log('Alias is conflicted:', key,
+          'previous =', previous, 'current =', current)
     }
   }
 
@@ -1188,21 +1220,26 @@ seajs._config = {
 /**
  * Prepare for plugins environment
  */
-;(function(seajs, util, global) {
+;(function(seajs, global) {
 
   // Sets a alias to `sea.js` directory for loading plugins.
   seajs.config({
-    alias: { seajs: util.loaderDir }
+    alias: { seajs: seajs._util.loaderDir }
   })
 
 
   // Uses `seajs-debug` flag to turn on debug mode.
   if (global.location.search.indexOf('seajs-debug') > -1 ||
       document.cookie.indexOf('seajs=1') > -1) {
-    seajs.config({ debug: 2, preload: ['seajs/plugin-map'] })
+    seajs.config({ debug: 2 }).use('seajs/plugin-map')
+
+    // Delays `seajs.use` calls to the onload of `mapfile`.
+    seajs._use = seajs.use
+    seajs._useArgs = []
+    seajs.use = function() { seajs._useArgs.push(arguments); return seajs }
   }
 
-})(seajs, seajs._util, this)
+})(seajs, this)
 /**
  * The bootstrap and entrances
  */
@@ -1217,37 +1254,8 @@ seajs._config = {
   }
 
 
-  var globalModule = seajs.globalModule
-
-  /**
-   * Loads modules to the environment and executes in callback.
-   * @param {function()=} callback
-   */
-  seajs.use = function(ids, callback) {
-    var preloadMods = config.preload
-
-    if (preloadMods.length) {
-      // Loads preload modules before all other modules.
-      globalModule._use(preloadMods, function() {
-        config.preload = []
-        globalModule._use(ids, callback)
-      })
-    }
-    else {
-      globalModule._use(ids, callback)
-    }
-  }
-
-
-  // Tweaks public api
+  // Assigns to global define.
   global.define = seajs.define
-
-  // For plugin developers
-  seajs.pluginSDK = {
-    Module: seajs.Module,
-    util: seajs._util,
-    config: seajs._config
-  }
 
 
   // Loads the data-main module automatically.
@@ -1270,9 +1278,7 @@ seajs._config = {
 
 
   // Keeps clean!
-  delete seajs.Module
   delete seajs.define
-  delete seajs.globalModule
   delete seajs._util
   delete seajs._config
   delete seajs._seajs

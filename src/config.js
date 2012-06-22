@@ -135,7 +135,8 @@
 
   function checkAliasConflict(previous, current, key) {
     if (previous && previous !== current) {
-      util.log('Alias is conflicted:', key)
+      util.log('Alias is conflicted:', key,
+          'previous =', previous, 'current =', current)
     }
   }
 

@@ -1,7 +1,7 @@
 /**
  * The Module constructor and its methods
  */
-;(function(seajs, util, config) {
+;(function(seajs, util, config, global) {
 
   var cachedModules = {}
 
@@ -370,8 +370,39 @@
   }
 
 
-  seajs.Module = Module
-  seajs.globalModule = new Module(util.pageUrl, [], {})
+  // Public API
+  // ----------
+
+  var globalModule = new Module(util.pageUrl, [], {})
+
+  /**
+   * Loads modules to the environment and executes in callback.
+   * @param {function()=} callback
+   */
+  seajs.use = function(ids, callback) {
+    var preloadMods = config.preload
+
+    if (preloadMods.length) {
+      // Loads preload modules before all other modules.
+      globalModule._use(preloadMods, function() {
+        config.preload = []
+        globalModule._use(ids, callback)
+      })
+    }
+    else {
+      globalModule._use(ids, callback)
+    }
+
+    return seajs
+  }
+
   seajs.define = Module._define
 
-})(seajs, seajs._util, seajs._config)
+  // For plugin developers
+  seajs.pluginSDK = {
+    Module: Module,
+    util: util,
+    config: config
+  }
+
+})(seajs, seajs._util, seajs._config, this)

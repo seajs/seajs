@@ -1,34 +1,53 @@
-
 /**
- * @fileoverview The map plugin for auto responder.
+ * The map plugin for auto responder
  */
+define('seajs/plugin-map', function() {
 
-define('plugin-map', [], function() {
+  var util = seajs.pluginSDK.util
+  var loc = this.location
+  var config = getConfig()
 
-  var config = getConfig();
-  var loc = this.location;
 
-  // Force debug to true when load via ?seajs-debug.
-  if (~loc.search.indexOf('seajs-debug')) {
-    config.debug = 1;
-    config.console = 1;
-    saveConfig(config);
+  // Forces debug to true when url contains `?seajs-debug`
+  if (loc.search.indexOf('seajs-debug') > -1) {
+    config.debug = 1
+    config.console = 1
+    saveConfig(config)
   }
 
-  // Load the map file
-  if (config.map) {
-    document.title = '[debug] - ' + document.title;
+  // Loads the map file
+  if (config.mapfile) {
+    document.title = '[seajs map mode] - ' + document.title
+
+    // Adds the `mapfile` to preload config
     seajs.config({
-      preload: config.map
-    });
+      preload: config.mapfile
+    })
   }
 
-  // Display console
+
+  // Restores the use function
+  seajs.use = seajs._use
+  delete seajs._use
+
+  // Calls pre-called `seajs.use`
+  var args = seajs._useArgs
+  for (var i = 0; i < args.length; i++) {
+    seajs.use(args[i][0], args[i][1])
+  }
+  delete seajs._useArgs
+
+
+  // Shows console
   if (config.console) {
-    displayConsole(config.map);
+    showConsole(config.mapfile)
   }
 
-  function displayConsole(mapfile) {
+
+  // Helpers
+  // -------
+
+  function showConsole(mapfile) {
     var style =
         '#seajs-debug-console { ' +
         '  position: fixed; bottom: 10px; right: 10px; z-index: 999999999;' +
@@ -56,75 +75,75 @@ define('plugin-map', [], function() {
         '}' +
         '#seajs-debug-console a {' +
         '  position: relative; top: 10px; text-decoration: none;' +
-        '}';
+        '}'
 
     var html =
         '<style>' + style + '</style>' +
         '<div id="seajs-debug-console">' +
-        '  <h3>SeaJS Debug Console</h3>' +
+        '  <h3>SeaJS Map Console</h3>' +
         '  <label>Map file: <input value="' + mapfile + '"/></label><br/>' +
         '  <button>Exit</button>' +
         '  <button>Hide</button>' +
         '  <button>Refresh</button>' +
         '  <a href="http://seajs.org/docs/appendix-map-plugin.html"' +
-        ' target="_blank">help</a>' +
-        '</div>';
+        ' target="_blank">?</a>' +
+        '</div>'
 
-    var div = document.createElement('div');
-    div.innerHTML = html;
-    document.body.appendChild(div);
+    var div = document.createElement('div')
+    div.innerHTML = html
+    document.body.appendChild(div)
 
-    var buttons = div.getElementsByTagName('button');
+    var buttons = div.getElementsByTagName('button')
 
     // hide
     buttons[1].onclick = function() {
-      config.console = 0;
-      saveConfig(config);
-      loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''));
-    };
+      config.console = 0
+      saveConfig(config)
+      loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''))
+    }
 
     // refresh
     buttons[2].onclick = function() {
-      var link = div.getElementsByTagName('input')[0].value;
-      if (link.indexOf('://') === -1) {
-        link = 'http://' + link;
+      var link = div.getElementsByTagName('input')[0].value || ''
+      if (link) {
+        link = util.id2Uri(link)
       }
 
-      config.map = link;
-      saveConfig(config);
-      loc.reload();
-    };
+      config.mapfile = link
+      saveConfig(config)
+      loc.reload()
+    }
 
     // exit debug mode
     buttons[0].onclick = function() {
-      config.debug = 0;
-      saveConfig(config);
-      loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''));
-    };
+      config.debug = 0
+      saveConfig(config)
+      loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''))
+    }
   }
 
   function getConfig() {
-    var cookie = '', m;
+    var cookie = '', m
 
     if ((m = document.cookie.match(
         /(?:^| )seajs(?:(?:=([^;]*))|;|$)/))) {
-      cookie = m[1] ? decodeURIComponent(m[1]) : '';
+      cookie = m[1] ? decodeURIComponent(m[1]) : ''
     }
 
-    var parts = cookie.split('`');
+    var parts = cookie.split('`')
     return {
       debug: Number(parts[0]) || 0,
-      map: parts[1] || '',
+      mapfile: parts[1] || '',
       console: Number(parts[2]) || 0
-    };
+    }
   }
 
   function saveConfig(o) {
-    var date = new Date();
-    date.setTime(date.getTime() + 30 * 86400000); // 30 days
+    var date = new Date()
+    date.setTime(date.getTime() + 30 * 86400000) // 30 days
 
-    document.cookie = 'seajs=' + o.debug + '`' + o.map + '`' + o.console +
-        '; expires=' + date.toUTCString();
+    document.cookie = 'seajs=' + o.debug + '`' + o.mapfile + '`' + o.console +
+        '; path=/; expires=' + date.toUTCString()
   }
 
 });

@@ -6,8 +6,8 @@
 
 <script>
 
-  if (parent != self) {
-    document.cookie = 'seajs=1`' + location.href.replace('test.html', 'seajs-map.js');
+  if (this != top) {
+    document.cookie = 'seajs=1`' + location.href.replace('test.html', 'seajs-map.js') + '; path=/'
   }
 
 </script>
