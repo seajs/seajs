@@ -10,6 +10,7 @@ define(function(require, exports, module) {
   // seajs
   test.assert(seajs.config, 'seajs.config')
   test.assert(seajs.use, 'seajs.use')
+  test.assert(seajs.modify, 'seajs.modify')
   test.assert(/\d\.\d\.\d/.test(seajs.version), seajs.version)
   test.assert(seajs.pluginSDK, 'pluginSDK')
   test.assert(getOwnPropertyCount(seajs) === 4, getOwnPropertyCount(seajs))
@@ -57,7 +58,8 @@ define(function(require, exports, module) {
   test.assert(module.parent.parent === undefined, 'module.parent.parent')
   test.assert(module.status === 2, 'module.status')
   test.assert(util.isObject(module.exports), 'module.exports')
-  test.assert(getOwnPropertyCount(module) === 7, getOwnPropertyCount(module))
+  test.assert(util.isFunction(module.require), 'module.require')
+  test.assert(getOwnPropertyCount(module) === 8, getOwnPropertyCount(module))
 
 
   test.done()

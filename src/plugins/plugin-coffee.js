@@ -18,3 +18,4 @@ define('seajs/plugin-coffee', function(require) {
   })
 
 });
+

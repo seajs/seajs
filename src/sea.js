@@ -3,7 +3,6 @@
  * @author lifesinger@gmail.com (Frank Wang)
  */
 
-
 /**
  * Base namespace for the framework.
  */
@@ -38,3 +37,4 @@ seajs._config = {
    */
   preload: []
 }
+

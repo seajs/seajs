@@ -147,3 +147,4 @@ define('seajs/plugin-map', function() {
   }
 
 });
+

@@ -4,6 +4,7 @@
 ;(function(seajs, util, config) {
 
   var cachedModules = {}
+  var cachedModifiers = {}
 
   var STATUS = {
     'FETCHED': 0,  // The module file has been downloaded to the browser.
@@ -136,20 +137,19 @@
     require.cache = cachedModules
 
 
+    module.require = require
     module.exports = {}
     var factory = module.factory
 
     if (util.isFunction(factory)) {
-      var ret = factory(require, module.exports, module)
-      if (ret !== undefined) {
-        module.exports = ret
-      }
+      runInModuleContext(factory, module)
     }
     else if (factory !== undefined) {
       module.exports = factory
     }
 
     module.status = STATUS.COMPILED
+    execModifiers(module)
     return module.exports
   }
 
@@ -224,6 +224,12 @@
   // Helpers
   // -------
 
+  var fetchingList = {}
+  var fetchedList = {}
+  var callbackList = {}
+  var anonymousModule = null
+  var currentPackageModules = []
+
   /**
    * @param {string=} refUri
    */
@@ -236,13 +242,6 @@
       return resolve(id, refUri)
     })
   }
-
-
-  var fetchingList = {}
-  var fetchedList = {}
-  var callbackList = {}
-  var anonymousModule = null
-  var currentPackageModules = []
 
   function fetch(uri, callback) {
     var srcUrl = util.parseMap(uri)
@@ -317,6 +316,26 @@
 
       module.status = STATUS.SAVED
       cachedModules[uri] = module
+    }
+  }
+
+  function runInModuleContext(fn, module) {
+    var ret = fn(module.require, module.exports, module)
+    if (ret !== undefined) {
+      module.exports = ret
+    }
+  }
+
+  function execModifiers(module) {
+    var uri = module.uri
+    var modifiers = cachedModifiers[uri]
+
+    if (modifiers) {
+      util.forEach(modifiers, function(modifier) {
+        runInModuleContext(modifier, module)
+      })
+
+      delete cachedModifiers[uri]
     }
   }
 
@@ -400,6 +419,27 @@
     return seajs
   }
 
+
+  /**
+   * Modifies the exports of a module.
+   */
+  seajs.modify = function(id, modifier) {
+    var uri = resolve(id)
+    var module = cachedModules[uri]
+
+    if (module && module.status === STATUS.COMPILED) {
+      runInModuleContext(modifier, module)
+    }
+    else {
+      cachedModifiers[uri] || (cachedModifiers[uri] = [])
+      cachedModifiers[uri].push(modifier)
+    }
+
+    return seajs
+  }
+
+
+  // For bootstrap
   seajs.define = Module._define
 
   // For plugin developers
@@ -410,3 +450,4 @@
   }
 
 })(seajs, seajs._util, seajs._config)
+

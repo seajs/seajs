@@ -201,12 +201,14 @@
         node.getAttribute('src', 4)
   }
 
+
+  /**
+   * References:
+   *  - http://unixpapa.com/js/dyna.html
+   *  - ../test/research/load-js-css/test.html
+   *  - ../test/issues/load-css/test.html
+   *  - http://www.blaze.io/technical/ies-premature-execution-problem/
+   */
+
 })(seajs._util, seajs._config, this)
 
-/**
- * References:
- *  - http://unixpapa.com/js/dyna.html
- *  - ../test/research/load-js-css/test.html
- *  - ../test/issues/load-css/test.html
- *  - http://www.blaze.io/technical/ies-premature-execution-problem/
- */

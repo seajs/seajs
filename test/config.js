@@ -28,7 +28,6 @@
     ,'modules/hasOwnProperty'
     ,'modules/load'
     ,'modules/math'
-    ,'modules/metadata'
     ,'modules/method'
     ,'modules/missing'
     ,'modules/monkeys'

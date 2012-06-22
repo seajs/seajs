@@ -4,7 +4,6 @@
  * @author lifesinger@gmail.com (Frank Wang)
  */
 
-
 /**
  * Base namespace for the framework.
  */
@@ -39,6 +38,7 @@ seajs._config = {
    */
   preload: []
 }
+
 /**
  * The minimal language enhancement
  */
@@ -154,6 +154,7 @@ seajs._config = {
   }
 
 })(seajs._util)
+
 /**
  * The tiny console support
  */
@@ -166,6 +167,7 @@ seajs._config = {
   }
 
 })(seajs._util)
+
 /**
  * Path utilities for the framework
  */
@@ -411,6 +413,7 @@ seajs._config = {
   util.pageUrl = pageUrl
 
 })(seajs._util, seajs._config, this)
+
 /**
  * Utilities for fetching js and css files.
  */
@@ -614,15 +617,17 @@ seajs._config = {
         node.getAttribute('src', 4)
   }
 
+
+  /**
+   * References:
+   *  - http://unixpapa.com/js/dyna.html
+   *  - ../test/research/load-js-css/test.html
+   *  - ../test/issues/load-css/test.html
+   *  - http://www.blaze.io/technical/ies-premature-execution-problem/
+   */
+
 })(seajs._util, seajs._config, this)
 
-/**
- * References:
- *  - http://unixpapa.com/js/dyna.html
- *  - ../test/research/load-js-css/test.html
- *  - ../test/issues/load-css/test.html
- *  - http://www.blaze.io/technical/ies-premature-execution-problem/
- */
 /**
  * The parser for dependencies
  */
@@ -666,12 +671,14 @@ seajs._config = {
   }
 
 })(seajs._util)
+
 /**
  * The Module constructor and its methods
  */
 ;(function(seajs, util, config) {
 
   var cachedModules = {}
+  var cachedModifiers = {}
 
   var STATUS = {
     'FETCHED': 0,  // The module file has been downloaded to the browser.
@@ -804,20 +811,19 @@ seajs._config = {
     require.cache = cachedModules
 
 
+    module.require = require
     module.exports = {}
     var factory = module.factory
 
     if (util.isFunction(factory)) {
-      var ret = factory(require, module.exports, module)
-      if (ret !== undefined) {
-        module.exports = ret
-      }
+      runInModuleContext(factory, module)
     }
     else if (factory !== undefined) {
       module.exports = factory
     }
 
     module.status = STATUS.COMPILED
+    execModifiers(module)
     return module.exports
   }
 
@@ -892,6 +898,12 @@ seajs._config = {
   // Helpers
   // -------
 
+  var fetchingList = {}
+  var fetchedList = {}
+  var callbackList = {}
+  var anonymousModule = null
+  var currentPackageModules = []
+
   /**
    * @param {string=} refUri
    */
@@ -904,13 +916,6 @@ seajs._config = {
       return resolve(id, refUri)
     })
   }
-
-
-  var fetchingList = {}
-  var fetchedList = {}
-  var callbackList = {}
-  var anonymousModule = null
-  var currentPackageModules = []
 
   function fetch(uri, callback) {
     var srcUrl = util.parseMap(uri)
@@ -985,6 +990,26 @@ seajs._config = {
 
       module.status = STATUS.SAVED
       cachedModules[uri] = module
+    }
+  }
+
+  function runInModuleContext(fn, module) {
+    var ret = fn(module.require, module.exports, module)
+    if (ret !== undefined) {
+      module.exports = ret
+    }
+  }
+
+  function execModifiers(module) {
+    var uri = module.uri
+    var modifiers = cachedModifiers[uri]
+
+    if (modifiers) {
+      util.forEach(modifiers, function(modifier) {
+        runInModuleContext(modifier, module)
+      })
+
+      delete cachedModifiers[uri]
     }
   }
 
@@ -1068,6 +1093,27 @@ seajs._config = {
     return seajs
   }
 
+
+  /**
+   * Modifies the exports of a module.
+   */
+  seajs.modify = function(id, modifier) {
+    var uri = resolve(id)
+    var module = cachedModules[uri]
+
+    if (module && module.status === STATUS.COMPILED) {
+      runInModuleContext(modifier, module)
+    }
+    else {
+      cachedModifiers[uri] || (cachedModifiers[uri] = [])
+      cachedModifiers[uri].push(modifier)
+    }
+
+    return seajs
+  }
+
+
+  // For bootstrap
   seajs.define = Module._define
 
   // For plugin developers
@@ -1078,6 +1124,7 @@ seajs._config = {
   }
 
 })(seajs, seajs._util, seajs._config)
+
 /**
  * The configuration
  */
@@ -1222,6 +1269,7 @@ seajs._config = {
   }
 
 })(seajs, seajs._util, seajs._config)
+
 /**
  * Prepare for plugins environment
  */
@@ -1245,6 +1293,7 @@ seajs._config = {
   }
 
 })(seajs, this)
+
 /**
  * The bootstrap and entrances
  */
@@ -1289,3 +1338,4 @@ seajs._config = {
   delete seajs._seajs
 
 })(seajs, seajs._config, this)
+
