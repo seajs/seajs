@@ -13,7 +13,7 @@ define(function(require, exports, module) {
   test.assert(seajs.modify, 'seajs.modify')
   test.assert(/\d\.\d\.\d/.test(seajs.version), seajs.version)
   test.assert(seajs.pluginSDK, 'pluginSDK')
-  test.assert(getOwnPropertyCount(seajs) === 4, getOwnPropertyCount(seajs))
+  test.assert(getOwnPropertyCount(seajs) === 5, getOwnPropertyCount(seajs))
 
   // seajs.pluginSDK
   var pluginSDK = seajs.pluginSDK
