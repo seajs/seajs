@@ -3,10 +3,33 @@
  */
 ;(function(seajs, util, global) {
 
+  var cachedModules = seajs.cache
+
+
+  /**
+   * Finds the specific modules via string or regexp quickly.
+   */
+  seajs.find = function(selector) {
+    var matches = []
+
+    util.forEach(util.keys(cachedModules), function(uri) {
+      if (util.isString(selector) && uri.indexOf(selector) > -1 ||
+          util.isRegExp(selector) && selector.test(uri)) {
+        var module = cachedModules[uri]
+        module.exports && matches.push(module.exports)
+      }
+    })
+
+    if (matches.length === 1) {
+      matches = matches[0]
+    }
+
+    return matches
+  }
+
+
   // The safe and convenient version of console.log
   seajs.log = util.log
-
-
 
 
   // Sets a alias to `sea.js` directory for loading plugins.

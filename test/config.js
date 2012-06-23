@@ -75,6 +75,8 @@
     ,'issues/public-api'
     ,'issues/remove-comments'
     ,'issues/require-async'
+    ,'issues/seajs-find'
+    ,'issues/seajs-log'
     ,'issues/seajs-map'
     ,'issues/seajs-modify'
     ,'issues/slash-in-map'

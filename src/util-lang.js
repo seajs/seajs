@@ -108,6 +108,23 @@
   }
 
 
+  util.keys = Object.keys
+
+  if (!util.keys) {
+    util.keys = function(o) {
+      var ret = []
+
+      for (var p in o) {
+        if (o.hasOwnProperty(p)) {
+          ret.push(p)
+        }
+      }
+
+      return ret
+    }
+  }
+
+
   util.now = Date.now || function() {
     return new Date().getTime()
   }

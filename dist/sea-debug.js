@@ -149,6 +149,23 @@ seajs._config = {
   }
 
 
+  util.keys = Object.keys
+
+  if (!util.keys) {
+    util.keys = function(o) {
+      var ret = []
+
+      for (var p in o) {
+        if (o.hasOwnProperty(p)) {
+          ret.push(p)
+        }
+      }
+
+      return ret
+    }
+  }
+
+
   util.now = Date.now || function() {
     return new Date().getTime()
   }
@@ -1126,8 +1143,9 @@ seajs._config = {
   }
 
 
-  // For bootstrap
+  // For bootstrap and debug
   seajs.define = Module._define
+  seajs.cache = Module._cache
 
   // For plugin developers
   seajs.pluginSDK = {
@@ -1290,7 +1308,32 @@ seajs._config = {
  */
 ;(function(seajs, util, global) {
 
-  // The safe and consistent version of console.log
+  var cachedModules = seajs.cache
+
+
+  /**
+   * Finds the specific modules via string or regexp quickly.
+   */
+  seajs.find = function(selector) {
+    var matches = []
+
+    util.forEach(util.keys(cachedModules), function(uri) {
+      if (util.isString(selector) && uri.indexOf(selector) > -1 ||
+          util.isRegExp(selector) && selector.test(uri)) {
+        var module = cachedModules[uri]
+        module.exports && matches.push(module.exports)
+      }
+    })
+
+    if (matches.length === 1) {
+      matches = matches[0]
+    }
+
+    return matches
+  }
+
+
+  // The safe and convenient version of console.log
   seajs.log = util.log
 
 
@@ -1298,7 +1341,6 @@ seajs._config = {
   seajs.config({
     alias: { seajs: util.loaderDir }
   })
-
 
   // Uses `seajs-debug` flag to turn on debug mode.
   if (global.location.search.indexOf('seajs-debug') > -1 ||
