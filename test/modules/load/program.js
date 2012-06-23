@@ -1,15 +1,17 @@
 define(function(require) {
 
-  var test = require('../../test');
+  var test = require('../../test')
 
   require.async('./a', function(a) {
-    test.assert(a.foo === 'a', 'test require.async from factory.');
-  });
+    test.assert(a.foo === 'a', 'test require.async from factory.')
+  })
 
-  require.async('./b');
+  require.async('./b')
 
-  require.async('./c.js', function() { // load normal script file.
-    test.done();
-  });
+  // load normal script file
+  require.async('./c.js', function() {
+    test.assert(this.cIsLoaded === true, this.cIsLoaded)
+    test.done()
+  })
 
-});
+})
