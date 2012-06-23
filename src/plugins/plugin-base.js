@@ -44,8 +44,9 @@ define('seajs/plugin-base', [], function(require, exports) {
         else if ((m = id.match(/[^?]*(\.\w+)/))) {
           var ext = m[1]
           for (var k in pluginsInfo) {
+
             if (pluginsInfo.hasOwnProperty(k) &&
-                pluginsInfo[k].ext.join('|').indexOf(ext) > -1) {
+                util.indexOf(pluginsInfo[k].ext, ext) > -1) {
               pluginName = k
               break
             }
