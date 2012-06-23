@@ -19,8 +19,6 @@
 
       var out = type === 'dir' ? args[0] : AP.join.call(args, ' ')
       console[type](out)
-
-      return out
     }
   }
 

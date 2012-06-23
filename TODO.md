@@ -1,5 +1,4 @@
 
- - seajs.log
  - seajs.find
  - utf8-in-gbk test case
  - test case for require.cache ...
