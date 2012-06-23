@@ -1325,8 +1325,13 @@ seajs._config = {
       }
     })
 
-    if (matches.length === 1) {
+    var length = matches.length
+
+    if (length === 1) {
       matches = matches[0]
+    }
+    else if (length === 0) {
+      matches = null
     }
 
     return matches
