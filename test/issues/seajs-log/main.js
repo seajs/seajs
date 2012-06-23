@@ -17,4 +17,6 @@ define(function(require) {
   test.assert(seajs.log('a', 'dir') === undefined, 'dir')
   test.assert(seajs.log({ name: 'a' }, 'dir') === undefined, 'dir')
 
+  test.done()
+  
 })
