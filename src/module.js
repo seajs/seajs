@@ -439,8 +439,9 @@
   }
 
 
-  // For bootstrap
+  // For bootstrap and debug
   seajs.define = Module._define
+  seajs.cache = Module._cache
 
   // For plugin developers
   seajs.pluginSDK = {
