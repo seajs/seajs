@@ -7,10 +7,8 @@ if (location.href.indexOf('/~lifesinger/') > 0) {
 seajs.config({
   base: MODULES_PATH,
 
-  timeout: 10000,
-
   alias: {
-    'jquery': MODULES_PATH + 'jquery/1.7.2/jquery.js'
+    'jquery': '1.7.2'
   }
 });
 

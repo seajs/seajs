@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Issue Test</title>
 <script>
-function printResults(txt, style) {
+  function printResults(txt, style) {
     var d = document.createElement('div');
     d.innerHTML = txt;
     d.className = style;
@@ -14,11 +14,12 @@ function printResults(txt, style) {
 </head>
 <body>
 
+<p><a href="https://github.com/seajs/seajs/issues/188">##188</a></p>
 <div id="out"></div>
 
 <script src="../../../dist/sea.js"></script>
 <script>
-  seajs.config({ alias: { a: './b' } }).use('./main')
+  seajs.use('./main')
 </script>
 
 </body>
