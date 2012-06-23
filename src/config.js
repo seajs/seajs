@@ -41,9 +41,6 @@
   // The default charset of module file.
   config.charset = 'utf-8'
 
-  // The max time to load a script file.
-  config.timeout = 20000
-
 
   /**
    * The function to configure the framework
@@ -59,7 +56,6 @@
    *   ],
    *   preload: [],
    *   charset: 'utf-8',
-   *   timeout: 20000, // 20s
    *   debug: false
    * })
    *

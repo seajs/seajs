@@ -500,22 +500,9 @@ seajs._config = {
 
   function assetOnload(node, callback) {
     if (node.nodeName === 'SCRIPT') {
-      scriptOnload(node, cb)
+      scriptOnload(node, callback)
     } else {
-      styleOnload(node, cb)
-    }
-
-    var timer = setTimeout(function() {
-      util.log('Time is out:', node.src, 'warn')
-      cb()
-    }, config.timeout)
-
-    function cb() {
-      if (!cb.isCalled) {
-        cb.isCalled = true
-        clearTimeout(timer)
-        callback()
-      }
+      styleOnload(node, callback)
     }
   }
 
