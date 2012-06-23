@@ -74,8 +74,18 @@
       if (previous && k === 'alias') {
         for (var p in current) {
           if (current.hasOwnProperty(p)) {
-            checkAliasConflict(previous[p], current[p], p)
-            previous[p] = current[p]
+
+            var prevValue = previous[p]
+            var currValue = current[p]
+
+            // Converts {jquery: '1.7.2'} to {jquery: 'jquery/1.7.2/jquery'}
+            if (/^\d+\.\d+\.\d+$/.test(currValue)) {
+              currValue = p + '/' + currValue + '/' + p
+            }
+
+            checkAliasConflict(prevValue, currValue, p)
+            previous[p] = currValue
+
           }
         }
       }

@@ -39,6 +39,7 @@
     ,'modules/version'
 
     ,'issues/alias-override'
+    ,'issues/alias-shortcuts'
     ,'issues/anonymous'
     ,'issues/anywhere'
     ,'issues/charset'
