@@ -43,6 +43,7 @@
     ,'issues/anywhere'
     ,'issues/charset'
     ,'issues/combo-use'
+    ,'issues/compiling-module'
     ,'issues/config-base'
     ,'issues/config-conflict'
     ,'issues/data-main'

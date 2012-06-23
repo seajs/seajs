@@ -5,6 +5,7 @@
 
   var cachedModules = {}
   var cachedModifiers = {}
+  var compilingModules = []
 
   var STATUS = {
     'FETCHED': 0,  // The module file has been downloaded to the browser.
@@ -142,7 +143,9 @@
     var factory = module.factory
 
     if (util.isFunction(factory)) {
+      compilingModules.push(module)
       runInModuleContext(factory, module)
+      compilingModules.pop()
     }
     else if (factory !== undefined) {
       module.exports = factory
@@ -212,6 +215,11 @@
       anonymousModule = module
     }
 
+  }
+
+
+  Module._getCompilingModule = function() {
+    return compilingModules[compilingModules.length - 1]
   }
 
 

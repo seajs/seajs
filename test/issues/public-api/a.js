@@ -33,7 +33,8 @@ define(function(require, exports, module) {
   test.assert(Module._define, 'Module._define')
   test.assert(Module._fetch, 'Module._fetch')
   test.assert(Module._resolve, 'Module._resolve')
-  test.assert(getOwnPropertyCount(Module) === 4, getOwnPropertyCount(Module))
+  test.assert(Module._getCompilingModule, 'Module._getCompilingModule')
+  test.assert(getOwnPropertyCount(Module) === 5, getOwnPropertyCount(Module))
 
   // seajs.pluginSDK.Module.prototype
   var MP = Module.prototype

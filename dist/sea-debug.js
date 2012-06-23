@@ -718,6 +718,7 @@ seajs._config = {
 
   var cachedModules = {}
   var cachedModifiers = {}
+  var compilingModules = []
 
   var STATUS = {
     'FETCHED': 0,  // The module file has been downloaded to the browser.
@@ -855,7 +856,9 @@ seajs._config = {
     var factory = module.factory
 
     if (util.isFunction(factory)) {
+      compilingModules.push(module)
       runInModuleContext(factory, module)
+      compilingModules.pop()
     }
     else if (factory !== undefined) {
       module.exports = factory
@@ -925,6 +928,11 @@ seajs._config = {
       anonymousModule = module
     }
 
+  }
+
+
+  Module._getCompilingModule = function() {
+    return compilingModules[compilingModules.length - 1]
   }
 
 
