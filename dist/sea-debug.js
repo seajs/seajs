@@ -449,9 +449,10 @@ seajs._config = {
  */
 ;(function(util, config, global) {
 
-  var head = document.head ||
-      document.getElementsByTagName('head')[0] ||
-      document.documentElement
+  var doc = document
+  var head = doc.head ||
+      doc.getElementsByTagName('head')[0] ||
+      doc.documentElement
 
   var baseElement = head.getElementsByTagName('base')[0]
   var isWebKit = navigator.userAgent.indexOf('AppleWebKit') > 0
@@ -632,6 +633,27 @@ seajs._config = {
         node.src :
         // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
         node.getAttribute('src', 4)
+  }
+
+
+  util.importStyle = function(cssText, id) {
+    // Don't add multi times
+    if (id && doc.getElementById(id)) return
+
+    var element = doc.createElement('style')
+    id && (element.id = id)
+
+    // Adds to DOM first to avoid the css hack invalid
+    head.appendChild(element)
+
+    // IE
+    if (element.styleSheet) {
+      element.styleSheet.cssText = cssText
+    }
+    // W3C
+    else {
+      element.appendChild(doc.createTextNode(cssText))
+    }
   }
 
 
@@ -1186,9 +1208,6 @@ seajs._config = {
   // The default charset of module file.
   config.charset = 'utf-8'
 
-  // The max time to load a script file.
-  config.timeout = 20000
-
 
   /**
    * The function to configure the framework
@@ -1204,7 +1223,6 @@ seajs._config = {
    *   ],
    *   preload: [],
    *   charset: 'utf-8',
-   *   timeout: 20000, // 20s
    *   debug: false
    * })
    *
@@ -1333,6 +1351,10 @@ seajs._config = {
 
     return matches
   }
+
+
+  // Creates a stylesheet from a text blob of rules.
+  seajs.importStyle = util.importStyle
 
 
   // The safe and convenient version of console.log

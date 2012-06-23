@@ -33,6 +33,10 @@
   }
 
 
+  // Creates a stylesheet from a text blob of rules.
+  seajs.importStyle = util.importStyle
+
+
   // The safe and convenient version of console.log
   seajs.log = util.log
 
