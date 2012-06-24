@@ -72,10 +72,10 @@
     //code = code.replace(/(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg, '')
 
     // multi-line comments
-    code = code.replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/mg, '\n');
+    code = code.replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '');
 
     // single-line comments
-    code = code.replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/mg, '\n');
+    code = code.replace(/^\s*\/\/.*$/mg, '');
 
     return code;
   }
