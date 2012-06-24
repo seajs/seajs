@@ -1,11 +1,11 @@
 
-define(['../../test', './biz.js'], function(require) {
+define('x2', function() {
+  return { name: 'x2' };
+});
+
+define(function(require) {
 
   var test = require('../../test');
-
-  define('x2', function() {
-    return { name: 'x2' };
-  });
 
   var a = require('biz/a');
   var b = require('biz/b');
