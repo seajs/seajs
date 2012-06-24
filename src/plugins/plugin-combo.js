@@ -10,15 +10,33 @@ define('seajs/plugin-combo', function() {
   // Hacks load function to inject combo support
   // -----------------------------------------------
 
+  var Module = pluginSDK.Module
+  var cachedModules = seajs.cache
+
+
   function hackLoad() {
-    var MP = pluginSDK.Module.prototype
+    var MP = Module.prototype
     var _load = MP._load
 
     MP._load = function(uris, callback) {
-      uris.length > 1 && seajs.config({ map: paths2map(uris2paths(uris)) })
+      setComboMap(uris)
       _load.call(this, uris, callback)
     }
   }
+
+
+  function setComboMap(uris) {
+    // Removes fetched or fetching uri
+    var unFetchingUris = util.filter(uris, function(uri) {
+      var module = cachedModules[uri]
+      return !module || module.status < Module.STATUS.FETCHING
+    })
+
+    if (unFetchingUris.length > 1) {
+      seajs.config({ map: paths2map(uris2paths(unFetchingUris)) })
+    }
+  }
+
 
   // No combo in debug mode
   if (!seajs.debug) hackLoad()
