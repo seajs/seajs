@@ -673,8 +673,8 @@ seajs._config = {
 ;(function(util) {
 
   var DEPS_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
-  var BLOCK_COMMENT_RE = /(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g
-  var LINE_COMMENT_RE = /(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g
+  var BLOCK_COMMENT_RE = /(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/mg
+  var LINE_COMMENT_RE = /(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/mg
 
 
   util.parseDependencies = function(code) {
@@ -699,7 +699,7 @@ seajs._config = {
     return util.unique(ret)
   }
 
-  // http://lifesinger.github.com/lab/2011/remove-comments-safely/
+  // See: research/remove-comments-safely
   function removeComments(code) {
     BLOCK_COMMENT_RE.lastIndex = 0
     LINE_COMMENT_RE.lastIndex = 0
