@@ -46,29 +46,24 @@ define(function(require) {
   test.assert(map[2][1] === map[0][1], map[2][1])
 
 
-  var count = 0
-
   // test seajs.use
   seajs.config({ comboSyntax: ['', '+'] }).use(['./a', './b'], function(a, b) {
     test.assert(a.name === 'a', a.name)
     test.assert(b.name === 'b', b.name)
-    done()
-  })
 
-  // test require.async and deps
-  require.async(['./c', './f'], function(c, f) {
-    test.assert(c.d.name === 'd', c.d.name)
-    test.assert(c.e.name === 'e', c.e.name)
-    test.assert(f.name === 'f', f.name)
-    done()
-  })
+    // test require.async and deps
+    require.async(['./c', './f'], function(c, f) {
+      test.assert(c.d.name === 'd', c.d.name)
+      test.assert(c.e.name === 'e', c.e.name)
 
+      // already loaded modules
+      test.assert(c.a.name === 'a', c.a.name)
+      test.assert(c.b.name === 'b', c.b.name)
 
-  function done() {
-    count++
-    if (count === 2) {
+      test.assert(f.name === 'f', f.name)
+
       test.done()
-    }
-  }
+    })
+  })
 
 })

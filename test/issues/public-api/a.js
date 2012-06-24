@@ -29,6 +29,7 @@ define(function(require, exports, module) {
 
   // seajs.pluginSDK.Module
   var Module = pluginSDK.Module
+  test.assert(Module.STATUS, 'Module.STATUS')
   test.assert(Module._cache, 'Module._cache')
   test.assert(Module._define, 'Module._define')
   test.assert(Module._fetch, 'Module._fetch')

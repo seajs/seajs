@@ -8,23 +8,24 @@
   var compilingModules = []
 
   var STATUS = {
-    'FETCHED': 0,  // The module file has been downloaded to the browser.
-    'SAVED': 1,    // The module info including uri has been saved.
-    'LOADED': 2,   // All dependencies are loaded.
-    'COMPILED': 3  // The module.exports is available.
+    'FETCHING': 1, // The module file is fetching now.
+    'SAVED': 2,    // The module file has been fetched and info has been saved.
+    'LOADED': 3,   // All dependencies are loaded.
+    'COMPILED': 4  // The module.exports is available.
   }
 
 
   /**
    * The Module constructor
    * @constructor
+   * @param {number=} status
    */
-  function Module(id, deps, factory) {
-    this.id = id
-    this.dependencies = deps || []
-    this.factory = factory
-    this.status = 0
+  function Module(uri, status) {
+    this.uri = uri
+    this.status = status || 0
 
+    // this.id is set when saving
+    // this.factory is set when saving
     // this.uri is set when saving
     // this.exports is set when compiling
     // this.parent is set when compiling
@@ -64,12 +65,14 @@
 
     for (var i = 0; i < length; i++) {
       (function(uri) {
-        cachedModules[uri] ? onFetch() : fetch(uri, onFetch)
+        cachedModules[uri] && cachedModules[uri].status >= STATUS.SAVED ?
+            onSaved() :
+            fetch(uri, onSaved)
 
-        function onFetch() {
+        function onSaved() {
           var module = cachedModules[uri]
 
-          if (module) {
+          if (module.status >= STATUS.SAVED) {
             var deps = getPureDependencies(module)
 
             if (deps.length) {
@@ -115,7 +118,7 @@
       //  1. the module file is 404.
       //  2. the module file is not written with valid module format.
       //  3. other error cases.
-      if (!child) {
+      if (!child || child.status < STATUS.LOADED) {
         return null
       }
 
@@ -204,15 +207,15 @@
       }
     }
 
-    var module = new Module(id, deps, factory)
+    var meta = { id: id, dependencies: deps, factory: factory }
 
     if (uri) {
-      save(uri, module)
-      currentPackageModules.push(module)
+      save(uri, meta)
+      currentPackageModules.push(cachedModules[uri])
     }
     else {
       // Saves information for "memoizing" work in the onload event.
-      anonymousModule = module
+      anonymousModuleMeta = meta
     }
 
   }
@@ -227,6 +230,7 @@
   Module._resolve = util.id2Uri
   Module._fetch = util.fetch
   Module._cache = cachedModules
+  Module.STATUS = STATUS
 
 
   // Helpers
@@ -235,7 +239,7 @@
   var fetchingList = {}
   var fetchedList = {}
   var callbackList = {}
-  var anonymousModule = null
+  var anonymousModuleMeta = null
   var currentPackageModules = []
 
   /**
@@ -267,22 +271,25 @@
     fetchingList[srcUrl] = true
     callbackList[srcUrl] = [callback]
 
+    // Saves module status
+    cachedModules[uri] = new Module(uri, STATUS.FETCHING)
+
+    // Fetches it
     Module._fetch(
         srcUrl,
 
         function() {
           fetchedList[srcUrl] = true
 
-          // Saves anonymous module.
-          var module = anonymousModule
-          if (module) {
-            save(uri, module)
-            anonymousModule = null
+          // Saves anonymous module meta data
+          if (anonymousModuleMeta) {
+            save(uri, anonymousModuleMeta)
+            anonymousModuleMeta = null
           }
 
           // Assigns the first module in package to cachedModules[uri]
           // See: test/issues/un-correspondence
-          module = currentPackageModules[0]
+          var module = currentPackageModules[0]
           if (module && !cachedModules[uri]) {
             cachedModules[uri] = module
           }
@@ -307,23 +314,23 @@
     )
   }
 
-  function save(uri, module) {
-    // Don't override existed module.
-    if (!cachedModules[uri]) {
-      module.uri = uri
+  function save(uri, meta) {
+    var module = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
 
-      // Lets anonymous module id equal to its uri.
-      if (!module.id) {
-        module.id = uri
-      }
+    // Don't override already saved module
+    if (module.status < STATUS.SAVED) {
+      // Lets anonymous module id equal to its uri
+      module.id = meta.id || uri
 
       module.dependencies = resolve(
-          util.filter(module.dependencies, function(dep) {
+          util.filter(meta.dependencies || [], function(dep) {
             return !!dep
           }), uri)
 
+      module.factory = meta.factory
+
+      // Updates module status
       module.status = STATUS.SAVED
-      cachedModules[uri] = module
     }
   }
 
@@ -356,7 +363,7 @@
   }
 
   function isCircularWaiting(module, uri) {
-    if (!module || module.status >= STATUS.LOADED) {
+    if (!module || module.status !== STATUS.SAVED) {
       return false
     }
 
@@ -404,7 +411,7 @@
   // Public API
   // ----------
 
-  var globalModule = new Module(util.pageUrl, [], {})
+  var globalModule = new Module(util.pageUrl, STATUS.COMPILED)
 
   /**
    * Loads modules to the environment and executes in callback.
