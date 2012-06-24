@@ -69,6 +69,7 @@
     ,'issues/parse-deps'
     ,'issues/plugin-coffee'
     ,'issues/plugin-json'
+    ,'issues/plugin-combo'
     ,'issues/plugin-extension'
     ,'issues/plugin-less'
     ,'issues/plugin-map'
