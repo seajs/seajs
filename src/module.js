@@ -211,7 +211,6 @@
 
     if (uri) {
       save(uri, meta)
-      currentPackageModules.push(cachedModules[uri])
     }
     else {
       // Saves information for "memoizing" work in the onload event.
@@ -240,7 +239,6 @@
   var fetchedList = {}
   var callbackList = {}
   var anonymousModuleMeta = null
-  var currentPackageModules = []
 
   /**
    * @param {string=} refUri
@@ -286,14 +284,6 @@
             save(uri, anonymousModuleMeta)
             anonymousModuleMeta = null
           }
-
-          // Assigns the first module in package to cachedModules[uri]
-          // See: test/issues/un-correspondence
-          var module = currentPackageModules[0]
-          if (module && !cachedModules[uri]) {
-            cachedModules[uri] = module
-          }
-          currentPackageModules = []
 
           // Clears
           if (fetchingList[srcUrl]) {
