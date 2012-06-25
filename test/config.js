@@ -64,6 +64,7 @@
     ,'issues/multi-map'
     ,'issues/multi-preload'
     ,'issues/multi-use'
+    ,'issues/multi-use-tpl'
     ,'issues/multi-versions'
     ,'issues/no-conflict'
     ,'issues/onload'
