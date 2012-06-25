@@ -175,7 +175,7 @@ seajs._config = {
 /**
  * The tiny console support
  */
-;(function(util) {
+;(function(util, config) {
 
   var AP = Array.prototype
 
@@ -191,12 +191,15 @@ seajs._config = {
       var last = args[args.length - 1]
       console[last] && (type = args.pop())
 
+      // Only show log info in debug mode
+      if (type === 'log' && !config.debug) return
+
       var out = type === 'dir' ? args[0] : AP.join.call(args, ' ')
       console[type](out)
     }
   }
 
-})(seajs._util)
+})(seajs._util, seajs._config)
 
 /**
  * Path utilities for the framework
@@ -977,6 +980,7 @@ seajs._config = {
   var fetchedList = {}
   var callbackList = {}
   var anonymousModuleMeta = null
+  var circularCheckStack = []
 
   /**
    * @param {string=} refUri
@@ -1085,8 +1089,17 @@ seajs._config = {
 
   function getPureDependencies(module) {
     var uri = module.uri
+
     return util.filter(module.dependencies, function(dep) {
-      return !isCircularWaiting(cachedModules[dep], uri)
+      circularCheckStack = [uri]
+
+      var isCircular = isCircularWaiting(cachedModules[dep], uri)
+      if (isCircular) {
+        circularCheckStack.push(uri)
+        printCircularLog(circularCheckStack)
+      }
+
+      return !isCircular
     })
   }
 
@@ -1095,6 +1108,7 @@ seajs._config = {
       return false
     }
 
+    circularCheckStack.push(module.uri)
     var deps = module.dependencies
 
     if (deps.length) {
@@ -1128,11 +1142,15 @@ seajs._config = {
       }
     }
 
-    if (ret) {
-      util.log('Found circular dependencies:', stack.join(' --> '), 'warn')
-    }
-
+    ret && printCircularLog(stack, 'warn')
     return ret
+  }
+
+  /**
+   * @param {string=} type
+   */
+  function printCircularLog(stack, type) {
+    util.log('Found circular dependencies:', stack.join(' --> '), type)
   }
 
 

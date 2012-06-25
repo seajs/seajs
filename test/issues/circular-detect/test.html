@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Issue Test</title>
+<script>
+function printResults(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+    document.getElementById('out').appendChild(d);
+}
+</script>
+</head>
+<body>
+
+<p><a href="https://github.com/seajs/seajs/issues/210">#210</a></p>
+<div id="out"></div>
+
+<script src="../../../dist/sea.js"></script>
+<script>
+
+  seajs.config({
+    'base': './'
+  })
+
+
+  var logStack = []
+  var log = function(msg) { logStack.push(msg) }
+
+  seajs.use(['../../test', 'a'], function(test, a) {
+    a.init()
+
+    test.assert(logStack.join('') === 'abc', logStack.join(' --> '))
+    test.done()
+  })
+
+</script>
+
+</body>
+</html>

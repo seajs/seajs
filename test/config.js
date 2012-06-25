@@ -42,6 +42,7 @@
     ,'issues/anonymous'
     ,'issues/anywhere'
     ,'issues/charset'
+    ,'issues/circular-detect'
     ,'issues/combo-use'
     ,'issues/compiling-module'
     ,'issues/config-base'

@@ -279,6 +279,7 @@
   var fetchedList = {}
   var callbackList = {}
   var anonymousModuleMeta = null
+  var circularCheckStack = []
 
   /**
    * @param {string=} refUri
@@ -387,8 +388,17 @@
 
   function getPureDependencies(module) {
     var uri = module.uri
+
     return util.filter(module.dependencies, function(dep) {
-      return !isCircularWaiting(cachedModules[dep], uri)
+      circularCheckStack = [uri]
+
+      var isCircular = isCircularWaiting(cachedModules[dep], uri)
+      if (isCircular) {
+        circularCheckStack.push(uri)
+        printCircularLog(circularCheckStack)
+      }
+
+      return !isCircular
     })
   }
 
@@ -397,6 +407,7 @@
       return false
     }
 
+    circularCheckStack.push(module.uri)
     var deps = module.dependencies
 
     if (deps.length) {
@@ -430,11 +441,15 @@
       }
     }
 
-    if (ret) {
-      util.log('Found circular dependencies:', stack.join(' --> '), 'warn')
-    }
-
+    ret && printCircularLog(stack, 'warn')
     return ret
+  }
+
+  /**
+   * @param {string=} type
+   */
+  function printCircularLog(stack, type) {
+    util.log('Found circular dependencies:', stack.join(' --> '), type)
   }
 
 
