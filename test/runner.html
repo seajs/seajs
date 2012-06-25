@@ -27,6 +27,9 @@
     if (location.search.indexOf('autorun') !== -1) {
       startRun();
     }
+
+    var ua = document.getElementById('ua');
+    ua.innerHTML = navigator.userAgent;
   };
 
 
@@ -126,6 +129,7 @@
   </div>
   <div id="reporter"></div>
   <button id="start">Start</button>
+  <p id="ua"></p>
 </div>
 
 </body>
