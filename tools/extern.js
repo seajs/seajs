@@ -1,2 +1,3 @@
 // extern file for google closure compiler
-var console;
+var console
+var seajs

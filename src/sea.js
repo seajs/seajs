@@ -6,7 +6,7 @@
 /**
  * Base namespace for the framework.
  */
-var seajs = { _seajs: seajs }
+this.seajs = { _seajs: this.seajs }
 
 
 /**

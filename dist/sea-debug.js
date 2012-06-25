@@ -7,7 +7,7 @@
 /**
  * Base namespace for the framework.
  */
-var seajs = { _seajs: seajs }
+this.seajs = { _seajs: this.seajs }
 
 
 /**
@@ -1388,7 +1388,7 @@ seajs._config = {
   var _seajs = seajs._seajs
 
   // Avoids conflicting when sea.js is loaded multi times.
-  if (_seajs && !_seajs.args) {
+  if (_seajs && !_seajs['args']) {
     global.seajs = seajs._seajs
     return
   }

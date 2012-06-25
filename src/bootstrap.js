@@ -6,7 +6,7 @@
   var _seajs = seajs._seajs
 
   // Avoids conflicting when sea.js is loaded multi times.
-  if (_seajs && !_seajs.args) {
+  if (_seajs && !_seajs['args']) {
     global.seajs = seajs._seajs
     return
   }

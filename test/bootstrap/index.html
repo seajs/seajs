@@ -37,11 +37,11 @@
 
 
   seajs.use('../test', function(test) {
-    var n = 9;
+    var n = 7;
 
     window.next = function() {
       if (--n === 0) {
-        test.assert(testCount === 12, testCount);
+        test.assert(testCount === 10, testCount);
         test.done();
       }
     };
@@ -51,9 +51,6 @@
 
     createIframe('async-1.html');
     createIframe('async-2.html');
-
-    createIframe('inline-1.html');
-    createIframe('inline-2.html');
 
     createIframe('multi-1.html');
     createIframe('multi-2.html');
