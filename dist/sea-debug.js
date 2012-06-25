@@ -474,9 +474,7 @@ seajs._config = {
 
     if (charset) {
       var cs = util.isFunction(charset) ? charset(url) : charset
-      if (cs) {
-        node.charset = cs
-      }
+      cs && (node.charset = cs)
     }
 
     assetOnload(node, callback || noop)
@@ -539,7 +537,7 @@ seajs._config = {
   function styleOnload(node, callback) {
 
     // for IE6-9 and Opera
-    if (global.hasOwnProperty('attachEvent')) { // see #208
+    if (node.attachEvent || global.opera) {
       node.attachEvent('onload', callback)
       // NOTICE:
       // 1. "onload" will be fired in IE6-9 when the file is 404, but in
