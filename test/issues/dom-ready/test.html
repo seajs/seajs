@@ -22,10 +22,10 @@ function printResults(txt, style) {
 
 <script src="../../../dist/sea.js"></script>
 <script>
-  var onLoaded = false
+  var onloadTime = 0
 
   window.onload = function() {
-    onLoaded = true
+    onloadTime = new Date().getTime()
   }
 
   seajs.use('./main')
