@@ -1,20 +1,47 @@
 define(function(require) {
 
-  var test = require('../../test');
+  var test = require('../../test')
 
-  var compatibleElement = document.getElementsByTagName('meta')[1];
-  var baseElement = document.getElementsByTagName('base')[0];
+  var compatibleElement = document.getElementsByTagName('meta')[1]
+  var baseElement = document.getElementsByTagName('base')[0]
 
-  var firstScript = document.getElementsByTagName('script')[0];
-  var secondScript = document.getElementsByTagName('script')[1];
+  var head = document.getElementsByTagName('head')[0]
+  var scripts = head.getElementsByTagName('script')
+  
+  var firstScript = scripts[0]
+  var lastScript = scripts[scripts.length - 1]
 
-  var nextElement = compatibleElement.nextSibling.nextSibling;
-  test.assert(nextElement === firstScript, 'script after compatible meta');
+  var nextElement = nextSiblingElement(compatibleElement)
+  test.assert(nextElement === firstScript, 'script after compatible meta')
 
 
-  var prevElement = baseElement.previousSibling;
-  test.assert(prevElement === secondScript, 'script before base element');
+  var prevElement = previousSiblingElement(baseElement)
+  test.assert(prevElement === lastScript, 'script before base element')
 
-  test.done();
+  test.done()
+
+
+  function nextSiblingElement(node) {
+    var sibling = node
+
+    do {
+      sibling = sibling.nextSibling
+    }
+    while (sibling && sibling.nodeType !== 1)
+
+    return sibling
+  }
+
+
+  function previousSiblingElement(node) {
+    var sibling = node
+
+    do {
+      sibling = sibling.previousSibling
+    }
+    while (sibling && sibling.nodeType !== 1)
+
+    return sibling
+  }
 
 });
