@@ -1,8 +1,10 @@
 define(function(require) {
 
   var test = require('../../test')
+  var oldIE = !!this.attachEvent
 
-  test.assert(seajs.log('seajs.log test', 'group') === undefined, 'group')
+
+  oldIE || test.assert(seajs.log('seajs.log test', 'group') === undefined, 'group')
 
   test.assert(seajs.log('a') === undefined, 'log')
   test.assert(seajs.log('a', 'b') === undefined, 'log')
@@ -14,10 +16,10 @@ define(function(require) {
   test.assert(seajs.log('a', 'time') === undefined, 'time')
   test.assert(seajs.log('a', 'timeEnd') === undefined, 'timeEnd')
 
-  test.assert(seajs.log('a', 'dir') === undefined, 'dir')
-  test.assert(seajs.log({ name: 'a' }, 'dir') === undefined, 'dir')
+  oldIE || test.assert(seajs.log('a', 'dir') === undefined, 'dir')
+  oldIE || test.assert(seajs.log({ name: 'a' }, 'dir') === undefined, 'dir')
 
-  test.assert(seajs.log('seajs.log test', 'groupEnd') === undefined, 'groupEnd')
+  oldIE || test.assert(seajs.log('seajs.log test', 'groupEnd') === undefined, 'groupEnd')
 
   test.done()
 
