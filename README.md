@@ -1,4 +1,3 @@
-
 A Module Loader for the Web
 ===
 
@@ -11,4 +10,4 @@ Checkout the official SeaJS docs site at <http://seajs.org/>.
 
 ## License
 
-SeaJS is available under the terms of the [MIT license](http://seajs.org/LICENSE.txt).
+SeaJS is available under the terms of the [MIT license](http://seajs.org/LICENSE.md).
