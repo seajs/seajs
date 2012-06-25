@@ -229,10 +229,11 @@ seajs._config = {
    * realpath('./a//b/../c') ==> 'a/c'
    */
   function realpath(path) {
+    MULTIPLE_SLASH_RE.lastIndex = 0
+
     // 'file:///a//b/c' ==> 'file:///a/b/c'
     // 'http://a//b/c' ==> 'http://a/b/c'
     if (MULTIPLE_SLASH_RE.test(path)) {
-      MULTIPLE_SLASH_RE.lastIndex = 0
       path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
     }
 
