@@ -19,7 +19,7 @@
   // Uses `seajs-debug` flag to turn on debug mode.
   if (global.location.search.indexOf('seajs-debug') > -1 ||
       document.cookie.indexOf('seajs=1') > -1) {
-    seajs.config({ debug: 2 }).use('seajs/plugin-map')
+    seajs.config({ debug: 2 }).use('seajs/plugin-debug')
 
     // Delays `seajs.use` calls to the onload of `mapfile`.
     seajs._use = seajs.use

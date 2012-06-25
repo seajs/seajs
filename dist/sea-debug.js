@@ -475,7 +475,7 @@ seajs._config = {
       }
     }
 
-    assetOnload(node, callback)
+    assetOnload(node, callback || noop)
 
     if (isCSS) {
       node.rel = 'stylesheet'
@@ -512,25 +512,12 @@ seajs._config = {
     node.onload = node.onerror = node.onreadystatechange = function() {
       if (READY_STATE_RE.test(node.readyState)) {
 
-        // Ensure only run once
+        // Ensure only run once and handle memory leak in IE
         node.onload = node.onerror = node.onreadystatechange = null
 
-        // Reduce memory leak
-        if (node.parentNode) {
-          try {
-            if (node.clearAttributes) {
-              node.clearAttributes()
-            }
-            else {
-              for (var p in node) delete node[p]
-            }
-          } catch (x) {
-          }
-
-          // Remove the script
-          if (!config.debug) {
-            head.removeChild(node)
-          }
+        // Remove the script to reduce memory leak
+        if (node.parentNode && !config.debug) {
+          head.removeChild(node)
         }
 
         // Dereference the node
@@ -599,6 +586,9 @@ seajs._config = {
         poll(node, callback)
       }
     }, 1)
+  }
+
+  function noop() {
   }
 
 
@@ -1363,7 +1353,7 @@ seajs._config = {
   // Uses `seajs-debug` flag to turn on debug mode.
   if (global.location.search.indexOf('seajs-debug') > -1 ||
       document.cookie.indexOf('seajs=1') > -1) {
-    seajs.config({ debug: 2 }).use('seajs/plugin-map')
+    seajs.config({ debug: 2 }).use('seajs/plugin-debug')
 
     // Delays `seajs.use` calls to the onload of `mapfile`.
     seajs._use = seajs.use

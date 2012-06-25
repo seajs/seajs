@@ -29,7 +29,7 @@
       }
     }
 
-    assetOnload(node, callback)
+    assetOnload(node, callback || noop)
 
     if (isCSS) {
       node.rel = 'stylesheet'
@@ -66,25 +66,12 @@
     node.onload = node.onerror = node.onreadystatechange = function() {
       if (READY_STATE_RE.test(node.readyState)) {
 
-        // Ensure only run once
+        // Ensure only run once and handle memory leak in IE
         node.onload = node.onerror = node.onreadystatechange = null
 
-        // Reduce memory leak
-        if (node.parentNode) {
-          try {
-            if (node.clearAttributes) {
-              node.clearAttributes()
-            }
-            else {
-              for (var p in node) delete node[p]
-            }
-          } catch (x) {
-          }
-
-          // Remove the script
-          if (!config.debug) {
-            head.removeChild(node)
-          }
+        // Remove the script to reduce memory leak
+        if (node.parentNode && !config.debug) {
+          head.removeChild(node)
         }
 
         // Dereference the node
@@ -153,6 +140,9 @@
         poll(node, callback)
       }
     }, 1)
+  }
+
+  function noop() {
   }
 
 

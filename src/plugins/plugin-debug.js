@@ -1,15 +1,16 @@
 /**
  * The map plugin for auto responder
  */
-define('seajs/plugin-map', function() {
+define('seajs/plugin-debug', function() {
 
   var util = seajs.pluginSDK.util
   var loc = this.location
+  var search = loc.search
   var config = getConfig()
 
 
   // Forces debug to true when url contains `?seajs-debug`
-  if (loc.search.indexOf('seajs-debug') > -1) {
+  if (search.indexOf('seajs-debug') > -1) {
     config.debug = 1
     config.console = 1
     saveConfig(config)
@@ -17,7 +18,7 @@ define('seajs/plugin-map', function() {
 
   // Loads the map file
   if (config.mapfile) {
-    document.title = '[seajs map mode] - ' + document.title
+    document.title = '[seajs debug mode] - ' + document.title
 
     // Adds the `mapfile` to preload config
     seajs.config({
@@ -41,6 +42,12 @@ define('seajs/plugin-map', function() {
   // Shows console
   if (config.console) {
     showConsole(config.mapfile)
+  }
+
+
+  // Loads firebug-lite
+  if (search.indexOf('firebug-lite') > -1) {
+    util.fetch('https://getfirebug.com/firebug-lite.js')
   }
 
 
@@ -80,13 +87,11 @@ define('seajs/plugin-map', function() {
     var html =
         '<style>' + style + '</style>' +
         '<div id="seajs-debug-console">' +
-        '  <h3>SeaJS Map Console</h3>' +
+        '  <h3>SeaJS Debug Console</h3>' +
         '  <label>Map file: <input value="' + mapfile + '"/></label><br/>' +
         '  <button>Exit</button>' +
         '  <button>Hide</button>' +
         '  <button>Refresh</button>' +
-        '  <a href="http://seajs.org/docs/appendix-map-plugin.html"' +
-        ' target="_blank">?</a>' +
         '</div>'
 
     var div = document.createElement('div')
