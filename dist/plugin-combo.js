@@ -40,7 +40,7 @@ define('seajs/plugin-combo', function() {
 
   // No combo in debug mode
   if (seajs.debug) {
-    seajs.log('Combo is turned off in debug mode', 'warn')
+    seajs.log('Combo is turned off in debug mode')
   } else {
     hackLoad()
   }
