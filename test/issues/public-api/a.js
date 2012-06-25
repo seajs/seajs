@@ -30,12 +30,14 @@ define(function(require, exports, module) {
   // seajs.pluginSDK.Module
   var Module = pluginSDK.Module
   test.assert(Module.STATUS, 'Module.STATUS')
-  test.assert(Module._cache, 'Module._cache')
-  test.assert(Module._define, 'Module._define')
-  test.assert(Module._fetch, 'Module._fetch')
   test.assert(Module._resolve, 'Module._resolve')
+  test.assert(Module._fetch, 'Module._fetch')
+  test.assert(Module._define, 'Module._define')
   test.assert(Module._getCompilingModule, 'Module._getCompilingModule')
-  test.assert(getOwnPropertyCount(Module) === 6, getOwnPropertyCount(Module))
+  test.assert(Module.cache, 'Module.cache')
+  test.assert(Module._find, 'Module._find')
+  test.assert(Module._modify, 'Module._modify')
+  test.assert(getOwnPropertyCount(Module) === 8, getOwnPropertyCount(Module))
 
   // seajs.pluginSDK.Module.prototype
   var MP = Module.prototype
@@ -46,7 +48,7 @@ define(function(require, exports, module) {
 
   // require
   test.assert(typeof require === 'function', 'require')
-  test.assert(require.cache === Module._cache, 'require.cache')
+  test.assert(require.cache === Module.cache, 'require.cache')
   test.assert(require.resolve, 'require.resolve')
   test.assert(require.async, 'require.async')
   test.assert(getOwnPropertyCount(require) === 3, getOwnPropertyCount(require))

@@ -5,7 +5,7 @@
 
   var cachedModules = {}
   var cachedModifiers = {}
-  var compilingModules = []
+  var compileStack = []
 
   var STATUS = {
     'FETCHING': 1, // The module file is fetching now.
@@ -146,9 +146,9 @@
     var factory = module.factory
 
     if (util.isFunction(factory)) {
-      compilingModules.push(module)
+      compileStack.push(module)
       runInModuleContext(factory, module)
-      compilingModules.pop()
+      compileStack.pop()
     }
     else if (factory !== undefined) {
       module.exports = factory
@@ -221,15 +221,55 @@
 
 
   Module._getCompilingModule = function() {
-    return compilingModules[compilingModules.length - 1]
+    return compileStack[compileStack.length - 1]
+  }
+
+
+  Module._find = function(selector) {
+    var matches = []
+
+    util.forEach(util.keys(cachedModules), function(uri) {
+      if (util.isString(selector) && uri.indexOf(selector) > -1 ||
+          util.isRegExp(selector) && selector.test(uri)) {
+        var module = cachedModules[uri]
+        module.exports && matches.push(module.exports)
+      }
+    })
+
+    var length = matches.length
+
+    if (length === 1) {
+      matches = matches[0]
+    }
+    else if (length === 0) {
+      matches = null
+    }
+
+    return matches
+  }
+
+
+  Module._modify = function(id, modifier) {
+    var uri = resolve(id)
+    var module = cachedModules[uri]
+
+    if (module && module.status === STATUS.COMPILED) {
+      runInModuleContext(modifier, module)
+    }
+    else {
+      cachedModifiers[uri] || (cachedModifiers[uri] = [])
+      cachedModifiers[uri].push(modifier)
+    }
+
+    return seajs
   }
 
 
   // For plugin developers
+  Module.STATUS = STATUS
   Module._resolve = util.id2Uri
   Module._fetch = util.fetch
-  Module._cache = cachedModules
-  Module.STATUS = STATUS
+  Module.cache = cachedModules
 
 
   // Helpers
@@ -425,28 +465,12 @@
   }
 
 
-  /**
-   * Modifies the exports of a module.
-   */
-  seajs.modify = function(id, modifier) {
-    var uri = resolve(id)
-    var module = cachedModules[uri]
-
-    if (module && module.status === STATUS.COMPILED) {
-      runInModuleContext(modifier, module)
-    }
-    else {
-      cachedModifiers[uri] || (cachedModifiers[uri] = [])
-      cachedModifiers[uri].push(modifier)
-    }
-
-    return seajs
-  }
-
-
-  // For bootstrap and debug
+  // For normal users
   seajs.define = Module._define
-  seajs.cache = Module._cache
+  seajs.cache = Module.cache
+  seajs.find = Module._find
+  seajs.modify = Module._modify
+
 
   // For plugin developers
   seajs.pluginSDK = {

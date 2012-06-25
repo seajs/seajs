@@ -1,4 +1,6 @@
-define(function(require, exports) {
+define(function(require, exports, module) {
+
+  var Module = module.constructor
 
 
   exports.inherits = function(ctor, superCtor) {
@@ -6,7 +8,7 @@ define(function(require, exports) {
     ctor.prototype = createProto(superCtor.prototype)
 
     // Adds meta info
-    var compilingModule = seajs.pluginSDK.Module._getCompilingModule()
+    var compilingModule = Module._getCompilingModule()
     var filename = compilingModule.uri.split(/[\/\\]/).pop()
 
     if (Object.defineProperties) {
