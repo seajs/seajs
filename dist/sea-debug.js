@@ -1,4 +1,4 @@
-/* SeaJS v1.2.0 | seajs.org | MIT Licensed */
+/* SeaJS v1.1.8 | seajs.org | MIT Licensed */
 /**
  * A Module Loader for the Web
  * @author lifesinger@gmail.com (Frank Wang)
@@ -14,7 +14,7 @@ this.seajs = { _seajs: this.seajs }
  * The version of the framework. It will be replaced with "major.minor.patch"
  * when building.
  */
-seajs.version = '1.2.0'
+seajs.version = '1.1.8'
 
 
 /**
