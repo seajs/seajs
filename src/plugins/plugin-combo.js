@@ -39,7 +39,11 @@ define('seajs/plugin-combo', function() {
 
 
   // No combo in debug mode
-  if (!seajs.debug) hackLoad()
+  if (seajs.debug) {
+    seajs.log('Combo is turned off in debug mode', 'warn')
+  } else {
+    hackLoad()
+  }
 
 
   // Uses map to implement combo support
@@ -208,8 +212,8 @@ define('seajs/plugin-combo', function() {
   util.toComboPaths = uris2paths
   util.toComboMap = paths2map
 
-});
+})
 
 // Runs it immediately
-seajs.use('seajs/plugin-combo')
+seajs.use('seajs/plugin-combo');
 
