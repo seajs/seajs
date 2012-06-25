@@ -7,7 +7,7 @@ define(function(require) {
 
   var head = document.getElementsByTagName('head')[0]
   var scripts = head.getElementsByTagName('script')
-  
+
   var firstScript = scripts[0]
   var lastScript = scripts[scripts.length - 1]
 
