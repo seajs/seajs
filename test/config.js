@@ -91,7 +91,6 @@
     ,'issues/utf8-in-gbk'
     ,'issues/x-ua-compatible'
 
-    ,'runtime/base'
     ,'runtime/math'
 
     ,'bootstrap/index'
