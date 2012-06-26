@@ -1,5 +1,5 @@
 /**
- * The combo plugin for apache modconcat or nginx http concat
+ * The combo plugin for http concat module
  */
 define('seajs/plugin-combo', [], function() {
 
