@@ -91,12 +91,10 @@
     ,'issues/utf8-in-gbk'
     ,'issues/x-ua-compatible'
 
-    ,'packages/base'
-    ,'packages/math'
+    ,'runtime/base'
+    ,'runtime/math'
 
     ,'bootstrap/index'
   ]
-
-  //exports.testCases = ['modules/inline']
 
 })
