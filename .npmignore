@@ -6,6 +6,7 @@ CNAME
 *.ico
 *.html
 *.md
+*.xml
 *.iml
 .*
 *~
