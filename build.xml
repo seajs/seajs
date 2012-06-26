@@ -7,7 +7,7 @@
   <property name="tmp.dir" location="${dist.dir}/tmp/"/>
 
   <property name="module.name" value="sea"/>
-  <property name="version" value="1.1.8"/>
+  <property name="version" value="1.2.0"/>
 
   <property name="tools.dir" location="${root.dir}/tools/"/>
   <property name="gcc.jar" location="${tools.dir}/compiler.jar"/>
@@ -15,13 +15,14 @@
 
   <property name="src.file" value="${tmp.dir}/${module.name}-src.js"/>
   <property name="debug.file" value="${dist.dir}/${module.name}-debug.js"/>
-  <property name="min.file" value="${tmp.dir}/${module.name}.js"/>
+  <property name="compress.plugins" value="plugin-combo.js"/>
 
 
-  <!-- 合并得到 sea-src.js -->
+  <!-- 合并 -->
   <target name="concat">
 
     <!-- 目录准备 -->
+    <delete dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${tmp.dir}"/>
 
@@ -46,20 +47,8 @@
     </concat>
   </target>
 
-  <!-- 复制插件到 plugin-xx-src.js -->
-  <target name="copy">
-
-    <copy todir="${tmp.dir}">
-      <fileset dir="${src.dir}/plugins" includes="*.js"/>
-      <mapper type="regexp"
-              from="^(.*)\.(js|css)$"
-              to="\1-src.\2"/>
-    </copy>
-
-  </target>
-
-  <!-- 预处理得到 sea-debug.js -->
-  <target name="prepare">
+  <!-- 预处理 -->
+  <target name="prepare" depends="concat">
 
     <!-- 版本号替换 -->
     <replaceregexp file="${src.file}"
@@ -68,12 +57,25 @@
                    flags="g"
                    encoding="${charset}"/>
 
-    <!-- 生成 debug 版本 -->
+    <!-- 得到 sea-debug.js -->
     <copy file="${src.file}" tofile="${debug.file}"/>
+
+    <!-- 复制 plugin 到 dist 目录 -->
+    <copy todir="${dist.dir}">
+      <fileset dir="${src.dir}/plugins" includes="*.js"/>
+    </copy>
+
+    <!-- 将需要压缩的 plugin 移动到 tmp 目录 -->
+    <move todir="${tmp.dir}">
+      <fileset dir="${dist.dir}" includes="${compress.plugins}"/>
+      <mapper type="regexp"
+              from="^(.*)\.(js|css)$"
+              to="\1-src.\2"/>
+    </move>
 
   </target>
 
-  <!-- 压缩 xx-src.js 到 xx.js -->
+  <!-- 压缩 -->
   <target name="compress">
 
     <!-- DEBUG 替换 -->
@@ -84,7 +86,7 @@
                    encoding="${charset}"/>
 
     <!-- 用 Google Closure Compiler 压缩 JS -->
-    <apply executable="java" verbose="true" dest="${tmp.dir}" failonerror="true">
+    <apply executable="java" verbose="true" dest="${dist.dir}" failonerror="true">
       <fileset dir="${tmp.dir}" includes="*-src.js"/>
 
       <arg line="-jar"/>
@@ -96,9 +98,6 @@
       <arg line="--warning_level VERBOSE"/>
       <arg line="--jscomp_off=checkTypes"/>
       <arg line="--jscomp_error=checkDebuggerStatement"/>
-      <arg line="--jscomp_error=externsValidation"/>
-      <arg line="--jscomp_error=globalThis"/>
-      <arg line="--jscomp_error=uselessCode"/>
 
       <arg line="--js"/>
       <srcfile/>
@@ -109,23 +108,14 @@
 
   </target>
 
-  <!-- 移动到 dist 目录等扫尾工作 -->
+  <!-- 扫尾 -->
   <target name="destroy">
-
-    <delete>
-      <fileset dir="${tmp.dir}" includes="*-src.js"/>
-    </delete>
-
-    <move todir="${dist.dir}">
-      <fileset dir="${tmp.dir}" includes="*.js"/>
-    </move>
 
     <delete dir="${tmp.dir}"/>
 
   </target>
 
   <!-- 入口 -->
-  <target name="build-all" depends="concat,copy,prepare,compress,destroy"/>
-  <target name="build" depends="concat,prepare,compress,destroy"/>
+  <target name="build" depends="prepare,compress,destroy"/>
 
 </project>

@@ -1,1 +1,0 @@
-define("seajs/plugin-text",["./plugin-base"],function(a){var a=a("./plugin-base"),b=a.util;a.add({name:"text",ext:[".tpl",".htm",".html"],fetch:function(a,c){b.xhr(a,function(a){a=a.replace(/(["\\])/g,"\\$1").replace(/\r/g,"\\r").replace(/\n/g,"\\n").replace(/\t/g,"\\t").replace(/\f/g,"\\f");b.globalEval('define([], "'+a+'")');c()})}})});
