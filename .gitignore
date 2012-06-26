@@ -9,7 +9,5 @@
 *.bak
 .DS_Store
 Thumbs.db
-.project
-.*proj
 .svn/
 *.swp
