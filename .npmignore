@@ -1,11 +1,11 @@
 docs/
 src/
-support/
 test/
+tools/
 CNAME
-favicon.ico
+*.ico
 *.html
-*.txt
+*.md
 *.iml
 .*
 *~
