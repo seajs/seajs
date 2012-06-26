@@ -1,7 +1,7 @@
 /**
  * The text plugin to load a module as text content
  */
-define('seajs/plugin-text', function(require) {
+define('seajs/plugin-text', ['./plugin-base'], function(require) {
 
   var plugin = require('./plugin-base')
   var util = plugin.util

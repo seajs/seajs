@@ -5,29 +5,28 @@
   <property name="src.dir" location="${root.dir}/src/"/>
   <property name="dist.dir" location="${root.dir}/dist/"/>
   <property name="tmp.dir" location="${dist.dir}/tmp/"/>
-  <property name="tools.dir" location="${root.dir}/tools/"/>
 
   <property name="module.name" value="sea"/>
   <property name="version" value="1.1.8"/>
 
+  <property name="tools.dir" location="${root.dir}/tools/"/>
   <property name="gcc.jar" location="${tools.dir}/compiler.jar"/>
   <property name="charset" value="utf-8"/>
 
-  <property name="package.file" value="${tmp.dir}/${module.name}-package.js"/>
-  <property name="debug.file" value="${tmp.dir}/${module.name}-debug.js"/>
+  <property name="src.file" value="${tmp.dir}/${module.name}-src.js"/>
+  <property name="debug.file" value="${dist.dir}/${module.name}-debug.js"/>
   <property name="min.file" value="${tmp.dir}/${module.name}.js"/>
 
 
-  <!-- 合并 -->
+  <!-- 合并得到 sea-src.js -->
   <target name="concat">
 
     <!-- 目录准备 -->
-    <delete dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${tmp.dir}"/>
 
     <!-- 合并 package 文件 -->
-    <concat destfile="${package.file}"
+    <concat destfile="${src.file}"
             encoding="${charset}"
             outputencoding="${charset}">
 
@@ -47,36 +46,46 @@
     </concat>
   </target>
 
+  <!-- 复制插件到 plugin-xx-src.js -->
+  <target name="copy">
 
-  <!-- 预处理 -->
+    <copy todir="${tmp.dir}">
+      <fileset dir="${src.dir}/plugins" includes="*.js"/>
+      <mapper type="regexp"
+              from="^(.*)\.(js|css)$"
+              to="\1-src.\2"/>
+    </copy>
+
+  </target>
+
+  <!-- 预处理得到 sea-debug.js -->
   <target name="prepare">
 
     <!-- 版本号替换 -->
-    <replaceregexp file="${package.file}"
+    <replaceregexp file="${src.file}"
                    match="%VERSION%"
                    replace="${version}"
                    flags="g"
                    encoding="${charset}"/>
 
     <!-- 生成 debug 版本 -->
-    <copy file="${package.file}" tofile="${debug.file}"/>
+    <copy file="${src.file}" tofile="${debug.file}"/>
 
   </target>
 
-
-  <!-- 压缩 -->
+  <!-- 压缩 xx-src.js 到 xx.js -->
   <target name="compress">
 
     <!-- DEBUG 替换 -->
-    <replaceregexp file="${package.file}"
+    <replaceregexp file="${src.file}"
                    match="%DEBUG%"
                    replace=""
                    flags="g"
                    encoding="${charset}"/>
 
     <!-- 用 Google Closure Compiler 压缩 JS -->
-    <apply executable="java" verbose="true" dir="${tmp.dir}" failonerror="true">
-      <fileset dir="${tmp.dir}" includes="${module.name}-package.js"/>
+    <apply executable="java" verbose="true" dest="${tmp.dir}" failonerror="true">
+      <fileset dir="${tmp.dir}" includes="*-src.js"/>
 
       <arg line="-jar"/>
       <arg path="${gcc.jar}"/>
@@ -87,40 +96,36 @@
       <arg line="--warning_level VERBOSE"/>
       <arg line="--jscomp_off=checkTypes"/>
       <arg line="--jscomp_error=checkDebuggerStatement"/>
+      <arg line="--jscomp_error=externsValidation"/>
+      <arg line="--jscomp_error=globalThis"/>
+      <arg line="--jscomp_error=uselessCode"/>
 
       <arg line="--js"/>
       <srcfile/>
-      <arg line="--js_output_file ${module.name}.js"/>
+      <arg value="--js_output_file"/>
+      <targetfile/>
+      <mapper type="regexp" from="^(.*)-src\.js$" to="\1.js"/>
     </apply>
-
-    <!-- 清除之 -->
-    <delete file="${package.file}"/>
 
   </target>
 
-
-  <!-- 扫尾 -->
+  <!-- 移动到 dist 目录等扫尾工作 -->
   <target name="destroy">
+
+    <delete>
+      <fileset dir="${tmp.dir}" includes="*-src.js"/>
+    </delete>
+
     <move todir="${dist.dir}">
       <fileset dir="${tmp.dir}" includes="*.js"/>
     </move>
+
     <delete dir="${tmp.dir}"/>
-  </target>
-
-
-  <!-- 插件 -->
-  <target name="build-plugin">
-
-    <copy todir="${dist.dir}">
-      <fileset dir="${src.dir}/plugins" includes="plugin-*.js"/>
-    </copy>
 
   </target>
-
 
   <!-- 入口 -->
-  <target name="build"
-          depends="concat,prepare,compress,destroy,build-plugin">
-  </target>
+  <target name="build-all" depends="concat,copy,prepare,compress,destroy"/>
+  <target name="build" depends="concat,prepare,compress,destroy"/>
 
 </project>
