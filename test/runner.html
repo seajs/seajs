@@ -7,102 +7,121 @@
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<script src="config.js?20111026"></script>
+<script src="config.js?20120626"></script>
 <script>
 (function() {
 
-  var container, reporter, summary, start;
-  var currentTest, count;
-  var tests = this['testCases'];
+  var container, reporter, summary, start
+  var currentTest, count
+  var tests = this['testCases']
 
 
   window.onload = function() {
-    container = document.getElementById('container');
-    reporter = document.getElementById('reporter');
-    summary = document.getElementById('summary');
+    container = document.getElementById('container')
+    reporter = document.getElementById('reporter')
+    summary = document.getElementById('summary')
 
-    start = document.getElementById('start');
-    start.setAttribute('autocomplete', 'off');
-    start.onclick = startRun;
+    start = document.getElementById('start')
+    start.setAttribute('autocomplete', 'off')
+    start.onclick = startRun
 
-    if (location.search.indexOf('autorun') !== -1) {
-      startRun();
+    if (location.search.indexOf('autorun') > -1) {
+      startRun()
     }
 
-    var ua = document.getElementById('ua');
-    ua.innerHTML = navigator.userAgent;
-  };
+    document.getElementById('info').innerHTML = navigator.userAgent
+  }
 
 
   function startRun() {
-    start.setAttribute('disabled', 'true');
-    reset();
-    testNext();
+    start.setAttribute('disabled', 'true')
+    reset()
+    testNext()
+  }
+
+
+  function reset() {
+    reporter.innerHTML = ''
+    currentTest = 0
+    count = { pass: 0, fail: 0, error: 0 }
+    clear()
   }
 
 
   window.testNext = function() {
-    var test = tests[currentTest++];
+    var test = tests[currentTest++]
 
     if (test) {
-      var url = getUrl(test);
+      var url = getUrl(test)
 
-      printHeader(test, url);
-      load(url);
+      printHeader(test, url)
+      clear()
+      load(url)
+
       summary.innerHTML = currentTest + ' / ' + tests.length +
-          ' Running ' + test + ' ... ';
+          ' Running ' + test + ' ... '
     }
     else {
-      printSummary();
-      start.removeAttribute('disabled');
+      printSummary()
+      start.removeAttribute('disabled')
     }
-  };
+  }
 
 
   window.printResults = function(txt, style) {
-    var d = document.createElement('div');
-    d.innerHTML = txt;
-    d.className = style;
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    d.className = style
 
-    reporter.appendChild(d);
-    reporter.scrollTop = reporter.scrollHeight;
+    reporter.appendChild(d)
+    reporter.scrollTop = reporter.scrollHeight
 
-    if (style in count) count[style] += 1;
+    if (style in count) count[style] += 1
   };
 
 
   function getUrl(test) {
-    var url = '';
+    var url = ''
 
     if (test.indexOf('issues/') === 0) {
-      url = test + '/test.html';
+      url = test + '/test.html'
     }
     else if (test.indexOf('unit/') === 0) {
-      url = 'sandbox.html?' + encodeURIComponent(test);
+      url = 'sandbox.html?' + encodeURIComponent(test)
     }
     else if (test.indexOf('bootstrap/') === 0) {
-      url = test + '.html';
+      url = test + '.html'
     }
     else {
-      url = 'sandbox.html?' + encodeURIComponent(test + '/program.js');
-      url += '&t=' + new Date().getTime();
+      url = 'sandbox.html?' + encodeURIComponent(test + '/program.js')
     }
 
-    return url;
+    url += (url.indexOf('?') > 0 ? '&' : '?') + 't=' + new Date().getTime()
+    return url
+  }
+
+
+  function clear() {
+    var iframes = document.getElementsByTagName('iframe')
+    var length = iframes.length
+
+    for (var i = 0; i < length; i++) {
+      iframes[i].parentNode.removeChild(iframes[i])
+    }
   }
 
 
   function load(url) {
-    var frame = document.createElement('iframe');
-    container.appendChild(frame);
-    frame.src = url;
+    var frame = document.createElement('iframe')
+    container.appendChild(frame)
+    frame.src = url
   }
 
 
   function printHeader(test, url) {
-    var h = document.createElement('h3');
-    h.innerHTML = '<a href="' + url + '">' + test + '</a>';
-    reporter.appendChild(h);
+    var h = document.createElement('h3')
+    h.innerHTML = '<a href="' + url + '">' + test + '</a>'
+    reporter.appendChild(h)
   }
 
 
@@ -110,27 +129,20 @@
     summary.innerHTML =
         'Passed: <span class="pass">' + count.pass + '</span> ' +
         'Failed: <span class="fail">' + count.fail + '</span> ' +
-        'Errors: <span class="error">' + count.error + '</span>';
+        'Errors: <span class="error">' + count.error + '</span>'
   }
 
-
-  function reset() {
-    reporter.innerHTML = '';
-    currentTest = 0;
-    count = { pass: 0, fail: 0, error: 0 };
-  }
-
-})();
+})()
 </script>
 
 <div id="container">
-  <div id="banner">
-    <div id="logo">Test Suite for sea.js</div>
+  <div id="header">
+    <div id="title">Test Suite for SeaJS</div>
     <div id="summary"></div>
   </div>
   <div id="reporter"></div>
   <button id="start">Start</button>
-  <p id="ua"></p>
+  <p id="info"></p>
 </div>
 
 </body>
