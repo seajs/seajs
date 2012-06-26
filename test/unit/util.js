@@ -26,12 +26,14 @@ define(function(require) {
 
   seajs.config({
         alias: {
-          'jquery': 'jquery/1.6.1/jquery-debug'
+          'jquery-debug': 'jquery/1.8.0/jquery-debug'
+          ,'jquery': '1.8.0'
           ,'app': 'app/1.2/app'
           ,'router': 'router.js?t=20110525'
         }
       });
-  test.assert(util.parseAlias('jquery') === 'jquery/1.6.1/jquery-debug', 'parseAlias');
+  test.assert(util.parseAlias('jquery-debug') === 'jquery/1.8.0/jquery-debug', 'parseAlias');
+  test.assert(util.parseAlias('jquery') === 'jquery/1.8.0/jquery', 'parseAlias');
   test.assert(util.parseAlias('app') === 'app/1.2/app', 'parseAlias');
   test.assert(util.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias');
   test.assert(util.parseAlias('#jquery') === 'jquery', 'parseAlias');
