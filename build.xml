@@ -17,7 +17,6 @@
   <property name="debug.file" value="${dist.dir}/${module.name}-debug.js"/>
   <property name="compress.plugins" value="plugin-combo.js"/>
 
-
   <!-- 合并 -->
   <target name="concat">
 
