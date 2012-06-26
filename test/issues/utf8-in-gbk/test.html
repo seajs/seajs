@@ -19,12 +19,18 @@
 
 <div id="out"></div>
 
-<script src="../../../dist/sea.js"></script>
+<script charset="utf-8" src="../../../dist/sea.js"></script>
 
 <!-- cache it -->
-<script charset="utf-8" src="utf8.js"></script>
+<script src="utf8.js" charset="utf-8"></script>
+<script src="utf8-module.js" charset="utf-8"></script>
+<!-- 注意：上面两个 script 如果不写 charset，则在 webkit 中会输出乱码。webkit 的超级缓存 bug -->
+
+<script src="utf8.js" charset="utf-8"></script>
+
 <script>
-  seajs.config({ debug: true }).use('./main')
+  seajs.use('./main')
 </script>
+
 </body>
 </html>

@@ -1,1 +1,1 @@
-define({ name: '中文' })
+printResults('中文')
