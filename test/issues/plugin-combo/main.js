@@ -61,8 +61,26 @@ define(function(require) {
 
       test.assert(f.name === 'f', f.name)
 
-      test.done()
+      done()
     })
+
+    // remove already fetching or fetched modules
+    require.async(['./l', './m', './c', './f', './a'], function(l, m, c, f, a) {
+      test.assert(l.name === 'l', l.name)
+      test.assert(m.name === 'm', m.name)
+      test.assert(f.name === 'f', f.name)
+      test.assert(a.name === 'a', a.name)
+
+      done()
+    })
+
+
+    var count = 0
+
+    function done() {
+      if (++count === 2) test.done()
+    }
+
   })
 
 })

@@ -65,13 +65,12 @@
 
     for (var i = 0; i < length; i++) {
       (function(uri) {
-        cachedModules[uri] && cachedModules[uri].status >= STATUS.SAVED ?
-            onSaved() :
-            fetch(uri, onSaved)
+        var module = cachedModules[uri] ||
+            (cachedModules[uri] = new Module(uri, STATUS.FETCHING))
+
+        module.status === STATUS.SAVED ? onSaved() : fetch(uri, onSaved)
 
         function onSaved() {
-          var module = cachedModules[uri]
-
           if (module.status >= STATUS.SAVED) {
             var deps = getPureDependencies(module)
 
@@ -309,9 +308,6 @@
 
     fetchingList[srcUrl] = true
     callbackList[srcUrl] = [callback]
-
-    // Saves module status
-    cachedModules[uri] = new Module(uri, STATUS.FETCHING)
 
     // Fetches it
     Module._fetch(

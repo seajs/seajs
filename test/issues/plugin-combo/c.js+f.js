@@ -5,6 +5,8 @@ define('./c', function(require, exports) {
   exports.a = require('./a')
   exports.b = require('./b')
 
+  exports.name = 'c'
+
 })
 
 define('./f', { name: 'f' })
