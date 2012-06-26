@@ -9,6 +9,7 @@ define(function(require) {
   test.assert(util.dirname('xxx') === './', 'dirname');
   test.assert(util.dirname('http://cdn.com/js/file.js') === 'http://cdn.com/js/', 'dirname');
   test.assert(util.dirname('http://cdn.com/js/file.js?t=xxxxx') === 'http://cdn.com/js/', 'dirname');
+  test.assert(util.dirname('http://example.com/arale/seajs/1.2.0/??sea.js,plugin-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname');
 
   test.assert(util.realpath('./a//b/../c') === 'a/c', 'realpath');
   test.assert(util.realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath');
