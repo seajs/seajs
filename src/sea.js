@@ -1,7 +1,8 @@
 /**
- * A Module Loader for the Web
- * @author lifesinger@gmail.com (Frank Wang)
+ * @preserve SeaJS - A Module Loader for the Web
+ * v%VERSION% | seajs.org | MIT Licensed
  */
+
 
 /**
  * Base namespace for the framework.

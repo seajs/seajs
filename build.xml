@@ -1,0 +1,126 @@
+<project name="seajs-build" default="build" basedir=".">
+  <description>SeaJS Build File</description>
+
+  <dirname property="root.dir" file="${ant.file.seajs-build}"/>
+  <property name="src.dir" location="${root.dir}/src/"/>
+  <property name="dist.dir" location="${root.dir}/dist/"/>
+  <property name="tmp.dir" location="${dist.dir}/tmp/"/>
+  <property name="tools.dir" location="${root.dir}/tools/"/>
+
+  <property name="module.name" value="sea"/>
+  <property name="version" value="1.1.8"/>
+
+  <property name="gcc.jar" location="${tools.dir}/compiler.jar"/>
+  <property name="charset" value="utf-8"/>
+
+  <property name="package.file" value="${tmp.dir}/${module.name}-package.js"/>
+  <property name="debug.file" value="${tmp.dir}/${module.name}-debug.js"/>
+  <property name="min.file" value="${tmp.dir}/${module.name}.js"/>
+
+
+  <!-- 合并 -->
+  <target name="concat">
+
+    <!-- 目录准备 -->
+    <delete dir="${dist.dir}"/>
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${tmp.dir}"/>
+
+    <!-- 合并 package 文件 -->
+    <concat destfile="${package.file}"
+            encoding="${charset}"
+            outputencoding="${charset}">
+
+      <path path="${src.dir}/sea.js"/>
+
+      <path path="src/util-lang.js"/>
+      <path path="src/util-log.js"/>
+      <path path="src/util-path.js"/>
+      <path path="src/util-fetch.js"/>
+      <path path="src/util-deps.js"/>
+
+      <path path="src/module.js"/>
+      <path path="src/config.js"/>
+      <path path="src/debug.js"/>
+      <path path="src/bootstrap.js"/>
+
+    </concat>
+  </target>
+
+
+  <!-- 预处理 -->
+  <target name="prepare">
+
+    <!-- 版本号替换 -->
+    <replaceregexp file="${package.file}"
+                   match="%VERSION%"
+                   replace="${version}"
+                   flags="g"
+                   encoding="${charset}"/>
+
+    <!-- 生成 debug 版本 -->
+    <copy file="${package.file}" tofile="${debug.file}"/>
+
+  </target>
+
+
+  <!-- 压缩 -->
+  <target name="compress">
+
+    <!-- DEBUG 替换 -->
+    <replaceregexp file="${package.file}"
+                   match="%DEBUG%"
+                   replace=""
+                   flags="g"
+                   encoding="${charset}"/>
+
+    <!-- 用 Google Closure Compiler 压缩 JS -->
+    <apply executable="java" verbose="true" dir="${tmp.dir}" failonerror="true">
+      <fileset dir="${tmp.dir}" includes="${module.name}-package.js"/>
+
+      <arg line="-jar"/>
+      <arg path="${gcc.jar}"/>
+      <arg line="--externs ${tools.dir}/extern.js"/>
+      <arg line="--compilation_level SIMPLE_OPTIMIZATIONS"/>
+
+      <!-- http://code.google.com/p/closure-compiler/wiki/Warnings -->
+      <arg line="--warning_level VERBOSE"/>
+      <arg line="--jscomp_off=checkTypes"/>
+      <arg line="--jscomp_error=checkDebuggerStatement"/>
+
+      <arg line="--js"/>
+      <srcfile/>
+      <arg line="--js_output_file ${module.name}.js"/>
+    </apply>
+
+    <!-- 清除之 -->
+    <delete file="${package.file}"/>
+
+  </target>
+
+
+  <!-- 扫尾 -->
+  <target name="destroy">
+    <move todir="${dist.dir}">
+      <fileset dir="${tmp.dir}" includes="*.js"/>
+    </move>
+    <delete dir="${tmp.dir}"/>
+  </target>
+
+
+  <!-- 插件 -->
+  <target name="build-plugin">
+
+    <copy todir="${dist.dir}">
+      <fileset dir="${src.dir}/plugins" includes="plugin-*.js"/>
+    </copy>
+
+  </target>
+
+
+  <!-- 入口 -->
+  <target name="build"
+          depends="concat,prepare,compress,destroy,build-plugin">
+  </target>
+
+</project>

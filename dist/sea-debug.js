@@ -1,8 +1,8 @@
-/* SeaJS v1.1.8 | seajs.org | MIT Licensed */
 /**
- * A Module Loader for the Web
- * @author lifesinger@gmail.com (Frank Wang)
+ * @preserve SeaJS - A Module Loader for the Web
+ * v1.1.8 | seajs.org | MIT Licensed
  */
+
 
 /**
  * Base namespace for the framework.
@@ -718,11 +718,6 @@ seajs._config = {
   }
 
 
-  /**
-   * The Module constructor
-   * @constructor
-   * @param {number=} status
-   */
   function Module(uri, status) {
     this.uri = uri
     this.status = status || 0
@@ -795,9 +790,6 @@ seajs._config = {
       })(unLoadedUris[i])
     }
 
-    /**
-     * @param {Object=} module
-     */
     function cb(module) {
       module && (module.status = STATUS.LOADED)
       --remain === 0 && callback()
@@ -983,9 +975,6 @@ seajs._config = {
   var anonymousModuleMeta = null
   var circularCheckStack = []
 
-  /**
-   * @param {string=} refUri
-   */
   function resolve(ids, refUri) {
     if (util.isString(ids)) {
       return Module._resolve(ids, refUri)
@@ -1144,9 +1133,6 @@ seajs._config = {
     return ret
   }
 
-  /**
-   * @param {string=} type
-   */
   function printCircularLog(stack, type) {
     util.log('Found circular dependencies:', stack.join(' --> '), type)
   }
@@ -1157,10 +1143,6 @@ seajs._config = {
 
   var globalModule = new Module(util.pageUrl, STATUS.COMPILED)
 
-  /**
-   * Loads modules to the environment and executes in callback.
-   * @param {function()=} callback
-   */
   seajs.use = function(ids, callback) {
     var preloadMods = config.preload
 
