@@ -182,7 +182,7 @@ define('seajs/plugin-combo', function() {
 
 
   // [
-  //   [ 'http://example.com/p', ['a.js', 'c/d.js', 'c/e.js'] ]
+  //   [ 'http://example.com/p', ['a.js', 'c/d.js', 'c/e.js', 'a.css', 'b.css'] ]
   // ]
   // ==>
   //
@@ -191,6 +191,8 @@ define('seajs/plugin-combo', function() {
   // 'http://example.com/p/a.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
   // 'http://example.com/p/c/d.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
   // 'http://example.com/p/c/e.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
+  // 'http://example.com/p/a.css'  ==> 'http://example.com/p/??a.css,b.css'
+  // 'http://example.com/p/b.css'  ==> 'http://example.com/p/??a.css,b.css'
   //
   function paths2map(paths) {
     var comboSyntax = pluginSDK.config.comboSyntax || ['??', ',']
@@ -198,26 +200,63 @@ define('seajs/plugin-combo', function() {
 
     util.forEach(paths, function(path) {
       var root = path[0] + '/'
-      var parts = path[1]
+      var group = files2group(path[1])
 
-      var hash = {}
-      var comboPath = root + comboSyntax[0] + parts.join(comboSyntax[1])
+      util.forEach(group, function(files) {
 
-      // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
-      if (comboPath.length > 2000) {
-        throw new Error('The combo url is too long: ' + comboPath)
-      }
+        var hash = {}
+        var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
 
-      util.forEach(parts, function(part) {
-        hash[root + part] = comboPath
+        // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
+        if (comboPath.length > 2000) {
+          throw new Error('The combo url is too long: ' + comboPath)
+        }
+
+        util.forEach(files, function(part) {
+          hash[root + part] = comboPath
+        })
+
+        map.push(function(url) {
+          return hash[url] || url
+        })
+
       })
 
-      map.push(function(url) {
-        return hash[url] || url
-      })
     })
 
     return map
+  }
+
+
+  //
+  //  ['a.js', 'c/d.js', 'c/e.js', 'a.css', 'b.css', 'z']
+  // ==>
+  //  [ ['a.js', 'c/d.js', 'c/e.js'], ['a.css', 'b.css'] ]
+  //
+  function files2group(files) {
+    var group = []
+    var hash = {}
+
+    util.forEach(files, function(file) {
+      var ext = getExt(file)
+      if (ext) {
+        (hash[ext] || (hash[ext] = [])).push(file)
+      }
+    })
+
+    for (var ext in hash) {
+      if (hash.hasOwnProperty(ext)) {
+        group.push(hash[ext])
+      }
+    }
+
+    return group
+  }
+
+
+  function getExt(file) {
+    var p = file.lastIndexOf('.')
+    return p >= 0 ? file.substring(p) : ''
   }
 
 
