@@ -76,8 +76,10 @@
     reporter.appendChild(d)
     reporter.scrollTop = reporter.scrollHeight
 
-    if (style in count) count[style] += 1
-  };
+    if (style in count) {
+      count[style] += 1
+    }
+  }
 
 
   function getUrl(test) {
@@ -120,7 +122,7 @@
 
   function printHeader(test, url) {
     var h = document.createElement('h3')
-    h.innerHTML = '<a href="' + url + '">' + test + '</a>'
+    h.innerHTML = test + ' <a href="' + url + '">#</a>'
     reporter.appendChild(h)
   }
 
