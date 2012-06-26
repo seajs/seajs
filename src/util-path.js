@@ -126,13 +126,16 @@
     for (var i = 0; i < map.length; i++) {
       var rule = map[i]
 
-      if (rule && rule.length > 1) {
+      if (util.isArray(rule) && rule.length === 2) {
         var m = rule[0]
 
         if (util.isString(m) && ret.indexOf(m) > -1 ||
             util.isRegExp(m) && m.test(ret)) {
           ret = ret.replace(m, rule[1])
         }
+      }
+      else if (util.isFunction(rule)) {
+        ret = rule(ret)
       }
     }
 

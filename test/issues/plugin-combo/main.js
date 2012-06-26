@@ -26,24 +26,23 @@ define(function(require) {
   test.assert(paths[0][1][2] === 'c/e.js', paths[0][1][2])
 
 
-  // map = [
-  //   ['http://example.com/p/a.js': 'http://example.com/p/??a.js,c/d.js,c/e.js'],
-  //   ['http://example.com/p/c/d.js': 'http://example.com/p/??a.js,c/d.js,c/e.js']
-  //   ['http://example.com/p/c/e.js': 'http://example.com/p/??a.js,c/d.js,c/e.js']
-  // ]
+  // map = [ fn ]
+  // the `fn` can convert:
+  //   'http://example.com/p/a.js' ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
+  //   'http://example.com/p/c/d.js' ==>'http://example.com/p/??a.js,c/d.js,c/e.js'
+  //   'http://example.com/p/c/e.js' ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
+  //
   var map = util.toComboMap(paths)
   //console.dir(map)
 
-  test.assert(map.length === 3, map.length)
-  test.assert(map[0].length === 2, map[0].length)
-  test.assert(map[1].length === 2, map[1].length)
-  test.assert(map[1].length === 2, map[2].length)
-  test.assert(map[0][0] === 'http://example.com/p/a.js', map[0][0])
-  test.assert(map[1][0] === 'http://example.com/p/c/d.js', map[1][0])
-  test.assert(map[2][0] === 'http://example.com/p/c/e.js', map[2][0])
-  test.assert(map[0][1] === 'http://example.com/p/??a.js,c/d.js,c/e.js', map[0][1])
-  test.assert(map[1][1] === map[0][1], map[1][1])
-  test.assert(map[2][1] === map[0][1], map[2][1])
+  test.assert(map.length === 1, map.length)
+  test.assert(typeof map[0] === 'function', typeof map[0])
+
+  var fn = map[0]
+  var comboPath = 'http://example.com/p/??a.js,c/d.js,c/e.js'
+  test.assert(fn('http://example.com/p/a.js') === comboPath, fn('http://example.com/p/a.js'))
+  test.assert(fn('http://example.com/p/c/d.js') === comboPath, fn('http://example.com/p/c/d.js'))
+  test.assert(fn('http://example.com/p/c/e.js') === comboPath, fn('http://example.com/p/c/e.js'))
 
 
   // test seajs.use

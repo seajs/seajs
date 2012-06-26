@@ -185,11 +185,13 @@ define('seajs/plugin-combo', function() {
   //   [ 'http://example.com/p', ['a.js', 'c/d.js', 'c/e.js'] ]
   // ]
   // ==>
-  // [
-  //   ['http://example.com/p/a.js': 'http://example.com/p/??a.js,c/d.js,c/e.js'],
-  //   ['http://example.com/p/c/d.js': 'http://example.com/p/??a.js,c/d.js,c/e.js']
-  //   ['http://example.com/p/c/e.js': 'http://example.com/p/??a.js,c/d.js,c/e.js']
-  // ]
+  //
+  // a map function to map
+  //
+  // 'http://example.com/p/a.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
+  // 'http://example.com/p/c/d.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
+  // 'http://example.com/p/c/e.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
+  //
   function paths2map(paths) {
     var comboSyntax = pluginSDK.config.comboSyntax || ['??', ',']
     var map = []
@@ -197,10 +199,15 @@ define('seajs/plugin-combo', function() {
     util.forEach(paths, function(path) {
       var root = path[0] + '/'
       var parts = path[1]
-      var concat = root + comboSyntax[0] + parts.join(comboSyntax[1])
+      var comboPath = root + comboSyntax[0] + parts.join(comboSyntax[1])
+      var hash = {}
 
       util.forEach(parts, function(part) {
-        map.push([ root + part, concat ])
+        hash[root + part] = comboPath
+      })
+
+      map.push(function(url) {
+        return hash[url] || url
       })
     })
 
