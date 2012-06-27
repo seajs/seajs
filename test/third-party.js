@@ -19,9 +19,12 @@
   seajs.config({
     map: [
       function(url) {
+        url = url.replace(/\?.*$/, '')
+
         if (hash[url.substring(SEAJS_PATH.length)]) {
           return url.replace(SEAJS_PATH, MODULES_PATH)
         }
+
         return url
       }
     ]
