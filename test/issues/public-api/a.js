@@ -76,7 +76,8 @@ define(function(require, exports, module) {
   function getOwnPropertyCount(o) {
     var n = 0
     for (var p in o) {
-      if (o.hasOwnProperty(p)) {
+      // 低版本 safari 会枚举出 prototype
+      if (o.hasOwnProperty(p) && p !== 'prototype') {
         n++
       }
     }
