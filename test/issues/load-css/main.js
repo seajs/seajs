@@ -16,7 +16,6 @@ define(function(require) {
   require.async('./notExisted.css', function() {
     test.print('404!');
   });
-  //test.print('** 404 will occur after 5 second (timeout) in Opera.');
 
   // don't load multi times
   require.async('./red.css');
