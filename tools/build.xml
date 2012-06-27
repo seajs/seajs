@@ -1,7 +1,7 @@
-<project name="seajs-build" default="build" basedir=".">
+<project name="seajs-build" default="build" basedir="../">
   <description>SeaJS Build File</description>
 
-  <dirname property="root.dir" file="${ant.file.seajs-build}"/>
+  <dirname property="root.dir" file="${ant.file.seajs-build}/../"/>
   <property name="src.dir" location="${root.dir}/src/"/>
   <property name="dist.dir" location="${root.dir}/dist/"/>
   <property name="tmp.dir" location="${dist.dir}/tmp/"/>
@@ -32,16 +32,16 @@
 
       <path path="${src.dir}/sea.js"/>
 
-      <path path="src/util-lang.js"/>
-      <path path="src/util-log.js"/>
-      <path path="src/util-path.js"/>
-      <path path="src/util-fetch.js"/>
-      <path path="src/util-deps.js"/>
+      <path path="../src/util-lang.js"/>
+      <path path="../src/util-log.js"/>
+      <path path="../src/util-path.js"/>
+      <path path="../src/util-fetch.js"/>
+      <path path="../src/util-deps.js"/>
 
-      <path path="src/module.js"/>
-      <path path="src/config.js"/>
-      <path path="src/debug.js"/>
-      <path path="src/bootstrap.js"/>
+      <path path="../src/module.js"/>
+      <path path="../src/config.js"/>
+      <path path="../src/debug.js"/>
+      <path path="../src/bootstrap.js"/>
 
     </concat>
   </target>
