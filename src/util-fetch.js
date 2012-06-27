@@ -78,10 +78,6 @@
         callback()
       }
     }
-
-    // NOTICE:
-    // Nothing will happen in Opera when the file status is 404. In this case,
-    // the callback will be called when time is out.
   }
 
   function styleOnload(node, callback) {

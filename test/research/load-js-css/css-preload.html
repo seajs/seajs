@@ -13,80 +13,101 @@
 
 <script>
 
-  // test cases
-  var head = document.getElementsByTagName('head')[0];
-  var timestamp = new Date().getTime();
-  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') !== -1;
+  if (typeof  console === 'undefined') {
+    console = {
+      log: function() {
+      }
+    }
+  }
 
-  print(navigator.userAgent);
+
+  // test cases
+  var head = document.getElementsByTagName('head')[0]
+  var timestamp = new Date().getTime()
+
+  var ua = navigator.userAgent
+  var isSafari = ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1
+  var isFirefox = ua.indexOf('Firefox') !== -1
+  print(ua)
+
 
   // 同域
-  getStyle('red.php');
+  getStyle('red.php')
+
   // 404
-  getStyle('404.css');
+  getStyle('404.css')
+
   // 跨域
-  getStyle('http://127.0.0.1/~lifesinger/seajs/seajs/test/research/load-js-css/blue.php');
+  getStyle('http://127.0.0.1/~lifesinger/seajs/seajs/test/research/load-js-css/blue.php')
 
 
   function getStyle(url) {
-    var s = document.createElement('link');
-    s.rel = 'stylesheet';
+    var s = document.createElement('link')
+    s.rel = 'stylesheet'
 
-    // for IE6-9 and Opera
-    if (window.attachEvent) {
-      s.onload = function() {
-        print('style is loaded. [onload] ' + url);
-      };
+    // for Safari and Old Firefox
+    if(isSafari || ( isFirefox && !('onload' in s) )) {
+      poll(s, url)
     }
-    // for WebKit and Firefox
+    // for Firefox, Chrome, IE, Opera
     else {
-      poll(s, url);
+      s.onload = function() {
+        print('style is loaded. [onload] ' + url)
+      }
+
+      s.onerror = function() {
+        print('style is loaded. [onerror] ' + url)
+      }
+
+      s.onreadystatechange = function() {
+        print('style is loaded. [onreadystatechange] ' + url)
+      }
     }
 
-    s.href = url + '?' + timestamp;
-    head.appendChild(s);
+    s.href = url + '?' + timestamp
+    head.appendChild(s)
   }
 
   function poll(node, url) {
-    var isLoaded = false;
+    var isLoaded = false
 
-    if (isWebKit) {
-      console.log('node.sheet = ' + node.sheet + ' ' + url);
+    if (isSafari) {
+      console.log('node.sheet = ' + node.sheet + ' ' + url)
       if (node.sheet) {
-        isLoaded = true;
-        console.log('node.sheet.cssRules = ' + node.sheet.cssRules + ' ' + url);
+        isLoaded = true
+        console.log('node.sheet.cssRules = ' + node.sheet.cssRules + ' ' + url)
       }
     }
     // for Firefox
     else if(node.sheet) {
       try {
         if (node.sheet.cssRules) {
-          console.log(node.sheet.cssRules + ' ' + url);
-          isLoaded = true;
+          console.log(node.sheet.cssRules + ' ' + url)
+          isLoaded = true
         }
       } catch(ex) {
-        console.log(ex.code + ' ' + url);
+        console.log(ex.code + ' ' + url)
         if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR' ||
             ex.name === 'SecurityError') {
-          isLoaded = true;
+          isLoaded = true
         }
       }
     }
 
     if (isLoaded) {
-      print('style is loaded. [poll] ' + url);
+      print('style is loaded. [poll] ' + url)
     } else {
       setTimeout(function() {
-        poll(node, url);
-      }, 1000);
+        poll(node, url)
+      }, 1000)
     }
   }
 
 
   function print(msg) {
-    var p = document.createElement('P');
-    p.appendChild(document.createTextNode(msg));
-    document.getElementById('out').appendChild(p);
+    var p = document.createElement('P')
+    p.appendChild(document.createTextNode(msg))
+    document.getElementById('out').appendChild(p)
   }
 
 </script>
