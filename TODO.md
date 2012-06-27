@@ -4,3 +4,7 @@
  - runner 页面中，汇总信息添加链接
 
  - fetch css
+
+ - seajs.org/test/runner.html
+ - research
+
