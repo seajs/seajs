@@ -26,24 +26,21 @@
 <script src="../../../dist/sea.js"></script>
 <script>
 
-  var MODULES_PATH = 'http://modules.seajs.org/';
+  seajs.use('../../third-party', function() {
 
-  if (location.href.indexOf('/~lifesinger/') > 0) {
-    MODULES_PATH = 'http://' + location.host + '/~lifesinger/seajs/spm/modules/';
-  }
+    seajs.config({
 
+      alias: {
+        'less': 'less/1.3.0/less'
+      },
 
-  seajs.config({
-    base: MODULES_PATH,
+      preload: ['seajs/plugin-less']
 
-    alias: {
-      'less':  'less/1.3.0/less'
-    },
+    })
 
-    preload: ['seajs/plugin-less']
-  });
+    seajs.use('./main')
 
-  seajs.use('./main');
+  })
 
 </script>
 </body>
