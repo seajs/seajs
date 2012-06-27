@@ -71,7 +71,7 @@
     if (p && p[fn]) {
       p[fn](msg, type)
     }
-    else if (typeof console !== 'undefined') {
+    else if (msg && typeof console !== 'undefined') {
       console.log(color(msg, type))
     }
   }
