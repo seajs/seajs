@@ -1,22 +1,7 @@
-var MODULES_PATH = 'http://modules.seajs.org/';
-
-if (location.href.indexOf('/~lifesinger/') > 0) {
-  MODULES_PATH = 'http://' + location.host + '/~lifesinger/seajs/spm/modules/';
-}
-
-seajs.config({
-  base: MODULES_PATH,
-
-  alias: {
-    'jquery': '1.7.2'
-  }
-});
-
-
 define(function(require) {
 
   var test = require('../../test');
-  var $ = require('jquery');
+  var $ = require('../../third-party').jQuery;
 
   require('./red.css');
   test.assert($('#red').width() === 200, '#red width should be 200');
