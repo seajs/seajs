@@ -45,7 +45,10 @@
 
 
   function error(err) {
-    exports.print('[ERROR] ' + err, 'error')
+    if (err !== 'Error loading script') {
+      exports.print('[ERROR] ' + err, 'error')
+    }
+
     exports.next()
   }
 
