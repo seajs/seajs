@@ -1,5 +1,5 @@
-;
-(function() {
+
+;(function() {
 
   var SEAJS_PATH = seajs.pluginSDK.config.base
   var MODULES_PATH = 'https://a.alipayobjects.com/static/arale/'
