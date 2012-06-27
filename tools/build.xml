@@ -32,16 +32,16 @@
 
       <path path="${src.dir}/sea.js"/>
 
-      <path path="../src/util-lang.js"/>
-      <path path="../src/util-log.js"/>
-      <path path="../src/util-path.js"/>
-      <path path="../src/util-fetch.js"/>
-      <path path="../src/util-deps.js"/>
+      <path path="${src.dir}/util-lang.js"/>
+      <path path="${src.dir}/util-log.js"/>
+      <path path="${src.dir}/util-path.js"/>
+      <path path="${src.dir}/util-fetch.js"/>
+      <path path="${src.dir}/util-deps.js"/>
 
-      <path path="../src/module.js"/>
-      <path path="../src/config.js"/>
-      <path path="../src/debug.js"/>
-      <path path="../src/bootstrap.js"/>
+      <path path="${src.dir}/module.js"/>
+      <path path="${src.dir}/config.js"/>
+      <path path="${src.dir}/debug.js"/>
+      <path path="${src.dir}/bootstrap.js"/>
 
     </concat>
   </target>

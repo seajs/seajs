@@ -1,5 +1,4 @@
 
  - research
  - lib
- - tools
  - docs
