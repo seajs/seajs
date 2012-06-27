@@ -1,5 +1,5 @@
 #/bin/bash
-#usage: ./size.sh
+#usage: ./tools/size.sh
 
 SRC=sea-debug.js
 MIN=sea.js
