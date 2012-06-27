@@ -61,7 +61,7 @@
   };
 
   exports.done = function() {
-    exports.print('DONE');
+    exports.print('[DONE]');
     exports.next();
   };
 
