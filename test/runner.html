@@ -12,7 +12,7 @@
 (function() {
 
   var container, summary, reporter, go
-  var count, result, paused
+  var current, result, running
   var tests = this['testCases']
 
 
@@ -25,14 +25,22 @@
     go.setAttribute('autocomplete', 'off')
 
     go.onclick = function() {
-      paused = !paused
-      go.innerHTML = paused ? 'Resume' : 'Pause'
-      paused || testNext()
+      // start
+      if (current === 0) {
+        start()
+      }
+      // pause
+      else if (running) {
+        pause()
+      }
+      // resume
+      else {
+        resume()
+      }
     }
 
-    if (location.search.indexOf('autorun') > -1) {
-      start()
-    }
+    // Start automatically
+    start()
 
     document.getElementById('info').innerHTML = navigator.userAgent
   }
@@ -40,28 +48,46 @@
 
   function start() {
     reporter.innerHTML = ''
+    reset()
+    resume()
+  }
 
-    count = 0
+
+  function pause() {
+    running = false
+    go.innerHTML = 'Resume'
+  }
+
+
+  function resume() {
+    running = true
+    go.innerHTML = 'Pause'
+    testNext()
+  }
+
+
+  function reset() {
+    current = 0
     result = {
       pass: { count: 0, cases: [] },
       fail: { count: 0, cases: [] },
       error: { count: 0, cases: [] }
     }
 
-    paused = false
-    testNext()
-    go.innerHTML = 'Pause'
+    running = false
+    go.innerHTML = 'Go'
   }
 
 
   window.testNext = function() {
-    var test = tests[count++]
+    var test = tests[current++]
 
     if (test) {
-      if (paused) {
-        count--
+      // paused
+      if (running === false) {
         printResults('[PAUSED]', 'warn')
-        printSummary()
+        printStepInfo()
+        printErrors()
         return
       }
 
@@ -72,10 +98,12 @@
       load(url)
 
       printStepInfo()
+
     }
     else {
-      count--
-      printSummary()
+      printStepInfo()
+      printErrors()
+      reset()
     }
   }
 
@@ -92,7 +120,7 @@
       var r = result[style]
       if (r) {
         r.count += 1
-        r.cases.push(tests[count])
+        r.cases.push(tests[current])
       }
     }
   }
@@ -145,10 +173,10 @@
 
 
   function printStepInfo() {
-    var test = tests[count]
+    var test = tests[current - 1]
 
     summary.innerHTML =
-        count + ' / ' + tests.length + ' &nbsp;&nbsp; { &nbsp;' +
+        (current - 1) + ' / ' + tests.length + ' &nbsp;&nbsp; { &nbsp;' +
             'Passed: <span class="pass">' + result.pass.count + '</span> ' +
             'Failed: <span class="fail">' + result.fail.count + '</span> ' +
             'Errors: <span class="error">' + result.error.count + '</span>}' +
@@ -157,11 +185,9 @@
   }
 
 
-  function printSummary() {
-    printStepInfo()
+  function printErrors() {
     if (result.fail.count + result.error.count === 0) return
-
-    printResults('-----------------------------------------------')
+    printHeader('Error Cases:')
 
     for (var type in result) {
       if (type === 'pass') continue
@@ -179,7 +205,7 @@
       }
     }
 
-    printResults('-----------------------------------------------')
+    printResults('[DONE]')
   }
 
 })()
