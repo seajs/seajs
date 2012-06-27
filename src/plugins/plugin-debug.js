@@ -96,7 +96,7 @@ define('seajs/plugin-debug', [], function() {
 
     var div = document.createElement('div')
     div.innerHTML = html
-    document.body.appendChild(div)
+    appendToBody(div)
 
     var buttons = div.getElementsByTagName('button')
 
@@ -149,6 +149,23 @@ define('seajs/plugin-debug', [], function() {
 
     document.cookie = 'seajs=' + o.debug + '`' + o.mapfile + '`' + o.console +
         '; path=/; expires=' + date.toUTCString()
+  }
+
+
+  var MAX_TRY = 100
+  var pollCount = 0
+
+  function appendToBody(div) {
+    pollCount++
+
+    if (document.body) {
+      document.body.appendChild(div)
+    }
+    else if (pollCount < MAX_TRY) {
+      setTimeout(function() {
+        appendToBody(div)
+      }, 200)
+    }
   }
 
 });
