@@ -1,7 +1,7 @@
 /**
  * Utilities for fetching js and css files.
  */
-;(function(util, config, global) {
+;(function(util, config) {
 
   var doc = document
   var head = doc.head ||
@@ -9,7 +9,10 @@
       doc.documentElement
 
   var baseElement = head.getElementsByTagName('base')[0]
-  var isWebKit = navigator.userAgent.indexOf('AppleWebKit') > 0
+
+  var UA = navigator.userAgent
+  var isSafari = UA.indexOf('Safari') > 0 && UA.indexOf('Chrome') === -1
+  var isFirefox = UA.indexOf('Firefox') > 0
 
   var IS_CSS_RE = /\.css(?:\?|$)/i
   var READY_STATE_RE = /loaded|complete|undefined/
@@ -78,36 +81,33 @@
         callback()
       }
     }
+
   }
 
   function styleOnload(node, callback) {
 
-    // for IE6-9 and Opera
-    if (node.attachEvent || global.opera) {
-      node.attachEvent('onload', callback)
-      // NOTICE:
-      // 1. "onload" will be fired in IE6-9 when the file is 404, but in
-      //    this situation, Opera does nothing, so fallback to timeout.
-      // 2. "onerror" doesn't fire in any browsers!
-    }
+    // for Safari and Old Firefox
+    if (isSafari || (isFirefox && !('onload' in node))) {
+      util.log('Start poll to fetch css')
 
-    // Polling for Firefox, Chrome, Safari
-    else {
       setTimeout(function() {
         poll(node, callback)
-      }, 0) // Begin after node insertion
+      }, 1) // Begin after node insertion
+    }
+    else {
+      node.onload = node.onerror = function() {
+        node.onload = node.onerror = null
+        node = undefined
+        callback()
+      }
     }
 
   }
 
   function poll(node, callback) {
-    if (callback.isCalled) {
-      return
-    }
-
     var isLoaded
 
-    if (isWebKit) {
+    if (isSafari) {
       if (node['sheet']) {
         isLoaded = true
       }
