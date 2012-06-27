@@ -16,7 +16,7 @@ define(function(require) {
     setTimeout(function() {
       test.assert($('#blue').width() === 200, '#blue width should be 200 now')
       done()
-    }, 100)
+    }, 500) // 留够时间给 css 渲染
   })
 
 
