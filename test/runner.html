@@ -12,7 +12,7 @@
 (function() {
 
   var container, summary, reporter, go
-  var current, result, running
+  var current, result, running, timeoutTimer
   var tests = this['testCases']
 
 
@@ -76,11 +76,13 @@
 
     running = false
     go.innerHTML = 'Go'
+    timeoutTimer = 0
   }
 
 
   window.testNext = function() {
     var test = tests[current++]
+    clearTimeout(timeoutTimer)
     clear()
 
     if (test) {
@@ -95,6 +97,7 @@
       var url = getUrl(test)
       printHeader(test, url)
       load(url)
+      makeSureGoOn(test)
 
       printStepInfo()
     }
@@ -204,6 +207,15 @@
     }
 
     printResults('[DONE]')
+  }
+
+
+  function makeSureGoOn(test) {
+    // Wait 10s
+    timeoutTimer = setTimeout(function() {
+      printResults('[ERROR] Time is out for this test case: ' + test, 'error')
+      testNext()
+    }, 10000)
   }
 
 })()
