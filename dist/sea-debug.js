@@ -765,6 +765,9 @@ seajs._config = {
         module.status === STATUS.SAVED ? onSaved() : fetch(uri, onSaved)
 
         function onSaved() {
+          // cachedModules[uri] is changed in un-correspondence case
+          module = cachedModules[uri]
+
           if (module.status >= STATUS.SAVED) {
             var deps = getPureDependencies(module)
 
@@ -900,7 +903,7 @@ seajs._config = {
     var meta = { id: id, dependencies: deps, factory: factory }
 
     if (uri) {
-      save(uri, meta)
+      currentPackageModules.push(save(uri, meta))
     }
     else {
       // Saves information for "memoizing" work in the onload event.
@@ -969,6 +972,7 @@ seajs._config = {
   var fetchedList = {}
   var callbackList = {}
   var anonymousModuleMeta = null
+  var currentPackageModules = []
   var circularCheckStack = []
 
   function resolve(ids, refUri) {
@@ -1010,6 +1014,14 @@ seajs._config = {
             anonymousModuleMeta = null
           }
 
+          // Assigns the first module in package to cachedModules[uri]
+          // See: test/issues/un-correspondence
+          var firstModule = currentPackageModules[0]
+          if (firstModule && cachedModules[uri].status === STATUS.FETCHING) {
+            cachedModules[uri] = firstModule
+          }
+          currentPackageModules = []
+
           // Clears
           if (fetchingList[requestUri]) {
             delete fetchingList[requestUri]
@@ -1047,6 +1059,8 @@ seajs._config = {
       // Updates module status
       module.status = STATUS.SAVED
     }
+
+    return module
   }
 
   function runInModuleContext(fn, module) {
