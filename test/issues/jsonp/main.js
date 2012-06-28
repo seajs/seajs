@@ -13,7 +13,7 @@ define(function(require) {
 
   require.async('./data.json#', function(data) {
     var out = to_html(tmpl, data);
-    test.assert(out === 'My name is Frank Wang, I love JavaScript.', out);
+    test.assert(out === 'My name is Frank Wang, I love JavaScript', out);
     test.done();
   });
 

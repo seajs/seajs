@@ -20,7 +20,7 @@ define(function(require) {
     passed = false;
   }
 
-  test.assert(passed, 'Do not throw error when the alias config is conflicted.');
+  test.assert(passed, 'Do not throw error when the alias config is conflicted');
   test.done();
 
 });
