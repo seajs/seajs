@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<script src="config.js?20120627"></script>
+<script src="config.js?20120628"></script>
 <script>
 (function() {
 
@@ -81,6 +81,7 @@
 
   window.testNext = function() {
     var test = tests[current++]
+    clear()
 
     if (test) {
       // paused
@@ -91,14 +92,11 @@
         return
       }
 
-      clear()
-
       var url = getUrl(test)
       printHeader(test, url)
       load(url)
 
       printStepInfo()
-
     }
     else {
       printStepInfo()
