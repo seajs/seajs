@@ -13,10 +13,20 @@ define(function(require) {
   // async case
   test.assert($('#blue').width() !== 200, '#blue width should not be 200. The actual value is ' + $('#blue').width())
   require.async('./blue.css', function() {
-    setTimeout(function() {
-      test.assert($('#blue').width() === 200, '#blue width should be 200 now')
-      done()
-    }, 500) // 留够时间给 css 渲染
+    var links = document.getElementsByTagName('link')
+    var length = links.length
+    var found = false
+
+    for (var i = 0; i < length; i++) {
+      var link = links[i]
+      if (link.getAttribute('href').indexOf('blue.css')) {
+        found = true
+        break
+      }
+    }
+
+    test.assert(found, 'blue.css is loaded')
+    done()
   })
 
 
