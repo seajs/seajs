@@ -90,7 +90,7 @@
     'fail': 31, // red
     'error': 31, // red
     'pass': 32, // green
-    'info': 36 // cyan
+    'info': 37 // white
   }
 
   function color(str, type) {
