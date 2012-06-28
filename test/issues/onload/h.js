@@ -1,7 +1,7 @@
 if (this['DEBUG']) {
-  print('h.js is executed');
-  out.push('H');
+  print('h.js is executed')
+  out.push('H')
 }
 else {
-  print('h.js is cached');
+  print('h.js is cached')
 }
