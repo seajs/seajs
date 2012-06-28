@@ -1,6 +1,0 @@
-
-
- - research
- - lib
-
- - docs
