@@ -20,7 +20,6 @@
     ,'modules/config-map'
     ,'modules/cyclic'
     ,'modules/define'
-    ,'modules/determinism'
     ,'modules/exact-exports'
     ,'modules/exports'
     ,'modules/extend'
