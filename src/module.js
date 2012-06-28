@@ -176,11 +176,11 @@
       deps = util.parseDependencies(factory.toString())
     }
 
-    // Gets url directly for specific modules.
+    // Gets uri directly for specific modules.
     if (id) {
       var uri = resolve(id)
     }
-    // Try to derive url in IE6-9 for anonymous modules.
+    // Try to derive uri in IE6-9 for anonymous modules.
     else if (document.attachEvent) {
 
       // Try to get the current script.
@@ -194,7 +194,7 @@
             factory.toString(), 'warn')
 
         // NOTE: If the id-deriving methods above is failed, then falls back
-        // to use onload event to get the url.
+        // to use onload event to get the uri.
       }
     }
 
@@ -283,27 +283,27 @@
   }
 
   function fetch(uri, callback) {
-    var srcUrl = util.parseMap(uri)
+    var requestUri = util.parseMap(uri)
 
-    if (fetchedList[srcUrl]) {
+    if (fetchedList[requestUri]) {
       callback()
       return
     }
 
-    if (fetchingList[srcUrl]) {
-      callbackList[srcUrl].push(callback)
+    if (fetchingList[requestUri]) {
+      callbackList[requestUri].push(callback)
       return
     }
 
-    fetchingList[srcUrl] = true
-    callbackList[srcUrl] = [callback]
+    fetchingList[requestUri] = true
+    callbackList[requestUri] = [callback]
 
     // Fetches it
     Module._fetch(
-        srcUrl,
+        requestUri,
 
         function() {
-          fetchedList[srcUrl] = true
+          fetchedList[requestUri] = true
 
           // Saves anonymous module meta data
           if (anonymousModuleMeta) {
@@ -312,16 +312,16 @@
           }
 
           // Clears
-          if (fetchingList[srcUrl]) {
-            delete fetchingList[srcUrl]
+          if (fetchingList[requestUri]) {
+            delete fetchingList[requestUri]
           }
 
           // Calls callbackList
-          if (callbackList[srcUrl]) {
-            util.forEach(callbackList[srcUrl], function(fn) {
+          if (callbackList[requestUri]) {
+            util.forEach(callbackList[requestUri], function(fn) {
               fn()
             })
-            delete callbackList[srcUrl]
+            delete callbackList[requestUri]
           }
 
         },
@@ -438,7 +438,7 @@
   // Public API
   // ----------
 
-  var globalModule = new Module(util.pageUrl, STATUS.COMPILED)
+  var globalModule = new Module(util.pageUri, STATUS.COMPILED)
 
   seajs.use = function(ids, callback) {
     var preloadMods = config.preload

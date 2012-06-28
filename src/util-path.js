@@ -61,26 +61,26 @@
 
 
   /**
-   * Normalizes an url.
+   * Normalizes an uri.
    */
-  function normalize(url) {
-    url = realpath(url)
-    var lastChar = url.charAt(url.length - 1)
+  function normalize(uri) {
+    uri = realpath(uri)
+    var lastChar = uri.charAt(uri.length - 1)
 
     if (lastChar === '/') {
-      return url
+      return uri
     }
 
-    // Adds the default '.js' extension except that the url ends with #.
+    // Adds the default '.js' extension except that the uri ends with #.
     // ref: http://jsperf.com/get-the-last-character
     if (lastChar === '#') {
-      url = url.slice(0, -1)
+      uri = uri.slice(0, -1)
     }
-    else if (url.indexOf('?') === -1 && !FILE_EXT_RE.test(url)) {
-      url += '.js'
+    else if (uri.indexOf('?') === -1 && !FILE_EXT_RE.test(uri)) {
+      uri += '.js'
     }
 
-    return url
+    return uri
   }
 
 
@@ -113,14 +113,14 @@
   var mapCache = {}
 
   /**
-   * Converts the url according to the map rules.
+   * Converts the ur according to the map rules.
    */
-  function parseMap(url, map) {
+  function parseMap(uri, map) {
     // map: [[match, replace], ...]
     map || (map = config.map || [])
-    if (!map.length) return url
+    if (!map.length) return uri
 
-    var ret = url
+    var ret = uri
 
     // Apply all matched rules in sequence.
     for (var i = 0; i < map.length; i++) {
@@ -139,8 +139,8 @@
       }
     }
 
-    if (ret !== url) {
-      mapCache[ret] = url
+    if (ret !== uri) {
+      mapCache[ret] = uri
     }
 
     return ret
@@ -148,10 +148,10 @@
 
 
   /**
-   * Gets the original url.
+   * Gets the original uri.
    */
-  function unParseMap(url) {
-    return mapCache[url] || url
+  function unParseMap(uri) {
+    return mapCache[uri] || uri
   }
 
 
@@ -160,7 +160,7 @@
    */
   function id2Uri(id, refUri) {
     id = parseAlias(id)
-    refUri || (refUri = pageUrl)
+    refUri || (refUri = pageUri)
 
     var ret
 
@@ -223,12 +223,12 @@
 
 
   var loc = global['location']
-  var pageUrl = loc.protocol + '//' + loc.host +
+  var pageUri = loc.protocol + '//' + loc.host +
       normalizePathname(loc.pathname)
 
   // local file in IE: C:\path\to\xx.js
-  if (pageUrl.indexOf('\\') > 0) {
-    pageUrl = pageUrl.replace(/\\/g, '/')
+  if (pageUri.indexOf('\\') > 0) {
+    pageUri = pageUri.replace(/\\/g, '/')
   }
 
 
@@ -244,7 +244,7 @@
   util.isAbsolute = isAbsolute
   util.isTopLevel = isTopLevel
 
-  util.pageUrl = pageUrl
+  util.pageUri = pageUri
 
 })(seajs._util, seajs._config, this)
 

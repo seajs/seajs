@@ -17,7 +17,7 @@
   }
 
   var loaderSrc = util.getScriptAbsoluteSrc(loaderScript) ||
-      util.pageUrl // When sea.js is inline, set base to pageUrl.
+      util.pageUri // When sea.js is inline, set base to pageUri.
 
   var base = util.dirname(loaderSrc)
   util.loaderDir = base

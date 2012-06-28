@@ -264,26 +264,26 @@ seajs._config = {
 
 
   /**
-   * Normalizes an url.
+   * Normalizes an uri.
    */
-  function normalize(url) {
-    url = realpath(url)
-    var lastChar = url.charAt(url.length - 1)
+  function normalize(uri) {
+    uri = realpath(uri)
+    var lastChar = uri.charAt(uri.length - 1)
 
     if (lastChar === '/') {
-      return url
+      return uri
     }
 
-    // Adds the default '.js' extension except that the url ends with #.
+    // Adds the default '.js' extension except that the uri ends with #.
     // ref: http://jsperf.com/get-the-last-character
     if (lastChar === '#') {
-      url = url.slice(0, -1)
+      uri = uri.slice(0, -1)
     }
-    else if (url.indexOf('?') === -1 && !FILE_EXT_RE.test(url)) {
-      url += '.js'
+    else if (uri.indexOf('?') === -1 && !FILE_EXT_RE.test(uri)) {
+      uri += '.js'
     }
 
-    return url
+    return uri
   }
 
 
@@ -316,14 +316,14 @@ seajs._config = {
   var mapCache = {}
 
   /**
-   * Converts the url according to the map rules.
+   * Converts the ur according to the map rules.
    */
-  function parseMap(url, map) {
+  function parseMap(uri, map) {
     // map: [[match, replace], ...]
     map || (map = config.map || [])
-    if (!map.length) return url
+    if (!map.length) return uri
 
-    var ret = url
+    var ret = uri
 
     // Apply all matched rules in sequence.
     for (var i = 0; i < map.length; i++) {
@@ -342,8 +342,8 @@ seajs._config = {
       }
     }
 
-    if (ret !== url) {
-      mapCache[ret] = url
+    if (ret !== uri) {
+      mapCache[ret] = uri
     }
 
     return ret
@@ -351,10 +351,10 @@ seajs._config = {
 
 
   /**
-   * Gets the original url.
+   * Gets the original uri.
    */
-  function unParseMap(url) {
-    return mapCache[url] || url
+  function unParseMap(uri) {
+    return mapCache[uri] || uri
   }
 
 
@@ -363,7 +363,7 @@ seajs._config = {
    */
   function id2Uri(id, refUri) {
     id = parseAlias(id)
-    refUri || (refUri = pageUrl)
+    refUri || (refUri = pageUri)
 
     var ret
 
@@ -426,12 +426,12 @@ seajs._config = {
 
 
   var loc = global['location']
-  var pageUrl = loc.protocol + '//' + loc.host +
+  var pageUri = loc.protocol + '//' + loc.host +
       normalizePathname(loc.pathname)
 
   // local file in IE: C:\path\to\xx.js
-  if (pageUrl.indexOf('\\') > 0) {
-    pageUrl = pageUrl.replace(/\\/g, '/')
+  if (pageUri.indexOf('\\') > 0) {
+    pageUri = pageUri.replace(/\\/g, '/')
   }
 
 
@@ -447,7 +447,7 @@ seajs._config = {
   util.isAbsolute = isAbsolute
   util.isTopLevel = isTopLevel
 
-  util.pageUrl = pageUrl
+  util.pageUri = pageUri
 
 })(seajs._util, seajs._config, this)
 
@@ -875,11 +875,11 @@ seajs._config = {
       deps = util.parseDependencies(factory.toString())
     }
 
-    // Gets url directly for specific modules.
+    // Gets uri directly for specific modules.
     if (id) {
       var uri = resolve(id)
     }
-    // Try to derive url in IE6-9 for anonymous modules.
+    // Try to derive uri in IE6-9 for anonymous modules.
     else if (document.attachEvent) {
 
       // Try to get the current script.
@@ -893,7 +893,7 @@ seajs._config = {
             factory.toString(), 'warn')
 
         // NOTE: If the id-deriving methods above is failed, then falls back
-        // to use onload event to get the url.
+        // to use onload event to get the uri.
       }
     }
 
@@ -982,27 +982,27 @@ seajs._config = {
   }
 
   function fetch(uri, callback) {
-    var srcUrl = util.parseMap(uri)
+    var requestUri = util.parseMap(uri)
 
-    if (fetchedList[srcUrl]) {
+    if (fetchedList[requestUri]) {
       callback()
       return
     }
 
-    if (fetchingList[srcUrl]) {
-      callbackList[srcUrl].push(callback)
+    if (fetchingList[requestUri]) {
+      callbackList[requestUri].push(callback)
       return
     }
 
-    fetchingList[srcUrl] = true
-    callbackList[srcUrl] = [callback]
+    fetchingList[requestUri] = true
+    callbackList[requestUri] = [callback]
 
     // Fetches it
     Module._fetch(
-        srcUrl,
+        requestUri,
 
         function() {
-          fetchedList[srcUrl] = true
+          fetchedList[requestUri] = true
 
           // Saves anonymous module meta data
           if (anonymousModuleMeta) {
@@ -1011,16 +1011,16 @@ seajs._config = {
           }
 
           // Clears
-          if (fetchingList[srcUrl]) {
-            delete fetchingList[srcUrl]
+          if (fetchingList[requestUri]) {
+            delete fetchingList[requestUri]
           }
 
           // Calls callbackList
-          if (callbackList[srcUrl]) {
-            util.forEach(callbackList[srcUrl], function(fn) {
+          if (callbackList[requestUri]) {
+            util.forEach(callbackList[requestUri], function(fn) {
               fn()
             })
-            delete callbackList[srcUrl]
+            delete callbackList[requestUri]
           }
 
         },
@@ -1137,7 +1137,7 @@ seajs._config = {
   // Public API
   // ----------
 
-  var globalModule = new Module(util.pageUrl, STATUS.COMPILED)
+  var globalModule = new Module(util.pageUri, STATUS.COMPILED)
 
   seajs.use = function(ids, callback) {
     var preloadMods = config.preload
@@ -1192,7 +1192,7 @@ seajs._config = {
   }
 
   var loaderSrc = util.getScriptAbsoluteSrc(loaderScript) ||
-      util.pageUrl // When sea.js is inline, set base to pageUrl.
+      util.pageUri // When sea.js is inline, set base to pageUri.
 
   var base = util.dirname(loaderSrc)
   util.loaderDir = base
