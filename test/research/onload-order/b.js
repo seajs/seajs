@@ -1,1 +1,1 @@
-window.res.push('B');
+if (window.res) window.res.push('B')
