@@ -3,7 +3,7 @@ define(function(require) {
   var test = require('../../test')
 
   require.async('./a', function(a) {
-    test.assert(a.foo === 'a', 'test require.async from factory.')
+    test.assert(a.foo === 'a', 'test require.async from factory')
   })
 
   require.async('./b')
