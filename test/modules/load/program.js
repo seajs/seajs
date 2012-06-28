@@ -9,8 +9,8 @@ define(function(require) {
   require.async('./b')
 
   // load normal script file
-  require.async('./c.js', function() {
-    test.assert(this.cIsLoaded === true, this.cIsLoaded)
+  require.async('./c.js', function(c) {
+    test.assert(c.name === 'c', c.name)
     test.done()
   })
 

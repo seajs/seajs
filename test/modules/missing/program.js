@@ -1,8 +1,10 @@
 
 // Old Safari 和 Firefox 在 script 404 时会抛错
-window.onerror = function() {
-  if (typeof console !== 'undefined') {
-    console.log('Ignore script loading error')
+if (typeof window !== 'undefined') {
+  window.onerror = function() {
+    if (typeof console !== 'undefined') {
+      console.log('Ignore script loading error')
+    }
   }
 }
 
@@ -13,7 +15,7 @@ define(function(require) {
   try {
     var bogus = require('bogus')
   }
-  catch(ex) { // for node
+  catch (ex) { // for node
     bogus = null
   }
 

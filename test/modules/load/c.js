@@ -1,1 +1,1 @@
-this.cIsLoaded = true
+define({ name: 'c' })
