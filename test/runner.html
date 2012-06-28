@@ -174,11 +174,11 @@
     var test = tests[current - 1]
 
     summary.innerHTML =
-        (current - 1) + ' / ' + tests.length + ' &nbsp;&nbsp; { &nbsp;' +
+        (current - 1) + ' / ' + tests.length + ' { &nbsp;' +
             'Passed: <span class="pass">' + result.pass.count + '</span> ' +
             'Failed: <span class="fail">' + result.fail.count + '</span> ' +
             'Errors: <span class="error">' + result.error.count + '</span>}' +
-            (test ? ' &nbsp;&nbsp;Running ' + test + ' ... ' : '')
+            (test ? '&nbsp; Running ' + test + ' ... ' : '')
 
   }
 
