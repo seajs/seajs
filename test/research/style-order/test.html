@@ -4,62 +4,61 @@
 <meta charset="utf-8">
 <title>Style Order</title>
 </head>
+
 <body>
-
 <p id="t">red -&gt; green -&gt; blue -&gt; green -&gt; black</p>
-
 <div id="out"></div>
-
 
 <script>
 
+  print(navigator.userAgent)
+
   // test cases
-  var head = document.getElementsByTagName('head')[0];
-  var timestamp = new Date().getTime();
-
-  print(navigator.userAgent);
+  var head = document.getElementsByTagName('head')[0]
+  var timestamp = new Date().getTime()
 
 
-  var red = getStyle('red.css');
+  var red = getStyle('red.css')
 
   setTimeout(function() {
-    var green = getStyle('green.css', true);
-    head.removeChild(red);
+    var green = getStyle('green.css', true)
+    head.removeChild(red)
 
     setTimeout(function() {
-      var blue = getStyle('blue.css');
+      var blue = getStyle('blue.css')
 
       setTimeout(function() {
-        head.removeChild(blue);
-
+        head.removeChild(blue)
+        
         setTimeout(function() {
-          head.removeChild(green);
+          head.removeChild(green)
+        }, 1500)
 
-        }, 1000);
-      }, 1000);
-    }, 1000);
-  }, 1000);
+      }, 1500)
+
+    }, 1500)
+  }, 1500)
 
 
   function getStyle(url, first) {
-    var linkNode = document.createElement('link');
-    linkNode.rel = 'stylesheet';
-    linkNode.href = url + '?' + timestamp;
+    var linkNode = document.createElement('link')
+    linkNode.rel = 'stylesheet'
+    linkNode.href = url + '?' + timestamp
 
     if (first) {
-      head.insertBefore(linkNode, head.firstChild);
+      head.insertBefore(linkNode, head.firstChild)
     }
     else {
-      head.appendChild(linkNode);
+      head.appendChild(linkNode)
     }
 
-    return linkNode;
+    return linkNode
   }
 
   function print(msg) {
-    var p = document.createElement('P');
-    p.appendChild(document.createTextNode(msg));
-    document.getElementById('out').appendChild(p);
+    var p = document.createElement('P')
+    p.appendChild(document.createTextNode(msg))
+    document.getElementById('out').appendChild(p)
   }
 
 </script>
