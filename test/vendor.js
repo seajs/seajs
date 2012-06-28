@@ -10,12 +10,12 @@
 
   // Ref: https://github.com/miohtama/detectmobile.js
   function isMobile() {
-    return Math.max(screen.availWidth || screen.availHeight) < 970
+    return Math.max(screen.availWidth || screen.availHeight) <= 480
   }
 
 
   function root(path) {
-    return MODULES_PATH + path;
+    return MODULES_PATH + path
   }
 
 
