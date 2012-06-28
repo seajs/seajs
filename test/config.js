@@ -88,6 +88,7 @@
     ,'issues/seajs-modify'
     ,'issues/slash-in-map'
     ,'issues/timestamp'
+    ,'issues/un-correspondence'
     ,'issues/utf8-in-gbk'
     ,'issues/x-ua-compatible'
 
