@@ -1,10 +1,10 @@
 define(function(require) {
 
   var test = require('../../test')
-  var $ = require('../../third-party').jQuery
+  var $ = require('$')
 
 
-  $(document).ready(function() {
+  $(function() {
 
     var passed = false
     var type = 'error'

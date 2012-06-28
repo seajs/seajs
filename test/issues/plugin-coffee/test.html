@@ -20,12 +20,16 @@
 <script src="../../../dist/sea.js"></script>
 <script>
 
-  seajs.use('../../third-party', function() {
+  seajs.use(['../../vendor', '../../test'], function(vendor, test) {
+
+    // 移动设备上不测试 plugin-coffee
+    if (vendor.isMobile) {
+      test.assert(true, 'Ignore this test case in mobile device')
+      test.done()
+      return
+    }
 
     seajs.config({
-      alias: {
-        'coffee': 'coffee/1.3.3/coffee-script'
-      },
       map: [
         ['a2.coffee', 'a.coffee']
       ],

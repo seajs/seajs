@@ -28,7 +28,10 @@ function printResults(txt, style) {
     onloadTime = new Date().getTime()
   }
 
-  seajs.use('./main')
+  seajs.use('../../vendor', function() { // load $ alias first
+    seajs.use('./main')
+  })
+
 </script>
 
 </body>

@@ -1,7 +1,7 @@
 define(function(require) {
 
   var test = require('../../test')
-  var $ = require('../../third-party').jQuery
+  var $ = require('$')
   var count = 0
 
 
