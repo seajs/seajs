@@ -45,6 +45,8 @@
 
 
   function error(err) {
+    // Firefox 和 Old Safari 在 script 404 时会抛出异常，下面仅处理了 Firefox 的情况
+    // Old Safari 的在具体 test case 中排除
     if (err !== 'Error loading script') {
       exports.print('[ERROR] ' + err, 'error')
     }
@@ -58,7 +60,11 @@
     process.on('uncaughtException', error)
   }
   else {
-    window.onerror = error
+    var _onerror = window.onerror
+    window.onerror = function(err) {
+      if (_onerror) _onerror(err)
+      error(err)
+    }
 
     // Set 10s timeout for each test case
     if (window != parent) {
@@ -98,4 +104,4 @@
     return '\033[' + ANSI_CODES[type] + 'm  ' + str + '\033[0m'
   }
 
-});
+})
