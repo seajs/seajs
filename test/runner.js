@@ -10,7 +10,7 @@ var test = require('./test')
 var testCases = require('./config').testCases
 
 var excludes = [
-  'modules/configMap'
+  'modules/config-map'
   ,'modules/define'
   ,'modules/preload'
 ]
