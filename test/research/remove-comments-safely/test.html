@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -32,8 +31,8 @@
   }
 </style>
 </head>
-<body>
 
+<body>
 <h1>Simple but Safe Comment Removal</h1>
 
 <textarea id="a">
@@ -60,24 +59,22 @@
 <script>
 
   $ = function(id) {
-    return document.getElementById(id);
-  };
+    return document.getElementById(id)
+  }
 
   $('b').onclick = function() {
     $('c').innerHTML = removeCommentsSafely($('a').value).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')
-  };
+  }
 
   function removeCommentsSafely(code) {
 
-    //code = code.replace(/(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg, '')
-
     // multi-line comments
-    code = code.replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '');
+    code = code.replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '')
 
     // single-line comments
-    code = code.replace(/^\s*\/\/.*$/mg, '');
+    code = code.replace(/^\s*\/\/.*$/mg, '')
 
-    return code;
+    return code
   }
 
 </script>
