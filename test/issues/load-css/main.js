@@ -1,31 +1,18 @@
 define(function(require) {
 
   var test = require('../../test')
-  var $ = require('$')
   var count = 0
 
 
   // normal case
   require('./red.css')
-  test.assert($('#red').width() === 200, '#red width should be 200')
+  test.assert(hasThisLinkStyle('red.css'), 'red.css is loaded')
 
 
   // async case
-  test.assert($('#blue').width() !== 200, '#blue width should not be 200. The actual value is ' + $('#blue').width())
+  test.assert(hasThisLinkStyle('blue.css'), 'blue.css is not available now')
   require.async('./blue.css', function() {
-    var links = document.getElementsByTagName('link')
-    var length = links.length
-    var found = false
-
-    for (var i = 0; i < length; i++) {
-      var link = links[i]
-      if (link.getAttribute('href').indexOf('blue.css')) {
-        found = true
-        break
-      }
-    }
-
-    test.assert(found, 'blue.css is loaded')
+    test.assert(hasThisLinkStyle('blue.css'), 'blue.css is loaded')
     done()
   })
 
@@ -54,6 +41,22 @@ define(function(require) {
     if (++count === MAX) {
       test.done()
     }
+  }
+
+  function hasThisLinkStyle(flag) {
+    var links = document.getElementsByTagName('link')
+    var length = links.length
+    var found = false
+
+    for (var i = 0; i < length; i++) {
+      var link = links[i]
+      if (link.getAttribute('href').indexOf(flag)) {
+        found = true
+        break
+      }
+    }
+
+    return found
   }
 
 })
