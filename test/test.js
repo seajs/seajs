@@ -59,6 +59,13 @@
   }
   else {
     window.onerror = error
+
+    // Set 10s timeout for each test case
+    if (window != parent) {
+      setTimeout(function() {
+        error('time is out')
+      }, 10000)
+    }
   }
 
 
