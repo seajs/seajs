@@ -57,7 +57,9 @@ define('seajs/plugin-debug', [], function() {
   function showConsole(mapfile) {
     var style =
         '#seajs-debug-console { ' +
-        '  position: fixed; bottom: 10px; right: 10px; z-index: 999999999;' +
+        '  position: fixed; bottom: 10px; ' +
+        '  *position: absolute; *top: 10px; *width: 465px; ' +
+        '  right: 10px; z-index: 999999999;' +
         '  background: #fff; color: #000; font: 12px arial;' +
         '  border: 2px solid #000; padding: 0 10px 10px;' +
         '}' +
@@ -85,7 +87,6 @@ define('seajs/plugin-debug', [], function() {
         '}'
 
     var html =
-        '<style>' + style + '</style>' +
         '<div id="seajs-debug-console">' +
         '  <h3>SeaJS Debug Console</h3>' +
         '  <label>Map file: <input value="' + mapfile + '"/></label><br/>' +
@@ -96,6 +97,8 @@ define('seajs/plugin-debug', [], function() {
 
     var div = document.createElement('div')
     div.innerHTML = html
+
+    seajs.importStyle(style)
     appendToBody(div)
 
     var buttons = div.getElementsByTagName('button')
