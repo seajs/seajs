@@ -2,84 +2,129 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>sea.js</title>
+<title>SeaJS - A Module Loader for the Web</title>
 <link rel="stylesheet" href="docs/assets/home.css">
 </head>
 <body>
 
-<div id="toc">
-  <ul>
-    <li><a href="#download">Download</a></li>
-    <li><a href="docs/">Documentation</a></li>
-    <li><a href="docs/zh-cn/">中文文档</a></li>
-    <li><a href="docs/release-notes.html">Release Notes</a></li>
-    <li><a href="#about">About</a></li>
+<div id="header">
+  <div id="header-inner">
+  <h1 id="logo">
+    <img src="docs/assets/logo.png" width="144" height="50" title="SeaJS">
+  </h1>
+  <ul id="nav">
+    <li><a name="home" class="active">首页</a></li>
+    <li><a href="docs/api.html">API 文档</a></li>
+    <li><a href="docs/guide.html">使用指南</a></li>
+    <li><a href="docs/community.html">社区交流</a></li>
+    <li><a href="docs/release-notes.html">下载</a></li>
+    <li><a href="https://github.com/seajs/seajs/">源码</a></li>
   </ul>
-  <ul>
-    <li><a href="https://github.com/seajs/seajs/wiki">Wiki</a></li>
-    <li><a href="http://lifesinger.wordpress.com/?s=seajs">Blog</a></li>
-    <li><a href="https://github.com/seajs/seajs/wiki/Community">Community</a></li>
-    <li><a href="docs/demo/">Demo</a></li>
-  </ul>
+  </div>
 </div>
 
 <div id="content">
+  <div id="intro">
 
-  <img id="logo" src="docs/assets/logo.png" alt="sea.js"/>
+    <h2 class="slogan">A Module Loader for the Web</h2>
+    <div class="sep"></div>
 
-  <p>A <a href="http://wiki.commonjs.org/wiki/Modules">Module</a> Loader for the Web</p>
+    <div class="words">
+
+      <p>
+        SeaJS 是一个适用于 Web 浏览器端的模块加载器。使用 SeaJS，可以更好地组织 JavaScript 代码。
+      </p>
+
+      <p>
+        也许你已注意到右边的美图：蓝天碧海之间，沙滩爱侣相伴。无论生活还是工作，我们都期望能享受如此良辰美景。SeaJS
+        在努力让我们的代码生涯变得更美好。
+      </p>
 
 
-  <p>Here below is an example of a JavaScript module which provides a <code>sayHello</code> method:</p>
+      <h3 id="glance">快速入门</h3>
 
-  <pre>
+      <p>
+        在 SeaJS 的世界里，一个文件就是一个模块。所有模块都遵循 <a href="https://github.com/seajs/seajs/blob/master/docs/specification.md">CMD</a> 规范，我们可以像在 <a href="http://nodejs.org/" target="_blank">Node</a> 环境中一样来书写模块代码：
+      </p>
+
+<pre>
 define(function(require, exports, module) {
+  var $ = require('jquery')
+
   exports.sayHello = function() {
-    alert('Hello from module: ' + module.id);
-  };
-});
+    $('#hello').toggle('slow')
+  }
+})
 </pre>
 
-  <p>
-    To use the above module, put the code into a file <code>example.js</code> and
-    launch it with a html file:
-  </p>
+      <p>
+        将上面的代码保存为 <code>hello.js</code>，然后就可以通过 SeaJS 来加载使用了：
+      </p>
 
-  <pre>
-&lt;script src="sea.js"&gt;&lt;/script&gt;
-&lt;script&gt;
-  seajs.use('./example', function(example) {
-    example.sayHello();
-  });
-&lt;/script&gt;
+<pre>
+seajs.config({
+  alias: {
+    'jquery': '1.7.2'
+  }
+})
+
+seajs.use(['./hello', 'jquery'], function(hello, $) {
+  $('#beautiful-sea').click(hello.sayHello)
+})
 </pre>
 
-  <p>Please refer to the <a href="docs/">API documentation</a> for more details.</p>
+      <p>
+        赶紧点击右上角的美图，与模块世界打个招呼 ^_^
+      </p>
 
 
-<!--  <h2 id="intro">Introduction</h2>
+      <h3 id="features">核心特性</h3>
 
-  <iframe src="http://www.slideshare.net/slideshow/embed_code/7735168" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
--->
+      <p>
+        无论是中小型站点，还是大型复杂应用，使用 SeaJS，都可以让我们的工作变得更轻松愉悦。SeaJS 具有以下核心特性：
+      </p>
+
+      <ul>
+        <li><strong>代码格式简单一致</strong>：所有模块代码，都按照 CMD 规范来书写。</li>
+        <li><strong>自动管理依赖</strong>：无论是多层级依赖还是循环依赖，SeaJS 都能帮你处理好。</li>
+        <li><strong>异步并行加载</strong>：异步无阻与并行加载，可以让页面性能达到默认优化。</li>
+        <li><strong>拥有丰富的插件</strong>：SeaJS 的可扩展性非常好，目前已有近 10 个插件。</li>
+        <li><strong>对调试非常友好</strong>：通过 debug 插件，可以实现在线调试等功能。</li>
+      </ul>
+
+      <p>
+        SeaJS 带来的最大好处是：<strong>提升代码的可维护性</strong>。上面的每一项特性，在接下来的文档中都会有详细阐述。除了这些核心特性，SeaJS
+        还具有不少非常实用的功能，比如可用于 mock 或快速 fix bug 的 <code>seajs.modify</code> 等方法。
+      </p>
+
+      <p>
+        SeaJS 追求的是<strong>更简单、更自然</strong>的代码书写和组织方式。
+      </p>
 
 
-  <h2 id="download">Download</h2>
+      <h3 id="docs">使用文档</h3>
 
-  <p><a href="http://github.com/seajs/seajs">git repo</a></p>
+      <p>
+        SeaJS 上手非常容易，精通也不难。找点时间，读读下面的文档就行：
+      </p>
 
-  <p class="download">
-    <a href="http://modules.seajs.org/seajs/1.1.0/sea-debug.js">Development Version (1.1.0)</a> <i>32KB, Uncompressed with Comments</i><br/>
-    <a href="http://modules.seajs.org/seajs/1.1.0/sea.js">Production Version (1.1.0)</a> <i>4KB, Minified and Gzipped</i>
-  </p>
+      <ul>
+        <li><a href="docs/api.html">API 文档</a></li>
+        <li><a href="docs/api.html">使用指南</a></li>
+      </ul>
 
-  <p class="promotejs">
-    <a href="https://developer.mozilla.org/en/JavaScript/Guide" title="JavaScript Guide"><img src="docs/assets/promotejsv.gif" height="275" width="157" alt="JavaScript Guide"/></a>
-  </p>
+      <p>
+        遇到问题时，欢迎到 <a href="docs/community.html">SeaJS 社区</a> 寻找帮助。
+      </p>
 
 
-  <h2 id="compatible">Compatible</h2>
+      <h3 id="compatible">兼容性</h3>
 
-  <pre class="text">
+      <p>
+        SeaJS 兼容所有主流浏览器：
+      </p>
+
+<pre class="text">
 IE 5.5+           ✔
 Chrome 3+         ✔
 Firefox 2+        ✔
@@ -87,32 +132,70 @@ Safari 3.2+       ✔
 Opera 10+         ✔
 </pre>
 
-  
-  <h2 id="about">About</h2>
+      <p>
+        下面是 SeaJS 的 Test Suite：
+        <br>
+        <br>
+        <a href="http://seajs.org/test/runner.html">http://seajs.org/test/runner.html</a>
+        <br>
+        <br>
+        目前已经在很多设备包括各种移动设备上测试通过。欢迎各位朋友继续帮忙测试，用例比较多，需耐心等待 2 - 30 分钟。若测试未通过，请将测试结果和浏览器 UA 信息通过 <a href="mailto:lifesinger@gmail.com">邮件</a> 或 <a href="http://weibo.com/lifesinger" target="_blank">微博</a> 反馈给我们，不胜感激。
+      </p>
 
-  <p>
-    The sea, holding water from thousands of rivers, is huge owing to its
-    capacity.
-  </p>
 
-  <p>
-    SeaJS is a module loader for the web. It is designed to change the way that
-    you organize JavaScript. With SeaJS, it is pleasure to build scalable web
-    applications.
-  </p>
+      <h3 id="companies">哪些公司在用</h3>
 
-  <p>
-    SeaJS is available under the terms of the <a href="http://seajs.org/MIT-LICENSE.txt">MIT license</a>.
-  </p>
+      <p>
+        感谢以下公司对 SeaJS 的信任：
+      </p>
 
-  <p>
-    For questions, comments, and feedbacks, please go to <a href="http://groups.google.com/group/seajs">SeaJS Group</a>.
-  </p>
+      <ol class="company-logo">
+        <li><a href="https://www.alipay.com/" target="_blank"><img alt="支付宝" src="docs/assets/companies/alipay.png" width="103" height="44"></a></li>
+        <li><a href="http://taobao.com/" target="_blank"><img alt="淘宝网" src="docs/assets/companies/taobao.png" width="164" height="44"></a></li>
+        <li><a href="http://etao.com/" target="_blank"><img alt="一淘" src="docs/assets/companies/etao.png" width="64" height="44"></a></li>
+        <li><a href="http://pengyou.com/" target="_blank"><img alt="朋友" src="docs/assets/companies/pengyou.png" width="126" height="44"></a></li>
+        <li><a href="http://faxianla.com/" target="_blank"><img alt="发现啦" src="docs/assets/companies/faxianla.png" width="147" height="44"></a></li>
+        <li><a href="http://clicki.cn/" target="_blank"><img alt="Clicki" src="docs/assets/companies/clicki.png" width="106" height="44"></a></li>
+        <li><a href="http://laiwang.com/" target="_blank"><img alt="来往" src="docs/assets/companies/laiwang.png" width="46" height="44"></a></li>
+        <li><a href="http://edoctor.com/" target="_blank"><img alt="医道网" src="docs/assets/companies/edoctor.png" width="131" height="44"></a></li>
+      </ol>
 
-  <p class="copyright">Copyright&copy;2011-2022 seajs.org</p>
+      <div class="clear"></div>
+
+      <p>
+        期待这里出现你所在公司的名字，更多使用者请参见：<a href="https://github.com/seajs/seajs/wiki/SeaJS-Users">SeaJS Users</a>
+      </p>
+
+      <p>
+        SeaJS 遵循 <a href="LICENSE.md">MIT 协议</a>，无论个人还是公司，都可以免费自由使用。
+      </p>
+
+    </div>
+
+    <img id="beautiful-sea" src="docs/assets/sea.jpg" width="300" height="300">
+    <p id="hello">Hello, modular world!</p>
+
+  </div>
 </div>
 
-<script src="dist/sea.js" data-main="docs/assets/init"></script>
+<div id="footer">
+  <div id="footer-inner">
+    <p class="copyright">© 2012 SeaJS Team - All Rights Reserved.</p>
+  </div>
+</div>
 
+<script src="dist/sea.js"></script>
+<script>
+  seajs.use('./docs/assets/init', function() {
+    seajs.use(['./docs/assets/hello', 'jquery'], function(hello, $) {
+      $('#beautiful-sea').click(hello.sayHello)
+    })
+  })
+</script>
+
+<!--
+The beautiful sea picture is from: http://www.hassel66.net/life_001.html
+Thanks very much!
+-->
 </body>
 </html>

@@ -1,5 +1,12 @@
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('PT Sans'), local('PTSans-Regular'), url(PTSans.woff) format('woff');
+}
 
-/* reset */
+
+/* basic */
 html, body, div, span, h1, h2, h3, h4, img, strong, ol, ul, li {
   margin: 0;
   padding: 0;
@@ -9,68 +16,166 @@ html, body, div, span, h1, h2, h3, h4, img, strong, ol, ul, li {
   background: transparent;
 }
 
-ul { list-style: none; }
+body {
+  background: #F4F4F4;
+}
 
-h2 { font-size: 1.5em; margin: 2em 0 1em; }
+body, button, input, select, textarea {
+  font: 16px/1.62 'Hiragino Sans GB', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #444;
+  text-rendering: optimizelegibility;
+}
 
+h3 { margin: 1.2em 0 .6em 0; font-size: 22px; font-weight: normal; }
+ul, ol { list-style-position: inside; margin-left: 2em; }
+ul { list-style: disc; }
 a { color: #008b8b; text-decoration: none; }
 a:hover { text-decoration: underline; }
+strong { color: #666; }
+.clear { clear: both; }
 
-html {
-  background: #E8E7E3 url(bg.png) repeat 0 0;
+
+/* #header */
+#header {
+  height: 85px;
+  border-top: 5px solid #323A41;
+  background: -moz-linear-gradient(top, #626D76, #323A41);
+  background: -webkit-gradient(linear, center top, center bottom, from(#626D76), to(#323A41));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#626D76, endColorstr=#323A41)";
+  background-color: #626D76;
 }
 
-body {
-  font: 14pt/150% Times, Times New Roman, times-roman, georgia, serif;
-  color: #222;
-}
-
-
-/* toc */
-#toc {
-  position: fixed;
-  top: 2em;
-  left: 0;
-  width: 10em;
-  font-size: 12pt;
-  padding-left: 1em;
-}
-
-#toc a { color: #444; }
-
-#toc ul { margin-bottom: 20px; }
-
-
-/* content */
-#content {
-  margin-left: 10em;
-  max-width: 42em;
-  margin-bottom: 10em;
+#header-inner {
+  width: 990px;
+  margin: 0 auto;
+  position: relative;
 }
 
 #logo {
-  height: 220px;
-  border: 0;
-  padding: 1em 0 2em;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  padding-left: 20px;
 }
 
-.download a {
-  display: inline-block;
-  width: 280px;
+#nav {
+  position: absolute;
+  left: 225px;
+  top: 45px;
+  list-style: none;
 }
 
-.copyright {
-  font-size: 12pt;
+#nav li {
+  float: left;
 }
 
-.promotejs {
-  float: right;
+#nav li a {
+  text-shadow: 1px 1px 0 #323A41;
+  color: #9CA4AB;
+  font-size: 18px;
+  line-height: 24px;
+  font-family: 'PT Sans';
+  padding: 7px 13px 7px 13px;
+}
+
+#nav li a.active,
+#nav li a:hover {
+  color: #BCD3C4;
+  text-decoration: none;
+}
+
+
+/* #content */
+#content {
+  min-height: 600px;
+}
+
+#intro {
+  margin: 0 auto;
+  width: 920px;
+  padding: 0 20px 50px 50px;
+  position: relative;
+}
+
+h2.slogan {
+  color: #323A41;
+  font-size: 36px;
+  padding: 1em 0 5px;
+  font-weight: normal;
+}
+
+div.sep {
+  height: 1px;
+  background-color: #e0e0e0;
+  border-bottom: 1px solid white;
+  margin-right: 320px;
+}
+
+#intro .words {
+  margin-right: 320px;
+}
+
+.company-logo {
+  list-style: none;
+}
+
+.company-logo li {
+  float: left;
+  margin: 0 5px;
+}
+
+.company-logo img {
+  border: 1px solid #DEDEDE;
+  opacity: .8;
+}
+
+.company-logo a:hover img {
+  opacity: 1;
+}
+
+#beautiful-sea {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+}
+
+#hello {
+  position: absolute;
+  top: 120px;
+  right: 30px;
+  font-size: 25px;
+  color: #616C75;
+  opacity: .6;
+  display: none;
+}
+
+
+/* #footer */
+#footer {
+  background: #616C75 url(footer.jpg) 0 0 repeat;
+  height: 91px;
+}
+
+#footer-inner {
+  background: url(footer-top.jpg) 0 0 repeat-x;
+  font-family: 'PT Sans';
+  color: #9CA4AB;
+  text-align: center;
+  padding-top: 10px;
+}
+
+p.copyright {
+  line-height: 1;
 }
 
 
 /* code style */
-pre, code, .pre {
+pre, code {
   font-family: Monaco, Consolas, "Lucida Console", monospace;
+  background-color: #f8f8f8;
+  border: 1px solid #EAEAEA;
+  border-radius: 3px;
+  padding: 0 5px;
 }
 
 pre {
@@ -79,8 +184,7 @@ pre {
   margin: -.5em 0 1.1em;
   padding: 1em 1.6em 1em 1.2em;
   vertical-align: top;
-  /*background: #f8f8f8;*/
-  border-left: 1px solid #999;
-  /*border-left-width: 6px;*/
+  border: 1px solid #e8e8e8;
+  border-left-width: 6px;
+  border-radius: 0 3px 3px 0;
 }
-
