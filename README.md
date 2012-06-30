@@ -2,8 +2,9 @@ A Module Loader for the Web
 ===
 
 SeaJS is a module loader for the web. It is designed to change the way that you
-organize JavaScript. With SeaJS, it is pleasure to build cool web
-applications.
+organize JavaScript. 
+
+With SeaJS, it is pleasure to build cool web applications.
 
 The official site: <http://seajs.org/>
 
