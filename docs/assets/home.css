@@ -105,7 +105,7 @@ a:hover { text-decoration: underline; }
 
 div.sep {
   height: 1px;
-  background-color: #e0e0e0;
+  background-color: #E0E0E0;
   border-bottom: 1px solid white;
   margin-right: 320px;
 }
@@ -194,23 +194,32 @@ a.download_link:hover {
   display: none;
 }
 
+#side h3 {
+  border-bottom: 1px solid #E0E0E0;
+  box-shadow: #FFF 0 1px;
+}
+
 #github-commits {
     margin-top: 20px;
 }
+
 #commits {
     font: 14px "PT Sans", "Helvetica Neue", "Hiragino Sans GB", Helvetica, Arial, sans-serif;
     list-style-type: none;
     margin: 0;
 }
+
 #commits li {
     position: relative;
     padding: 6px 0;
-    border-bottom: 1px solid #E0E0E0;
-    box-shadow: white 0 1px;
+    border-bottom: 1px solid #E8E8E8;
+    /*box-shadow: #FFF 0 1px;*/
 }
+
 #commits p {
     margin: 0 14px 0 0;
 }
+
 #commits a {
     position: absolute;
     top: 8px;
@@ -223,6 +232,7 @@ a.download_link:hover {
     -moz-transition: color .2s ease-in;
     transition: color .2s ease-in;
 }
+
 #commits a:hover {
     color: #008B8B;
 }
@@ -276,5 +286,5 @@ pre.text {
 
 strong {
   font-weight: normal;
-  border-bottom: 1px solid #D8DA99;
+  border-bottom: 1px solid #E0E0E0;
 }
