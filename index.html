@@ -196,13 +196,16 @@ Opera 10+         ✔
         <p id="wish">让生活更美好</p>
         <p id="hello">Hello, modular world!</p>
       </div>
-      <div id="github-commits">
-        <h3>Latest Updates</h3>
+      <div id="github">
+        <h3>Latest Issues</h3>
+        <ul id="issues">
+          <li>Status Loading ...</li>
+        </ul>
+        <h3>Latest Commits</h3>
         <ul id="commits">
           <li>Status Loading ...</li>
         </ul>
       </div>
-
     </div>
 
   </div>
@@ -226,7 +229,7 @@ Opera 10+         ✔
   })
 
   seajs.use('http://lepture.github.com/github.js/src/github', function(github) {
-    github('seajs').commits({ repo: 'seajs' })
+    github('seajs/seajs').issues().commits();
   })
 
 </script>
