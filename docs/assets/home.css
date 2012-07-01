@@ -161,7 +161,7 @@ div.sep {
   bottom: 8px;
   right: 20px;
   color: #B4BBC1;
-  text-shadow: 1px 1px 0 #323A41;
+  /*text-shadow: 1px 1px 0 #323A41;*/
 }
 
 a.download_link:hover {
