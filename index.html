@@ -218,14 +218,17 @@ Opera 10+         ✔
 
 <script src="dist/sea.js"></script>
 <script>
+
   seajs.use('./docs/assets/init', function() {
     seajs.use(['./docs/assets/hello', 'jquery'], function(hello, $) {
       $('#beautiful-sea').click(hello.sayHello)
     })
   })
+
   seajs.use('http://lepture.github.com/github.js/src/github', function(github) {
-      github('seajs').commits({repo: 'seajs'});
-  });
+    github('seajs').commits({ repo: 'seajs' })
+  })
+
 </script>
 
 <!--
