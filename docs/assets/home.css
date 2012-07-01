@@ -29,9 +29,8 @@ body, button, input, select, textarea {
 h3 { margin: 1.2em 0 .6em 0; font-size: 22px; font-weight: normal; }
 ul, ol { list-style-position: inside; margin-left: 2em; }
 ul { list-style: disc; }
-a { color: #008b8b; text-decoration: none; }
+a { color: #008B8B; text-decoration: none; }
 a:hover { text-decoration: underline; }
-strong { color: #666; }
 .clear { clear: both; }
 
 
@@ -93,11 +92,11 @@ strong { color: #666; }
 #intro {
   margin: 0 auto;
   width: 920px;
-  padding: 0 20px 50px 50px;
+  padding: 0 0 30px 50px;
   position: relative;
 }
 
-h2.slogan {
+#slogan {
   color: #323A41;
   font-size: 36px;
   padding: 1em 0 5px;
@@ -111,7 +110,7 @@ div.sep {
   margin-right: 320px;
 }
 
-#intro .words {
+#words {
   margin-right: 320px;
 }
 
@@ -133,16 +132,61 @@ div.sep {
   opacity: 1;
 }
 
-#beautiful-sea {
+#side {
   position: absolute;
-  top: 70px;
-  right: 10px;
+  top: 20px;
+  right: 0;
+}
+
+#downloads {
+  position: absolute;
+  top: -55px;
+  right: 0;
+  width: 120px;
+  height: 70px;
+  background: url(download.png) no-repeat 0 90%;
+}
+
+.download_link {
+  display: block;
+  float: right;
+  width: 90px;
+  height:70px;
+  background: url(download-folder.png) no-repeat 0 0;
+  position: relative;
+}
+
+.download_link span {
+  position: absolute;
+  bottom: 8px;
+  right: 20px;
+  color: #A6D3C0;
+  text-shadow: 1px 1px 0 #323A41;
+}
+
+a.download_link:hover {
+  text-decoration: none;
+}
+
+#social {
+  margin: 40px 0 5px;
+  text-align: right;
+}
+
+#sea-pic {
+  position: relative;
+}
+
+#wish {
+  text-align: center;
+  margin: 0;
+  color: #AACFBA;
 }
 
 #hello {
   position: absolute;
-  top: 120px;
-  right: 30px;
+  top: 50px;
+  right: 20px;
   font-size: 25px;
   color: #616C75;
   opacity: .6;
@@ -169,13 +213,13 @@ p.copyright {
 }
 
 
-/* code style */
+/* misc style */
 pre, code {
   font-family: Monaco, Consolas, "Lucida Console", monospace;
-  background-color: #f8f8f8;
+  background-color: #F8F8F8;
   border: 1px solid #EAEAEA;
   border-radius: 3px;
-  padding: 0 5px;
+  padding: 2px 3px 1px;
 }
 
 pre {
@@ -187,4 +231,15 @@ pre {
   border: 1px solid #e8e8e8;
   border-left-width: 6px;
   border-radius: 0 3px 3px 0;
+}
+
+pre.text {
+  border-width: 0 0 0 6px;
+  background-color: #F4F4F4;
+  margin-left: 1em;
+}
+
+strong {
+  font-weight: normal;
+  border-bottom: 1px solid #D8DA99;
 }
