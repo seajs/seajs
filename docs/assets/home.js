@@ -19,7 +19,7 @@ define(function(require) {
     $('#beautiful-sea').click(hello.sayHello)
 
     // github items
-    github('seajs/seajs').issues().commits()
+    github('seajs/seajs').issues().commits({ perpage: 10 })
 
   })
 
