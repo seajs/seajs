@@ -27,7 +27,7 @@
 <div id="content">
   <div id="intro">
 
-    <h2 class="sep">A Module Loader for the Web</h2>
+    <h2>A Module Loader for the Web</h2>
 
     <div id="words">
 
@@ -195,19 +195,23 @@ Opera 10+         ✔
 
       <div id="sea-pic">
         <img id="beautiful-sea" src="docs/assets/sea.jpg" width="300" height="300">
+        <!-- Thanks to the beautiful sea picture from: http://www.hassel66.net/life_001.html -->
         <p id="wish">让生活更美好</p>
         <p id="hello">Hello, modular world!</p>
       </div>
 
       <div id="github">
-        <h3 class="sep">Latest Issues</h3>
+
+        <h3>Latest Issues</h3>
         <ul id="issues">
-          <li>Status Loading ...</li>
+          <li>Loading ...</li>
         </ul>
-        <h3 class="sep">Latest Commits</h3>
+
+        <h3>Latest Commits</h3>
         <ul id="commits">
-          <li>Status Loading ...</li>
+          <li>Loading ...</li>
         </ul>
+
       </div>
     </div>
 
@@ -220,23 +224,10 @@ Opera 10+         ✔
   </div>
 </div>
 
-<a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -2px; right: -2px; border: 0" src="docs/assets/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
+<div class="extra">
+  <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -2px; right: -2px; border: 0" src="docs/assets/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
+</div>
+
 <script src="dist/sea.js" data-main="./docs/assets/home"></script>
-
-<!-- Thanks to the beautiful sea picture from: http://www.hassel66.net/life_001.html -->
-<script src="dist/sea.js"></script>
-<script>
-
-  seajs.use('./docs/assets/init', function() {
-    seajs.use(['./docs/assets/hello', 'jquery'], function(hello, $) {
-      $('#beautiful-sea').click(hello.sayHello)
-    })
-  })
-
-  seajs.use('http://lepture.github.com/github.js/src/github', function(github) {
-    github('seajs/seajs').issues().commits();
-  })
-
-</script>
 </body>
 </html>

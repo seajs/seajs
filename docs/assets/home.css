@@ -44,9 +44,7 @@ ul { list-style: disc; }
 a { color: #008B8B; text-decoration: none; }
 a:hover { text-decoration: underline; }
 strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
-
 .clear { clear: both; }
-.sep { border-bottom: 1px solid #E0E0E0; box-shadow: #FFF 0 1px; }
 
 
 /* #header */
@@ -112,6 +110,8 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
 }
 
 #intro h2 {
+  border-bottom: 1px solid #E0E0E0;
+  box-shadow: #FFF 0 1px;
   width: 600px;
 }
 
@@ -140,8 +140,8 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
 #side {
   position: absolute;
   top: 20px;
-  width: 300px;
   right: 0;
+  width: 300px;
 }
 
 #downloads {
@@ -207,12 +207,13 @@ a.download_link:hover {
 #github {
     margin-top: 20px;
 }
+
 #github h3 {
     margin-top: 20px;
 }
 
 #github ul {
-    font: 14px "PT Sans", "Helvetica Neue", "Hiragino Sans GB", Helvetica, Arial, sans-serif;
+    font: 14px "PT Sans";
     list-style-type: none;
     margin: 0;
 }

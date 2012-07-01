@@ -14,8 +14,13 @@ define(function(require) {
   require('./highlight').init()
 
   require.async(['jquery', './hello', 'github'], function($, hello, github) {
+
+    // first example
     $('#beautiful-sea').click(hello.sayHello)
-    github('seajs').commits({ repo: 'seajs' })
+
+    // github items
+    github('seajs/seajs').issues().commits()
+
   })
 
 })
