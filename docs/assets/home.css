@@ -199,28 +199,36 @@ a.download_link:hover {
   display: none;
 }
 
-#github-commits {
+#side h3 {
+  border-bottom: 1px solid #E0E0E0;
+  box-shadow: #FFF 0 1px;
+}
+
+#github {
+    margin-top: 20px;
+}
+#github h3 {
     margin-top: 20px;
 }
 
-#commits {
+#github ul {
     font: 14px "PT Sans", "Helvetica Neue", "Hiragino Sans GB", Helvetica, Arial, sans-serif;
     list-style-type: none;
     margin: 0;
 }
 
-#commits li {
+#github li {
     position: relative;
     padding: 6px 0;
     border-bottom: 1px solid #E8E8E8;
     /*box-shadow: #FFF 0 1px;*/
 }
 
-#commits p {
+#github p {
     margin: 0 14px 0 0;
 }
 
-#commits a {
+#github a {
     position: absolute;
     top: 8px;
     right: 0;
@@ -233,7 +241,7 @@ a.download_link:hover {
     transition: color .2s ease-in;
 }
 
-#commits a:hover {
+#github a:hover {
     color: #008B8B;
 }
 

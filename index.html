@@ -199,13 +199,16 @@ Opera 10+         ✔
         <p id="hello">Hello, modular world!</p>
       </div>
 
-      <div id="github-commits">
-        <h3 class="sep">Latest Updates</h3>
+      <div id="github">
+        <h3 class="sep">Latest Issues</h3>
+        <ul id="issues">
+          <li>Status Loading ...</li>
+        </ul>
+        <h3 class="sep">Latest Commits</h3>
         <ul id="commits">
           <li>Status Loading ...</li>
         </ul>
       </div>
-
     </div>
 
   </div>
@@ -221,5 +224,19 @@ Opera 10+         ✔
 <script src="dist/sea.js" data-main="./docs/assets/home"></script>
 
 <!-- Thanks to the beautiful sea picture from: http://www.hassel66.net/life_001.html -->
+<script src="dist/sea.js"></script>
+<script>
+
+  seajs.use('./docs/assets/init', function() {
+    seajs.use(['./docs/assets/hello', 'jquery'], function(hello, $) {
+      $('#beautiful-sea').click(hello.sayHello)
+    })
+  })
+
+  seajs.use('http://lepture.github.com/github.js/src/github', function(github) {
+    github('seajs/seajs').issues().commits();
+  })
+
+</script>
 </body>
 </html>
