@@ -26,12 +26,27 @@ body, button, input, select, textarea {
   text-rendering: optimizelegibility;
 }
 
-h3 { margin: 1.2em 0 .6em 0; font-size: 22px; font-weight: normal; }
+h2 {
+  color: #323A41;
+  font-size: 36px;
+  padding: 1em 0 5px;
+  font-weight: normal;
+}
+
+h3 {
+  margin: 1.2em 0 .6em 0;
+  font-size: 22px;
+  font-weight: normal;
+}
+
 ul, ol { list-style-position: inside; margin-left: 2em; }
 ul { list-style: disc; }
 a { color: #008B8B; text-decoration: none; }
 a:hover { text-decoration: underline; }
+strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
+
 .clear { clear: both; }
+.sep { border-bottom: 1px solid #E0E0E0; box-shadow: #FFF 0 1px; }
 
 
 /* #header */
@@ -96,18 +111,8 @@ a:hover { text-decoration: underline; }
   position: relative;
 }
 
-#slogan {
-  color: #323A41;
-  font-size: 36px;
-  padding: 1em 0 5px;
-  font-weight: normal;
-}
-
-div.sep {
-  height: 1px;
-  background-color: #E0E0E0;
-  border-bottom: 1px solid white;
-  margin-right: 320px;
+#intro h2 {
+  width: 600px;
 }
 
 #words {
@@ -194,11 +199,6 @@ a.download_link:hover {
   display: none;
 }
 
-#side h3 {
-  border-bottom: 1px solid #E0E0E0;
-  box-shadow: #FFF 0 1px;
-}
-
 #github-commits {
     margin-top: 20px;
 }
@@ -236,7 +236,6 @@ a.download_link:hover {
 #commits a:hover {
     color: #008B8B;
 }
-
 
 
 /* #footer */
@@ -282,9 +281,4 @@ pre.text {
   border-width: 0 0 0 6px;
   background-color: #F4F4F4;
   margin-left: 1em;
-}
-
-strong {
-  font-weight: normal;
-  border-bottom: 1px solid #E0E0E0;
 }

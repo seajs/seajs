@@ -9,23 +9,25 @@
 
 <div id="header">
   <div id="header-inner">
+
   <h1 id="logo">
     <img src="docs/assets/logo.png" width="144" height="50" title="SeaJS">
   </h1>
+
   <ul id="nav">
     <li><a name="home" class="active">首页</a></li>
     <li><a href="docs/api.html">API 文档</a></li>
     <li><a href="docs/guide.html">使用指南</a></li>
     <li><a href="docs/community.html">社区交流</a></li>
   </ul>
+
   </div>
 </div>
 
 <div id="content">
   <div id="intro">
 
-    <h2 id="slogan">A Module Loader for the Web</h2>
-    <div class="sep"></div>
+    <h2 class="sep">A Module Loader for the Web</h2>
 
     <div id="words">
 
@@ -196,8 +198,9 @@ Opera 10+         ✔
         <p id="wish">让生活更美好</p>
         <p id="hello">Hello, modular world!</p>
       </div>
+
       <div id="github-commits">
-        <h3>Latest Updates</h3>
+        <h3 class="sep">Latest Updates</h3>
         <ul id="commits">
           <li>Status Loading ...</li>
         </ul>
@@ -215,25 +218,8 @@ Opera 10+         ✔
 </div>
 
 <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -2px; right: -2px; border: 0" src="docs/assets/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
+<script src="dist/sea.js" data-main="./docs/assets/home"></script>
 
-<script src="dist/sea.js"></script>
-<script>
-
-  seajs.use('./docs/assets/init', function() {
-    seajs.use(['./docs/assets/hello', 'jquery'], function(hello, $) {
-      $('#beautiful-sea').click(hello.sayHello)
-    })
-  })
-
-  seajs.use('http://lepture.github.com/github.js/src/github', function(github) {
-    github('seajs').commits({ repo: 'seajs' })
-  })
-
-</script>
-
-<!--
-The beautiful sea picture is from: http://www.hassel66.net/life_001.html
-Thanks very much!
--->
+<!-- Thanks to the beautiful sea picture from: http://www.hassel66.net/life_001.html -->
 </body>
 </html>
