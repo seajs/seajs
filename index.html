@@ -189,6 +189,12 @@ Opera 10+         ✔
         <p id="wish">让生活更美好</p>
         <p id="hello">Hello, modular world!</p>
       </div>
+      <div id="github-commits">
+        <h3>Latest Updates</h3>
+        <ul id="commits">
+          <li>Status Loading ...</li>
+        </ul>
+      </div>
 
     </div>
 
@@ -210,6 +216,9 @@ Opera 10+         ✔
       $('#beautiful-sea').click(hello.sayHello)
     })
   })
+  seajs.use('http://lepture.github.com/github.js/src/github', function(github) {
+      github('seajs').commits({repo: 'seajs'});
+  });
 </script>
 
 <!--

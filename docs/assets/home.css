@@ -135,6 +135,7 @@ div.sep {
 #side {
   position: absolute;
   top: 20px;
+  width: 300px;
   right: 0;
 }
 
@@ -192,6 +193,40 @@ a.download_link:hover {
   opacity: .6;
   display: none;
 }
+
+#github-commits {
+    margin-top: 20px;
+}
+#commits {
+    font: 14px "PT Sans", "Helvetica Neue", "Hiragino Sans GB", Helvetica, Arial, sans-serif;
+    list-style-type: none;
+    margin: 0;
+}
+#commits li {
+    position: relative;
+    padding: 6px 0;
+    border-bottom: 1px solid #E0E0E0;
+    box-shadow: white 0 1px;
+}
+#commits p {
+    margin: 0 14px 0 0;
+}
+#commits a {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    color: #A4A4A4;
+    text-shadow: white 0 1px;
+    text-decoration: none;
+    font-size: 12px;
+    -webkit-transition: color .2s ease-in;
+    -moz-transition: color .2s ease-in;
+    transition: color .2s ease-in;
+}
+#commits a:hover {
+    color: #008B8B;
+}
+
 
 
 /* #footer */
