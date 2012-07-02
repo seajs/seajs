@@ -102,23 +102,39 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   min-height: 600px;
 }
 
-#intro {
+.page,
+.page-active {
   margin: 0 auto;
   width: 920px;
   padding: 0 0 30px 50px;
   position: relative;
+  display: none;
 }
 
-#intro h2 {
+.page-active {
+  display: block;
+}
+
+.page h2 {
   border-bottom: 1px solid #E0E0E0;
   box-shadow: #FFF 0 1px;
   width: 600px;
 }
 
-#words {
+.words {
   margin-right: 320px;
 }
 
+.words ul {
+  margin-left: 3em;
+}
+
+.words .toc {
+  margin-top: 30px;
+}
+
+
+/* #intro */
 .company-logo {
   list-style: none;
 }

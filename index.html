@@ -11,25 +11,30 @@
   <div id="header-inner">
 
   <h1 id="logo">
-    <img src="docs/assets/logo.png" width="144" height="50" title="SeaJS">
+    <a href="."><img src="docs/assets/logo.png" width="144" height="50" title="SeaJS"></a>
   </h1>
 
   <ul id="nav">
-    <li><a name="home" class="active">首页</a></li>
-    <li><a href="docs/api.html">API 文档</a></li>
-    <li><a href="docs/guide.html">使用指南</a></li>
-    <li><a href="docs/community.html">社区交流</a></li>
+    <li><a href="#intro">首页</a></li>
+    <li><a href="#api">API 文档</a></li>
+    <li><a href="#guide">使用指南</a></li>
+    <li><a href="#about">社区交流</a></li>
   </ul>
 
   </div>
 </div>
 
 <div id="content">
-  <div id="intro">
+
+  <div class="page page-active" id="page-loading">
+    <h2>Loading ...</h2>
+  </div>
+
+  <div class="page" id="page-intro">
 
     <h2>A Module Loader for the Web</h2>
 
-    <div id="words">
+    <div class="words">
 
       <p>
         SeaJS 是一个适用于 Web 浏览器端的模块加载器。使用 SeaJS，可以更好地组织 JavaScript 代码。
@@ -64,7 +69,7 @@ define(function(require, exports, module) {
 <pre>
 seajs.config({
   alias: {
-    'jquery': '1.7.2'
+    'jquery': 'http://modules.seajs.org/jquery/1.7.2/jquery.js'
   }
 })
 
@@ -109,12 +114,12 @@ seajs.use(['./hello', 'jquery'], function(hello, $) {
       </p>
 
       <ul>
-        <li><a href="docs/api.html">API 文档</a></li>
-        <li><a href="docs/api.html">使用指南</a></li>
+        <li><a href="#api">API 文档</a></li>
+        <li><a href="#guide">使用指南</a></li>
       </ul>
 
       <p>
-        遇到问题时，欢迎到 <a href="docs/community.html">SeaJS 社区</a> 寻找帮助。
+        遇到问题时，欢迎到 <a href="#about">SeaJS 社区</a> 寻找帮助。
       </p>
 
 
@@ -150,23 +155,23 @@ Opera 10+         ✔
       </p>
 
       <ol class="company-logo">
-        <li><a href="https://www.alipay.com/" target="_blank"><img alt="支付宝" src="docs/assets/companies/alipay.png" width="103" height="44"></a></li>
-        <li><a href="http://taobao.com/" target="_blank"><img alt="淘宝网" src="docs/assets/companies/taobao.png" width="164" height="44"></a></li>
-        <li><a href="http://etao.com/" target="_blank"><img alt="一淘" src="docs/assets/companies/etao.png" width="64" height="44"></a></li>
-        <li><a href="http://laiwang.com/" target="_blank"><img alt="来往" src="docs/assets/companies/laiwang.png" width="46" height="44"></a></li>
+        <li><a href="https://www.alipay.com/" target="_blank"><img alt="支付宝" data-src="docs/assets/companies/alipay.png" width="103" height="44"></a></li>
+        <li><a href="http://taobao.com/" target="_blank"><img alt="淘宝网" data-src="docs/assets/companies/taobao.png" width="164" height="44"></a></li>
+        <li><a href="http://etao.com/" target="_blank"><img alt="一淘" data-src="docs/assets/companies/etao.png" width="64" height="44"></a></li>
+        <li><a href="http://laiwang.com/" target="_blank"><img alt="来往" data-src="docs/assets/companies/laiwang.png" width="46" height="44"></a></li>
         <li class="clear"></li>
-        <li><a href="http://pengyou.com/" target="_blank"><img alt="朋友" src="docs/assets/companies/pengyou.png" width="126" height="44"></a></li>
-        <li><a href="http://baixing.com/" target="_blank"><img alt="百姓网" src="docs/assets/companies/baixing.png" width="104" height="44"></a></li>
-        <li><a href="http://faxianla.com/" target="_blank"><img alt="发现啦" src="docs/assets/companies/faxianla.png?v2" width="133" height="44"></a></li>
-        <li><a href="http://howzhi.com/" target="_blank"><img alt="好知" src="docs/assets/companies/howzhi.png" width="84" height="44"></a></li>
+        <li><a href="http://pengyou.com/" target="_blank"><img alt="朋友" data-src="docs/assets/companies/pengyou.png" width="126" height="44"></a></li>
+        <li><a href="http://baixing.com/" target="_blank"><img alt="百姓网" data-src="docs/assets/companies/baixing.png" width="104" height="44"></a></li>
+        <li><a href="http://faxianla.com/" target="_blank"><img alt="发现啦" data-src="docs/assets/companies/faxianla.png?v2" width="133" height="44"></a></li>
+        <li><a href="http://howzhi.com/" target="_blank"><img alt="好知" data-src="docs/assets/companies/howzhi.png" width="84" height="44"></a></li>
         <li class="clear"></li>
-        <li><a href="http://t.163.com/" target="_blank"><img alt="网易微博" src="docs/assets/companies/t163.png" width="122" height="44"></a></li>
-        <li><a href="http://clicki.cn/" target="_blank"><img alt="Clicki" src="docs/assets/companies/clicki.png" width="106" height="44"></a></li>
-        <li><a href="http://xueqiu.com/" target="_blank"><img alt="雪球" src="docs/assets/companies/xueqiu.png" width="88" height="44"></a></li>
-        <li><a href="http://edoctor.com/" target="_blank"><img alt="医道网" src="docs/assets/companies/edoctor.png" width="131" height="44"></a></li>
+        <li><a href="http://t.163.com/" target="_blank"><img alt="网易微博" data-src="docs/assets/companies/t163.png" width="122" height="44"></a></li>
+        <li><a href="http://clicki.cn/" target="_blank"><img alt="Clicki" data-src="docs/assets/companies/clicki.png" width="106" height="44"></a></li>
+        <li><a href="http://xueqiu.com/" target="_blank"><img alt="雪球" data-src="docs/assets/companies/xueqiu.png" width="88" height="44"></a></li>
+        <li><a href="http://edoctor.com/" target="_blank"><img alt="医道网" data-src="docs/assets/companies/edoctor.png" width="131" height="44"></a></li>
         <li class="clear"></li>
-        <li><a href="http://sodao.com/" target="_blank"><img alt="搜道网" src="docs/assets/companies/sodao.png" width="171" height="44"></a></li>
-        <li><a href="http://dnspod.cn/" target="_blank"><img alt="DNSPOD" src="docs/assets/companies/dnspod.png" width="138" height="44"></a></li>
+        <li><a href="http://sodao.com/" target="_blank"><img alt="搜道网" data-src="docs/assets/companies/sodao.png" width="171" height="44"></a></li>
+        <li><a href="http://dnspod.cn/" target="_blank"><img alt="DNSPOD" data-src="docs/assets/companies/dnspod.png" width="138" height="44"></a></li>
       </ol>
 
       <div class="clear"></div>
@@ -184,7 +189,7 @@ Opera 10+         ✔
     <div id="side">
 
       <div id="downloads">
-        <a class="download_link" href="docs/release-notes.html" alt="Download this project"><span>v1.2.0</span></a>
+        <a class="download_link" href="#downloads" alt="Download this project"><span>v1.2.0</span></a>
       </div>
 
       <div id="social">
@@ -216,6 +221,55 @@ Opera 10+         ✔
     </div>
 
   </div>
+
+  <div class="page" id="page-api">
+
+    <h2>API Documentation</h2>
+
+    <div class="words">
+
+      <ul class="toc">
+        <li><a href="https://github.com/seajs/seajs/issues/240">模块系统概述</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/241">CMD 模块定义规范</a></li>
+      </ul>
+
+
+      <p>尚未写完，请先看看老的：</p>
+
+      <ul>
+        <li><a href="docs/index.html">Sea.js Manual &amp; Documentation</a></li>
+        <li><a href="docs/zh-cn/index.html">中文版</a></li>
+      </ul>
+
+    </div>
+  </div>
+
+  <div class="page" id="page-guide">
+
+    <h2>Learning Guide</h2>
+
+    <div class="words">
+
+      <p>
+        书写中⋯⋯ 感谢你的光顾，请关注 <a href="http://weibo.com/lifesinger">@玉伯也叫射雕</a>，好了会微博发布。
+      </p>
+
+    </div>
+  </div>
+
+  <div class="page" id="page-about">
+
+    <h2>Community</h2>
+
+    <div class="words">
+
+      <p>
+        Writing ...
+      </p>
+
+    </div>
+  </div>
+
 </div>
 
 <div id="footer">
