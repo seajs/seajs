@@ -40,7 +40,7 @@ h3 {
 }
 
 ul, ol { list-style-position: inside; margin-left: 2em; }
-ul { list-style: disc; }
+ul { list-style: circle; }
 a { color: #008B8B; text-decoration: none; }
 a:hover { text-decoration: underline; }
 strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
@@ -126,11 +126,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
 }
 
 .words ul {
-  margin-left: 3em;
-}
-
-.words .toc {
-  margin-top: 30px;
+  margin: 1em 0 1em 2em;
 }
 
 
