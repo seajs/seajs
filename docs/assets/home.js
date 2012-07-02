@@ -65,12 +65,7 @@ define(function(require) {
 
   function isPageNav(href) {
     if (href.indexOf('#') === -1) return false
-
-    for (var i = 0, len = navs.length; i < len; i++) {
-      if (navs[i].href === href) return true
-    }
-
-    return false
+    return document.getElementById('page-' + href.replace(/^.*#/, ''))
   }
 
   function initIntroPage() {
@@ -84,8 +79,11 @@ define(function(require) {
         function($, hello, github, render) {
           $('#beautiful-sea').click(hello.sayHello)
 
-          github('seajs/seajs').issues({ callback: render.issues })
-          github('seajs/seajs').commits({ callback: render.commits })
+          if (github && render) {
+            $('#github').show()
+            github('seajs/seajs').issues({ callback: render.issues })
+            github('seajs/seajs').commits({ callback: render.commits })
+          }
         })
 
     initCompanyLogos()

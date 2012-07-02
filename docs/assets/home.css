@@ -160,7 +160,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   width: 300px;
 }
 
-#downloads {
+#downloads-link {
   position: absolute;
   top: -55px;
   right: 0;
@@ -169,7 +169,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   background: url(download.png) no-repeat 0 90%;
 }
 
-.download_link {
+#downloads-link a {
   display: block;
   float: right;
   width: 90px;
@@ -178,7 +178,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   position: relative;
 }
 
-.download_link span {
+#downloads-link a span {
   position: absolute;
   bottom: 8px;
   right: 20px;
@@ -186,7 +186,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   /*text-shadow: 1px 1px 0 #323A41;*/
 }
 
-a.download_link:hover {
+#downloads-link a:hover {
   text-decoration: none;
 }
 
@@ -222,6 +222,7 @@ a.download_link:hover {
 
 #github {
     margin-top: 20px;
+    display: none;
 }
 
 #github h3 {
