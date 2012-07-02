@@ -1,4 +1,4 @@
-define(function(require, exports) {
+define('highlight', [], function(require, exports) {
 
   /* Copyright (C) 2007, 2008 gnombat@users.sourceforge.net */
   /* License: http://shjs.sourceforge.net/doc/gplv3.html */
@@ -12,21 +12,21 @@ define(function(require, exports) {
 
   /* public api */
   exports.init = function() {
-    var els = document.getElementsByTagName('pre');
-    var len = els.length;
+    var els = document.getElementsByTagName('pre')
+    var len = els.length
 
     if(len > 0) {
 
       for(var i = 0; i < len; i++) {
         if (els[i].className.indexOf('text') === -1) {
-          els[i].className += ' sh_javascript';
+          els[i].className += ' sh_javascript'
         }
       }
 
-      sh_highlightDocument();
+      sh_highlightDocument()
     }
   };
 
-  require('./sh.css');
+  require.async('./sh.css')
 
-});
+})

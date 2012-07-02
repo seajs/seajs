@@ -1,4 +1,4 @@
-define(function(require, exports) {
+define('hello', ['jquery'], function(require, exports) {
 
   var $ = require('jquery')
 

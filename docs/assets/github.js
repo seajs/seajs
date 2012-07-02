@@ -1,7 +1,7 @@
 /**
  * Thanks to https://github.com/lepture/github.js
  */
-define(function(require, exports, module) {
+define('github', [], function(require, exports, module) {
 
   var API_BASE = 'https://api.github.com'
   var CALLBACK = 'callback=define'

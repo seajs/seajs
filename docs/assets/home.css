@@ -136,21 +136,21 @@ a:hover { text-decoration: underline; }
 
 
 /* #intro */
-.company-logo {
+#company-logos {
   list-style: none;
 }
 
-.company-logo li {
+#company-logos li {
   float: left;
   margin: 0 5px;
 }
 
-.company-logo img {
+#company-logos img {
   border: 1px solid #DEDEDE;
   opacity: .8;
 }
 
-.company-logo a:hover img {
+#company-logos a:hover img {
   opacity: 1;
 }
 
@@ -308,6 +308,12 @@ p.copyright {
 /* for mobile device */
 @media screen and (max-width: 1200px) {
   .extra { display: none; }
+}
+
+
+/* for old browsers */
+.extra {
+  _display: none;
 }
 
 

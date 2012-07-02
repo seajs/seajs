@@ -3,15 +3,16 @@
  */
 
 seajs.config({
+  base: './docs/assets/',
   alias: {
     'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery.js'
   }
 })
 
-define(function(require) {
+define('home', [], function(require) {
 
   var navs = document.getElementById('nav').getElementsByTagName('a')
-  var pages = document.getElementsByClassName('page')
+  var pages = getElementsByClassName('content', 'page')
 
   var hash = location.hash.substring(1)
   var pageId = document.getElementById('page-' + hash) ? hash : 'intro'
@@ -69,16 +70,16 @@ define(function(require) {
   function initIntroPage() {
     if (introInited) return
 
-    require.async('./highlight', function(highlight) {
+    require.async('highlight', function(highlight) {
       highlight.init()
     })
 
-    require.async('./github', function(github) {
+    require.async('github', function(github) {
       document.getElementById('github').style.display = 'block'
       github('seajs/seajs').issues().commits()
     })
 
-    require.async(['jquery', './hello'], function($, hello) {
+    require.async(['jquery', 'hello'], function($, hello) {
       $('#beautiful-sea').click(hello.sayHello)
     })
 
@@ -87,13 +88,33 @@ define(function(require) {
   }
 
   function initCompanyLogos() {
-    var imgs = document.getElementsByClassName('company-logo')[0]
+    var imgs = document.getElementById('company-logos')
         .getElementsByTagName('img')
 
     for (var i = 0, len = imgs.length; i < len; i++) {
       var img = imgs[i]
       img.src = img.getAttribute('data-src')
     }
+  }
+
+  function getElementsByClassName(root, className) {
+    root = document.getElementById(root)
+
+    if (root.getElementsByClassName) {
+      return root.getElementsByClassName(className)
+    }
+
+    var elements = root.getElementsByTagName('*')
+    var ret = []
+
+    for (var i = 0, len = elements.length; i < len; i++) {
+      var elem = elements[i]
+      if ((' ' + elem.className + ' ').indexOf(' ' + className + ' ') > -1) {
+        ret.push(elem)
+      }
+    }
+
+    return ret
   }
 
 })
