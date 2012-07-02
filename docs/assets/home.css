@@ -129,6 +129,12 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   margin: 1em 0 1em 2em;
 }
 
+.words ul li {
+  list-style: none;
+  padding-left: 20px;
+  background: url(dot.png) 0 0.66em no-repeat;
+}
+
 
 /* #intro */
 .company-logo {
