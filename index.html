@@ -11,7 +11,7 @@
   <div id="header-inner">
 
   <h1 id="logo">
-    <a href="."><img src="docs/assets/logo.png" width="144" height="50" title="SeaJS"></a>
+    <a href="."><img src="docs/assets/images/logo.png" width="144" height="50" title="SeaJS"></a>
   </h1>
 
   <ul id="nav">
@@ -42,24 +42,24 @@
 
       <p>
         也许你已注意到右边的美图：蓝天碧海之间，沙滩爱侣相伴。无论生活还是工作，我们都期望能享受如此良辰美景。SeaJS
-        在努力让我们的代码生涯变得更美好。
+        在努力让我们的生活变得更美好。
       </p>
 
 
       <h3 id="glance">快速入门</h3>
 
       <p>
-        在 SeaJS 的世界里，一个文件就是一个模块。所有模块都遵循 <a href="https://github.com/seajs/seajs/blob/master/docs/specification.md">CMD</a> 规范，我们可以像在 <a href="http://nodejs.org/" target="_blank">Node</a> 环境中一样来书写模块代码：
+        在 SeaJS 的世界里，一个文件就是一个模块。所有模块都遵循 <a href="https://github.com/seajs/seajs/issues/242" target="_blank">CMD</a> 规范，我们可以像在 <a href="http://nodejs.org/" target="_blank">Node</a> 环境中一样来书写模块代码：
       </p>
 
 <pre>
 define(function(require, exports, module) {
-  var $ = require('jquery')
+  var $ = require('jquery');
 
   exports.sayHello = function() {
-    $('#hello').toggle('slow')
-  }
-})
+    $('#hello').toggle('slow');
+  };
+});
 </pre>
 
       <p>
@@ -71,15 +71,15 @@ seajs.config({
   alias: {
     'jquery': 'http://modules.seajs.org/jquery/1.7.2/jquery.js'
   }
-})
+});
 
 seajs.use(['./hello', 'jquery'], function(hello, $) {
-  $('#beautiful-sea').click(hello.sayHello)
-})
+  $('#beautiful-sea').click(hello.sayHello);
+});
 </pre>
 
       <p>
-        赶紧点击右上角的美图，与模块世界打个招呼。
+        赶紧点击右上角的美图，与模块世界打个招呼吧 ^_^
       </p>
 
 
@@ -90,20 +90,20 @@ seajs.use(['./hello', 'jquery'], function(hello, $) {
       </p>
 
       <ul>
-        <li><strong>代码格式简单一致</strong>：所有模块代码，都按照 CMD 规范来书写。</li>
-        <li><strong>自动管理依赖</strong>：无论是多层级依赖还是循环依赖，SeaJS 都能帮你处理好。</li>
-        <li><strong>异步并行加载</strong>：异步无阻与并行加载，可以让页面性能达到默认优化。</li>
-        <li><strong>拥有丰富的插件</strong>：SeaJS 的可扩展性非常好，目前已有近 10 个插件。</li>
-        <li><strong>对调试非常友好</strong>：通过 debug 插件，可以实现在线调试等功能。</li>
+        <li>简单一致的模块格式。</li>
+        <li>依赖的自动管理。</li>
+        <li>脚本的异步并行加载。</li>
+        <li>丰富的插件。</li>
+        <li>友好的调试。</li>
       </ul>
 
       <p>
-        SeaJS 带来的最大好处是：<strong>提升代码的可维护性</strong>。上面的每一项特性，在接下来的文档中都会有详细阐述。除了这些核心特性，SeaJS
-        还具有不少非常实用的功能，比如可用于 mock 或快速 fix bug 的 <code>seajs.modify</code> 等方法。
+        SeaJS 带来的最大好处是：提升代码的可维护性。上面的每一项特性，在使用文档中都会有详细阐述。如果一个网站的 JS
+        文件超过 3 个，就适合用 SeaJS 来组织和维护代码。涉及的 JS 文件越多，SeaJS 就越适合。
       </p>
 
       <p>
-        SeaJS 追求的是<strong>更简单、更自然</strong>的代码书写和组织方式。
+        SeaJS 追求的是更简单、自然的代码书写和组织方式。
       </p>
 
 
@@ -126,7 +126,7 @@ seajs.use(['./hello', 'jquery'], function(hello, $) {
       <h3 id="compatible">兼容性</h3>
 
       <p>
-        SeaJS 兼容所有主流浏览器：
+        SeaJS 兼容所有 PC 和 Mobile 端的主流浏览器：
       </p>
 
 <pre class="text">
@@ -141,17 +141,17 @@ Opera 10+         ✔
         下面是 SeaJS 的 Test Suite：
         <br>
         <br>
-        <a href="http://seajs.org/test/runner.html">http://seajs.org/test/runner.html</a>
+        <a href="http://seajs.org/test/runner.html" target="_blank">http://seajs.org/test/runner.html</a>
         <br>
         <br>
-        目前已经在很多设备包括各种移动设备上测试通过。欢迎各位朋友继续帮忙测试，用例比较多，需耐心等待 2 - 30 分钟。若测试未通过，请将测试结果和浏览器 UA 信息通过 <a href="mailto:lifesinger@gmail.com">邮件</a> 或 <a href="http://weibo.com/lifesinger" target="_blank">微博</a> 反馈给我们，不胜感激。
+        欢迎各位朋友继续帮忙测试，用例比较多，需耐心等待 2 - 30 分钟。若测试未通过，请将测试结果和浏览器 UA 信息通过 <a href="mailto:lifesinger@gmail.com">邮件</a> 或 <a href="http://weibo.com/lifesinger" target="_blank">微博</a> 反馈给我们。
       </p>
 
 
       <h3 id="companies">哪些公司在用</h3>
 
       <p>
-        感谢以下公司对 SeaJS 的信任：
+        感谢以下公司、产品对 SeaJS 的信任：
       </p>
 
       <ol class="company-logo">
@@ -177,7 +177,7 @@ Opera 10+         ✔
       <div class="clear"></div>
 
       <p>
-        期待这里出现你所在公司的名字，更多使用者请参见：<a href="https://github.com/seajs/seajs/wiki/SeaJS-Users">SeaJS Users</a>
+        期待出现与你相关的名字，更多使用者请参见：<a href="https://github.com/seajs/seajs/wiki/SeaJS-Users" target="_blank">SeaJS Users</a>
       </p>
 
       <p>
@@ -199,7 +199,7 @@ Opera 10+         ✔
       </div>
 
       <div id="sea-pic">
-        <img id="beautiful-sea" src="docs/assets/sea.jpg" width="300" height="300">
+        <img id="beautiful-sea" src="docs/assets/images/sea.jpg" width="300" height="300">
         <!-- Thanks to the beautiful sea picture from: http://www.hassel66.net/life_001.html -->
         <p id="wish">让生活更美好</p>
         <p id="hello">Hello, modular world!</p>
@@ -207,12 +207,12 @@ Opera 10+         ✔
 
       <div id="github">
 
-        <h3>Latest Issues</h3>
+        <h3>Latest Issues <span><a href="https://github.com/seajs/seajs/issues" target="_blank">#</a></span></h3>
         <ul id="issues">
           <li>Loading ...</li>
         </ul>
 
-        <h3>Latest Commits</h3>
+        <h3>Latest Commits <span><a href="https://github.com/seajs/seajs/commits/master" target="_blank">#</a></span></h3>
         <ul id="commits">
           <li>Loading ...</li>
         </ul>
@@ -317,7 +317,7 @@ Opera 10+         ✔
 </div>
 
 <div class="extra">
-  <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -2px; right: -2px; border: 0" src="docs/assets/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
+  <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -2px; right: -2px; border: 0" src="docs/assets/images/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
 </div>
 
 <script src="dist/sea.js" data-main="./docs/assets/home.js?v20120702"></script>

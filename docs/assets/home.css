@@ -43,7 +43,6 @@ ul, ol { list-style-position: inside; margin-left: 2em; }
 ul { list-style: circle; }
 a { color: #008B8B; text-decoration: none; }
 a:hover { text-decoration: underline; }
-strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
 .clear { clear: both; }
 
 
@@ -105,7 +104,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
 .page,
 .page-active {
   margin: 0 auto;
-  width: 920px;
+  width: 950px;
   padding: 0 0 30px 50px;
   position: relative;
   display: none;
@@ -122,17 +121,17 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
 }
 
 .words {
-  margin-right: 320px;
+  margin-right: 350px;
 }
 
 .words ul {
-  margin: 1em 0 1em 2em;
+  margin: 1em 0 1em 1em;
 }
 
 .words ul li {
   list-style: none;
   padding-left: 20px;
-  background: url(dot.png) 0 0.66em no-repeat;
+  background: url(images/dot.png) 0 0.66em no-repeat;
 }
 
 
@@ -168,7 +167,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   right: 0;
   width: 120px;
   height: 70px;
-  background: url(download.png) no-repeat 0 90%;
+  background: url(images/download.png) no-repeat 0 90%;
 }
 
 #downloads-link a {
@@ -176,7 +175,7 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
   float: right;
   width: 90px;
   height:70px;
-  background: url(download-folder.png) no-repeat 0 0;
+  background: url(images/download-folder.png) no-repeat 0 0;
   position: relative;
 }
 
@@ -223,57 +222,78 @@ strong { font-weight: normal; border-bottom: 1px solid #E0E0E0; }
 }
 
 #github {
-    margin-top: 20px;
-    display: none;
+  margin-top: 20px;
+  display: none;
 }
 
 #github h3 {
-    margin-top: 20px;
+  margin-top: 20px;
+  position: relative;
+}
+
+#github h3 a {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #CCC;
+  padding-left: 20px;
+  font-size: 22px;
+}
+
+#github h3 a:hover {
+  text-decoration: none;
 }
 
 #github ul {
-    font: 14px "PT Sans";
-    list-style-type: none;
-    margin: 0;
+  font: 14px "PT Sans";
+  list-style-type: none;
+  margin: 0;
 }
 
 #github li {
-    position: relative;
-    padding: 6px 0;
-    border-bottom: 1px solid #E8E8E8;
-    /*box-shadow: #FFF 0 1px;*/
+  position: relative;
+  padding: 6px 18px 6px 0;
+  border-bottom: 1px solid #E8E8E8;
+  /*box-shadow: #FFF 0 1px;*/
 }
 
-#github p {
-    margin: 0 14px 0 0;
+#github li .label {
+  color: #999;
+  text-shadow: white 0 1px;
+  padding-right: 5px;
+  font-size: 14px;
 }
 
-#github a {
-    position: absolute;
-    top: 8px;
-    right: 0;
-    color: #A4A4A4;
-    text-shadow: white 0 1px;
-    text-decoration: none;
-    font-size: 12px;
-    -webkit-transition: color .2s ease-in;
-    -moz-transition: color .2s ease-in;
-    transition: color .2s ease-in;
+#github li .date {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  color: #A4A4A4;
+  text-shadow: white 0 1px;
+  font-size: 12px;
+}
+
+#github li a {
+  color: #444;
+  -webkit-transition: color .2s ease-in;
+  -moz-transition: color .2s ease-in;
+  transition: color .2s ease-in;
 }
 
 #github a:hover {
-    color: #008B8B;
+  color: #008B8B;
+  text-decoration: none;
 }
 
 
 /* #footer */
 #footer {
-  background: #616C75 url(footer.jpg) 0 0 repeat;
+  background: #616C75 url(images/footer.jpg) 0 0 repeat;
   height: 91px;
 }
 
 #footer-inner {
-  background: url(footer-top.jpg) 0 0 repeat-x;
+  background: url(images/footer-top.jpg) 0 0 repeat-x;
   font-family: 'PT Sans';
   color: #9CA4AB;
   text-align: center;
@@ -285,8 +305,15 @@ p.copyright {
 }
 
 
+/* for mobile device */
+@media screen and (max-width: 1200px) {
+  .extra { display: none; }
+}
+
+
 /* misc style */
 pre, code {
+  font-size: 14px;
   font-family: Monaco, Consolas, "Lucida Console", monospace;
   background-color: #F8F8F8;
   border: 1px solid #EAEAEA;
@@ -295,7 +322,6 @@ pre, code {
 }
 
 pre {
-  font-size: 0.95em;
   line-height: 1.5438em;
   margin: -.5em 0 1.1em;
   padding: 1em 1.6em 1em 1.2em;

@@ -4,9 +4,7 @@
 
 seajs.config({
   alias: {
-    'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery',
-    'github': 'http://lepture.github.com/github.js/src/github',
-    'github-render': 'http://lepture.github.com/github.js/src/render'
+    'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery.js'
   }
 })
 
@@ -75,19 +73,16 @@ define(function(require) {
       highlight.init()
     })
 
-    require.async(['jquery', './hello', 'github', 'github-render'],
-        function($, hello, github, render) {
-          $('#beautiful-sea').click(hello.sayHello)
+    require.async('./github', function(github) {
+      document.getElementById('github').style.display = 'block'
+      github('seajs/seajs').issues().commits()
+    })
 
-          if (github && render) {
-            $('#github').show()
-            github('seajs/seajs').issues({ callback: render.issues })
-            github('seajs/seajs').commits({ callback: render.commits })
-          }
-        })
+    require.async(['jquery', './hello'], function($, hello) {
+      $('#beautiful-sea').click(hello.sayHello)
+    })
 
     initCompanyLogos()
-
     introInited = true
   }
 
