@@ -134,8 +134,8 @@
   function getUrl(test) {
     var url = ''
 
-    if (test.indexOf('issues/') === 0) {
-      url = test + '/test.html'
+    if (test.indexOf('modules/') === 0) {
+      url = 'sandbox.html?' + encodeURIComponent(test + '/program.js')
     }
     else if (test.indexOf('unit/') === 0) {
       url = 'sandbox.html?' + encodeURIComponent(test)
@@ -144,7 +144,7 @@
       url = test + '.html'
     }
     else {
-      url = 'sandbox.html?' + encodeURIComponent(test + '/program.js')
+      url = test + '/test.html'
     }
 
     url += (url.indexOf('?') > 0 ? '&' : '?') + 't=' + new Date().getTime()

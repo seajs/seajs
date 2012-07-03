@@ -92,7 +92,7 @@
     ,'issues/utf8-in-gbk'
     ,'issues/x-ua-compatible'
 
-    ,'runtime/math'
+    ,'runtime/combine'
 
     ,'bootstrap/index'
   ]
