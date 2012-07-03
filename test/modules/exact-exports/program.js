@@ -6,4 +6,4 @@ define(function (require, exports) {
   test.assert(a.program() === exports, 'exact exports')
   test.done()
 
-});
+})

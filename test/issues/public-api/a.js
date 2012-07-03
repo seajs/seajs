@@ -64,7 +64,7 @@ define(function(require, exports, module) {
   test.assert(util.isObject(module.exports), 'module.exports')
   test.assert(module.parent instanceof Module, 'module.parent')
   test.assert(module.parent.parent === undefined, 'module.parent.parent')
-  test.assert(module.status === Module.STATUS.READY, 'module.status')
+  test.assert(module.status === Module.STATUS.COMPILING, 'module.status')
   test.assert(util.isObject(module.exports), 'module.exports')
   test.assert(util.isFunction(module.require), 'module.require')
   test.assert(getOwnPropertyCount(module) === 8, getOwnPropertyCount(module))

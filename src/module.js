@@ -8,11 +8,12 @@
   var compileStack = []
 
   var STATUS = {
-    'FETCHING': 1, // The module file is fetching now.
-    'FETCHED': 2,  // The module file has been fetched.
-    'SAVED': 3,    // The module info has been saved.
-    'READY': 4,    // All dependencies and self are ready to compile.
-    'COMPILED': 5  // The module.exports is available.
+    'FETCHING': 1,  // The module file is fetching now.
+    'FETCHED': 2,   // The module file has been fetched.
+    'SAVED': 3,     // The module info has been saved.
+    'READY': 4,     // All dependencies and self are ready to compile.
+    'COMPILING': 5, // The module is in compiling now.
+    'COMPILED': 6   // The module is compiled and module.exports is available.
   }
 
 
@@ -112,6 +113,9 @@
       return null
     }
 
+    module.status = STATUS.COMPILING
+
+
     function require(id) {
       var uri = resolve(id, module.uri)
       var child = cachedModules[uri]
@@ -121,7 +125,8 @@
         return null
       }
 
-      if (isCircular(child)) {
+      // Avoids circular calls.
+      if (child.status === STATUS.COMPILING) {
         return child.exports
       }
 
@@ -395,7 +400,6 @@
     }
   }
 
-
   function getPureDependencies(module) {
     var uri = module.uri
 
@@ -435,24 +439,6 @@
     }
 
     return false
-  }
-
-  function isCircular(module) {
-    var ret = false
-    var stack = [module.uri]
-    var parent = module
-
-    while (parent = parent.parent) {
-      stack.unshift(parent.uri)
-
-      if (parent === module) {
-        ret = true
-        break
-      }
-    }
-
-    ret && printCircularLog(stack, 'warn')
-    return ret
   }
 
   function printCircularLog(stack, type) {
