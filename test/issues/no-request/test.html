@@ -6,13 +6,19 @@
 <title>Issue Test</title>
 </head>
 <body>
-<p><a href="https://github.com/seajs/seajs/issues/100">#100</a></p>
 <div id="out"></div>
 
 <script src="../../../dist/sea.js"></script>
+<script src="./a.js"></script>
+
 <script>
 
-  seajs.use('./main')
+  seajs.use(['../../test', './a'], function(test, a) {
+
+    test.assert(a.name === 'a', a.name)
+    test.done()
+
+  })
 
 
   function printResults(txt, style) {
