@@ -32,8 +32,18 @@
 
 <script>
 
+  var count = 0
+
+  function done(main) {
+    if (++count === 2) {
+      main.done()
+    }
+  }
+
+
   seajs.use('./main', function(main) {
-    main.echo(1);
+    main.echo(1)
+    done(main)
   });
 
 </script>
@@ -41,8 +51,8 @@
 <script>
 
   seajs.use('./main', function(main) {
-    main.echo(2);
-    main.done();
+    main.echo(2)
+    done(main)
   });
 
 </script>

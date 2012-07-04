@@ -4,6 +4,7 @@ define(function(require) {
 
   require.async('./a', function(a) {
     test.assert(a.foo === 'a', 'test require.async from factory')
+    done()
   })
 
   require.async('./b')
@@ -11,7 +12,15 @@ define(function(require) {
   // load normal script file
   require.async('./c.js', function(c) {
     test.assert(c.name === 'c', c.name)
-    test.done()
+    done()
   })
 
+
+  var count = 0
+
+  function done() {
+    if (++count === 2) {
+      test.done()
+    }
+  }
 })
