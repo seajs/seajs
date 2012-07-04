@@ -463,10 +463,6 @@ seajs._config = {
 
   var baseElement = head.getElementsByTagName('base')[0]
 
-  var UA = navigator.userAgent
-  var isSafari = UA.indexOf('Safari') > 0 && UA.indexOf('Chrome') === -1
-  var isFirefox = UA.indexOf('Firefox') > 0
-
   var IS_CSS_RE = /\.css(?:\?|$)/i
   var READY_STATE_RE = /loaded|complete|undefined/
 
@@ -539,8 +535,8 @@ seajs._config = {
 
   function styleOnload(node, callback) {
 
-    // for Safari and Old Firefox
-    if (isSafari || (isFirefox && !('onload' in node))) {
+    // for Old WebKit and Old Firefox
+    if (isOldWebKit || isOldFirefox) {
       util.log('Start poll to fetch css')
 
       setTimeout(function() {
@@ -560,20 +556,24 @@ seajs._config = {
   function poll(node, callback) {
     var isLoaded
 
-    if (isSafari) {
+    // for WebKit < 536
+    if (isOldWebKit) {
       if (node['sheet']) {
         isLoaded = true
       }
     }
-    // for Firefox
+    // for Firefox < 9.0
     else if (node['sheet']) {
       try {
         if (node['sheet'].cssRules) {
           isLoaded = true
         }
       } catch (ex) {
-        if (ex.name === 'SecurityError' || // firefox >= 13.0
-            ex.name === 'NS_ERROR_DOM_SECURITY_ERR') { // old firefox
+        // The value of `ex.name` is changed from
+        // 'NS_ERROR_DOM_SECURITY_ERR' to 'SecurityError' since Firefox 13.0
+        // But Firefox is less than 9.0 in here, So it is ok to just rely on
+        // 'NS_ERROR_DOM_SECURITY_ERR'
+        if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
           isLoaded = true
         }
       }
@@ -646,6 +646,21 @@ seajs._config = {
       element.appendChild(doc.createTextNode(cssText))
     }
   }
+
+
+  var UA = navigator.userAgent
+
+  // `onload` event is supported in WebKit since 535.23
+  // Ref:
+  //  - https://bugs.webkit.org/show_activity.cgi?id=38995
+  var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, '$1')) < 536
+
+  // `onload/onerror` event is supported since Firefox 9.0
+  // Ref:
+  //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
+  //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
+  var isOldFirefox = UA.indexOf('Firefox') > 0 &&
+      !('onload' in document.createElement('link'))
 
 
   /**
