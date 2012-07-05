@@ -113,11 +113,11 @@
   var mapCache = {}
 
   /**
-   * Converts the ur according to the map rules.
+   * Converts the uri according to the map rules.
    */
-  function parseMap(uri, map) {
+  function parseMap(uri) {
     // map: [[match, replace], ...]
-    map || (map = config.map || [])
+    var map = config.map || []
     if (!map.length) return uri
 
     var ret = uri

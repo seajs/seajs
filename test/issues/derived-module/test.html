@@ -5,24 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
 <title>Issue Test</title>
 </head>
-
 <body>
-<p><a href="https://github.com/seajs/seajs/issues/137">#137</a></p>
+<p><a href="https://github.com/seajs/seajs/issues/254">#254</a></p>
 <div id="out"></div>
 
 <script src="../../../dist/sea.js"></script>
 <script>
 
-  seajs.config({
-    base: '.',
-
-    map: [
-        [ 'a.js', 'a-debug.js' ],
-        [ 'c.js', 'c-src.js' ]
-    ]
+  seajs.use('../../vendor', function() {
+    seajs.use('./main')
   })
-
-  seajs.use('./main')
 
 
   function printResults(txt, style) {

@@ -316,11 +316,11 @@ seajs._config = {
   var mapCache = {}
 
   /**
-   * Converts the ur according to the map rules.
+   * Converts the uri according to the map rules.
    */
-  function parseMap(uri, map) {
+  function parseMap(uri) {
     // map: [[match, replace], ...]
-    map || (map = config.map || [])
+    var map = config.map || []
     if (!map.length) return uri
 
     var ret = uri
@@ -903,20 +903,18 @@ seajs._config = {
       deps = util.parseDependencies(factory.toString())
     }
 
-    // Gets uri directly for specific modules.
-    if (id) {
-      var uri = resolve(id)
-    }
-    // Try to derive uri in IE6-9 for anonymous modules.
-    else if (document.attachEvent) {
+    var meta = { id: id, dependencies: deps, factory: factory }
+    var derivedUri
 
+    // Try to derive uri in IE6-9 for anonymous modules.
+    if (document.attachEvent) {
       // Try to get the current script.
       var script = util.getCurrentScript()
       if (script) {
-        uri = util.unParseMap(util.getScriptAbsoluteSrc(script))
+        derivedUri = util.unParseMap(util.getScriptAbsoluteSrc(script))
       }
 
-      if (!uri) {
+      if (!derivedUri) {
         util.log('Failed to derive URI from interactive script for:',
             factory.toString(), 'warn')
 
@@ -925,10 +923,21 @@ seajs._config = {
       }
     }
 
-    var meta = { id: id, dependencies: deps, factory: factory }
+    // Gets uri directly for specific module.
+    var resolvedUri = id ? resolve(id) : derivedUri
 
-    if (uri) {
-      currentPackageModules.push(save(uri, meta))
+    if (resolvedUri) {
+      var module = save(resolvedUri, meta)
+
+      // Handles un-correspondence case:
+      if (derivedUri) {
+        if ((cachedModules[derivedUri] || {}).status === STATUS.FETCHING) {
+          cachedModules[derivedUri] = module
+        }
+      }
+      else {
+        firstModuleInPackage || (firstModuleInPackage = module)
+      }
     }
     else {
       // Saves information for "memoizing" work in the onload event.
@@ -997,7 +1006,7 @@ seajs._config = {
   var fetchedList = {}
   var callbackList = {}
   var anonymousModuleMeta = null
-  var currentPackageModules = []
+  var firstModuleInPackage = null
   var circularCheckStack = []
 
   function resolve(ids, refUri) {
@@ -1047,11 +1056,10 @@ seajs._config = {
 
           // Assigns the first module in package to cachedModules[uri]
           // See: test/issues/un-correspondence
-          var firstModule = currentPackageModules[0]
-          if (firstModule && module.status === STATUS.FETCHED) {
-            cachedModules[uri] = firstModule
+          if (firstModuleInPackage && module.status === STATUS.FETCHED) {
+            cachedModules[uri] = firstModuleInPackage
           }
-          currentPackageModules = []
+          firstModuleInPackage = null
 
           // Clears
           if (fetchingList[requestUri]) {
