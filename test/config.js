@@ -54,7 +54,6 @@
     ,'issues/dom-ready'
     ,'issues/duplicate-load'
     ,'issues/ie-cache'
-    ,'issues/ie-define'
     ,'issues/inline-module'
     ,'issues/invalid-deps'
     ,'issues/jsonp'
