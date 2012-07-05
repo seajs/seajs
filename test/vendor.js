@@ -4,7 +4,7 @@
   var MODULES_PATH = 'https://a.alipayobjects.com/static/arale/'
   //var MODULES_PATH = 'http://modules.seajs.org/'
 
-  if (location.href.indexOf('/~lifesinger/x') > 0) {
+  if (location.href.indexOf('/~lifesinger/') > 0) {
     MODULES_PATH = 'http://' + location.host + '/~lifesinger/seajs/spm/modules/'
   }
 
