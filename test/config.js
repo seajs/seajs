@@ -68,6 +68,7 @@
     ,'issues/multi-use-tpl'
     ,'issues/multi-versions'
     ,'issues/no-conflict'
+    ,'issues/no-request'
     ,'issues/onload'
     ,'issues/parse-deps'
     ,'issues/plugin-coffee'
