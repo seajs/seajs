@@ -32,6 +32,7 @@
     ,'modules/nested'
     ,'modules/preload'
     ,'modules/relative'
+    ,'modules/require-async'
     ,'modules/simplest'
     ,'modules/transitive'
     ,'modules/version'
