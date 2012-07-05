@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<script src="config.js?20120703"></script>
+<script src="config.js?20120705"></script>
 <script>
 (function() {
 
@@ -74,6 +74,7 @@
     result = {
       pass: { count: 0, cases: [] },
       fail: { count: 0, cases: [] },
+      warn: { count: 0, cases: [] },
       error: { count: 0, cases: [] }
     }
 
@@ -219,7 +220,7 @@
   function makeSureGoOn(test) {
     // Wait 20s
     timeoutTimer = setTimeout(function() {
-      printResults('[ERROR] Time is out for this test case: ' + test, 'error')
+      printResults('[WARN] Time is out for this test case: ' + test, 'warn')
       testNext()
     }, 20000)
   }
