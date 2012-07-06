@@ -321,6 +321,8 @@
     var requestUri = util.parseMap(uri)
 
     if (fetchedList[requestUri]) {
+      // See test/issues/debug-using-map
+      cachedModules[uri] = cachedModules[requestUri]
       callback()
       return
     }

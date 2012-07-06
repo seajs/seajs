@@ -49,6 +49,7 @@
     ,'issues/config-conflict'
     ,'issues/data-main'
     ,'issues/debug'
+    ,'issues/debug-using-map'
     ,'issues/define-override'
     ,'issues/derived-module'
     ,'issues/dom-ready'
