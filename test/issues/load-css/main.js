@@ -18,11 +18,15 @@ define(function(require) {
 
 
   // not-existed case
-  // 注意：Opera 下不会触发回调
   require.async('./not-existed.css', function() {
     test.print('[PASS] 404 is ok')
     done()
   })
+  // 注意：Opera 下不会触发回调
+  if (window.opera) {
+    test.print('[FUCK] Opera do NOT fire onerror event of css file')
+    done()
+  }
 
 
   // don't load multi times
@@ -35,7 +39,6 @@ define(function(require) {
 
 
   var MAX = 3
-  if (window.opera) MAX--
 
   function done() {
     if (++count === MAX) {

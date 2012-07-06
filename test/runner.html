@@ -194,7 +194,7 @@
 
 
   function printErrors() {
-    if (result.fail.count + result.error.count === 0) return
+    if (result.fail.count + result.error.count + result.warn.count === 0) return
     printHeader('Error Cases:')
 
     for (var type in result) {
