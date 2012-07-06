@@ -1,9 +1,5 @@
 
-define('x2', function() {
-  return { name: 'x2' };
-});
-
-define(function(require) {
+define('./main', function(require) {
 
   var test = require('../../test');
 
@@ -25,6 +21,10 @@ define(function(require) {
 
   test.done();
 
+});
+
+define('x2', function() {
+  return { name: 'x2' };
 });
 
 define('biz/e', function(require, exports) {
