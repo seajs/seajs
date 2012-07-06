@@ -1,7 +1,10 @@
 define(function(require) {
 
   var test = require('../../test')
-  var path = 'http://seajs.org/test/modules/require-async/'
+
+  var path = typeof global !== 'undefined' ? // node environment
+      'http://seajs.org/test/modules/require-async/' :
+      './'
 
   require.async(['./a', path + 'b.js', path + 'c.js'], function(a, b, c) {
 

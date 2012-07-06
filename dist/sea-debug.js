@@ -929,9 +929,12 @@ seajs._config = {
     if (resolvedUri) {
       // If the first module in a package is not the cachedModules[derivedUri]
       // self, it should assign it to the correct module when found.
-      if (resolvedUri === derivedUri &&
-          (cachedModules[derivedUri] || {}).status === STATUS.SAVED) {
-        cachedModules[derivedUri] = null
+      if (resolvedUri === derivedUri) {
+        var refModule = cachedModules[derivedUri]
+        if (refModule && refModule.packageUri &&
+            refModule.status === STATUS.SAVED) {
+          cachedModules[derivedUri] = null
+        }
       }
 
       var module = save(resolvedUri, meta)
@@ -941,6 +944,7 @@ seajs._config = {
         // cachedModules[derivedUri] may be undefined in combo case.
         if ((cachedModules[derivedUri] || {}).status === STATUS.FETCHING) {
           cachedModules[derivedUri] = module
+          module.packageUri = derivedUri
         }
       }
       else {
@@ -1066,6 +1070,7 @@ seajs._config = {
           // See: test/issues/un-correspondence
           if (firstModuleInPackage && module.status === STATUS.FETCHED) {
             cachedModules[uri] = firstModuleInPackage
+            firstModuleInPackage.packageUri = uri
           }
           firstModuleInPackage = null
 
