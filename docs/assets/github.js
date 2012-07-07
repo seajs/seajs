@@ -69,7 +69,12 @@ define('github', [], function(require, exports, module) {
   }
 
   function issue2html(data) {
-    var html = '<li><span class="label">[' + data.labels[0].name + ']</span>'
+    var html = '<li>'
+
+    if (data.labels.length) {
+      html += '<span class="label">[' + data.labels[0].name + ']</span>'
+    }
+
     html += '<a href="' + data.html_url + '" target="_blank">' + data.title + '</a>'
     html += '<span class="date">' + prettyDate(data.updated_at) + '</span>'
     html += '</li>'

@@ -13,21 +13,24 @@ define('home', [], function(require) {
 
   var navs = document.getElementById('nav').getElementsByTagName('a')
   var pages = getElementsByClassName('content', 'page')
-
-  var hash = location.hash.substring(1)
-  var pageId = document.getElementById('page-' + hash) ? hash : 'intro'
   var introInited = false
 
-  updateView(pageId)
-  bindNavClick()
+  updateView()
+  bindEvents()
 
 
   // Helpers
   // -------
 
   function updateView(pageId) {
-    setActiveNav(pageId)
-    setActivePage(pageId)
+    pageId || (pageId = location.hash.substring(1))
+
+    if (document.getElementById('page-' + pageId)) {
+      setActiveNav(pageId)
+      setActivePage(pageId)
+    }
+
+    window.scrollTo(0, 0)
   }
 
   function setActiveNav(pageId) {
@@ -48,7 +51,14 @@ define('home', [], function(require) {
     if (pageId === 'intro') initIntroPage()
   }
 
-  function bindNavClick() {
+  function bindEvents() {
+    if ('onhashchange' in window) {
+      window.onhashchange = function() {
+        updateView()
+      }
+      return
+    }
+
     var links = document.getElementsByTagName('a')
 
     for (var i = 0, len = links.length; i < len; i++) {
@@ -56,7 +66,7 @@ define('home', [], function(require) {
 
       if (isPageNav(link.href)) {
         link.onclick = function() {
-          updateView(this.href.replace(/^.*#/, ''))
+          updateView(this.href.replace(/.*#(\w+).*/, '$1'))
         }
       }
     }
@@ -64,7 +74,7 @@ define('home', [], function(require) {
 
   function isPageNav(href) {
     if (href.indexOf('#') === -1) return false
-    return document.getElementById('page-' + href.replace(/^.*#/, ''))
+    return document.getElementById('page-' + href.replace(/.*#(\w+).*/, '$1'))
   }
 
   function initIntroPage() {
