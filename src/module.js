@@ -22,6 +22,7 @@
     this.status = status || 0
 
     // this.id is set when saving
+    // this.dependencies is set when saving
     // this.factory is set when saving
     // this.uri is set when saving
     // this.exports is set when compiling
