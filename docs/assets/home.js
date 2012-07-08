@@ -15,7 +15,7 @@ define('home', [], function(require) {
   var pages = getElementsByClassName('content', 'page')
   var introInited = false
 
-  updateView()
+  updateView('intro')
   bindEvents()
 
 
