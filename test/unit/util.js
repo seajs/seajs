@@ -25,6 +25,11 @@ define(function(require) {
   test.assert(util.normalize('a/b/c.json#') === 'a/b/c.json', 'normalize');
   test.assert(util.normalize('a/b/') === 'a/b/', 'normalize');
 
+  test.assert(util.id2Uri() === '', 'id2Uri')
+  test.assert(util.id2Uri('') === '', 'id2Uri')
+  test.assert(util.id2Uri('http://t.com/x.js') === 'http://t.com/x.js', 'id2Uri')
+  test.assert(util.id2Uri('./z.js', 'http://t.com/x.js') === 'http://t.com/z.js', 'id2Uri')
+
   seajs.config({
         alias: {
           'jquery-debug': 'jquery/1.8.0/jquery-debug'

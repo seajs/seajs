@@ -82,6 +82,7 @@
     ,'issues/plugin-less'
     ,'issues/plugin-text'
     ,'issues/preload'
+    ,'issues/protocol-80'
     ,'issues/public-api'
     ,'issues/remove-comments'
     ,'issues/require-async'

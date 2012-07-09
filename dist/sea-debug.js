@@ -283,6 +283,11 @@ seajs._config = {
       uri += '.js'
     }
 
+    // Remove ':80/' for bug in IE
+    if (uri.indexOf(':80/') > 0) {
+      uri = uri.replace(':80/', '/')
+    }
+
     return uri
   }
 
@@ -362,6 +367,8 @@ seajs._config = {
    * Converts id to uri.
    */
   function id2Uri(id, refUri) {
+    if (!id) return ''
+
     id = parseAlias(id)
     refUri || (refUri = pageUri)
 
@@ -736,6 +743,7 @@ seajs._config = {
     this.status = status || 0
 
     // this.id is set when saving
+    // this.dependencies is set when saving
     // this.factory is set when saving
     // this.uri is set when saving
     // this.exports is set when compiling
@@ -749,7 +757,7 @@ seajs._config = {
 
     this._load(uris, function() {
       var args = util.map(uris, function(uri) {
-        return cachedModules[uri]._compile()
+        return uri ? cachedModules[uri]._compile() : null
       })
 
       if (callback) {

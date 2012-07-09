@@ -15,7 +15,7 @@ define('home', [], function(require) {
   var pages = getElementsByClassName('content', 'page')
   var introInited = false
 
-  updateView('intro')
+  updateView()
   bindEvents()
 
 
@@ -23,7 +23,7 @@ define('home', [], function(require) {
   // -------
 
   function updateView(pageId) {
-    pageId || (pageId = location.hash.substring(1))
+    pageId || (pageId = location.hash.substring(1) || 'intro')
 
     if (document.getElementById('page-' + pageId)) {
       setActiveNav(pageId)

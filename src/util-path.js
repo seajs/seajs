@@ -80,6 +80,11 @@
       uri += '.js'
     }
 
+    // Remove ':80/' for bug in IE
+    if (uri.indexOf(':80/') > 0) {
+      uri = uri.replace(':80/', '/')
+    }
+
     return uri
   }
 
@@ -159,6 +164,8 @@
    * Converts id to uri.
    */
   function id2Uri(id, refUri) {
+    if (!id) return ''
+
     id = parseAlias(id)
     refUri || (refUri = pageUri)
 

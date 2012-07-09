@@ -36,7 +36,7 @@
 
     this._load(uris, function() {
       var args = util.map(uris, function(uri) {
-        return cachedModules[uri]._compile()
+        return uri ? cachedModules[uri]._compile() : null
       })
 
       if (callback) {
