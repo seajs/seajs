@@ -103,4 +103,6 @@
     ,'bootstrap/index'
   ]
 
+  //exports.testCases = ['issues/multi-use']
+
 })
