@@ -18,6 +18,7 @@ html, body, div, span, h1, h2, h3, h4, img, strong, ol, ul, li {
 
 body {
   background: #F4F4F4;
+  min-width: 1000px;
 }
 
 body, button, input, select, textarea {
@@ -66,7 +67,7 @@ a:hover { text-decoration: underline; }
   position: absolute;
   top: 20px;
   left: 0;
-  padding-left: 20px;
+  padding-left: 10px;
 }
 
 #nav {
@@ -105,7 +106,7 @@ a:hover { text-decoration: underline; }
 .page-active {
   margin: 0 auto;
   width: 950px;
-  padding: 0 0 30px 50px;
+  padding: 0 0 30px 30px;
   position: relative;
   display: none;
 }
