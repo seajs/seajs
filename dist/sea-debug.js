@@ -745,9 +745,9 @@ seajs._config = {
     // this.id is set when saving
     // this.dependencies is set when saving
     // this.factory is set when saving
-    // this.uri is set when saving
     // this.exports is set when compiling
     // this.parent is set when compiling
+    // this.require is set when compiling
   }
 
 
