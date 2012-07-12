@@ -3,7 +3,7 @@
  */
 
 seajs.config({
-  base: './docs/assets/',
+  base: './assets/',
   alias: {
     'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery.js'
   }
@@ -91,20 +91,22 @@ define('home', [], function(require) {
 
     require.async(['jquery', 'hello'], function($, hello) {
       $('#beautiful-sea').click(hello.sayHello)
+      initLazySrc($)
     })
 
-    initCompanyLogos()
     introInited = true
   }
 
-  function initCompanyLogos() {
-    var imgs = document.getElementById('company-logos')
-        .getElementsByTagName('img')
+  function initLazySrc($) {
+    var elements = $('#page-intro img, #page-intro iframe')
 
-    for (var i = 0, len = imgs.length; i < len; i++) {
-      var img = imgs[i]
-      img.src = img.getAttribute('data-src')
-    }
+    elements.each(function(i, elem) {
+      elem = $(elem)
+      var dataSrc = elem.attr('data-src')
+      if (dataSrc) {
+        elem.attr('src', dataSrc)
+      }
+    })
   }
 
   function getElementsByClassName(root, className) {

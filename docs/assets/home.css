@@ -286,6 +286,29 @@ a:hover { text-decoration: underline; }
   text-decoration: none;
 }
 
+#page-downloads p.current {
+  margin-left: 38px;
+}
+
+#page-downloads h3 {
+  margin-bottom: -10px;
+}
+
+#page-downloads .date {
+  color: #A4A4A4;
+  text-shadow: #ffffff 0 1px;
+  font-size: 12px;
+  margin-right: 20px;
+}
+
+#page-downloads ul li {
+  list-style: none;
+}
+
+#page-downloads a {
+  margin-right: 20px;
+}
+
 
 /* #footer */
 #footer {
