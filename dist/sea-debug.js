@@ -805,9 +805,10 @@ seajs._config = {
             }
           }
           // Maybe failed to fetch successfully, such as 404 or non-module.
+          // // In these cases, module.status stay at FETCHING or FETCHED.
           else {
             util.log('It is not a valid CMD module: ' + uri)
-            cb(module)
+            cb()
           }
         }
 
@@ -825,6 +826,14 @@ seajs._config = {
     var module = this
     if (module.status === STATUS.COMPILED) {
       return module.exports
+    }
+
+    // Just return null when:
+    //  1. the module file is 404.
+    //  2. the module file is not written with valid module format.
+    //  3. other error cases.
+    if (module.status < STATUS.READY && !hasModifiers(module)) {
+      return null
     }
 
     module.status = STATUS.COMPILING
@@ -1124,6 +1133,10 @@ seajs._config = {
     }
   }
 
+  function hasModifiers(module) {
+    return !!cachedModifiers[module.realUri || module.uri]
+  }
+
   function execModifiers(module) {
     var uri = module.realUri || module.uri
     var modifiers = cachedModifiers[uri]
@@ -1140,7 +1153,7 @@ seajs._config = {
   function getPureDependencies(module) {
     var uri = module.uri
 
-    return util.filter(module.dependencies || [], function(dep) {
+    return util.filter(module.dependencies, function(dep) {
       circularCheckStack = [uri]
 
       var isCircular = isCircularWaiting(cachedModules[dep], uri)

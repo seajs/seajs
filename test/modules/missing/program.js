@@ -16,10 +16,10 @@ define(function(require) {
     var bogus = require('bogus')
   }
   catch (ex) { // for node
-    bogus = {}
+    bogus = null
   }
 
-  test.assert(bogus, 'return {} when module missing')
+  test.assert(bogus === null, 'return null when module missing')
   test.done()
 
 })
