@@ -41,6 +41,7 @@
     ,'issues/alias-shortcuts'
     ,'issues/anonymous'
     ,'issues/anywhere'
+    ,'issues/auto-transport'
     ,'issues/charset'
     ,'issues/circular-detect'
     ,'issues/combo-use'
