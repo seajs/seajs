@@ -1,6 +1,6 @@
 /**
  * @preserve SeaJS - A Module Loader for the Web
- * v1.2.0 | seajs.org | MIT Licensed
+ * v1.3.0-dev | seajs.org | MIT Licensed
  */
 
 
@@ -14,7 +14,7 @@ this.seajs = { _seajs: this.seajs }
  * The version of the framework. It will be replaced with "major.minor.patch"
  * when building.
  */
-seajs.version = '1.2.0'
+seajs.version = '1.3.0-dev'
 
 
 /**
@@ -805,9 +805,9 @@ seajs._config = {
             }
           }
           // Maybe failed to fetch successfully, such as 404 or non-module.
-          // In these cases, module.status stay at FETCHING or FETCHED.
           else {
-            cb()
+            util.log('It is not a valid CMD module: ' + uri)
+            cb(module)
           }
         }
 
@@ -825,14 +825,6 @@ seajs._config = {
     var module = this
     if (module.status === STATUS.COMPILED) {
       return module.exports
-    }
-
-    // Just return null when:
-    //  1. the module file is 404.
-    //  2. the module file is not written with valid module format.
-    //  3. other error cases.
-    if (module.status < STATUS.READY) {
-      return null
     }
 
     module.status = STATUS.COMPILING
@@ -936,10 +928,10 @@ seajs._config = {
 
     if (resolvedUri) {
       // If the first module in a package is not the cachedModules[derivedUri]
-      // self, it should assign it to the correct module when found.
+      // self, it should assign to the correct module when found.
       if (resolvedUri === derivedUri) {
         var refModule = cachedModules[derivedUri]
-        if (refModule && refModule.packageUri &&
+        if (refModule && refModule.realUri &&
             refModule.status === STATUS.SAVED) {
           cachedModules[derivedUri] = null
         }
@@ -952,7 +944,7 @@ seajs._config = {
         // cachedModules[derivedUri] may be undefined in combo case.
         if ((cachedModules[derivedUri] || {}).status === STATUS.FETCHING) {
           cachedModules[derivedUri] = module
-          module.packageUri = derivedUri
+          module.realUri = derivedUri
         }
       }
       else {
@@ -1080,7 +1072,7 @@ seajs._config = {
           // See: test/issues/un-correspondence
           if (firstModuleInPackage && module.status === STATUS.FETCHED) {
             cachedModules[uri] = firstModuleInPackage
-            firstModuleInPackage.packageUri = uri
+            firstModuleInPackage.realUri = uri
           }
           firstModuleInPackage = null
 
@@ -1133,7 +1125,7 @@ seajs._config = {
   }
 
   function execModifiers(module) {
-    var uri = module.uri
+    var uri = module.realUri || module.uri
     var modifiers = cachedModifiers[uri]
 
     if (modifiers) {
@@ -1148,7 +1140,7 @@ seajs._config = {
   function getPureDependencies(module) {
     var uri = module.uri
 
-    return util.filter(module.dependencies, function(dep) {
+    return util.filter(module.dependencies || [], function(dep) {
       circularCheckStack = [uri]
 
       var isCircular = isCircularWaiting(cachedModules[dep], uri)
