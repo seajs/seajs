@@ -7,7 +7,7 @@ define(function(require) {
   });
 
   function expectedPath(str) {
-    return location.protocol + '//' + location.host + '/root-path/' + str
+    return location.protocol + '//' + location.host + '/root-path/' + str + '.js'
   }
 
   test.assert(
