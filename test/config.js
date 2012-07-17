@@ -47,6 +47,7 @@
     ,'issues/combo-use'
     ,'issues/compiling-module'
     ,'issues/config-base'
+    ,'issues/config-base-is-root'
     ,'issues/config-conflict'
     ,'issues/data-main'
     ,'issues/debug'
