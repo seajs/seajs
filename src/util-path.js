@@ -249,6 +249,7 @@
 
   util.id2Uri = id2Uri
   util.isAbsolute = isAbsolute
+  util.isRoot = isRoot
   util.isTopLevel = isTopLevel
 
   util.pageUri = pageUri
