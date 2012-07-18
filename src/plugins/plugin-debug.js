@@ -107,7 +107,7 @@ define('seajs/plugin-debug', [], function() {
     buttons[1].onclick = function() {
       config.console = 0
       saveConfig(config)
-      loc.replace(loc.href.replace(/(?:\?|&)seajs-debug/, ''))
+      loc.replace(loc.href.replace('seajs-debug', ''))
     }
 
     // refresh
@@ -126,9 +126,7 @@ define('seajs/plugin-debug', [], function() {
     buttons[0].onclick = function() {
       config.debug = 0
       saveConfig(config)
-      var query = loc.search.slice(1)
-      var newQuery = query.replace(/seajs-debug&?/, '')
-      loc.replace(loc.href.replace(query, newQuery))
+      loc.replace(loc.href.replace('seajs-debug', ''))
     }
   }
 
