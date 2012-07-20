@@ -33,10 +33,12 @@ define('seajs/plugin-debug', [], function() {
 
   // Calls pre-called `seajs.use`
   var args = seajs._useArgs
-  for (var i = 0; i < args.length; i++) {
-    seajs.use(args[i][0], args[i][1])
+  if (args) {
+    for (var i = 0; i < args.length; i++) {
+      seajs.use(args[i][0], args[i][1])
+    }
+    delete seajs._useArgs
   }
-  delete seajs._useArgs
 
 
   // Shows console
