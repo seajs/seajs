@@ -85,29 +85,6 @@
       }
 
 
-  util.unique = function(arr) {
-    var ret = []
-    var o = {}
-
-    forEach(arr, function(item) {
-      o[item] = 1
-    })
-
-    if (Object.keys) {
-      ret = Object.keys(o)
-    }
-    else {
-      for (var p in o) {
-        if (o.hasOwnProperty(p)) {
-          ret.push(p)
-        }
-      }
-    }
-
-    return ret
-  }
-
-
   util.keys = Object.keys
 
   if (!util.keys) {
@@ -122,6 +99,17 @@
 
       return ret
     }
+  }
+
+
+  util.unique = function(arr) {
+    var o = {}
+
+    forEach(arr, function(item) {
+      o[item] = 1
+    })
+
+    return util.keys(o)
   }
 
 
