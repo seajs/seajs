@@ -85,20 +85,16 @@
       }
 
 
-  util.keys = Object.keys
+  var keys = util.keys = Object.keys || function(o) {
+    var ret = []
 
-  if (!util.keys) {
-    util.keys = function(o) {
-      var ret = []
-
-      for (var p in o) {
-        if (o.hasOwnProperty(p)) {
-          ret.push(p)
-        }
+    for (var p in o) {
+      if (o.hasOwnProperty(p)) {
+        ret.push(p)
       }
-
-      return ret
     }
+
+    return ret
   }
 
 
@@ -109,7 +105,7 @@
       o[item] = 1
     })
 
-    return util.keys(o)
+    return keys(o)
   }
 
 

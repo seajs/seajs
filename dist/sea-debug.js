@@ -126,22 +126,12 @@ seajs._config = {
       }
 
 
-  util.unique = function(arr) {
+  var keys = util.keys = Object.keys || function(o) {
     var ret = []
-    var o = {}
 
-    forEach(arr, function(item) {
-      o[item] = 1
-    })
-
-    if (Object.keys) {
-      ret = Object.keys(o)
-    }
-    else {
-      for (var p in o) {
-        if (o.hasOwnProperty(p)) {
-          ret.push(p)
-        }
+    for (var p in o) {
+      if (o.hasOwnProperty(p)) {
+        ret.push(p)
       }
     }
 
@@ -149,20 +139,14 @@ seajs._config = {
   }
 
 
-  util.keys = Object.keys
+  util.unique = function(arr) {
+    var o = {}
 
-  if (!util.keys) {
-    util.keys = function(o) {
-      var ret = []
+    forEach(arr, function(item) {
+      o[item] = 1
+    })
 
-      for (var p in o) {
-        if (o.hasOwnProperty(p)) {
-          ret.push(p)
-        }
-      }
-
-      return ret
-    }
+    return keys(o)
   }
 
 
