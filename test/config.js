@@ -55,6 +55,7 @@
     ,'issues/define-override'
     ,'issues/derived-module'
     ,'issues/dom-ready'
+    ,'issues/duplicate-init'
     ,'issues/duplicate-load'
     ,'issues/ie-cache'
     ,'issues/inline-module'
