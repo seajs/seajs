@@ -81,6 +81,7 @@
     ,'issues/plugin-combo'
     ,'issues/plugin-debug'
     ,'issues/plugin-extension'
+    ,'issues/plugin-i18n'
     ,'issues/plugin-json'
     ,'issues/plugin-less'
     ,'issues/plugin-text'
