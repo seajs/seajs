@@ -921,19 +921,18 @@ seajs._config = {
     var resolvedUri = id ? resolve(id) : derivedUri
 
     if (resolvedUri) {
-      // If the first module in a package is not the cachedModules[derivedUri]
-      // self, it should assign to the correct module when found.
-      if (resolvedUri === derivedUri) {
-        var refModule = cachedModules[derivedUri]
-        if (refModule && refModule.realUri &&
-            refModule.status === STATUS.SAVED) {
-          cachedModules[derivedUri] = null
-        }
+      // for IE: if the first module in a package is not the
+      // cachedModules[derivedUri] self, it should assign to the correct module
+      // when found.
+      if (resolvedUri === derivedUri &&
+          (cachedModules[derivedUri] || {}).status === STATUS.SAVED) {
+        cachedModules[derivedUri] = null
       }
 
       var module = save(resolvedUri, meta)
 
-      // Handles un-correspondence case:
+      // for IE: Assigns the first module in package
+      // to cachedModules[derivedUrl]
       if (derivedUri) {
         // cachedModules[derivedUri] may be undefined in combo case.
         if ((cachedModules[derivedUri] || {}).status === STATUS.FETCHING) {
