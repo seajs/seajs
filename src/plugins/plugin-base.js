@@ -87,7 +87,10 @@ define('seajs/plugin-base', [], function(require, exports) {
 
 
   function xhr(url, callback) {
-    var r = new (window.ActiveXObject || XMLHttpRequest)('Microsoft.XMLHTTP')
+    var r = window.ActiveXObject ?
+        new window.ActiveXObject('Microsoft.XMLHTTP')
+        : new window.XMLHttpRequest()
+
     r.open('GET', url, true)
 
     r.onreadystatechange = function() {
