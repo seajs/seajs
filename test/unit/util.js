@@ -44,5 +44,11 @@ define(function(require) {
   test.assert(util.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias');
   test.assert(util.parseAlias('#jquery') === 'jquery', 'parseAlias');
 
+
+  // issues#302
+  var t = 'http://XXX.com.cn/min/index.php?g=commonCss.css'
+  test.assert(require.resolve(t) === t, 'require.resolve')
+
+
   test.done();
 });
