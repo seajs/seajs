@@ -5,6 +5,7 @@ define('seajs/plugin-base', [], function(require, exports) {
 
   var pluginSDK = seajs.pluginSDK
   var util = pluginSDK.util
+  var config =  pluginSDK.config
   var Module = pluginSDK.Module
 
   var pluginsInfo = {}
