@@ -39,7 +39,7 @@ define('seajs/plugin-base', [], function(require, exports) {
        
       util.isTopLevel(id) ? _id = config.alias[id] : _id = id
       
-      if (/\.\w|^\w+!/.test(id)) {
+      if (/\.\w|^\w+!/.test(_id)) {
         var m
 
         // id = text!path/to/some
@@ -48,7 +48,7 @@ define('seajs/plugin-base', [], function(require, exports) {
           id = m[2]
         }
         // id = abc.xyz?t=123
-        else if ((m = id.match(/[^?]*(\.\w+)/))) {
+        else if ((m = _id.match(/[^?]*(\.\w+)/))) {
           var ext = m[1]
           for (var k in pluginsInfo) {
 
