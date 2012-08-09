@@ -30,8 +30,14 @@ define('seajs/plugin-base', [], function(require, exports) {
     var _resolve = Module._resolve
 
     Module._resolve = function(id, refUri) {
-      var pluginName
+      var pluginName,
+          _id,
+          _m
 
+      (_m = id.match(/^(\w+)!(.*)$/)) && (id = _m[2])
+       
+      util.isTopLevel(id) ? _id = config.alias[id] : _id = id
+      
       if (/\.\w|^\w+!/.test(id)) {
         var m
 
@@ -54,7 +60,9 @@ define('seajs/plugin-base', [], function(require, exports) {
         }
 
         // Prevents adding the default `.js` extension
-        if (pluginName && !/\?|#$/.test(id)) {
+        util.isTopLevel(id) ?  !/\?|#$/.test(config.alias[id]) &&  (config.alias[id] += '#') : null
+
+        if (pluginName && !/\?|#$/.test(id) && !util.isTopLevel(id)) {
           id += '#'
         }
       }
