@@ -61,7 +61,7 @@ define('seajs/plugin-base', [], function(require, exports) {
         }
 
         // Prevents adding the default `.js` extension
-        util.isTopLevel(id) ?  !/\?|#$/.test(config.alias[id]) &&  (config.alias[id] += '#') : null
+        util.isTopLevel(id) && id.indexOf('#') != 0 ?  !/\?|#$/.test(config.alias[id]) &&  (config.alias[id] += '#') : null
 
         if (pluginName && !/\?|#$/.test(id) && !util.isTopLevel(id)) {
           id += '#'
