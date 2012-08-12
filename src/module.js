@@ -1,5 +1,5 @@
 /**
- * The Module constructor and its methods
+ * The core of loader
  */
 ;(function(seajs, util, config) {
 

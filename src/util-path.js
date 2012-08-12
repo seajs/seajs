@@ -1,5 +1,5 @@
 /**
- * Path utilities for the framework
+ * Path utilities
  */
 ;(function(util, config, global) {
 

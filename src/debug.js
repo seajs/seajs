@@ -1,5 +1,5 @@
 /**
- * Prepare for debug mode
+ * Prepare for bootstrapping
  */
 ;(function(seajs, util, global) {
 

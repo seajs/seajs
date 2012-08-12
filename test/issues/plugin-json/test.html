@@ -11,7 +11,7 @@
     document.getElementById('out').appendChild(d);
   }
 </script>
-<script src="../../../dist/sea.js"></script>
+<script src="../../../dist/sea-debug.js"></script>
 </head>
 <body>
 
@@ -24,6 +24,9 @@
 <script>
 
   seajs.config({
+    alias: {
+      'd': 'path/to/d.json'
+    },
     preload: ['seajs/plugin-json']
   });
 

@@ -5,7 +5,6 @@ define('seajs/plugin-base', [], function(require, exports) {
 
   var pluginSDK = seajs.pluginSDK
   var util = pluginSDK.util
-  var config =  pluginSDK.config
   var Module = pluginSDK.Module
 
   var pluginsInfo = {}
@@ -31,15 +30,9 @@ define('seajs/plugin-base', [], function(require, exports) {
     var _resolve = Module._resolve
 
     Module._resolve = function(id, refUri) {
-      var pluginName,
-          _id,
-          _m
+      var pluginName
 
-      (_m = id.match(/^(\w+)!(.*)$/)) && (id = _m[2])
-       
-      util.isTopLevel(id) ? _id = config.alias[id] : _id = id
-      
-      if (/\.\w|^\w+!/.test(_id)) {
+      if (/\.\w|^\w+!/.test(id)) {
         var m
 
         // id = text!path/to/some
@@ -48,7 +41,7 @@ define('seajs/plugin-base', [], function(require, exports) {
           id = m[2]
         }
         // id = abc.xyz?t=123
-        else if ((m = _id.match(/[^?]*(\.\w+)/))) {
+        else if ((m = id.match(/[^?]*(\.\w+)/))) {
           var ext = m[1]
           for (var k in pluginsInfo) {
 
@@ -61,9 +54,7 @@ define('seajs/plugin-base', [], function(require, exports) {
         }
 
         // Prevents adding the default `.js` extension
-        util.isTopLevel(id) && id.indexOf('#') != 0 ?  !/\?|#$/.test(config.alias[id]) &&  (config.alias[id] += '#') : null
-
-        if (pluginName && !/\?|#$/.test(id) && !util.isTopLevel(id)) {
+        if (pluginName && !/\?|#$/.test(id)) {
           id += '#'
         }
       }
@@ -96,7 +87,10 @@ define('seajs/plugin-base', [], function(require, exports) {
 
 
   function xhr(url, callback) {
-    var r = new (window.ActiveXObject || XMLHttpRequest)('Microsoft.XMLHTTP')
+    var r = window.ActiveXObject ?
+        new window.ActiveXObject('Microsoft.XMLHTTP')
+        : new window.XMLHttpRequest()
+
     r.open('GET', url, true)
 
     r.onreadystatechange = function() {
@@ -123,4 +117,3 @@ define('seajs/plugin-base', [], function(require, exports) {
   }
 
 });
-

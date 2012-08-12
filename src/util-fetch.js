@@ -1,5 +1,5 @@
 /**
- * Utilities for fetching js and css files.
+ * Utilities for fetching js and css files
  */
 ;(function(util, config) {
 

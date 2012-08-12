@@ -1,5 +1,5 @@
 /**
- * The tiny console support
+ * The tiny console
  */
 ;(function(util, config) {
 
