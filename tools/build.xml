@@ -40,7 +40,7 @@
 
       <path path="${src.dir}/module.js"/>
       <path path="${src.dir}/config.js"/>
-      <path path="${src.dir}/debug.js"/>
+      <path path="${src.dir}/prepare.js"/>
       <path path="${src.dir}/bootstrap.js"/>
 
     </concat>
