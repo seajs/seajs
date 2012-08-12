@@ -157,7 +157,7 @@ seajs._config = {
 })(seajs._util)
 
 /**
- * The tiny console support
+ * The tiny console
  */
 ;(function(util, config) {
 
@@ -186,7 +186,7 @@ seajs._config = {
 })(seajs._util, seajs._config)
 
 /**
- * Path utilities for the framework
+ * Path utilities
  */
 ;(function(util, config, global) {
 
@@ -444,7 +444,7 @@ seajs._config = {
 })(seajs._util, seajs._config, this)
 
 /**
- * Utilities for fetching js and css files.
+ * Utilities for fetching js and css files
  */
 ;(function(util, config) {
 
@@ -705,7 +705,7 @@ seajs._config = {
 })(seajs._util)
 
 /**
- * The Module constructor and its methods
+ * The core of loader
  */
 ;(function(seajs, util, config) {
 
@@ -1393,7 +1393,7 @@ seajs._config = {
 })(seajs, seajs._util, seajs._config)
 
 /**
- * Prepare for debug mode
+ * Prepare for bootstrapping
  */
 ;(function(seajs, util, global) {
 
