@@ -18,7 +18,8 @@ define('seajs/plugin-base', [], function(require, exports) {
 
   exports.util = {
     xhr: xhr,
-    globalEval: globalEval
+    globalEval: globalEval,
+    toRealPath: toRealPath
   }
 
 
@@ -30,9 +31,12 @@ define('seajs/plugin-base', [], function(require, exports) {
     var _resolve = Module._resolve
 
     Module._resolve = function(id, refUri) {
+      var manifest = Module._find('manifest')     
       var pluginName
       var m
 
+      //manifest entries version control
+      manifest && (refUri = toRealPath(refUri,manifest))
       // id = text!path/to/some
       if (m = id.match(/^(\w+)!(.+)$/)) {
         pluginName = m[1]
@@ -118,5 +122,14 @@ define('seajs/plugin-base', [], function(require, exports) {
     }
   }
 
-});
+  function toRealPath(url,manifest){
+    if(!manifest[url]) return url
+    var m = url.match(/^(.*)\/(.*)$/),
+        dirname = m[1],
+        name = m[2],
+        version = manifest[url]['version']
+    if(!version) return url
+    return dirname+'/'+version+'/'+name
+  }
 
+});
