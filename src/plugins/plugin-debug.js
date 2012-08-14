@@ -136,7 +136,7 @@ define('seajs/plugin-debug', [], function() {
     var cookie = '', m
 
     if ((m = document.cookie.match(
-        /(?:^| )seajs(?:(?:=([^;]*))|;|$)/))) {
+        /(?:^| )seajs-debug(?:(?:=([^;]*))|;|$)/))) {
       cookie = m[1] ? decodeURIComponent(m[1]) : ''
     }
 
@@ -152,8 +152,8 @@ define('seajs/plugin-debug', [], function() {
     var date = new Date()
     date.setTime(date.getTime() + 30 * 86400000) // 30 days
 
-    document.cookie = 'seajs=' + o.debug + '`' + o.mapfile + '`' + o.console +
-        '; path=/; expires=' + date.toUTCString()
+    document.cookie = 'seajs-debug=' + o.debug + '`' + o.mapfile + '`' +
+        o.console + '; path=/; expires=' + date.toUTCString()
   }
 
 
