@@ -1409,21 +1409,39 @@ seajs._config = {
     alias: { seajs: util.loaderDir }
   })
 
-  // Uses `seajs-xxx` flag to load plugin-xxx.
-  var RE = /seajs-([\w-]+)/
-  var search = global.location.search
 
-  var m = search.match(RE) || document.cookie.match(RE)
-  if (m) {
-    var pluginName = m[1]
-    seajs.config({ debug: 2 }).use('seajs/plugin-' + pluginName)
+  // Uses `seajs-xxx` flag to load plugin-xxx.
+  util.forEach(getStartupPlugins(), function(name) {
+    seajs.use('seajs/plugin-' + name)
 
     // Delays `seajs.use` calls to the onload of `mapfile` in debug mode.
-    if (pluginName === 'debug') {
+    if (name === 'debug') {
       seajs._use = seajs.use
       seajs._useArgs = []
       seajs.use = function() { seajs._useArgs.push(arguments); return seajs }
     }
+  })
+
+
+  // Helpers
+  // -------
+
+  function getStartupPlugins() {
+    var ret = []
+    var str = global.location.search
+
+    // Converts `seajs-xxx` to `seajs-xxx=1`
+    str = str.replace(/(seajs-\w+)(&|$)/g, '$1=1$2')
+
+    // Add cookie string
+    str += ' ' + document.cookie
+
+    // Excludes seajs-xxx=0
+    str.replace(/seajs-(\w+)=[1-9]/g, function(m, name) {
+      ret.push(name)
+    })
+
+    return util.unique(ret)
   }
 
 })(seajs, seajs._util, this)
