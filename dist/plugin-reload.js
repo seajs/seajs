@@ -7,15 +7,15 @@
  * - ?seajs-reload=8000
  * - ?seajs-reload=192.168.1.2:8000
  *
- * the default request location is localhost:8000
+ * The default request location is localhost:8000
  *
  * You need a reload server that supports it.
  * The server should watch the file changes, and sent a "update" message.
  *
- * For example::
+ * For example:
  * 
  *   var io = require('socket.io').listen(8000)
- *   io.sockes.on('connection', function(socket) {
+ *   io.sockets.on('connection', function(socket) {
  *     // if (fileChanged) {
  *     socket.emit('update', {message: 'file changed'})
  *     // }
@@ -38,4 +38,5 @@ define('seajs/plugin-reload', [], function(require) {
       location.reload()
     })
   })
+
 });
