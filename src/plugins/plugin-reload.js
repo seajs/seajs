@@ -1,10 +1,15 @@
-define('seajs/plugin-reload', ['socketio'], function(require) {
-  var io = require('socketio')
+/**
+ * The reload plugin to free your finger.
+ */
+define('seajs/plugin-reload', [], function(require) {
 
-  // decide the server port
-  var socket = io.connect('http://localhost:8964')
-  socket.on('reload', function(data) {
-    // TODO refresh the give path
-    location.reload()
+  // todo
+
+  require.async('path/to/socketio', function(io) {
+    var socket = io.connect('http://localhost:8964')
+    socket.on('reload', function() {
+      location.reload()
+    })
   })
+
 });
