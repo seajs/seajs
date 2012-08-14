@@ -32,8 +32,7 @@
 
 
   define({
-    isMobile: isMobile,
-    isLocal: isLocal
+    isMobile: isMobile
   })
 
 })()

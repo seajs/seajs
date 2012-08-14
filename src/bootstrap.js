@@ -35,9 +35,8 @@
   })((_seajs || 0)['args'])
 
 
-  // Compatible with AMD modules.
-  // Ref: https://github.com/amdjs/amdjs-api/wiki/AMD
-  global.define.amd = {}
+  // Add define.amd property for clear indicator.
+  global.define.cmd = {}
 
 
   // Keeps clean!
