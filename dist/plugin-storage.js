@@ -1,2 +1,97 @@
-define("seajs/plugin-storage",["./plugin-base","store","manifest"],function(c){var j=c("./plugin-base"),a=c("manifest"),e=j.util,f=c("store").createStorage("localStorage"),d=f.get("manifest"),c=!1,i={};d||(c=!0);c||d.version==a.version||(c=!0);if(c){if(d)for(var b in a)"version"!=b&&(!d[b]&&(i[b]=a[b]),d[b]&&d[b].version!=a[b].version&&(i[b]=a[b]));else i=a;d=a;f.set("manifest",a)}(function(){var d=g._resolve;g._resolve=function(b,c){var a=g._find("manifest");if(a){var h=c;if(a[h])var e=h.match(/^(.*)\/(.*)$/),
-f=e[1],e=e[2],c=(a=a[h].version)?f+"/"+a+"/"+e:h;else c=h}return d(b,c)}})();j.add({name:"storage",ext:[".js"],fetch:function(a,c){var b=f.get(a),g=e.toRealPath(a,d);b&&d[a]&&!i[a]?(e.globalEval(b),c()):e.xhr(g,function(b){2==parseInt(seajs.pluginSDK.config.debug)||d[a]&&f.set(a,b);e.globalEval(b);c()})}});var g=seajs.pluginSDK.Module});
+/**
+ * The storage plugin
+ */
+define('seajs/plugin-storage', ['./plugin-base','store','manifest'], function(require) {
+
+  var plugin = require('./plugin-base'),
+      manifest = require('manifest'),
+      util = plugin.util,
+      store = require('store'),
+      s = store.createStorage('localStorage'),
+      _manifest = s.get('manifest'),
+      isNeedUpdate = false,
+      updateList = {}
+
+  // need update only when  _manifest does not exist or local manifest.version not equals online manifest.version 
+  isNeedUpdate = !_manifest || _manifest.version !== manifest.version 
+
+  if(isNeedUpdate){
+    // if local manifest does not exist  update all entries which are listed in manifest file
+    if(!_manifest){
+      updateList = manifest
+    }else{
+      for(var i in manifest){
+        if(i != 'version'){
+
+          // Update a entry when the entry does not exist in the manifest file or local entry.version not equals online entry.version 
+          
+          !_manifest[i] && (updateList[i] = manifest[i])
+
+          _manifest[i] && _manifest[i].version != manifest[i].version && (updateList[i] = manifest[i])
+        }
+
+      }
+    }
+    _manifest = manifest
+    s.set('manifest',manifest)
+  }
+
+
+  extendResolve()
+
+
+  plugin.add({
+    name: 'storage',
+
+    ext: ['.js'],
+
+    fetch: function(url, callback) {
+
+      var stCache = s.get(url),
+          realPath= util.toRealPath(url,_manifest)
+      // use localStorage only when the entry has existed in localStorage and the entry is listed in manifest file meanwhile not be listed in updateList
+      if(stCache  && _manifest[url] && !updateList[url]){
+        util.globalEval(stCache)
+        callback()
+      }else{
+
+        util.xhr(realPath, function(code) {
+          parseInt(seajs.pluginSDK.config.debug) == 2 || ( _manifest[url] && s.set(url,code) )
+          util.globalEval(code)
+          callback()
+        })
+      }
+
+    }
+  })
+
+
+  var Module = seajs.pluginSDK.Module
+  
+  // fix refUri
+  function extendResolve() {
+    var _resolve = Module._resolve
+
+    Module._resolve = function(id, refUri) {
+      var manifest = Module._find('manifest')
+
+      manifest && (refUri = toRealPath(refUri, manifest))
+      return _resolve(id, refUri)
+    }
+  }
+
+  // manifest file maybe declare the entry·s version ，we need to make up the real path
+  function toRealPath(url, manifest) {
+    if (!manifest[url]) return url
+
+    var m = url.match(/^(.*)\/(.*)$/)
+    var dirname = m[1]
+    var name = m[2]
+
+    var version = manifest[url]['version']
+    if (!version) return url
+
+    return dirname + '/' + version + '/' + name
+  }
+
+});
