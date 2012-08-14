@@ -476,8 +476,7 @@ seajs._config = {
     if (isCSS) {
       node.rel = 'stylesheet'
       node.href = url
-    }
-    else {
+    } else {
       node.async = 'async'
       node.src = url
     }
