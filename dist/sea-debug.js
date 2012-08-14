@@ -1482,6 +1482,11 @@ seajs._config = {
   })((_seajs || 0)['args'])
 
 
+  // Compatible with AMD modules.
+  // Ref: https://github.com/amdjs/amdjs-api/wiki/AMD
+  global.define.amd = {}
+
+
   // Keeps clean!
   delete seajs.define
   delete seajs._util
