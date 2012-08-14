@@ -13,6 +13,9 @@
                     },
   "main"          : "./lib/sea-node.js",
   "preferGlobal"  : true,
-  "output": {"sea.js": ["sea.js", "util-lang.js", "util-log.js", "util-path.js",
-      "util-fetch.js", "util-deps.js", "module.js", "config.js", "prepare.js", "bootstrap.js"]}
+  "output"        : {
+                      "sea.js": ["sea.js", "util-lang.js", "util-log.js", "util-path.js",
+                                 "util-fetch.js", "util-deps.js", "module.js", "config.js",
+                                 "prepare.js", "bootstrap.js"]
+                    }
 }
