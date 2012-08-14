@@ -12,21 +12,19 @@ define('seajs/plugin-storage', ['./plugin-base','store','manifest'], function(re
       isNeedUpdate = false,
       updateList = {}
 
-
-  if(!_manifest){
-    isNeedUpdate = true
-  }
-
-  isNeedUpdate || _manifest.version == manifest.version ? isNeedUpdate : isNeedUpdate = true
-
+  // need update only when  _manifest does not exist or local manifest.version not equals online manifest.version 
+  isNeedUpdate = !_manifest || _manifest.version !== manifest.version 
 
   if(isNeedUpdate){
+    // if local manifest does not exist  update all entries which are listed in manifest file
     if(!_manifest){
       updateList = manifest
     }else{
       for(var i in manifest){
         if(i != 'version'){
 
+          // Update a entry when the entry does not exist in the manifest file or local entry.version not equals online entry.version 
+          
           !_manifest[i] && (updateList[i] = manifest[i])
 
           _manifest[i] && _manifest[i].version != manifest[i].version && (updateList[i] = manifest[i])
@@ -51,7 +49,7 @@ define('seajs/plugin-storage', ['./plugin-base','store','manifest'], function(re
 
       var stCache = s.get(url),
           realPath= util.toRealPath(url,_manifest)
-
+      // use localStorage only when the entry has existed in localStorage and the entry is listed in manifest file meanwhile not be listed in updateList
       if(stCache  && _manifest[url] && !updateList[url]){
         util.globalEval(stCache)
         callback()
@@ -69,7 +67,8 @@ define('seajs/plugin-storage', ['./plugin-base','store','manifest'], function(re
 
 
   var Module = seajs.pluginSDK.Module
-
+  
+  // fix refUri
   function extendResolve() {
     var _resolve = Module._resolve
 
@@ -81,6 +80,7 @@ define('seajs/plugin-storage', ['./plugin-base','store','manifest'], function(re
     }
   }
 
+  // manifest file maybe declare the entry·s version ，we need to make up the real path
   function toRealPath(url, manifest) {
     if (!manifest[url]) return url
 
@@ -95,4 +95,3 @@ define('seajs/plugin-storage', ['./plugin-base','store','manifest'], function(re
   }
 
 });
-
