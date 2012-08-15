@@ -90,6 +90,7 @@
     ,'issues/public-api'
     ,'issues/remove-comments'
     ,'issues/require-async'
+    ,'issues/seajs-cache'
     ,'issues/seajs-find'
     ,'issues/seajs-importStyle'
     ,'issues/seajs-log'
