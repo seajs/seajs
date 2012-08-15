@@ -5,6 +5,7 @@ define('seajs/plugin-combo', [], function() {
 
   var pluginSDK = seajs.pluginSDK
   var util = pluginSDK.util
+  var config = pluginSDK.config
 
 
   // Hacks load function to inject combo support
@@ -26,10 +27,14 @@ define('seajs/plugin-combo', [], function() {
 
 
   function setComboMap(uris) {
+    var comboExcludes = config.comboExcludes
+
     // Removes fetched or fetching uri
     var unFetchingUris = util.filter(uris, function(uri) {
       var module = cachedModules[uri]
-      return !module || module.status < Module.STATUS.FETCHING
+
+      return (!module || module.status < Module.STATUS.FETCHING) &&
+          (!comboExcludes || !comboExcludes.test(uri))
     })
 
     if (unFetchingUris.length > 1) {
@@ -195,7 +200,7 @@ define('seajs/plugin-combo', [], function() {
   // 'http://example.com/p/b.css'  ==> 'http://example.com/p/??a.css,b.css'
   //
   function paths2map(paths) {
-    var comboSyntax = pluginSDK.config.comboSyntax || ['??', ',']
+    var comboSyntax = config.comboSyntax || ['??', ',']
     var map = []
 
     util.forEach(paths, function(path) {

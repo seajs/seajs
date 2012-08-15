@@ -46,9 +46,15 @@ define(function(require) {
 
 
   // test seajs.use
-  seajs.config({ comboSyntax: ['', '+'] }).use(['./a', './b'], function(a, b) {
+  seajs.config({
+    comboSyntax: ['', '+'],
+    comboExcludes: /x\.js/
+  })
+
+  seajs.use(['./a', './b', './x'], function(a, b, x) {
     test.assert(a.name === 'a', a.name)
     test.assert(b.name === 'b', b.name)
+    test.assert(x.name === 'x', x.name)
 
     // test require.async and deps
     require.async(['./c', './f'], function(c, f) {
