@@ -154,6 +154,9 @@ define('seajs/plugin-debug', [], function() {
 
     document.cookie = 'seajs-debug=' + o.debug + '`' + o.mapfile + '`' +
         o.console + '; path=/; expires=' + date.toUTCString()
+
+    // Sync to seajs.debug
+    seajs.debug = !!o.debug
   }
 
 
