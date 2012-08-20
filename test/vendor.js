@@ -2,14 +2,6 @@
 ;(function() {
 
   var MODULES_PATH = 'https://a.alipayobjects.com/static/arale/'
-  //var MODULES_PATH = 'http://modules.seajs.org/'
-
-  var isLocal = location.href.indexOf('/~lifesinger/') > 0
-
-  if (isLocal) {
-    MODULES_PATH = 'http://' + location.host + '/~lifesinger/seajs/spm/modules/'
-  }
-
 
   // Ref: https://github.com/miohtama/detectmobile.js
   var isMobile = Math.max(screen.availWidth || screen.availHeight) <= 480
