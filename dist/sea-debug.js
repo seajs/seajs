@@ -1,6 +1,6 @@
 /**
  * @preserve SeaJS - A Module Loader for the Web
- * v1.2.1 | seajs.org | MIT Licensed
+ * v1.3.0-dev | seajs.org | MIT Licensed
  */
 
 
@@ -14,7 +14,7 @@ this.seajs = { _seajs: this.seajs }
  * The version of the framework. It will be replaced with "major.minor.patch"
  * when building.
  */
-seajs.version = '1.2.1'
+seajs.version = '1.3.0-dev'
 
 
 /**
@@ -159,31 +159,27 @@ seajs._config = {
 /**
  * The tiny console
  */
-;(function(util, config) {
-
-  var AP = Array.prototype
-
+;(function(util) {
 
   /**
    * The safe wrapper of console.log/error/...
    */
   util.log = function() {
     if (typeof console !== 'undefined') {
-      var args = AP.slice.call(arguments)
+      var args = Array.prototype.slice.call(arguments)
 
       var type = 'log'
       var last = args[args.length - 1]
       console[last] && (type = args.pop())
 
       // Only show log info in debug mode
-      if (type === 'log' && !config.debug) return
+      if (type === 'log' && !seajs.debug) return
 
-      var out = type === 'dir' ? args[0] : AP.join.call(args, ' ')
-      console[type](out)
+      console[type].apply(console, args)
     }
   }
 
-})(seajs._util, seajs._config)
+})(seajs._util)
 
 /**
  * Path utilities
