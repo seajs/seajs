@@ -58,6 +58,7 @@
     ,'issues/duplicate-init'
     ,'issues/duplicate-load'
     ,'issues/ie-cache'
+    ,'issues/ie-path-resolve'
     ,'issues/inline-module'
     ,'issues/invalid-deps'
     ,'issues/jsonp'

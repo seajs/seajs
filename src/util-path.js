@@ -144,6 +144,10 @@
       }
     }
 
+    if (!isAbsolute(ret)) {
+      ret = realpath(dirname(util.pageUri) + ret)
+    }
+
     if (ret !== uri) {
       mapCache[ret] = uri
     }
