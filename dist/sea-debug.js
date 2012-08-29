@@ -327,6 +327,10 @@ seajs._config = {
       }
     }
 
+    if (!isAbsolute(ret)) {
+      ret = realpath(dirname(pageUri) + ret)
+    }
+
     if (ret !== uri) {
       mapCache[ret] = uri
     }

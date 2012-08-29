@@ -145,7 +145,7 @@
     }
 
     if (!isAbsolute(ret)) {
-      ret = realpath(dirname(util.pageUri) + ret)
+      ret = realpath(dirname(pageUri) + ret)
     }
 
     if (ret !== uri) {
