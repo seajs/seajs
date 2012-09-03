@@ -16,7 +16,7 @@
     loaderScript = scripts[scripts.length - 1]
   }
 
-  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript) ||
+  var loaderSrc = (loaderScript && util.getScriptAbsoluteSrc(loaderScript)) ||
       util.pageUri // When sea.js is inline, set base to pageUri.
 
   var base = util.dirname(getLoaderActualSrc(loaderSrc))
@@ -32,7 +32,7 @@
   config.base = base
 
 
-  var dataMain = loaderScript.getAttribute('data-main')
+  var dataMain = loaderScript && loaderScript.getAttribute('data-main')
   if (dataMain) {
     config.main = dataMain
   }
