@@ -7,18 +7,35 @@
    * The safe wrapper of console.log/error/...
    */
   util.log = function() {
-    if (typeof console !== 'undefined') {
-      var args = Array.prototype.slice.call(arguments)
+    if (typeof console === 'undefined') return
 
-      var type = 'log'
-      var last = args[args.length - 1]
-      console[last] && (type = args.pop())
+    var args = Array.prototype.slice.call(arguments)
 
-      // Only show log info in debug mode
-      if (type === 'log' && !seajs.debug) return
+    var type = 'log'
+    var last = args[args.length - 1]
+    console[last] && (type = args.pop())
 
-      // See issue#349
-      console[type](args[0], args[1], args[2], args[3], args[4], args[5])
+    // Only show log info in debug mode
+    if (type === 'log' && !seajs.debug) return
+
+    if (console[type].apply) {
+      console[type].apply(console, args)
+      return
+    }
+
+    // See issue#349
+    var length = args.length
+    if (length === 1) {
+      console[type](args[0])
+    }
+    else if (length === 2) {
+      console[type](args[0], args[1])
+    }
+    else if (length === 3) {
+      console[type](args[0], args[1], args[2])
+    }
+    else {
+      console[type](args.join(' '))
     }
   }
 
