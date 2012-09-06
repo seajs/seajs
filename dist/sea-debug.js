@@ -807,9 +807,8 @@ seajs._config = {
             }
           }
           // Maybe failed to fetch successfully, such as 404 or non-module.
-          // // In these cases, module.status stay at FETCHING or FETCHED.
+          // In these cases, just call cb function directly.
           else {
-            util.log('It is not a valid CMD module: ' + uri)
             cb()
           }
         }

@@ -15,7 +15,7 @@ define('seajs/plugin-storage', ['./plugin-base', 'store', 'manifest'], function(
 
 
   var isNeedUpdate = !storedManifest ||
-      storedManifest.version !== latestManifest.version
+      storedManifest.apiVersion !== latestManifest.apiVersion
 
   if (isNeedUpdate) {
     updatedList = getUpdatedList()
@@ -32,7 +32,7 @@ define('seajs/plugin-storage', ['./plugin-base', 'store', 'manifest'], function(
 
   // Register plugin information
   plugin.add({
-    name: 'storage',
+    name: 'version',
 
     ext: ['.js'],
 
@@ -68,13 +68,13 @@ define('seajs/plugin-storage', ['./plugin-base', 'store', 'manifest'], function(
     var list = {}
 
     for (var key in latestManifest) {
-      if (!latestManifest.hasOwnProperty(key) || key === 'version') continue
+      if (!latestManifest.hasOwnProperty(key) || key === 'apiVersion') continue
 
-      var storedItem = storedManifest[key]
-      var latestItem = latestManifest[key]
+      var storedVersion = storedManifest[key]
+      var latestVersion = latestManifest[key]
 
-      if (!storedItem || storedItem.version !== latestItem.version) {
-        list[key] = latestItem
+      if (storedVersion !== latestVersion) {
+        list[key] = latestVersion
       }
     }
 
@@ -87,26 +87,28 @@ define('seajs/plugin-storage', ['./plugin-base', 'store', 'manifest'], function(
   function extendResolve() {
     var _resolve = Module._resolve
     Module._resolve = function(id, refUri) {
-      return _resolve(id, getRealPath(refUri, storedManifest))
+      return getRealPath(_resolve(id, refUri), storedManifest)
     }
   }
 
 
   function getRealPath(url, manifest) {
-    var version
-    if (!manifest[url] || !(version = manifest[url]['version'])) return url
+    var apiVersion
+    if (!manifest[url] || !(apiVersion = manifest[url]['apiVersion'])) {
+      return url
+    }
 
     var m = url.match(/^(.*)\/([^\/]+)$/)
     if (!m) return url
 
     var dirname = m[1]
     var name = m[2]
-    return dirname + '/' + version + '/' + name
+    return dirname + '/' + apiVersion + '/' + name
   }
 
 });
 
 
 // Runs it immediately
-seajs.use('seajs/plugin-storage');
+seajs.use('seajs/plugin-version');
 
