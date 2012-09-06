@@ -40,3 +40,7 @@ define('seajs/plugin-reload', [], function(require) {
   })
 
 });
+
+// Runs it immediately
+seajs.use('seajs/plugin-reload');
+

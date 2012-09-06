@@ -32,3 +32,6 @@ define('seajs/plugin-text', ['./plugin-base'], function(require) {
 
 });
 
+// Runs it immediately
+seajs.use('seajs/plugin-text');
+

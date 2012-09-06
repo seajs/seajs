@@ -105,3 +105,8 @@ define('seajs/plugin-storage', ['./plugin-base', 'store', 'manifest'], function(
   }
 
 });
+
+
+// Runs it immediately
+seajs.use('seajs/plugin-storage');
+

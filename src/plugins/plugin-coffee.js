@@ -19,3 +19,6 @@ define('seajs/plugin-coffee', ['./plugin-base', 'coffee'], function(require) {
 
 });
 
+// Runs it immediately
+seajs.use('seajs/plugin-coffee');
+

@@ -38,3 +38,6 @@ define('seajs/plugin-less', ['./plugin-base', 'less'], function(require) {
 
 });
 
+// Runs it immediately
+seajs.use('seajs/plugin-less');
+
