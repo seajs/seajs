@@ -17,7 +17,8 @@
       // Only show log info in debug mode
       if (type === 'log' && !seajs.debug) return
 
-      console[type].apply(console, args)
+      // See issue#349
+      console[type](args[0], args[1], args[2], args[3], args[4], args[5])
     }
   }
 
