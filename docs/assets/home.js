@@ -86,7 +86,7 @@ define('home', [], function(require) {
 
     require.async('github', function(github) {
       document.getElementById('github').style.display = 'block'
-      github('seajs/seajs').issues().commits()
+      github('seajs/seajs').issues()//.commits()
     })
 
     require.async(['jquery', 'hello'], function($, hello) {
