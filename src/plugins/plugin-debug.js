@@ -178,6 +178,3 @@ define('seajs/plugin-debug', [], function() {
 
 });
 
-// Runs it immediately
-seajs.use('seajs/plugin-debug');
-

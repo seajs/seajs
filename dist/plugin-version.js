@@ -46,13 +46,16 @@ define('seajs/plugin-storage', ['./plugin-base', 'store', 'manifest'], function(
       else {
         var realPath = getRealPath(url, storedManifest)
 
+        // TODO:
+        // 这里应该不能应该 xhr，否则线上一跨域就不可用
+        // 应该还是用 util.fetch 去取，然后拿 seajs.cache 中的内容存起来
+        // 有点小麻烦
         util.xhr(realPath, function(code) {
-          parseInt(seajs.pluginSDK.config.debug) == 2 || ( storedManifest[url] && store.set(url, code) )
+          storedManifest[url] && store.set(url, code)
           util.globalEval(code)
           callback()
         })
       }
-
     }
   })
 
