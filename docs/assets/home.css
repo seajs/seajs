@@ -41,7 +41,7 @@ h3 {
 }
 
 ul, ol { list-style-position: inside; margin-left: 2em; }
-ul { list-style: circle; }
+ul { list-style: circle inline; }
 a { color: #008B8B; text-decoration: none; }
 a:hover { text-decoration: underline; }
 .clear { clear: both; }
@@ -126,7 +126,11 @@ a:hover { text-decoration: underline; }
 }
 
 .words ul {
-  margin: 1em 0 1em 1em;
+  margin: 1em 0 1em 2em;
+}
+
+.words ul ul{
+    margin-left:1em;
 }
 
 .words ul li {
