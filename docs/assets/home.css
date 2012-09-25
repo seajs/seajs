@@ -49,7 +49,7 @@ a:hover { text-decoration: underline; }
 
 /* #header */
 #header {
-  height: 85px;
+  height: 80px;
   border-top: 5px solid #323A41;
   background: -moz-linear-gradient(top, #626D76, #323A41);
   background: -webkit-gradient(linear, center top, center bottom, from(#626D76), to(#323A41));
@@ -72,8 +72,8 @@ a:hover { text-decoration: underline; }
 
 #nav {
   position: absolute;
-  left: 225px;
-  top: 45px;
+  left: 140px;
+  top: 40px;
   list-style: none;
 }
 
@@ -118,11 +118,6 @@ a:hover { text-decoration: underline; }
 .page h2 {
   border-bottom: 1px solid #E0E0E0;
   box-shadow: #FFF 0 1px;
-  width: 600px;
-}
-
-.words {
-  margin-right: 350px;
 }
 
 .words ul {
@@ -160,35 +155,34 @@ a:hover { text-decoration: underline; }
 }
 
 #side {
-  position: absolute;
-  top: 20px;
+  position:absolute;
+  top: 160px;
   right: 0;
   width: 300px;
 }
 
 #downloads-link {
   position: absolute;
-  top: -55px;
+  top: -215px;
   right: 0;
-  width: 120px;
-  height: 70px;
-  background: url(images/download.png) no-repeat 0 90%;
+  width: 100px;
+  height: 85px;
 }
 
 #downloads-link a {
   display: block;
-  float: right;
-  width: 90px;
-  height:70px;
-  background: url(images/download-folder.png) no-repeat 0 0;
-  position: relative;
+  width: 100%;
+  height:100%;
+  background: url(images/download-folder.png) no-repeat 50% 0;
 }
 
 #downloads-link a span {
   position: absolute;
-  bottom: 8px;
-  right: 20px;
-  color: #B4BBC1;
+  width:100%;
+  bottom: 0px;
+  text-align:center;
+  color: #323A41;
+  font-size:12px;
   /*text-shadow: 1px 1px 0 #323A41;*/
 }
 
@@ -370,3 +364,23 @@ pre.text {
   background-color: #F4F4F4;
   margin-left: 1em;
 }
+
+#page-intro .slogan{
+  padding:10px;
+}
+
+#page-intro .slogan h2{
+  text-align:center;
+  border-bottom:none;
+  box-shadow:none;
+}
+#page-intro .slogan p{
+  margin:0;
+  text-align:center;
+  color:#888;
+}
+
+#page-intro .words{
+  width:600px;
+}
+

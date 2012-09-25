@@ -12,13 +12,14 @@
   <div id="header-inner">
 
   <h1 id="logo">
-    <a href="./"><img src="assets/images/logo.png" width="144" height="50" title="SeaJS"></a>
+    <a href="#intro"><img src="assets/images/logo.png" width="144" height="50" title="SeaJS"></a>
   </h1>
 
   <ul id="nav">
     <li><a href="#intro">介绍</a></li>
     <li><a href="#api">使用文档</a></li>
-    <li><a href="#articles">大家谈</a></li>
+    <li><a href="#articles">社区精选</a></li>
+    <li><a href="https://github.com/seajs/spm/wiki">SPM</a></li>
     <li><a href="#about">关于</a></li>
   </ul>
 
@@ -33,21 +34,15 @@
 
   <div class="page" id="page-intro">
 
-    <h2>A Module Loader for the Web</h2>
+    <div class="slogan">
+      <h2>SeaJS 是一个适用于 Web 浏览器端的模块加载器。</h2>
+      <p>使用 SeaJS，可以更好地组织 JavaScript 代码。</p>
+      <p class="desc">A Module Loader for the Web</p>
+    </div>
 
     <div class="words">
-
-      <p>
-        SeaJS 是一个适用于 Web 浏览器端的模块加载器。使用 SeaJS，可以更好地组织 JavaScript 代码。
-      </p>
-
-      <p>
-        也许你已注意到右边的美图：蓝天碧海之间，沙滩爱侣相伴。无论生活还是工作，我们都期望能享受如此良辰美景。SeaJS
-        在努力让我们的生活变得更美好。
-      </p>
-
-
-      <h3 id="glance">快速入门</h3>
+      
+      <h3 id="glance">快速上手</h3>
 
       <p>
         在 SeaJS 的世界里，一个文件就是一个模块。所有模块都遵循 <a href="https://github.com/seajs/seajs/issues/242" target="_blank">CMD</a> 规范，我们可以像在 <a href="http://nodejs.org/" target="_blank">Node</a> 环境中一样来书写模块代码：
@@ -80,7 +75,7 @@ seajs.use(['./hello', 'jquery'], function(hello, $) {
 </pre>
 
       <p>
-        赶紧点击右上角的美图，与模块世界打个招呼吧 ^_^
+        赶紧点击右侧的美图，与模块世界打个招呼吧 ^_^
       </p>
 
 
@@ -105,22 +100,6 @@ seajs.use(['./hello', 'jquery'], function(hello, $) {
 
       <p>
         SeaJS 追求的是更简单、自然的代码书写和组织方式。
-      </p>
-
-
-      <h3 id="docs">使用文档</h3>
-
-      <p>
-        SeaJS 上手非常容易，精通也不难。找点时间，读读下面的文档就行：
-      </p>
-
-      <ul>
-        <li><a href="#api">使用文档</a></li>
-        <li><a href="#articles">大家谈</a></li>
-      </ul>
-
-      <p>
-        遇到问题时，欢迎到 <a href="#about">SeaJS 社区</a> 寻找帮助。
       </p>
 
 
@@ -191,7 +170,7 @@ Opera 10+         ✔
     <div id="side">
 
       <div id="downloads-link">
-        <a href="#downloads" alt="Download this project"><span>v1.2.1</span></a>
+        <a href="#downloads" alt="Download this project"><span> 源码下载 v1.2.1</span></a>
       </div>
 
       <div id="social">
@@ -226,23 +205,23 @@ Opera 10+         ✔
 
   <div class="page" id="page-api">
 
-    <h2>Documentation</h2>
+    <h2>使用文档</h2>
 
     <div class="words">
 
       <p>
         这是 SeaJS 的官方文档。<br/>
-        初级部分推荐按顺序阅读，后续部分可根据兴趣选读。<br/>
+        基础教程推荐按顺序阅读，后续部分可根据兴趣选读。<br/>
         阅读过程中有任何疑问，欢迎到 <a href="https://github.com/seajs/seajs/issues/271" target="_blank">社区</a> 交流。
       </p>
 
-      <h3>Quick Start</h3>
+      <h3>快速上手</h3>
       <ul>
         <li><a href="https://github.com/seajs/seajs/issues/374" target="_blank">5分钟上手 SeaJS</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/266" target="_blank">API 快速参考</a></li>
       </ul>
 
-      <h3>For Primary Users</h3>
+      <h3>基础教程</h3>
 
       <ul>
         <li><a href="https://github.com/seajs/seajs/issues/240" target="_blank">模块系统</a></li>
@@ -258,7 +237,7 @@ Opera 10+         ✔
       </ul>
 
 
-      <h3>For Advanced Users</h3>
+      <h3>进阶教程</h3>
 
       <ul>
         <li><a href="https://github.com/seajs/seajs/issues/267" target="_blank">常见错误</a></li>
@@ -285,7 +264,7 @@ Opera 10+         ✔
       </ul>
 
 
-      <h3>For Plugin Developers</h3>
+      <h3>插件开发</h3>
 
       <ul>
         <li><a href="https://github.com/seajs/seajs/issues/264" target="_blank">插件开发指南</a></li>
@@ -300,7 +279,7 @@ Opera 10+         ✔
 
   <div class="page" id="page-articles">
 
-    <h2>Articles</h2>
+    <h2>社区精选</h2>
 
     <div class="words">
 
@@ -385,7 +364,7 @@ Opera 10+         ✔
 
   <div class="page" id="page-about">
 
-    <h2>About</h2>
+    <h2>关于</h2>
 
     <div class="words">
 
