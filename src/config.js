@@ -37,6 +37,10 @@
     config.main = dataMain
   }
 
+  var dataConfigSrc = loaderScript.getAttribute('data-config')
+  if (dataConfigSrc) {
+    config.src = dataConfigSrc
+  }
 
   // The default charset of module file.
   config.charset = 'utf-8'
