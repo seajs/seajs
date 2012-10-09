@@ -1,0 +1,5 @@
+seajs.config({
+
+  preload: './g'
+
+})

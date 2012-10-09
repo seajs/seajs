@@ -17,16 +17,10 @@
 
 
   // Loads the data-main module automatically.
-  if (config.src) {
-    seajs.use(config.src, function(){
-      config.main && seajs.use(config.main)
-  })
-  }
-  else {
-    config.main && seajs.use(config.main)
-  }
+  config.main && seajs.use(config.main)
 
-  // Parses the pre-call of seajs.config/seajs.use/define.
+
+    // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
   ;(function(args) {
     if (args) {

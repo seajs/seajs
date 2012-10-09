@@ -35,13 +35,16 @@
     var uris = resolve(ids, this.uri)
 
     this._load(uris, function() {
-      var args = util.map(uris, function(uri) {
-        return uri ? cachedModules[uri]._compile() : null
-      })
+      // Loads preload files introduced in modules before compiling.
+      preload(function() {
+        var args = util.map(uris, function(uri) {
+          return uri ? cachedModules[uri]._compile() : null
+        })
 
-      if (callback) {
-        callback.apply(null, args)
-      }
+        if (callback) {
+          callback.apply(null, args)
+        }
+      })
     })
   }
 
@@ -466,6 +469,12 @@
     util.log('Found circular dependencies:', stack.join(' --> '), type)
   }
 
+  function preload(callback) {
+    var preloadMods = config.preload.slice()
+    config.preload = []
+    preloadMods.length ? globalModule._use(preloadMods, callback) : callback()
+  }
+
 
   // Public API
   // ----------
@@ -473,19 +482,12 @@
   var globalModule = new Module(util.pageUri, STATUS.COMPILED)
 
   seajs.use = function(ids, callback) {
-    var preloadMods = config.preload
-
-    if (preloadMods.length) {
-      // Loads preload modules before all other modules.
-      globalModule._use(preloadMods, function() {
-        config.preload = []
-        globalModule._use(ids, callback)
-      })
-    }
-    else {
+    // Loads preload modules before all other modules.
+    preload(function() {
       globalModule._use(ids, callback)
-    }
+    })
 
+    // Chain
     return seajs
   }
 

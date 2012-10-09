@@ -87,6 +87,7 @@
     ,'issues/plugin-less'
     ,'issues/plugin-text'
     ,'issues/preload'
+    ,'issues/preload-as-deps'
     ,'issues/protocol-80'
     ,'issues/public-api'
     ,'issues/remove-comments'

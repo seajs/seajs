@@ -758,13 +758,16 @@ seajs._config = {
     var uris = resolve(ids, this.uri)
 
     this._load(uris, function() {
-      var args = util.map(uris, function(uri) {
-        return uri ? cachedModules[uri]._compile() : null
-      })
+      // Loads preload modules introduced in modules.
+      preload(function() {
+        var args = util.map(uris, function(uri) {
+          return uri ? cachedModules[uri]._compile() : null
+        })
 
-      if (callback) {
-        callback.apply(null, args)
-      }
+        if (callback) {
+          callback.apply(null, args)
+        }
+      })
     })
   }
 
@@ -1189,6 +1192,12 @@ seajs._config = {
     util.log('Found circular dependencies:', stack.join(' --> '), type)
   }
 
+  function preload(callback) {
+    var preloadMods = config.preload.slice()
+    config.preload = []
+    preloadMods.length ? globalModule._use(preloadMods, callback) : callback()
+  }
+
 
   // Public API
   // ----------
@@ -1196,19 +1205,12 @@ seajs._config = {
   var globalModule = new Module(util.pageUri, STATUS.COMPILED)
 
   seajs.use = function(ids, callback) {
-    var preloadMods = config.preload
-
-    if (preloadMods.length) {
-      // Loads preload modules before all other modules.
-      globalModule._use(preloadMods, function() {
-        config.preload = []
-        globalModule._use(ids, callback)
-      })
-    }
-    else {
+    // Loads preload modules before all other modules.
+    preload(function() {
       globalModule._use(ids, callback)
-    }
+    })
 
+    // Chain
     return seajs
   }
 
@@ -1256,20 +1258,10 @@ seajs._config = {
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
   // to "http://test.com/libs/"
   var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/)
-  if (match) {
-    base = match[1]
-  }
+  if (match) base = match[1]
 
   config.base = base
-
-
-  var dataMain = loaderScript && loaderScript.getAttribute('data-main')
-  if (dataMain) {
-    config.main = dataMain
-  }
-
-
-  // The default charset of module file.
+  config.main = loaderScript && loaderScript.getAttribute('data-main')
   config.charset = 'utf-8'
 
 
@@ -1474,7 +1466,8 @@ seajs._config = {
   // Loads the data-main module automatically.
   config.main && seajs.use(config.main)
 
-  // Parses the pre-call of seajs.config/seajs.use/define.
+
+    // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
   ;(function(args) {
     if (args) {

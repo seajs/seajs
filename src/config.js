@@ -25,24 +25,10 @@
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
   // to "http://test.com/libs/"
   var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/)
-  if (match) {
-    base = match[1]
-  }
+  if (match) base = match[1]
 
   config.base = base
-
-
-  var dataMain = loaderScript && loaderScript.getAttribute('data-main')
-  if (dataMain) {
-    config.main = dataMain
-  }
-
-  var dataConfigSrc = loaderScript.getAttribute('data-config')
-  if (dataConfigSrc) {
-    config.src = dataConfigSrc
-  }
-
-  // The default charset of module file.
+  config.main = loaderScript && loaderScript.getAttribute('data-main')
   config.charset = 'utf-8'
 
 
