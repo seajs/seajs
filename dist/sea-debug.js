@@ -758,7 +758,7 @@ seajs._config = {
     var uris = resolve(ids, this.uri)
 
     this._load(uris, function() {
-      // Loads preload modules introduced in modules.
+      // Loads preload files introduced in modules before compiling.
       preload(function() {
         var args = util.map(uris, function(uri) {
           return uri ? cachedModules[uri]._compile() : null
@@ -836,7 +836,7 @@ seajs._config = {
     //  1. the module file is 404.
     //  2. the module file is not written with valid module format.
     //  3. other error cases.
-    if (module.status < STATUS.READY && !hasModifiers(module)) {
+    if (module.status < STATUS.SAVED && !hasModifiers(module)) {
       return null
     }
 

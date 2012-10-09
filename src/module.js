@@ -113,7 +113,7 @@
     //  1. the module file is 404.
     //  2. the module file is not written with valid module format.
     //  3. other error cases.
-    if (module.status < STATUS.READY && !hasModifiers(module)) {
+    if (module.status < STATUS.SAVED && !hasModifiers(module)) {
       return null
     }
 

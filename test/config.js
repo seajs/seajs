@@ -44,6 +44,7 @@
     ,'issues/auto-transport'
     ,'issues/charset'
     ,'issues/circular-detect'
+    ,'issues/circular-in-package'
     ,'issues/combo-use'
     ,'issues/compiling-module'
     ,'issues/config-base'
