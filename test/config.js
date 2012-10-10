@@ -45,6 +45,7 @@
     ,'issues/charset'
     ,'issues/circular-detect'
     ,'issues/circular-in-package'
+    ,'issues/circular-log'
     ,'issues/combo-use'
     ,'issues/compiling-module'
     ,'issues/config-base'
