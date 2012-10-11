@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>SeaJS - A Module Loader for the Web</title>
-<link rel="stylesheet" href="assets/home.css">
+<link rel="stylesheet" href="assets/home.css?v20121010.css">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
     <li><a href="#intro">介绍</a></li>
     <li><a href="#api">使用文档</a></li>
     <li><a href="#articles">社区精选</a></li>
-    <li><a href="https://github.com/seajs/spm/wiki">SPM</a></li>
+    <li><a href="https://github.com/seajs/spm/wiki">包管理工具</a></li>
     <li><a href="#about">关于</a></li>
   </ul>
 
@@ -34,54 +34,26 @@
 
   <div class="page" id="page-intro">
 
-    <div class="slogan">
-      <h2>SeaJS 是一个适用于 Web 浏览器端的模块加载器。</h2>
+    <div class="headline">
+      <h2>SeaJS 是一个适用于 Web 端的模块加载器。</h2>
       <p>使用 SeaJS，可以更好地组织 JavaScript 代码。</p>
-      <p class="desc">A Module Loader for the Web</p>
+      <p>A Module Loader for the Web</p>
+    </div>
+
+    <div class="quick-start">
+      <a href="quick-start/" class="button">快速上手
+        <span class="extra">开启 SeaJS 的奇妙世界</span>
+      </a>
     </div>
 
     <div class="words">
-      
-      <h3 id="glance">快速上手</h3>
+
+      <h3 id="why">为什么要用 SeaJS ？</h3>
 
       <p>
-        在 SeaJS 的世界里，一个文件就是一个模块。所有模块都遵循 <a href="https://github.com/seajs/seajs/issues/242" target="_blank">CMD</a> 规范，我们可以像在 <a href="http://nodejs.org/" target="_blank">Node</a> 环境中一样来书写模块代码：
-      </p>
+        <img class="sea-pic" src="assets/images/sea.jpg" width="300" height="300">
+        Web 前端开发日趋复杂，当 JavaScript 代码达到几千行、文件超过十几个时，
 
-<pre>
-define(function(require, exports, module) {
-  var $ = require('jquery');
-
-  exports.sayHello = function() {
-    $('#hello').toggle('slow');
-  };
-});
-</pre>
-
-      <p>
-        将上面的代码保存为 <code>hello.js</code>，然后就可以通过 SeaJS 来加载使用了：
-      </p>
-
-<pre>
-seajs.config({
-  alias: {
-    'jquery': 'http://modules.seajs.org/jquery/1.7.2/jquery.js'
-  }
-});
-
-seajs.use(['./hello', 'jquery'], function(hello, $) {
-  $('#beautiful-sea').click(hello.sayHello);
-});
-</pre>
-
-      <p>
-        赶紧点击右侧的美图，与模块世界打个招呼吧 ^_^
-      </p>
-
-
-      <h3 id="features">核心特性</h3>
-
-      <p>
         无论是中小型站点，还是大型复杂应用，使用 SeaJS，都可以让我们的工作变得更轻松愉悦。SeaJS 具有以下核心特性：
       </p>
 
@@ -167,38 +139,8 @@ Opera 10+         ✔
 
     </div>
 
-    <div id="side">
-
-      <div id="downloads-link">
-        <a href="#downloads" alt="Download this project"><span> 源码下载 v1.2.1</span></a>
-      </div>
-
-      <div id="social">
-        <!--<iframe data-src="http://markdotto.github.com/github-buttons/github-btn.html?user=seajs&amp;repo=seajs&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe>-->
-        <!--<iframe data-src="http://markdotto.github.com/github-buttons/github-btn.html?user=seajs&amp;repo=seajs&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="90px" height="20px"></iframe>-->
-        <!--<iframe allowtransparency="true" frameborder="0" scrolling="no" src="http://platform.twitter.com/widgets/tweet_button.1340179658.html#_=1341106072057&amp;count=horizontal&amp;id=twitter-widget-0&amp;lang=en&amp;original_referer=http%3A%2F%2Fseajs.org%2F&amp;size=m&amp;text=SeaJS%20-%20A%20Module%20Loader%20for%20the%20Web&amp;url=http%3A%2F%2Fseajs.org%2F&amp;via=lifesinger" class="twitter-share-button twitter-count-horizontal" style="width: 116px; height: 20px; " title="Twitter Tweet Button"></iframe>-->
-      </div>
-
-      <div id="sea-pic">
-        <img id="beautiful-sea" src="assets/images/sea.jpg" width="300" height="300">
-        <!-- Thanks to the beautiful sea picture from: http://www.hassel66.net/life_001.html -->
-        <p id="wish">让生活更美好</p>
-        <p id="hello">Hello, modular world!</p>
-      </div>
-
-      <div id="github">
-
-        <h3>Latest Issues <span><a href="https://github.com/seajs/seajs/issues" target="_blank">#</a></span></h3>
-        <ul id="issues">
-          <li>Loading ...</li>
-        </ul>
-
-        <!--<h3>Latest Commits <span><a href="https://github.com/seajs/seajs/commits/master" target="_blank">#</a></span></h3>-->
-        <!--<ul id="commits">-->
-          <!--<li>Loading ...</li>-->
-        <!--</ul>-->
-
-      </div>
+    <div id="downloads-link">
+      <a href="#downloads" alt="下载"><span>下载 v1.3.0</span></a>
     </div>
 
   </div>
@@ -396,7 +338,7 @@ Opera 10+         ✔
 
       <p>
         最后，隆重感谢可爱的小雕。其实 SeaJS 是他写的，我只是代笔。<br>
-        <img src="assets/images/xiaodiao.jpg" width="368" height="490">
+        <img src="assets/images/sea.jpg" width="500" height="500">
       </p>
 
       <p>
@@ -485,14 +427,14 @@ Opera 10+         ✔
 
 <div id="footer">
   <div id="footer-inner">
-    <p class="copyright">© 2010 - 2012 seajs.org All Rights Reserved.</p>
+    <p class="copyright">© 2010 - 2022 seajs.org Coding with pleasure</p>
   </div>
 </div>
 
-<div class="extra">
-  <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -1px; right: 0; border: 0" src="assets/images/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
+<div id="extra">
+  <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -7px; right: 0; border: 0" src="assets/images/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
 </div>
 
-<script src="../dist/sea.js" data-main="./assets/home.js?v20120712.js"></script>
+<script src="../dist/sea.js" data-main="./assets/home.js?v20121010.js"></script>
 </body>
 </html>
