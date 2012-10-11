@@ -84,13 +84,7 @@ define('home', [], function(require) {
       highlight.init()
     })
 
-    require.async('github', function(github) {
-      document.getElementById('github').style.display = 'block'
-      github('seajs/seajs').issues()//.commits()
-    })
-
-    require.async(['jquery', 'hello'], function($, hello) {
-      $('#beautiful-sea').click(hello.sayHello)
+    require.async(['jquery'], function($) {
       initLazySrc($)
     })
 
