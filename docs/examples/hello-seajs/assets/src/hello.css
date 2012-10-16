@@ -1,0 +1,57 @@
+html, body, div, span, h1, h2, h3, h4, p, img, strong, ol, ul, li {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+body {
+  background: #F4F4F4;
+}
+
+p {
+  font: 16px/1.62 'Hiragino Sans GB', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #444;
+  text-rendering: optimizelegibility;
+}
+
+p.hello {
+  font-size: 36px;
+  margin: 20px;
+  text-align: center;
+}
+
+#container {
+  position: relative;
+  margin: 40px 120px;
+}
+
+canvas {
+  position: absolute;
+  top: 30px;
+  left: 0;
+}
+
+#container img {
+  display: inline-block;
+  width: 44px;
+  height: 44px;
+  text-indent: -3000px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  position: absolute;
+  cursor: pointer;
+  opacity: .6;
+
+  -webkit-transition-duration: 0.8s;
+  -moz-transition-duration: 0.8s;
+  -o-transition-duration: 0.8s;
+  transition-duration: 0.8s;
+  -webkit-transition-property: -webkit-transform;
+  -moz-transition-property: -moz-transform;
+  -o-transition-property: -o-transform;
+  transition-property: transform;
+}

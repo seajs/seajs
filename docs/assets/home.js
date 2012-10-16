@@ -13,10 +13,10 @@ define('home', [], function(require) {
 
   var navs = document.getElementById('nav').getElementsByTagName('a')
   var pages = getElementsByClassName('content', 'page')
-  var introInited = false
+  var extraInited = false
 
-  updateView()
   bindEvents()
+  updateView()
 
 
   // Helpers
@@ -28,9 +28,9 @@ define('home', [], function(require) {
     if (document.getElementById('page-' + pageId)) {
       setActiveNav(pageId)
       setActivePage(pageId)
+      window.scrollTo(0, 0)
     }
 
-    window.scrollTo(0, 0)
   }
 
   function setActiveNav(pageId) {
@@ -48,7 +48,14 @@ define('home', [], function(require) {
       page.className = isActive ? 'page page-active' : 'page'
     }
 
-    if (pageId === 'intro') initIntroPage()
+    if (pageId === 'intro' || pageId === 'quick-start') {
+      initExtra()
+
+      var iframe = document.getElementById('#quick-start-iframe')
+      if (iframe) {
+        iframe.src += new Date().getTime()
+      }
+    }
   }
 
   function bindEvents() {
@@ -77,8 +84,8 @@ define('home', [], function(require) {
     return document.getElementById('page-' + href.replace(/.*#(\w+).*/, '$1'))
   }
 
-  function initIntroPage() {
-    if (introInited) return
+  function initExtra() {
+    if (extraInited) return
 
     require.async('highlight', function(highlight) {
       highlight.init()
@@ -88,7 +95,7 @@ define('home', [], function(require) {
       initLazySrc($)
     })
 
-    introInited = true
+    extraInited = true
   }
 
   function initLazySrc($) {

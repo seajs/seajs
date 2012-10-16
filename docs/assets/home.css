@@ -294,7 +294,7 @@ p.copyright {
 
 /* for mobile device */
 @media screen and (max-width: 1200px) {
-  .extra { display: none; }
+  #extra { display: none; }
 }
 
 
@@ -304,7 +304,7 @@ p.copyright {
 }
 
 
-/* misc style */
+/* code style */
 pre, code {
   font-size: 14px;
   font-family: Monaco, Consolas, "Lucida Console", monospace;
