@@ -4,8 +4,14 @@
   "dependencies": {
     "jquery": "1.7.2"
   },
+  "root": "",
   "output": {
     "hello.js": ".",
     "hello.css": "."
+  },
+  "spmConfig": {
+    "build": {
+      "to": "sea_modules/{{name}}/{{version}}"
+    }
   }
 }

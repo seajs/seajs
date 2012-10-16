@@ -19,18 +19,15 @@ define('home', [], function(require) {
       require.async(['jquery'], function($) {
         initLazySrc($)
       })
-
-      require.async('highlight', function(highlight) {
-        highlight.init()
-      })
-
-      // Only run once
-      delete extraCode['intro']
     },
 
     'quick-start': function() {
       var iframe = document.getElementById('quick-start-iframe')
-      iframe.contentDocument.location.reload()
+      iframe.contentDocument.location.href = 'examples/hello-seajs/index.html'
+
+      require.async('highlight', function(highlight) {
+        highlight.init()
+      })
     }
   }
 
@@ -68,7 +65,10 @@ define('home', [], function(require) {
       page.className = isActive ? 'page page-active' : 'page'
     }
 
-    extraCode[pageId] && extraCode[pageId]()
+    if (extraCode[pageId]) {
+      extraCode[pageId]()
+      delete extraCode[pageId]
+    }
   }
 
   function bindEvents() {

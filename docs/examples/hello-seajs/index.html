@@ -2,8 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Hello, SeaJS!</title>
-<link rel="stylesheet" href="assets/src/hello.css">
+<title>Hello, SeaJS</title>
+<link rel="stylesheet" href="assets/sea_modules/hello-seajs/1.0.0/hello.css">
 </head>
 <body>
 
@@ -21,13 +21,16 @@
   <img src="assets/images/s2.png" width="44" height="44" alt="S">
 </div>
 
-<script src="assets/sea_modules/seajs/1.3.0/sea.js"></script>
+<script src="https://a.alipayobjects.com/static/arale/seajs/1.2.1/sea.js"></script>
 <script>
   seajs.config({
     alias: {
-      'jquery': '1.7.2'
+      'jquery': '1.7.2',
+      'hello-seajs': './assets/sea_modules/hello-seajs'
     }
-  }).use('./assets/src/hello.js')
+  })
+
+  seajs.use('hello-seajs/1.0.0/hello.js')
 </script>
 
 </body>
