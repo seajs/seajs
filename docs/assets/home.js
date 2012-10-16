@@ -13,7 +13,27 @@ define('home', [], function(require) {
 
   var navs = document.getElementById('nav').getElementsByTagName('a')
   var pages = getElementsByClassName('content', 'page')
-  var extraInited = false
+
+  var extraCode = {
+    'intro': function() {
+      require.async(['jquery'], function($) {
+        initLazySrc($)
+      })
+
+      require.async('highlight', function(highlight) {
+        highlight.init()
+      })
+
+      // Only run once
+      delete extraCode['intro']
+    },
+
+    'quick-start': function() {
+      var iframe = document.getElementById('quick-start-iframe')
+      iframe.contentDocument.location.reload()
+    }
+  }
+
 
   bindEvents()
   updateView()
@@ -48,14 +68,7 @@ define('home', [], function(require) {
       page.className = isActive ? 'page page-active' : 'page'
     }
 
-    if (pageId === 'intro' || pageId === 'quick-start') {
-      initExtra()
-
-      var iframe = document.getElementById('#quick-start-iframe')
-      if (iframe) {
-        iframe.src += new Date().getTime()
-      }
-    }
+    extraCode[pageId] && extraCode[pageId]()
   }
 
   function bindEvents() {
@@ -82,20 +95,6 @@ define('home', [], function(require) {
   function isPageNav(href) {
     if (href.indexOf('#') === -1) return false
     return document.getElementById('page-' + href.replace(/.*#(\w+).*/, '$1'))
-  }
-
-  function initExtra() {
-    if (extraInited) return
-
-    require.async('highlight', function(highlight) {
-      highlight.init()
-    })
-
-    require.async(['jquery'], function($) {
-      initLazySrc($)
-    })
-
-    extraInited = true
   }
 
   function initLazySrc($) {
