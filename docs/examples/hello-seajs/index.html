@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="assets/src/hello.css">
 </head>
 <body>
+
 <div id="container">
   <img src="assets/images/h.png" width="44" height="44" alt="H">
   <img src="assets/images/e.png" width="44" height="44" alt="e">
@@ -22,7 +23,12 @@
 
 <script src="assets/sea_modules/seajs/1.3.0/sea.js"></script>
 <script>
-  seajs.use('./assets/src/init.js')
+  seajs.config({
+    alias: {
+      'jquery': '1.7.2'
+    }
+  }).use('./assets/src/hello.js')
 </script>
+
 </body>
 </html>

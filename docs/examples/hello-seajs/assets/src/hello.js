@@ -1,18 +1,7 @@
-define(function(require, exports, module) {
+define(function(require) {
 
   var $ = require('jquery')
 
+  require('./spinning').spinning($('#container img'))
 
-  function Hello(message) {
-    this.message = message
-  }
-
-  Hello.prototype.renderTo = function(container) {
-    $('<p class="hello">Hello, ' + this.message + ' !</p>')
-        .appendTo(container)
-        .fadeOut(60000)
-
-  }
-
-  module.exports = Hello
 })
