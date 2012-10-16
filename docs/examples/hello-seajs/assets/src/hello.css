@@ -14,6 +14,7 @@ body {
 #container {
   position: relative;
   margin: 40px 120px;
+  display: none;
 }
 
 #container img {

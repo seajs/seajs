@@ -1,7 +1,8 @@
 define(function(require) {
 
-  var $ = require('jquery')
+  var Spinning = require('./spinning')
 
-  require('./spinning').spinning($('#container img'))
+  var s = new Spinning('#container')
+  s.render()
 
 })
