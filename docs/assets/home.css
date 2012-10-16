@@ -257,13 +257,13 @@ a:hover { text-decoration: underline; }
 }
 
 #page-downloads .date {
-  color: #A4A4A4;
   text-shadow: #ffffff 0 1px;
   font-size: 12px;
   margin-right: 20px;
 }
 
 #page-downloads ul li {
+  color: #A4A4A4;
   list-style: none;
 }
 
