@@ -154,17 +154,17 @@ Opera 10+         ✔
 hello-seajs/
   |-- assets
   |     |-- images
-  |     |-- sea_modules
+  |     |-- sea-modules
   |     |-- src
   |     |-- package.json
   |-- index.html
 </pre>
 
-    <p>所有 css、js、img 等静态资源文件，都存放在 <code>assets</code> 目录下。其中 <code>sea_modules</code>
+    <p>所有 css、js、img 等静态资源文件，都存放在 <code>assets</code> 目录下。其中 <code>sea-modules</code>
       下存放的是我们需要用到的第三方模块，可通过 <code>spm install</code> 来获取：</p>
 
 <pre class="text">
-$ cd hello-seajs/assets/sea_modules
+$ cd hello-seajs/assets/sea-modules
 $ spm install seajs
 $ spm install jquery
 </pre>
@@ -193,7 +193,7 @@ src/
       在 <code>index.html</code> 里，首先需要引入 <code>sea.js</code>，然后通过 <code>use</code> 方法来加载模块：
     </p>
 <pre class="sh_html">
-&lt;script src="assets/sea_modules/seajs/1.3.0/sea.js"&gt;&lt;/script&gt;
+&lt;script src="assets/sea-modules/seajs/1.3.0/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   seajs.config({
     alias: {
@@ -276,11 +276,11 @@ $
 </pre>
 
     <p>
-      这样就打包好了，生成的文件在 <code>sea_modules</code> 目录下：
+      这样就打包好了，生成的文件在 <code>sea-modules</code> 目录下：
     </p>
 
 <pre class="text">
-sea_modules/
+sea-modules/
   |-- hello-seajs
         |-- 1.0.0
               |-- hello-debug.css
@@ -294,14 +294,14 @@ sea_modules/
     </p>
 
     <p>
-      打包好后，将需要的文件，比如 <code>images</code> 和 <code>sea_modules</code> 同步到线上，然后修改
+      打包好后，将需要的文件，比如 <code>images</code> 和 <code>sea-modules</code> 同步到线上，然后修改
       <code>index.html</code> 中的引用路径：
     </p>
 
 <pre class="sh_html">
-&lt;link rel="stylesheet" href="http://yoursite.com/assets/sea_modules/hello-seajs/1.0.0/hello.css"&gt;
+&lt;link rel="stylesheet" href="http://yoursite.com/assets/sea-modules/hello-seajs/1.0.0/hello.css"&gt;
 ...
-&lt;script src="http://yoursite.com/assets/sea_modules/seajs/1.3.0/sea.js"&gt;&lt;/script&gt;
+&lt;script src="http://yoursite.com/assets/sea-modules/seajs/1.3.0/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   seajs.config({
     alias: {

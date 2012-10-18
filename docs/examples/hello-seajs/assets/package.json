@@ -11,7 +11,7 @@
   },
   "spmConfig": {
     "build": {
-      "to": "sea_modules/{{name}}/{{version}}"
+      "to": "sea-modules/{{name}}/{{version}}"
     }
   }
 }
