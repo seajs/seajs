@@ -22,6 +22,3 @@ define('seajs/plugin-json', ['./plugin-base'], function(require) {
 
 });
 
-// Runs it immediately
-seajs.use('seajs/plugin-json');
-

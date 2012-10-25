@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Issue Test</title>
+</head>
+<body>
+<p><a href="https://github.com/seajs/seajs/issues/399">#399</a></p>
+<div id="out"></div>
+
+<script src="../../../dist/sea-debug.js"></script>
+<script>
+
+
+  seajs.config({
+    preload: ['seajs/plugin-json']
+  })
+
+  window.N = 0
+  var _use = seajs.use
+
+  seajs.use = function(ids, callback) {
+    N++
+    _use('./package.json', function(data) {
+      seajs.config({ alias: data })
+      _use(ids, callback)
+      seajs.use = _use
+    })
+  }
+
+  seajs.use('./main')
+
+
+  function printResults(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+    document.getElementById('out').appendChild(d);
+  }
+
+</script>
+</body>
+</html>

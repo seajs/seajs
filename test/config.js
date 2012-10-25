@@ -90,6 +90,7 @@
     ,'issues/plugin-text'
     ,'issues/preload'
     ,'issues/preload-as-deps'
+    ,'issues/preload-use'
     ,'issues/protocol-80'
     ,'issues/public-api'
     ,'issues/remove-comments'
