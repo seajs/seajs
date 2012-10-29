@@ -430,7 +430,7 @@
     return util.filter(module.dependencies, function(dep) {
       circularCheckStack = [uri]
 
-      var isCircular = isCircularWaiting(cachedModules[dep], uri)
+      var isCircular = isCircularWaiting(cachedModules[dep])
       if (isCircular) {
         circularCheckStack.push(uri)
         printCircularLog(circularCheckStack)
@@ -440,7 +440,7 @@
     })
   }
 
-  function isCircularWaiting(module, uri) {
+  function isCircularWaiting(module) {
     if (!module || module.status !== STATUS.SAVED) {
       return false
     }
@@ -449,24 +449,28 @@
     var deps = module.dependencies
 
     if (deps.length) {
-      if (util.indexOf(deps, uri) > -1) {
+      if (isOverlap(deps, circularCheckStack)) {
         return true
       }
 
       for (var i = 0; i < deps.length; i++) {
-        if (isCircularWaiting(cachedModules[deps[i]], uri)) {
+        if (isCircularWaiting(cachedModules[deps[i]])) {
           return true
         }
       }
-
-      return false
     }
 
+    circularCheckStack.pop()
     return false
   }
 
   function printCircularLog(stack, type) {
     util.log('Found circular dependencies:', stack.join(' --> '), type)
+  }
+
+  function isOverlap(arrA, arrB) {
+    var arrC = arrA.concat(arrB)
+    return arrC.length > util.unique(arrC).length
   }
 
   function preload(callback) {
