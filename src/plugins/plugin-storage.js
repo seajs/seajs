@@ -80,7 +80,7 @@ define('seajs/plugin-storage', ['./plugin-base','store','manifest'], function(re
     }
   }
 
-  // manifest file maybe declare the entry·s version ，we need to make up the real path
+  // manifest file maybe declare the entry's version ,we need to make up the real path
   function toRealPath(url, manifest) {
     if (!manifest[url]) return url
 
