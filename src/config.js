@@ -24,7 +24,7 @@
 
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
   // to "http://test.com/libs/"
-  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/)
+  var match = base.match(/^(.+\/)seajs\/[\.\-\w]+\/$/)
   if (match) base = match[1]
 
   config.base = base
