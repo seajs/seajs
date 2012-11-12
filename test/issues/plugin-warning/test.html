@@ -7,12 +7,23 @@
 </head>
 <body>
 <p><a href="https://github.com/seajs/seajs/issues/352">#352</a></p>
-<div id="out">ccc</div>
+<div id="out"></div>
 
 <script src="../../../dist/sea.js"></script>
 <script>
 
-  seajs.use('./main')
+  var _warn = console.warn
+  var N = 0
+
+  console.warn = function(msg) {
+    N++
+    _warn.call(console, msg)
+  }
+
+
+  seajs.config({
+    preload: 'seajs/plugin-warning'
+  }).use('./main')
 
 
   function printResults(txt, style) {

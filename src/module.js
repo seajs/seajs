@@ -228,7 +228,7 @@
         }
       }
 
-      var module = save(resolvedUri, meta)
+      var module = Module._save(resolvedUri, meta)
 
       // For IE:
       // Assigns the first module in package to cachedModules[derivedUrl]
@@ -291,6 +291,7 @@
   Module.STATUS = STATUS
   Module._resolve = util.id2Uri
   Module._fetch = util.fetch
+  Module._save = save
 
 
   // Helpers
@@ -346,7 +347,7 @@
 
           // Saves anonymous module meta data
           if (anonymousModuleMeta) {
-            save(uri, anonymousModuleMeta)
+            Module._save(uri, anonymousModuleMeta)
             anonymousModuleMeta = null
           }
 

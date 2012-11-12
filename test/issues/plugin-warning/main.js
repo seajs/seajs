@@ -9,5 +9,16 @@ define(function(require) {
   test.assert(xx100.version === '1.0.0', xx100.name)
   test.assert(xx120.version === '1.2.0', xx120.name)
 
+  var a12 = require('./zz/a-1.2.js')
+  var a13 = require('./zz/a-1.3.js')
+
+  test.assert(a12.name === 'a', a12.name)
+  test.assert(a13.name === 'a', a13.name)
+  test.assert(a12.version === '1.2', a12.name)
+  test.assert(a13.version === '1.3', a13.name)
+
+  test.assert(N === 2, N)
+  test.assert(true, 'please see warning info in your console')
   test.done()
+
 })
