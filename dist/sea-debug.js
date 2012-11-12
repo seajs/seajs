@@ -1014,7 +1014,6 @@ seajs._config = {
   Module.STATUS = STATUS
   Module._resolve = util.id2Uri
   Module._fetch = util.fetch
-  Module.cache = cachedModules
 
 
   // Helpers
@@ -1088,11 +1087,12 @@ seajs._config = {
           }
 
           // Calls callbackList
-          if (callbackList[requestUri]) {
-            util.forEach(callbackList[requestUri], function(fn) {
+          var fns = callbackList[requestUri]
+          if (fns) {
+            delete callbackList[requestUri]
+            util.forEach(fns, function(fn) {
               fn()
             })
-            delete callbackList[requestUri]
           }
 
         },
@@ -1221,12 +1221,13 @@ seajs._config = {
 
   // For normal users
   seajs.define = Module._define
-  seajs.cache = Module.cache
+  seajs.cache = Module.cache = cachedModules
   seajs.find = Module._find
   seajs.modify = Module._modify
 
 
   // For plugin developers
+  Module.fetchedList = fetchedList
   seajs.pluginSDK = {
     Module: Module,
     util: util,
@@ -1261,7 +1262,7 @@ seajs._config = {
 
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
   // to "http://test.com/libs/"
-  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/)
+  var match = base.match(/^(.+\/)seajs\/[\.\d]+(?:-dev)?\/$/)
   if (match) base = match[1]
 
   config.base = base
