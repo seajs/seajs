@@ -17,7 +17,6 @@ define(function(require) {
   test.assert(a12.version === '1.2', a12.name)
   test.assert(a13.version === '1.3', a13.name)
 
-  test.assert(N === 2, N)
   test.assert(true, 'please see warning info in your console')
   test.done()
 

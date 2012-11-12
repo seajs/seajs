@@ -12,15 +12,6 @@
 <script src="../../../dist/sea.js"></script>
 <script>
 
-  var _warn = console.warn
-  var N = 0
-
-  console.warn = function(msg) {
-    N++
-    _warn.call(console, msg)
-  }
-
-
   seajs.config({
     preload: 'seajs/plugin-warning'
   }).use('./main')
