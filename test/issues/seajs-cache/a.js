@@ -1,3 +1,5 @@
-define('#a', [], function(require, exports) {
+g++
+
+define(function(require, exports) {
   exports.name = 'a'
 })

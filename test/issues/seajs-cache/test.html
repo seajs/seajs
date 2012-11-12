@@ -7,18 +7,15 @@
 </head>
 <body>
 <p><a href="https://github.com/seajs/seajs/issues/289">#289</a></p>
+<p><a href="https://github.com/seajs/seajs/issues/408">#408</a></p>
 <div id="out"></div>
 
-<script src="../../../dist/sea.js"></script>
+<script src="../../../dist/sea-debug.js"></script>
 <script>
 
-  seajs.config({
-    alias: {
-      'a': './a.js'
-    }
-  })
+  var g = 0
 
-  seajs.use(['a', './main'])
+  seajs.use('./main')
 
 
   function printResults(txt, style) {
