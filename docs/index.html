@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>SeaJS - A Module Loader for the Web</title>
-<link rel="stylesheet" href="assets/home.css?v20121016.css">
+<link rel="stylesheet" href="assets/home.css?v20121112.css">
 </head>
 <body>
 
@@ -154,9 +154,8 @@ Opera 10+         ✔
 hello-seajs/
   |-- assets
   |     |-- images
-  |     |-- sea-modules
-  |     |-- src
-  |     `-- package.json
+  |     |-- main
+  |     `-- sea-modules
   `-- index.html
 </pre>
 
@@ -164,9 +163,9 @@ hello-seajs/
       下存放的是我们需要用到的第三方模块，可通过 <code>spm install</code> 来获取：</p>
 
 <pre class="text">
-$ cd hello-seajs/assets/sea-modules
+$ cd hello-seajs/assets
 $ spm install seajs
-$ spm install jquery
+$ spm install gallery.jquery
 </pre>
 
     <p><strong>注意</strong>：</p>
@@ -175,14 +174,22 @@ $ spm install jquery
       <li><a href="https://github.com/seajs/spm/wiki">spm</a> 是包管理工具，我们先了解有这么一个工具就好，不用着急。</li>
     </ol>
 
-    <p>最重要的一个目录是 src，用来存放源码：</p>
+    <p>最重要的一个目录是 main，用来存放模块源码：</p>
 
 <pre class="text">
-src/
-  |-- hello.css
-  |-- hello.js
-  |-- spinning.js
+main/
+  |-- docs
+  |-- examples
+  |-- src
+  |    |-- main.css
+  |    |-- main.js
+  |    `-- spinning.js
+  |-- tests
+  |-- package.json
+  `-- README.md
 </pre>
+
+    <p>这是一个模块的标准目录结构，<code>docs</code> 目录用来存放文档，<code>examples</code> 存放示例，<code>src</code> 存放源码，<code>tests</code> 存放测试用例。</p>
 
     <p><code>package.json</code> 是元信息的描述文件，spm 在打包时会从该文件中获取信息。</p>
 
@@ -197,12 +204,12 @@ src/
 &lt;script&gt;
   seajs.config({
     alias: {
-      'jquery': '1.7.2' // 指定使用的 jQuery 版本
+      'jquery': 'gallery/jquery/1.8.2/jquery' // 指定使用的 jQuery 版本
     }
   })
 
   // 加载入口模块
-  seajs.use('./assets/src/hello.js')
+  seajs.use('./assets/main/src/main')
 &lt;/script&gt;
 </pre>
 
@@ -268,7 +275,7 @@ define(function(require) {
     </p>
 
 <pre class="text">
-$ cd hello-seajs/assets
+$ cd hello-seajs/assets/main
 $ spm build 
 ...
 BUILD SUCCESS!
@@ -282,35 +289,36 @@ $
 <pre class="text">
 sea-modules/
   |-- hello-seajs
-        |-- 1.0.0
-              |-- hello-debug.css
-              |-- hello-debug.js
-              |-- hello.css
-              |-- hello.js
+        `-- main
+              `-- 1.0.0
+                    |-- main-debug.css
+                    |-- main-debug.js
+                    |-- main.css
+                    `-- main.js
 </pre>
 
     <p>
-      其中 <code>hello.js</code> 中已经合并了 <code>spinning.js</code> 文件。详尽用法请参考：<a href="https://github.com/seajs/spm/wiki">spm Wiki</a>
+      其中 <code>main.js</code> 中已经合并了 <code>spinning.js</code> 文件。详尽用法请参考：<a href="https://github.com/seajs/spm/wiki">spm Wiki</a>
     </p>
 
     <p>
-      打包好后，将需要的文件，比如 <code>images</code> 和 <code>sea-modules</code> 同步到线上，然后修改
+      打包好后，将需要的文件，比如 <code>sea-modules</code> 同步到线上，然后修改
       <code>index.html</code> 中的引用路径：
     </p>
 
 <pre class="sh_html">
-&lt;link rel="stylesheet" href="http://yoursite.com/assets/sea-modules/hello-seajs/1.0.0/hello.css"&gt;
+&lt;link rel="stylesheet" href="http://yoursite.com/assets/sea-modules/hello-seajs/main/1.0.0/main.css"&gt;
 ...
 &lt;script src="http://yoursite.com/assets/sea-modules/seajs/1.3.0/sea.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   seajs.config({
     alias: {
-      'jquery': '1.7.2' // 指定使用的 jQuery 版本
+      'jquery': 'gallery/jquery/1.8.2/jquery' // 指定使用的 jQuery 版本
     }
   })
 
   // 加载入口模块
-  seajs.use('hello-seajs/1.0.0/hello.js')
+  seajs.use('hello-seajs/main/1.0.0/main')
 &lt;/script&gt;
 </pre>
 
@@ -319,8 +327,20 @@ sea-modules/
     </p>
 
     <p>
-      <strong>注意</strong>：在实际项目中，一般不需要修改 <code>index.html</code> 中的引用。可以通过配置，自动适配环境。
+      <strong>注意</strong>：在实际项目中，不需要修改 <code>index.html</code> 中的引用。可以通过配置，自动适配环境。比如可以：
     </p>
+
+<pre>
+  // 加载入口模块
+  seajs.use(location.host === 'localhost' ? './assets/main/src/main' : 'hello-seajs/main/1.0.0/main')
+</pre>
+
+    <p>非静态页面时，一般情况下通过服务端模板语言来配置，比如在 PHP 里，可以：</p>
+
+<pre>
+  // 加载入口模块
+  seajs.use('&lt;?=$MAIN_SRC?&gt;')
+</pre>
 
 
     <h3>结束语</h3>
@@ -634,6 +654,6 @@ sea-modules/
   <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -7px; right: 0; border: 0" src="assets/images/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
 </div>
 
-<script src="../dist/sea.js" data-main="./assets/home.js?v20121016.js"></script>
+<script src="../dist/sea.js?v20121112.js" data-main="./assets/home.js?v20121112.js"></script>
 </body>
 </html>
