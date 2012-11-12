@@ -951,7 +951,7 @@ seajs._config = {
         }
       }
 
-      var module = save(resolvedUri, meta)
+      var module = Module._save(resolvedUri, meta)
 
       // For IE:
       // Assigns the first module in package to cachedModules[derivedUrl]
@@ -1014,6 +1014,7 @@ seajs._config = {
   Module.STATUS = STATUS
   Module._resolve = util.id2Uri
   Module._fetch = util.fetch
+  Module._save = save
 
 
   // Helpers
@@ -1069,7 +1070,7 @@ seajs._config = {
 
           // Saves anonymous module meta data
           if (anonymousModuleMeta) {
-            save(uri, anonymousModuleMeta)
+            Module._save(uri, anonymousModuleMeta)
             anonymousModuleMeta = null
           }
 
@@ -1450,6 +1451,7 @@ seajs._config = {
   }
 
 })(seajs, seajs._util, this)
+
 /**
  * The bootstrap and entrances
  */
