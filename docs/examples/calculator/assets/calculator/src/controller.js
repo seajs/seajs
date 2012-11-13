@@ -1,8 +1,8 @@
 
 define(function(require, exports) {
 
-  var stdout = require('./stdout');
-  var math = require('./math');
+  var view = require('./view');
+  var math = require('math');
 
   var operators = {
     '+': 'add',
@@ -55,13 +55,13 @@ define(function(require, exports) {
       }
 
       currentInput += value;
-      stdout.updateResult(currentInput);
+      view.updateResult(currentInput);
     },
 
     operate: function(type) {
       if (operator) {
         previousInput = calc();
-        stdout.updateResult(previousInput);
+        view.updateResult(previousInput);
       }
       else {
         previousInput = currentInput;
@@ -69,14 +69,14 @@ define(function(require, exports) {
       currentInput = '';
 
       operator = operators[type];
-      stdout.updateOperator(type);
+      view.updateOperator(type);
     },
 
     clear: function () {
       previousInput = '';
       currentInput = '0';
       operator = null;
-      stdout.clear();
+      view.clear();
     },
 
     del: function () {
@@ -85,13 +85,13 @@ define(function(require, exports) {
         if (!currentInput) {
           currentInput = '0';
         }
-        stdout.updateResult(currentInput);
+        view.updateResult(currentInput);
       }
     },
 
     inverse: function () {
       currentInput = 0 - currentInput;
-      stdout.updateResult(currentInput);
+      view.updateResult(currentInput);
     },
 
     equal: function () {

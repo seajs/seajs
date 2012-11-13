@@ -2,7 +2,8 @@
 define(function(require, exports) {
 
   var $ = require('jquery');
-  var calculator = require('./calculator');
+  var controller = require('./controller');
+  var view = require('./view');
 
   var specialKeys = {
     '8': 'delete',
@@ -12,8 +13,10 @@ define(function(require, exports) {
 
   exports.init = function() {
 
+    view.init();
+
     $('#keyboard').delegate('div', 'click', function() {
-      calculator.handleInput($(this).text());
+      controller.handleInput($(this).text());
     });
 
     $(document).keypress(function(ev) {
@@ -27,7 +30,7 @@ define(function(require, exports) {
         val = String.fromCharCode(ev.which);
       }
 
-      calculator.handleInput(val);
+      controller.handleInput(val);
     });
 
   };

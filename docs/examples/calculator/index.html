@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <title>Calculator</title>
-<link href="style.css" rel="stylesheet"/>
+<link href="assets/main/src/main.css" rel="stylesheet"/>
 </head>
 <body>
 
@@ -37,7 +37,22 @@
 
 </div>
 
-<script src="../../../dist/sea.js" data-main="./init"></script>
+<script src="../../../dist/sea.js"></script>
+<script>
+
+  seajs.config({
+    base: './assets/',
+    alias: {
+      'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery',
+      'math': 'math/src/math',
+      'calculator': 'calculator/src/calculator'
+    }
+  });
+
+  seajs.use('./assets/main/src/main')
+
+</script>
+
 
 </body>
 </html>
