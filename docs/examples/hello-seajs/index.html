@@ -3,34 +3,33 @@
 <head>
 <meta charset="utf-8">
 <title>Hello, SeaJS</title>
-<link rel="stylesheet" href="assets/sea-modules/hello-seajs/1.0.0/hello.css">
+<link rel="stylesheet" href="assets/main/src/main.css">
 </head>
 <body>
 
 <div id="container">
-  <img src="assets/images/h.png" width="44" height="44" alt="H">
-  <img src="assets/images/e.png" width="44" height="44" alt="e">
-  <img src="assets/images/l.png" width="44" height="44" alt="l">
-  <img src="assets/images/l2.png" width="44" height="44" alt="l">
-  <img src="assets/images/o.png" width="44" height="44" alt="o">
-  <img src="assets/images/comma.png" width="44" height="44" alt=",">
-  <img src="assets/images/s.png" width="44" height="44" alt="S">
-  <img src="assets/images/e2.png" width="44" height="44" alt="e">
-  <img src="assets/images/a.png" width="44" height="44" alt="a">
-  <img src="assets/images/j.png" width="44" height="44" alt="J">
-  <img src="assets/images/s2.png" width="44" height="44" alt="S">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKb32QfE.png" width="44" height="44" alt="H">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKb2rJHI.png" width="44" height="44" alt="e">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKeZrUpg.png" width="44" height="44" alt="l">
+  <img src="https://i.alipayobjects.com/e/201211/1cqM4u3Ejk.png" width="44" height="44" alt="l">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKoKV2Sa.png" width="44" height="44" alt="o">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKb4JU4K.png" width="44" height="44" alt=",">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKojFDLY.png" width="44" height="44" alt="S">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKb2sBO8.png" width="44" height="44" alt="e">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKb2LmXk.png" width="44" height="44" alt="a">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKb1jcWC.png" width="44" height="44" alt="J">
+  <img src="https://i.alipayobjects.com/e/201211/1cqKojb72y.png" width="44" height="44" alt="S">
 </div>
 
-<script src="https://a.alipayobjects.com/static/arale/seajs/1.2.1/sea.js"></script>
+<script src="../../../dist/sea.js"></script>
 <script>
   seajs.config({
     alias: {
-      'jquery': '1.7.2',
-      'hello-seajs': './assets/sea-modules/hello-seajs'
+      'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery.js'
     }
   })
 
-  seajs.use('hello-seajs/1.0.0/hello.js')
+  seajs.use('./assets/main/src/main')
 </script>
 
 </body>
