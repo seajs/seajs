@@ -27,7 +27,8 @@
       var hash = {
         0: 'config',
         1: 'use',
-        2: 'define'
+		2: 'modify',
+        3: 'define'
       }
       for (var i = 0; i < args.length; i += 2) {
         seajs[hash[args[i]]].apply(seajs, args[i + 1])
