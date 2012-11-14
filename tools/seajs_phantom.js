@@ -2,6 +2,7 @@ var page = new WebPage();
 var address = phantom.args[0];
 
 page.onConsoleMessage = function(msg) {
+  console.log(msg)
   if (msg === 'Test finished') {
     var result = page.evaluate(function() {
       return result;
