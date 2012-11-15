@@ -12,7 +12,7 @@
 (function() {
 
   var container, summary, reporter, go
-  var current, result, running, timeoutTimer
+  var current, running, timeoutTimer
   var startTime, endTime
   var tests = this['testCases']
 
@@ -109,7 +109,7 @@
       endTime = new Date().getTime()
       printStepInfo()
       printErrors()
-      reset()
+      console.log('Test finished')
     }
   }
 
