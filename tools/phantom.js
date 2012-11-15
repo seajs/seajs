@@ -19,6 +19,6 @@ page.onConsoleMessage = function(msg) {
 
 page.open(address, function(status) {
   if (status !== 'success') {
-    console.warn('Can\'t load the address:' + address)
+    console.warn('** status = ' + status)
   }
 })
