@@ -4,6 +4,7 @@ node_js:
   - 0.8
 
 before_script:
+  - node test/runner.js
   - phantomjs --version
   - nohup python -m SimpleHTTPServer 8000 &
 
