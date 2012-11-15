@@ -6,6 +6,8 @@ organize JavaScript. With SeaJS, it is pleasure to build cool web applications.
 
 The official site: <http://seajs.org/>
 
+[![Build Status](https://secure.travis-ci.org/seajs/seajs.png?branch=master)](https://travis-ci.org/seajs/seajs)
+
 
 ## Questions?
 
