@@ -1,5 +1,4 @@
-var page = new WebPage()
-var address = phantom.args[0]
+var page = require('webpage').create()
 
 page.onConsoleMessage = function(msg) {
   console.log(msg)
@@ -16,6 +15,10 @@ page.onConsoleMessage = function(msg) {
     }
   }
 }
+
+
+var system = require('system')
+var address = system.args[0]
 
 page.open(address, function(status) {
   if (status !== 'success') {
