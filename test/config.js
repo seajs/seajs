@@ -115,6 +115,6 @@
     ,'bootstrap/index'
   ]
 
-  //exports.testCases = ['issues/charset']
+  exports.testCases = ['modules/missing']
 
 })
