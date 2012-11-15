@@ -1,7 +1,7 @@
 language: node_js
 
 node_js:
-  - 0.8
+  - 0.9
 
 before_install:
   - wget http://phantomjs.googlecode.com/files/phantomjs-1.7.0-linux-i686.tar.bz2
