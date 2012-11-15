@@ -4,6 +4,7 @@ node_js:
   - 0.8
 
 before_script:
+  - phantomjs --version
   - nohup python -m SimpleHTTPServer 8000 &
 
 script: phantomjs tools/seajs_phantom.js http://127.0.0.1:8000/test/runner.html
