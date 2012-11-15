@@ -115,6 +115,6 @@
     ,'bootstrap/index'
   ]
 
-  exports.testCases = ['modules/missing']
+  //exports.testCases = ['modules/missing']
 
 })
