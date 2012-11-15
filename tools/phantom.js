@@ -18,7 +18,7 @@ page.onConsoleMessage = function(msg) {
 
 
 var system = require('system')
-var address = system.args[0]
+var address = system.args[1]
 
 page.open(address, function(status) {
   if (status !== 'success') {
