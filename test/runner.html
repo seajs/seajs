@@ -9,12 +9,15 @@
 <body>
 <script src="config.js?20121112.js"></script>
 <script>
+var result
+
 (function() {
 
   var container, summary, reporter, go
   var current, running, timeoutTimer
   var startTime, endTime
   var tests = this['testCases']
+  var consoleMode = location.search.indexOf('console') > 0
 
 
   window.onload = function() {
@@ -109,7 +112,8 @@
       endTime = new Date().getTime()
       printStepInfo()
       printErrors()
-      console.log('Test finished')
+      printResults('[END]')
+      reset()
     }
   }
 
@@ -129,6 +133,8 @@
         r.cases.push(tests[current - 1])
       }
     }
+
+    consoleMode && print2Console(txt, style)
   }
 
 
@@ -175,13 +181,15 @@
     h.innerHTML = test +
         (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
     reporter.appendChild(h)
+
+    consoleMode && print2Console(test)
   }
 
 
   function printStepInfo() {
     var test = tests[current - 1]
 
-    summary.innerHTML =
+    var html = summary.innerHTML =
         (current - 1) + ' / ' + tests.length + ' { &nbsp;' +
             'Passed: <span class="pass">' + result.pass.count + '</span> ' +
             'Failed: <span class="fail">' + result.fail.count + '</span> ' +
@@ -190,6 +198,11 @@
             (test ?
                 'Running ' + test + ' ... ' :
                 'Elapsed Time: ' + (endTime - startTime) / 1000 + 's')
+
+    if (!test && consoleMode) {
+      printHeader('Summary')
+      print2Console(html.replace(/&nbsp;/g, '').replace(/<\/?span[^>]*>/g, ''))
+    }
   }
 
 
@@ -206,8 +219,10 @@
 
         for (var i = 0; i < cases.length; i++) {
           var test = cases[i]
-          printResults('[' + type.toUpperCase() + '] ' + test +
-              ' <a class="hash" target="_blank" href="' + getUrl(test) + '">#</a>',
+          printResults('[' + type.toUpperCase() + '] ' + test + ' ' +
+              (consoleMode ?
+                  getUrl(test) :
+                  '<a class="hash" target="_blank" href="' + getUrl(test) + '">#</a>'),
               type, true)
         }
       }
@@ -223,6 +238,12 @@
       printResults('[WARN] Time is out for this test case: ' + test, 'warn')
       testNext()
     }, 20000)
+  }
+
+
+  function print2Console(msg, type) {
+    if (type !== 'warn' && type !== 'error') type = 'log'
+    console[type](msg)
   }
 
 })()
