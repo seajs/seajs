@@ -18,7 +18,7 @@ page.onConsoleMessage = function(msg) {
 
 
 var system = require('system')
-var address = system.args[1]
+var address = system.args[1] || 'http://localhost/~lifesinger/seajs/seajs/test/runner.html?console'
 
 page.open(address, function(status) {
   if (status !== 'success') {
