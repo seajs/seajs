@@ -7,4 +7,6 @@ before_script:
   - phantomjs --version
   - nohup python -m SimpleHTTPServer 8000 &
 
-script: phantomjs tools/phantom.js http://127.0.0.1:8000/test/runner.html?console
+script:
+  - node test/runner.js
+  - phantomjs tools/phantom.js http://127.0.0.1:8000/test/runner.html?console
