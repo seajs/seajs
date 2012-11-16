@@ -1,12 +1,13 @@
 docs/
 src/
-test/
+tests/
 tools/
 CNAME
 *.ico
 *.html
 *.md
 *.xml
+*.yml
 *.iml
 .*
 *~
