@@ -675,8 +675,8 @@ seajs._config = {
   /**
    * References:
    *  - http://unixpapa.com/js/dyna.html
-   *  - ../test/research/load-js-css/test.html
-   *  - ../test/issues/load-css/test.html
+   *  - ../tests/research/load-js-css/test.html
+   *  - ../tests/issues/load-css/test.html
    *  - http://www.blaze.io/technical/ies-premature-execution-problem/
    */
 
@@ -1041,7 +1041,7 @@ seajs._config = {
     var requestUri = util.parseMap(uri)
 
     if (fetchedList[requestUri]) {
-      // See test/issues/debug-using-map
+      // See tests/issues/debug-using-map
       cachedModules[uri] = cachedModules[requestUri]
       callback()
       return
@@ -1075,7 +1075,7 @@ seajs._config = {
           }
 
           // Assigns the first module in package to cachedModules[uri]
-          // See: test/issues/un-correspondence
+          // See: tests/issues/un-correspondence
           if (firstModuleInPackage && module.status === STATUS.FETCHED) {
             cachedModules[uri] = firstModuleInPackage
             firstModuleInPackage.realUri = uri
@@ -1475,7 +1475,7 @@ seajs._config = {
 
 
     // Parses the pre-call of seajs.config/seajs.use/define.
-  // Ref: test/bootstrap/async-3.html
+  // Ref: tests/bootstrap/async-3.html
   ;(function(args) {
     if (args) {
       var hash = {

@@ -212,8 +212,8 @@
   /**
    * References:
    *  - http://unixpapa.com/js/dyna.html
-   *  - ../test/research/load-js-css/test.html
-   *  - ../test/issues/load-css/test.html
+   *  - ../tests/research/load-js-css/test.html
+   *  - ../tests/issues/load-css/test.html
    *  - http://www.blaze.io/technical/ies-premature-execution-problem/
    */
 

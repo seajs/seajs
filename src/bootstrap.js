@@ -21,7 +21,7 @@
 
 
     // Parses the pre-call of seajs.config/seajs.use/define.
-  // Ref: test/bootstrap/async-3.html
+  // Ref: tests/bootstrap/async-3.html
   ;(function(args) {
     if (args) {
       var hash = {

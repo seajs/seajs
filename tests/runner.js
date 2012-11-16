@@ -2,7 +2,7 @@
  * Run test cases in node environment
  * Usage:
  *   $ cd seajs
- *   $ node test/runner.js
+ *   $ node tests/runner.js
  */
 
 var path = require('path')

@@ -318,7 +318,7 @@
     var requestUri = util.parseMap(uri)
 
     if (fetchedList[requestUri]) {
-      // See test/issues/debug-using-map
+      // See tests/issues/debug-using-map
       cachedModules[uri] = cachedModules[requestUri]
       callback()
       return
@@ -352,7 +352,7 @@
           }
 
           // Assigns the first module in package to cachedModules[uri]
-          // See: test/issues/un-correspondence
+          // See: tests/issues/un-correspondence
           if (firstModuleInPackage && module.status === STATUS.FETCHED) {
             cachedModules[uri] = firstModuleInPackage
             firstModuleInPackage.realUri = uri

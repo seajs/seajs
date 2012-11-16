@@ -5,6 +5,6 @@ build:
 build_all:
 	ant -buildfile tools/build.xml
 
-tests:
-	node test/runner.js
-	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/test/runner.html?console
+test:
+	node tests/runner.js
+	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/tests/runner.html?console
