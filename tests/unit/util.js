@@ -49,6 +49,8 @@ define(function(require) {
   var t = 'http://XXX.com.cn/min/index.php?g=commonCss.css'
   test.assert(require.resolve(t) === t, 'require.resolve')
 
+  // issues#430
+  test.assert(require.resolve('./front_net/jquery.plupload.queue.js#').indexOf('jquery.plupload.queue.js') > 0, 'require.resolve')
 
   test.done();
 });
