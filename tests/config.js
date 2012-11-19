@@ -69,6 +69,7 @@
     ,'issues/load-deps'
     ,'issues/local-files'
     ,'issues/map'
+    ,'issues/map-combo-conflict'
     ,'issues/methods-chain'
     ,'issues/module-extend'
     ,'issues/multi-map'
