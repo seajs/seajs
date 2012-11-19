@@ -24,7 +24,8 @@
 
   seajs.config({
     map: [
-      ['a.js', 'b.js']
+      ['a.js', 'b.js'],
+      ['f.js', 'f.js+f2.js']
     ],
     comboSyntax: ['', '+']
   })
@@ -36,8 +37,13 @@
       test.assert(c.name = 'c', c.name)
       test.assert(g_error === false, g_error)
 
-      test.done()
+      seajs.use(['./a', './d', './e', './f'], function(a, d, e, f) {
+        test.assert(a.name === 'b', a.name)
+        test.assert(d.name === 'd', d.name)
+        test.assert(e.name === 'e', e.name)
 
+        test.done()
+      })
     })
   })
 

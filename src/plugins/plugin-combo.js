@@ -27,19 +27,21 @@ define('seajs/plugin-combo', [], function() {
 
 
   function setComboMap(uris) {
+    var unFetchingUris = []
     var comboExcludes = config.comboExcludes
 
-    // Remove fetched or fetching uri
-    var unFetchingUris = util.filter(uris, function(uri) {
+    util.forEach(uris, function(uri) {
       var module = cachedModules[uri]
 
-      return (!module || module.status < Module.STATUS.FETCHING) &&
-          (!comboExcludes || !comboExcludes.test(uri))
-    })
+      // Remove fetched or fetching uri
+      if ((!module || module.status < Module.STATUS.FETCHING) &&
+          (!comboExcludes || !comboExcludes.test(uri))) {
 
-    // Parse map first
-    unFetchingUris = util.map(unFetchingUris, function(uri) {
-      return util.parseMap(uri)
+        // Parse map before pushing
+        var requestUri = util.parseMap(uri)
+        !isComboUri(requestUri) && unFetchingUris.push(requestUri)
+      }
+
     })
 
     if (unFetchingUris.length > 1) {
@@ -267,6 +269,15 @@ define('seajs/plugin-combo', [], function() {
   function getExt(file) {
     var p = file.lastIndexOf('.')
     return p >= 0 ? file.substring(p) : ''
+  }
+
+
+  function isComboUri(uri) {
+    var comboSyntax = config.comboSyntax || ['??', ',']
+    var s1 = comboSyntax[0]
+    var s2 = comboSyntax[1]
+
+    return s1 && uri.indexOf(s1) > 0 || s2 && uri.indexOf(s2) > 0
   }
 
 
