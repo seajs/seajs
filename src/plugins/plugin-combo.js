@@ -29,12 +29,17 @@ define('seajs/plugin-combo', [], function() {
   function setComboMap(uris) {
     var comboExcludes = config.comboExcludes
 
-    // Removes fetched or fetching uri
+    // Remove fetched or fetching uri
     var unFetchingUris = util.filter(uris, function(uri) {
       var module = cachedModules[uri]
 
       return (!module || module.status < Module.STATUS.FETCHING) &&
           (!comboExcludes || !comboExcludes.test(uri))
+    })
+
+    // Parse map first
+    unFetchingUris = util.map(unFetchingUris, function(uri) {
+      return util.parseMap(uri)
     })
 
     if (unFetchingUris.length > 1) {
