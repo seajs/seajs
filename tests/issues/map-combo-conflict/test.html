@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Issue Test</title>
+<script>
+  function printResults(txt, style) {
+    var d = document.createElement('div');
+    d.innerHTML = txt;
+    d.className = style;
+    document.getElementById('out').appendChild(d);
+  }
+</script>
+<script src="../../../dist/sea.js"></script>
+<script src="../../../dist/plugin-combo.js"></script>
+</head>
+<body>
+
+<div id="out"></div>
+
+<script>
+  var g_error = false
+
+  seajs.config({
+    map: [
+      ['a.js', 'b.js']
+    ],
+    comboSyntax: ['', '+']
+  })
+
+  seajs.use('../../test', function(test) {
+    seajs.use(['./a', './c'], function(a, c) {
+
+      test.assert(a.name = 'b', a.name)
+      test.assert(c.name = 'c', c.name)
+      test.assert(g_error === false, g_error)
+
+      test.done()
+
+    })
+  })
+
+</script>
+</body>
+</html>
