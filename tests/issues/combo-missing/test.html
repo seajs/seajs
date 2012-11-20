@@ -9,25 +9,19 @@
 <p><a href="https://github.com/seajs/seajs/issues/100">#100</a></p>
 <div id="out"></div>
 
-<script src="../../../dist/sea.js"></script>
-<!--<script src="https://a.alipayobjects.com/static/arale/seajs/1.2.1/sea.js"></script>-->
+<script src="../../../dist/sea-debug.js"></script>
 
 <script>
 
   seajs.config({
-    locale: 'zh-cn',
-    preload: [
-      'seajs/plugin-i18n'
+    map: [
+        ['a.js', 'combo.js'],
+        ['b.js', 'combo.js'],
+        ['c.js', 'combo.js']
     ]
   })
 
-  seajs.use([], function() {
-    seajs.config({
-      preload: ['seajs/plugin-json']
-    })
-    seajs.use('./main')
-  })
-
+  seajs.use('./main')
 
   function printResults(txt, style) {
     var d = document.createElement('div');
