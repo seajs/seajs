@@ -31,23 +31,24 @@ define('seajs/plugin-base', [], function(require, exports) {
 
     Module._resolve = function(id, refUri) {
       var pluginName
-      var m
+      var parsedId = id
 
       // id = text!path/to/some
-      if (m = id.match(/^(\w+)!(.+)$/)) {
+      var m = id.match(/^(\w+)!(.+)$/)
+      if (m && isPluginName(m[1])) {
         pluginName = m[1]
-        id = m[2]
+        parsedId = m[2]
       }
 
       // Parse alias first
-      id = '#' + util.parseAlias(id)
+      parsedId = '#' + util.parseAlias(parsedId)
 
       // id = abc.xyz?t=123
-      if (!pluginName && (m = id.match(/[^?]*(\.\w+)/))) {
+      if (!pluginName && (m = parsedId.match(/[^?]*(\.\w+)/))) {
         var ext = m[1]
 
         for (var k in pluginsInfo) {
-          if (pluginsInfo.hasOwnProperty(k) &&
+          if (isPluginName(k) &&
               util.indexOf(pluginsInfo[k].ext, ext) > -1) {
             pluginName = k
             break
@@ -56,14 +57,15 @@ define('seajs/plugin-base', [], function(require, exports) {
       }
 
       // Prevents adding the default `.js` extension
-      if (pluginName && !/\?|#$/.test(id)) {
-        id += '#'
+      if (pluginName && !/\?|#$/.test(parsedId)) {
+        parsedId += '#'
       }
 
 
-      var uri = _resolve(id, refUri)
+      // Don't pollute id when pluginName is not found
+      var uri = _resolve(pluginName ? parsedId : id, refUri)
 
-      if (pluginName && pluginsInfo[pluginName] && !uriCache[uri]) {
+      if (isPluginName(pluginName) && !uriCache[uri]) {
         uriCache[uri] = pluginName
       }
 
@@ -116,6 +118,11 @@ define('seajs/plugin-base', [], function(require, exports) {
         window['eval'].call(window, data)
       })(data)
     }
+  }
+
+
+  function isPluginName(name) {
+    return name && pluginsInfo.hasOwnProperty(name)
   }
 
 });

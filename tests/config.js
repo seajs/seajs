@@ -60,6 +60,7 @@
     ,'issues/dom-ready'
     ,'issues/duplicate-init'
     ,'issues/duplicate-load'
+    ,'issues/i18n-conflict'
     ,'issues/ie-cache'
     ,'issues/ie-path-resolve'
     ,'issues/inline-module'
