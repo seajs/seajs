@@ -18,7 +18,7 @@ define(function(require) {
 
   var timestamp = (new Date().getTime() + '').substring(0, 8);
 
-  test.assert(debugInitialValue === undefined, 'initial debug value is undefined');
+  test.assert(debugInitialValue === false, 'initial debug value is false');
   test.assert(seajs.debug === true, 'seajs.debug should be true');
   test.assert(a.uri.indexOf(timestamp) === -1, a.uri);
   test.assert(b.uri.indexOf(timestamp) === -1, b.uri);
