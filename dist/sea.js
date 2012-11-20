@@ -1,8 +1,8 @@
 /*
  SeaJS - A Module Loader for the Web
- v1.3.0 | seajs.org | MIT Licensed
+ v1.3.1 | seajs.org | MIT Licensed
 */
-this.seajs={_seajs:this.seajs};seajs.version="1.3.0";seajs._util={};seajs._config={debug:"",preload:[]};
+this.seajs={_seajs:this.seajs};seajs.version="1.3.1";seajs._util={};seajs._config={debug:"",preload:[]};
 (function(a){var b=Object.prototype.toString,d=Array.prototype;a.isString=function(a){return"[object String]"===b.call(a)};a.isFunction=function(a){return"[object Function]"===b.call(a)};a.isRegExp=function(a){return"[object RegExp]"===b.call(a)};a.isObject=function(a){return a===Object(a)};a.isArray=Array.isArray||function(a){return"[object Array]"===b.call(a)};a.indexOf=d.indexOf?function(a,b){return a.indexOf(b)}:function(a,b){for(var c=0;c<a.length;c++)if(a[c]===b)return c;return-1};var c=a.forEach=
 d.forEach?function(a,b){a.forEach(b)}:function(a,b){for(var c=0;c<a.length;c++)b(a[c],c,a)};a.map=d.map?function(a,b){return a.map(b)}:function(a,b){var d=[];c(a,function(a,c,e){d.push(b(a,c,e))});return d};a.filter=d.filter?function(a,b){return a.filter(b)}:function(a,b){var d=[];c(a,function(a,c,e){b(a,c,e)&&d.push(a)});return d};var e=a.keys=Object.keys||function(a){var b=[],c;for(c in a)a.hasOwnProperty(c)&&b.push(c);return b};a.unique=function(a){var b={};c(a,function(a){b[a]=1});return e(b)};
 a.now=Date.now||function(){return(new Date).getTime()}})(seajs._util);(function(a){a.log=function(){if("undefined"!==typeof console){var a=Array.prototype.slice.call(arguments),d="log";console[a[a.length-1]]&&(d=a.pop());if("log"!==d||seajs.debug)if(console[d].apply)console[d].apply(console,a);else{var c=a.length;if(1===c)console[d](a[0]);else if(2===c)console[d](a[0],a[1]);else if(3===c)console[d](a[0],a[1],a[2]);else console[d](a.join(" "))}}}})(seajs._util);

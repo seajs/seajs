@@ -1,6 +1,6 @@
 /**
  * @preserve SeaJS - A Module Loader for the Web
- * v1.3.0 | seajs.org | MIT Licensed
+ * v1.3.1 | seajs.org | MIT Licensed
  */
 
 
@@ -14,7 +14,7 @@ this.seajs = { _seajs: this.seajs }
  * The version of the framework. It will be replaced with "major.minor.patch"
  * when building.
  */
-seajs.version = '1.3.0'
+seajs.version = '1.3.1'
 
 
 /**
