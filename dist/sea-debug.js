@@ -1041,8 +1041,6 @@ seajs._config = {
     var requestUri = util.parseMap(uri)
 
     if (fetchedList[requestUri]) {
-      // See tests/issues/debug-using-map
-      cachedModules[uri] = cachedModules[requestUri]
       callback()
       return
     }
@@ -1359,10 +1357,8 @@ seajs._config = {
 
 
   function debugSync() {
-    if (config.debug) {
-      // For convenient reference
-      seajs.debug = !!config.debug
-    }
+    // For convenient reference
+    seajs.debug = !!config.debug
   }
 
   debugSync()
