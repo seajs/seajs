@@ -23,7 +23,7 @@ define('home', [], function(require) {
 
     'quick-start': function() {
       var iframe = document.getElementById('quick-start-iframe')
-      iframe.src = 'examples/hello-seajs/index.html'
+      iframe.src = 'examples/hello-seajs/index.html?v20121126'
 
       require.async('highlight', function(highlight) {
         highlight.init()
