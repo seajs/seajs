@@ -23,7 +23,7 @@ define('home', [], function(require) {
 
     'quick-start': function() {
       var iframe = document.getElementById('quick-start-iframe')
-      iframe.contentDocument.location.href = 'examples/hello-seajs/index.html'
+      iframe.src = 'examples/hello-seajs/index.html'
 
       require.async('highlight', function(highlight) {
         highlight.init()
@@ -34,6 +34,7 @@ define('home', [], function(require) {
 
   bindEvents()
   updateView()
+  misc()
 
 
   // Helpers
@@ -127,6 +128,12 @@ define('home', [], function(require) {
     }
 
     return ret
+  }
+
+  function misc() {
+    if (navigator.userAgent.indexOf(' Trident') > 0) {
+      document.body.className += 'ie'
+    }
   }
 
 })

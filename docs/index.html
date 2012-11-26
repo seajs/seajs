@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>SeaJS - A Module Loader for the Web</title>
-<link rel="stylesheet" href="assets/home.css?v20121113.css">
+<link rel="stylesheet" href="assets/home.css?v20121126.css">
 </head>
 <body>
 
@@ -134,6 +134,7 @@ Opera 10+         ✔
 
     <p>
       这是个小游戏，调皮的字母来自神秘的大海深处。当鼠标轻轻滑过时，字母会旋转到正确位置。
+      <span class="only-ie"><br>注意：该例子仅在高级浏览器下有效，推荐用 Chrome 浏览。</span>
       <br>
       来试试吧，看你能否让所有字母都听话……
     </p>
@@ -618,6 +619,17 @@ sea-modules/
   <a href="https://github.com/seajs/seajs" target="_blank"><img style="position: absolute; top: -7px; right: 0; border: 0" src="https://i.alipayobjects.com/e/201211/1dbSqT9ykm.png" width="149" height="149" alt="Fork me on GitHub"></a>
 </div>
 
-<script src="../dist/sea.js?v20121113.js" data-main="./assets/home.js?v20121113.js"></script>
+<script src="../dist/sea.js?v20121113.js" data-main="./assets/home.js?v20121126.js"></script>
+<script>
+  var _gaq = _gaq || []
+  _gaq.push(['_setAccount', 'UA-53409-11'])
+  _gaq.push(['_setDomainName', 'seajs.org'])
+  _gaq.push(['_trackPageview'])
+  ;(function(ga, s) {
+    ga.async = true
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'
+    s.parentNode.insertBefore(ga, s)
+  })(document.createElement('script'), document.getElementsByTagName('script')[0])
+</script>
 </body>
 </html>
