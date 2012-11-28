@@ -3,10 +3,15 @@
  */
 ;(function(util) {
 
+  var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
 
   util.parseDependencies = function(code) {
+    // Remove Comments
+    // ref: research/remove-comments-safely
+    code = code.replace(COMMENT_RE, '')
+
     // Parse these `requires`:
     //   var a = require('a');
     //   someMethod(require('b'));
@@ -15,8 +20,6 @@
     // Doesn't parse:
     //   someInstance.require(...);
     var ret = [], match
-
-    code = removeComments(code)
     REQUIRE_RE.lastIndex = 0
 
     while ((match = REQUIRE_RE.exec(code))) {
@@ -26,13 +29,6 @@
     }
 
     return util.unique(ret)
-  }
-
-  // See: research/remove-comments-safely
-  function removeComments(code) {
-    return code
-        .replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '') // block comments
-        .replace(/^\s*\/\/.*$/mg, '') // line comments
   }
 
 })(seajs._util)

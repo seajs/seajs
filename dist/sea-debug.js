@@ -1,6 +1,6 @@
 /**
  * @preserve SeaJS - A Module Loader for the Web
- * v1.3.1 | seajs.org | MIT Licensed
+ * v2.0.0-dev | seajs.org | MIT Licensed
  */
 
 
@@ -14,7 +14,7 @@ this.seajs = { _seajs: this.seajs }
  * The version of the framework. It will be replaced with "major.minor.patch"
  * when building.
  */
-seajs.version = '1.3.1'
+seajs.version = '2.0.0-dev'
 
 
 /**
@@ -687,10 +687,15 @@ seajs._config = {
  */
 ;(function(util) {
 
+  var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
 
   util.parseDependencies = function(code) {
+    // Remove Comments
+    // ref: research/remove-comments-safely
+    code = code.replace(COMMENT_RE, '')
+
     // Parse these `requires`:
     //   var a = require('a');
     //   someMethod(require('b'));
@@ -699,8 +704,6 @@ seajs._config = {
     // Doesn't parse:
     //   someInstance.require(...);
     var ret = [], match
-
-    code = removeComments(code)
     REQUIRE_RE.lastIndex = 0
 
     while ((match = REQUIRE_RE.exec(code))) {
@@ -710,13 +713,6 @@ seajs._config = {
     }
 
     return util.unique(ret)
-  }
-
-  // See: research/remove-comments-safely
-  function removeComments(code) {
-    return code
-        .replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '') // block comments
-        .replace(/^\s*\/\/.*$/mg, '') // line comments
   }
 
 })(seajs._util)

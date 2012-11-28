@@ -68,13 +68,15 @@
 
   function removeCommentsSafely(code) {
 
+    return code.replace(/(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg, '')
+
     // multi-line comments
-    code = code.replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '')
+    //code = code.replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '')
 
     // single-line comments
-    code = code.replace(/^\s*\/\/.*$/mg, '')
+    //code = code.replace(/^\s*\/\/.*$/mg, '')
 
-    return code
+    //return code
   }
 
 </script>
