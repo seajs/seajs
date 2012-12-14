@@ -191,6 +191,10 @@
     else {
       element.appendChild(doc.createTextNode(cssText))
     }
+
+    // IE NOTICE:
+    // 31 limit: http://msdn.microsoft.com/en-us/library/ms531194(VS.85).aspx
+    // 4095 limit: http://www.blueidea.com/tech/web/2009/7003.asp
   }
 
 
