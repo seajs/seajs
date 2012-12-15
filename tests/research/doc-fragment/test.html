@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>DocumentFragment</title>
+</head>
+<body>
+
+<div id="out"></div>
+
+<hr>
+
+<h2>Summary</h2>
+
+<pre>
+
+1. Chrome、Safari、Firefox、Opera 下，script 添加到 fragment 中时不会执行，添加
+   到 DOM 树中时才会下载并执行，并且执行上下文是全局环境，一切符合预期。
+
+2. IE6-9 下，在 script 添加到 fragment 中时，就会触发下载并执行。执行时上下文
+   是 fragment，相当于 with(fragment) { (function() { script code })() }
+
+3. 标准浏览器包括 IE9+ 下，fragment 没有 getElementById 等方法，但在 IE6-8 下有。
+
+4. IE 下，利用 script 在 fragment 中的特性，可以干不少事情，嘿嘿。
+
+最后更新时间：2012-12-15
+
+
+参考文档：
+
+  https://developer.mozilla.org/en-US/docs/DOM/document.createDocumentFragment
+  http://www.guypo.com/technical/ies-premature-execution-problem/
+
+</pre>
+
+<script>
+
+    var X = 'x'
+
+    // test cases
+    var head = document.getElementsByTagName('head')[0]
+
+    var frag = document.createDocumentFragment()
+    var script = document.createElement('script')
+    script.src = 'test.js'
+
+    frag.X = 'frag-x'
+    frag.Y = 'frag-y'
+
+    frag.appendChild(script)
+    print('----- After appendTo Fragment -----')
+
+    setTimeout(function() {
+        print('frag.getElementById = ' + typeof frag.getElementById)
+        print('X = ' + (typeof X === 'undefined' ? 'undefined' : X))
+        print('Y = ' + (typeof Y === 'undefined' ? 'undefined' : Y))
+        print('Z = ' + (typeof Z === 'undefined' ? 'undefined' : Z))
+
+        head.appendChild(frag)
+        print('----- After appendTo Document -----')
+
+        setTimeout(function() {
+            print('X = ' + (typeof X === 'undefined' ? 'undefined' : X))
+            print('Y = ' + (typeof Y === 'undefined' ? 'undefined' : Y))
+            print('Z = ' + (typeof Z === 'undefined' ? 'undefined' : Z))
+
+            print('window.Z = ' + window.Z)
+            print('frag.X = ' + frag.X)
+            print('frag.Y = ' + frag.Y)
+            print('frag.Z = ' + frag.Z)
+        }, 1000)
+
+    }, 1000)
+
+
+    function print(msg) {
+        var p = document.createElement('P')
+        p.appendChild(document.createTextNode(msg))
+        document.getElementById('out').appendChild(p)
+    }
+
+</script>
+</body>
+</html>
