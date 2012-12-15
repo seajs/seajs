@@ -17,15 +17,14 @@
 1. Chrome、Safari、Firefox、Opera 下，script 添加到 fragment 中时不会下载，添加
    到 DOM 树中时才会下载并执行，并且执行上下文是全局环境，一切符合预期。
 
-
 2. IE6-9 下，在 script 设置 src 属性时就会触发下载，添加到 fragment 或其他 DOM 节点
    时会触发执行。执行时上下文是 fragment，相当于
 
        with(fragment) { (function() { script code })() }
 
+   当有缓存时，情况更复杂，详见参考文档 [2]
 
 3. 标准浏览器包括 IE9+ 下，fragment 没有 getElementById 等方法，但在 IE6-8 下有。
-
 
 4. IE10 与 Chrome 等标准浏览器表现一致，赞。
 
@@ -35,8 +34,8 @@
 
 参考文档：
 
-  https://developer.mozilla.org/en-US/docs/DOM/document.createDocumentFragment
-  http://www.guypo.com/technical/ies-premature-execution-problem/
+  1. https://developer.mozilla.org/en-US/docs/DOM/document.createDocumentFragment
+  2. http://www.guypo.com/technical/ies-premature-execution-problem/
 
 </pre>
 
