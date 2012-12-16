@@ -29,13 +29,48 @@
 4. IE10 与 Chrome 等标准浏览器表现一致，赞。
 
 
-最后更新时间：2012-12-15
+本来想利用 DocumentFragment 来解决 IE6-9 下获取 script 的 src 的问题，比如：
+
+    fragment['define'] = function(require, exports, module) {
+      // 很自然地得到了模块 id
+      module.id = script.src
+
+      // 调用 seajs 的 define
+      window.define(require, exports, module)
+    }
+
+现在看起来带来的隐患很多。如果用 DocumentFragment 来动态插入 script，则 script code
+在执行时，相当于
+
+       with(fragment) { (function() { script code }).call(fragment) }
+
+   a) script code 执行时多了一层闭包，这导致 var xx = ... 不再是全局变量。
+   b) script code 执行时的 this 是 fragment，不是 window，这会带来很多问题。
+   c) 多了一层闭包，如果 script code 代码不当，会导致内存泄露。
+
+这样，利用 DocumentFragment 来动态插入 script，只适合纯数据的 JSONP，比如
+
+   define({
+     "a": "a",
+     ...
+   })
+
+上面这种情况下，利用 DocumentFragment 来实现 JSONP，简单方便，并能提升性能。
+
+
+最后更新时间：2012-12-16
 
 
 参考文档：
 
   1. https://developer.mozilla.org/en-US/docs/DOM/document.createDocumentFragment
   2. http://www.guypo.com/technical/ies-premature-execution-problem/
+  3. http://velocity.oreilly.com.cn/2012/ppts/xuxiao.pdf 性能优化无末日
+  4. http://www.codedodger.com/2009/07/documentfragment-in-ie-does-not-process-cssjs/
+  5. http://www.cnblogs.com/objectorl/archive/2009/08/05/1632718.html IE Bug: DocumentFragment 和 SCRIPT
+  6. http://www.cnblogs.com/lzf0514/archive/2012/08/22/2650870.html Javascript Callback 的两种实现方案
+  7. http://www.nczonline.net/blog/2009/07/28/the-best-way-to-load-external-javascript/
+  8. http://www.webshowme.com/04js/content.asp?id=1613
 
 </pre>
 

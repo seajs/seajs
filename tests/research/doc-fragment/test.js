@@ -8,4 +8,7 @@ print('Z = ' + (typeof Z === 'undefined' ? 'undefined' : Z))
 
 print('window.X = ' + window.X)
 
+print('this === window ? ' + (this === window))
+print('this === frag ? ' + (this === frag))
+
 print('----- Script END -----')
