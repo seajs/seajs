@@ -1,14 +1,20 @@
-print('----- Script BEGIN -----')
+test.print('----- Script BEGIN -----')
+
 
 var Z = 'script-z'
 
-print('X = ' + (typeof X === 'undefined' ? 'undefined' : X))
-print('Y = ' + (typeof Y === 'undefined' ? 'undefined' : Y))
-print('Z = ' + (typeof Z === 'undefined' ? 'undefined' : Z))
+assertV('X', 'x')
+assertV('Y', undefined)
+assertV('Z', 'script-z')
 
-print('window.X = ' + window.X)
+test.assert(window.X === 'x', 'window.X = ' + window.X)
+test.assert(window.Y === undefined, 'window.Y = ' + window.Y)
 
-print('this === window ? ' + (this === window))
-print('this === frag ? ' + (this === frag))
+test.assert(this === window, 'this === window is ' + (this === window))
+test.assert(this !== container, 'this === container is ' + (this === container))
 
-print('----- Script END -----')
+//for(var k in this) print('this[' + k + '] = ' + this[k])
+test.print('this.nodeType = ' + this.nodeType)
+
+
+test.print('----- Script END -----')

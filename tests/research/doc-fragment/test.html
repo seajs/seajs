@@ -20,11 +20,11 @@
 2. IE6-9 下，在 script 设置 src 属性时就会触发下载，添加到 fragment 或其他 DOM 节点
    时会触发执行。执行时上下文是 fragment，相当于
 
-       with(fragment) { (function() { script code })() }
+       with(fragment) { (function() { script code }).call(fragment) }
 
-   当有缓存时，情况更复杂，详见参考文档 [2]
+   当有缓存时，情况更复杂，详见参考文档 [3]
 
-3. 标准浏览器包括 IE9+ 下，fragment 没有 getElementById 等方法，但在 IE6-8 下有。
+3. 标准浏览器包括 IE9+ 下，fragment 没有 createElement 等方法，但在 IE6-8 下有。
 
 4. IE10 与 Chrome 等标准浏览器表现一致，赞。
 
@@ -58,65 +58,85 @@
 上面这种情况下，利用 DocumentFragment 来实现 JSONP，简单方便，并能提升性能。
 
 
-最后更新时间：2012-12-16
+补充：不用 DocumentFragment 做容器，用普通 div 元素做容器，IE6-9 下会自动创建一个匿名
+     document，执行时变成
+
+       with(document) { (function() { script code }).call(document) }
+
+     问题依旧。
+
+
+最后更新时间：2012-12-17
 
 
 参考文档：
 
   1. https://developer.mozilla.org/en-US/docs/DOM/document.createDocumentFragment
-  2. http://www.guypo.com/technical/ies-premature-execution-problem/
-  3. http://velocity.oreilly.com.cn/2012/ppts/xuxiao.pdf 性能优化无末日
-  4. http://www.codedodger.com/2009/07/documentfragment-in-ie-does-not-process-cssjs/
-  5. http://www.cnblogs.com/objectorl/archive/2009/08/05/1632718.html IE Bug: DocumentFragment 和 SCRIPT
-  6. http://www.cnblogs.com/lzf0514/archive/2012/08/22/2650870.html Javascript Callback 的两种实现方案
-  7. http://www.nczonline.net/blog/2009/07/28/the-best-way-to-load-external-javascript/
+  2. http://www.nczonline.net/blog/2009/07/28/the-best-way-to-load-external-javascript/
+  3. http://www.guypo.com/technical/ies-premature-execution-problem/
+  4. http://velocity.oreilly.com.cn/2012/ppts/xuxiao.pdf
+  5. http://varnow.org/?p=152
+  6. http://www.cnblogs.com/objectorl/archive/2009/08/05/1632718.html
+  7. http://www.cnblogs.com/rubylouvre/archive/2012/12/16/2820372.html
   8. http://www.webshowme.com/04js/content.asp?id=1613
 
 </pre>
 
+<div id="t"></div>
+<script src="../../test.js"></script>
 <script>
 
-    var X = 'x'
-    var head = document.getElementsByTagName('head')[0]
-
-    var frag = document.createDocumentFragment()
-    var script = document.createElement('script')
-    script.src = 'test.js'
-
-    frag.X = 'frag-x'
-    frag.Y = 'frag-y'
-
-    frag.appendChild(script)
-    print('----- After appendTo Fragment -----')
-
-    setTimeout(function() {
-        print('frag.getElementById = ' + typeof frag.getElementById)
-        print('X = ' + (typeof X === 'undefined' ? 'undefined' : X))
-        print('Y = ' + (typeof Y === 'undefined' ? 'undefined' : Y))
-        print('Z = ' + (typeof Z === 'undefined' ? 'undefined' : Z))
-
-        head.appendChild(frag)
-        print('----- After appendTo Document -----')
-
-        setTimeout(function() {
-            print('X = ' + (typeof X === 'undefined' ? 'undefined' : X))
-            print('Y = ' + (typeof Y === 'undefined' ? 'undefined' : Y))
-            print('Z = ' + (typeof Z === 'undefined' ? 'undefined' : Z))
-
-            print('window.Z = ' + window.Z)
-            print('frag.X = ' + frag.X)
-            print('frag.Y = ' + frag.Y)
-            print('frag.Z = ' + frag.Z)
-        }, 1000)
-
-    }, 1000)
-
-
-    function print(msg) {
+    function printResults(msg) {
         var p = document.createElement('P')
         p.appendChild(document.createTextNode(msg))
         document.getElementById('out').appendChild(p)
     }
+
+    function assertV(name, expected) {
+        var val = this[name]
+        test.assert(val === expected, name + ' = ' + val)
+    }
+
+
+    var X = 'x'
+    var head = document.getElementsByTagName('head')[0]
+
+    var container = document.createDocumentFragment()
+    //var container = document.createElement('div')
+    //var container = document.getElementById('t')
+
+    container.X = 'container-x'
+    container.Y = 'container-y'
+    test.print('container.createElement = ' + (typeof container.createElement))
+
+    //var script = frag.createElement('script')
+    var script = document.createElement('script')
+    script.src = 'test.js'
+
+    container.appendChild(script)
+    test.print('----- After appendTo Container -----')
+
+    setTimeout(function() {
+        assertV('X', 'x')
+        assertV('Y', undefined)
+        assertV('Z', undefined)
+
+        head.appendChild(container)
+        test.print('----- After appendTo Document -----')
+
+        setTimeout(function() {
+            assertV('X', 'x')
+            assertV('Y', undefined)
+            assertV('Z', 'script-z')
+
+            test.assert(window.Z === 'script-z', 'window.Z = ' + window.Z)
+            test.assert(container.X === 'container-x', 'container.X = ' + container.X)
+            test.assert(container.Y === 'container-y', 'container.Y = ' + container.Y)
+            test.assert(container.Z === undefined, 'container.Z = ' + container.Z)
+        }, 1000)
+
+    }, 1000)
+
 </script>
 </body>
 </html>
