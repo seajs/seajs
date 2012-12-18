@@ -14,25 +14,28 @@
     //   ...
     // Doesn't parse:
     //   someInstance.require(...);
-    var ret = [], match
+    var ret = [], _strings = [], match;
 
-    code = removeComments(code)
-    REQUIRE_RE.lastIndex = 0
+    // extract all strings
+    code = code.replace(/(["'])(.+?)\1/g, function(match, quote, str, index) {
+      _strings.push(str);
+      return match.replace(str, _strings.length - 1);
+    });
 
+    // remove comments
+    code = code
+      .replace(/\/\*[\s\S]*?\*\//mg, '') // block comments
+      .replace(/\/\/.*$/mg, ''); // line comments
+
+    // parse 'require()'
+    REQUIRE_RE.lastIndex = 0;
     while ((match = REQUIRE_RE.exec(code))) {
       if (match[2]) {
-        ret.push(match[2])
+        ret.push(_strings[match[2]])
       }
     }
 
     return util.unique(ret)
-  }
-
-  // See: research/remove-comments-safely
-  function removeComments(code) {
-    return code
-        .replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '') // block comments
-        .replace(/^\s*\/\/.*$/mg, '') // line comments
   }
 
 })(seajs._util)
