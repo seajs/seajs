@@ -197,7 +197,7 @@
     var derivedUri
 
     // Try to derive uri in IE6-9 for anonymous modules.
-    if (document.attachEvent) {
+    if (!id && document.attachEvent) {
       // Try to get the current script.
       var script = util.getCurrentScript()
       if (script) {
