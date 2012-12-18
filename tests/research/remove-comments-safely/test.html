@@ -54,23 +54,26 @@
   //
   //     var Calendar = require('calendar');
 
-  /*@cc_on @*/
   var str = " /* not a real comment */ ";
   var regex = /\/*.*/;
   var z = '"\'';
   var r = /\/*/require('mod')/**/;
+  var a = / \/\/ \/b\//g;
+
+  // 不用考虑下面这个极端情况
+  var a=/ // /b\//g;
 </textarea>
 <button id="b">Remove Comments</button>
 <pre id="c"></pre>
 
 <script>
-
+    
   $ = function(id) {
     return document.getElementById(id)
   }
 
   $('b').onclick = function() {
-    $('c').innerHTML = removeComments($('a').value).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')
+    $('c').innerHTML = removeComments3($('a').value).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')
   }
 
   function removeComments(code) {
