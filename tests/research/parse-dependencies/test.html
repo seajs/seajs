@@ -101,16 +101,21 @@ function $(id) {
   return document.getElementById(id)
 }
 
+function now() {
+  return new Date().getTime()
+}
+
+
 $('run').onclick = function() {
   var code = $('code').value
   var EXPECTED = ['../test', './a', 'b', 'f', 'e', 'x']
   var result, t
 
-  t = util.now()
+  t = now()
   for (var i = 0; i < 100; i++) {
     result = parseDependenciesByLifesinger(code)
   }
-  t = util.now() - t
+  t = now() - t
 
   if (result.length !== EXPECTED.length ||
       result.join('|') !== EXPECTED.join('|')) {
@@ -126,7 +131,6 @@ $('run').onclick = function() {
 
 // 大家都可以用
 var util = seajs.pluginSDK.util
-
 
 // PASS
 var parseDependenciesByLifesinger = (function() {
@@ -149,7 +153,6 @@ var parseDependenciesByLifesinger = (function() {
     return util.unique(ret)
   }
 })()
-
 
 var parseDependenciesByLifesinger2 = (function() {
   // multi-line comments
@@ -174,7 +177,6 @@ var parseDependenciesByLifesinger2 = (function() {
     return util.unique(ret)
   }
 })()
-
 
 var parseDependenciesByJames = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
@@ -280,7 +282,6 @@ var parseDependenciesByJames = (function() {
   }
 })()
 
-
 var parseDependenciesByJames2 = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
@@ -347,7 +348,6 @@ var parseDependenciesByJames2 = (function() {
 
   }
 })()
-
 
 // PASS
 var parseDependenciesByArmy = (function() {
@@ -484,7 +484,6 @@ var parseDependenciesByArmy = (function() {
   }
 })()
 
-
 var parseDependenciesByHaxAndLuolonghao = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
@@ -512,7 +511,6 @@ var parseDependenciesByHaxAndLuolonghao = (function() {
   }
 })()
 
-
 var parseDependenciesByLuolonghao = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
@@ -538,7 +536,6 @@ var parseDependenciesByLuolonghao = (function() {
     });
   }
 })()
-
 
 var parseDependenciesByYessky = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
@@ -572,7 +569,6 @@ var parseDependenciesByYessky = (function() {
     return code;
   }
 })()
-
 
 var parseDependenciesByZiyunfei = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
