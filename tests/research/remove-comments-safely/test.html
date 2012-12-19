@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Comment Removal</title>
+<title>Comments Removal</title>
 <style>
   body {
     font-size: .8em;
@@ -33,7 +33,7 @@
 </head>
 
 <body>
-<h1>Comment Removal</h1>
+<h1>Comments Removal</h1>
 
 <textarea id="a">
   /**
@@ -46,8 +46,8 @@
   }
 
   /* ok, I will disappear. */
-  var s = '// i am string'; require('xx');
-  var t = 'i am string too'; // require('zz');
+  var s = '// i am string'; require('x');
+  var t = 'i am string too'; // require('z');
 
   /* will not // be removed */ var xx = 'a';
 
@@ -56,11 +56,12 @@
 
   var str = " /* not a real comment */ ";
   var regex = /\/*.*/;
-  var z = '"\'';
-  var r = /\/*/require('mod')/**/;
+  var tt = '"\'';
+  var r = /\/*require('r')*/;
+  var r2 = /require("r2")/
   var a = / \/\/ \/b\//g;
 
-  // 不用考虑下面这个极端情况
+  // 不用考虑极端情况，比如
   var a=/ // /b\//g;
 </textarea>
 <button id="b">Remove Comments</button>
@@ -73,14 +74,16 @@
   }
 
   $('b').onclick = function() {
-    $('c').innerHTML = removeComments3($('a').value).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')
+    $('c').innerHTML = removeCommentsByLifesinger($('a').value).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')
   }
 
-  function removeComments(code) {
-    return code.replace(/(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg, '')
+  function removeCommentsByLifesinger(code) {
+    return code
+            .replace(/;/g, ';\n')
+            .replace(/(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg, '')
   }
 
-  function removeComments2(code) {
+  function removeCommentsByLifesinger2(code) {
     // multi-line comments
     code = code.replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '')
 
@@ -91,7 +94,7 @@
   }
 
   // http://james.padolsey.com/javascript/removing-comments-in-javascript/
-  function removeComments3(str) {
+  function removeCommentsByJames(str) {
       str = ('__' + str + '__').split('');
       var mode = {
           singleQuote: false,
@@ -176,7 +179,7 @@
   }
 
   // http://james.padolsey.com/javascript/javascript-comment-removal-revisted/
-  function removeComments4(str) {
+  function removeCommentsByJames2(str) {
       var uid = '_' + +new Date(),
               primatives = [],
               primIndex = 0;
@@ -223,6 +226,89 @@
 
   }
 
+  // https://github.com/seajs/seajs/issues/478#issuecomment-11481101
+  function removeCommentsByArmy(e) {
+      function f() {
+          b = e.charAt(a++)
+      }
+
+      function j() {
+          return"_" == b || "$" == b || "." == b || "A" <= b && "z" >= b || 0 <= b && 9 >= b
+      }
+
+      for (var a = 0, b, g = e.length, c = !0, h = !1, d = [0], i = ""; a < g;)if (f(), "\n" == b)c = !0; else if (!/\s/.test(b))if ('"' == b || "'" == b) {
+          h && d.push(a - 1);
+          for (c = b; a < g;)if (f(), "\\" == b)a++; else if (b == c)break;
+          h && d.push(a);
+          c = !0
+      } else if ("/" == b)if (f(), "/" == b)d.push(a - 2), a = e.indexOf("\n", a), -1 == a && (a = e.length), d.push(a), c = !0; else if ("*" == b)d.push(a - 2), a = e.indexOf("*/", a) + 2, d.push(a), c = !0; else if (c) {
+          a--;
+          for (d.push(a - 1); a <
+                  g;)if (f(), "\\" == b)a++; else if ("/" == b)break; else if ("[" == b)for (; ;)if (f(), "\\" == b)a++; else if ("]" == b)break;
+          d.push(a);
+          c = !1
+      } else c = !0; else if (j()) {
+          for (c = a - 1; a < g;)if (f(), !j()) {
+              h = "require" != e.slice(c, --a);
+              break
+          }
+          c = !1
+      } else c = !0;
+      d.push(g);
+      for (a = 0; a < d.length; a += 2)i += e.slice(d[a], d[a + 1]);
+      return i
+  }
+
+  // https://github.com/seajs/seajs/issues/478#issuecomment-11492343
+  function removeCommentsByHaxAndLuolonghao(code) {
+      return code.replace(/"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|([^\\])([/][*][\S\s]*?(?:[*][/]|$)|[/][/].*)/g, function($0, $1) {
+          return $1 || $0;
+      });
+  }
+
+  // https://github.com/seajs/seajs/issues/478#issuecomment-11491575
+  function removeCommentsByZiyunfei(input) {
+      var i = 0;
+      var left = false;
+      var length = input.length;
+      var output = "";
+      while (i < input.length) {
+          if (input[i] === "/") {
+              if (left === true && input[i + 1] !== "/") {
+                  left = false;
+                  putstr(input[i++]);
+                  continue;
+              }
+              if (input[++i] === "*") {
+                  while (input[++i] + input[i + 1] != "*/" && i < length) {}
+                  i++;
+                  i++;
+              } else if (input[i] === "/") {
+                  while ((input[++i] !== "\n" || input[i - 1] === "\\") && i < length) {}
+              } else if (input[i]) {
+                  putstr("/" + input[i]);
+                  while ((input[++i] !== "/" || input[i - 1] === "\\") && i < length) {
+                      putstr(input[i]);
+                  }
+                  left = true;
+              }
+          } else if (input[i] === "'" || input[i] === '"') {
+              var quote = input[i];
+              putstr(quote);
+              while ((input[++i] != quote || input[i - 1] === "\\") && i < length) {
+                  putstr(input[i]);
+              }
+          } else if (input[i] === "\n") {
+              left = false;
+          }
+          putstr(input[i++])
+      }
+      return output;
+
+      function putstr(c) {
+          output += c || "";
+      }
+  }
 
 </script>
 
