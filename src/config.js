@@ -3,10 +3,6 @@
  */
 ;(function(seajs, util, config) {
 
-  var noCachePrefix = 'seajs-ts='
-  var noCacheTimeStamp = noCachePrefix + util.now()
-
-
   // Async inserted script
   var loaderScript = document.getElementById('seajsnode')
 
@@ -96,21 +92,6 @@
     var base = config.base
     if (base && !util.isAbsolute(base)) {
       config.base = util.id2Uri((util.isRoot(base) ? '' : './') + base + '/')
-    }
-
-    // Uses map to implement nocache.
-    if (config.debug === 2) {
-      config.debug = 1
-      seajs.config({
-        map: [
-          [/^.*$/, function(url) {
-            if (url.indexOf(noCachePrefix) === -1) {
-              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
-            }
-            return url
-          }]
-        ]
-      })
     }
 
     debugSync()
