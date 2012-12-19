@@ -18,7 +18,6 @@
 ### 排版
 
 GitHub 使用 [Markdown](http://github.github.com/github-flavored-markdown/) 渲染内容，你应该阅读一下这份文档。
-
 最重要的是代码的排版，请务必保证代码的可阅读性。
 
 
