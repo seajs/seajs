@@ -5,20 +5,13 @@
 
   var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var LINE_RE = /;/g
 
 
+  // see ../tests/research/parse-dependencies/test.html
   util.parseDependencies = function(code) {
-    // Remove Comments
-    // ref: research/remove-comments-safely
-    code = code.replace(COMMENT_RE, '')
+    code = code.replace(LINE_RE, '').replace(COMMENT_RE, '')
 
-    // Parse these `requires`:
-    //   var a = require('a');
-    //   someMethod(require('b'));
-    //   require('c');
-    //   ...
-    // Doesn't parse:
-    //   someInstance.require(...);
     var ret = [], match
     REQUIRE_RE.lastIndex = 0
 
