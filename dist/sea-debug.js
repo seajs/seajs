@@ -686,22 +686,23 @@ seajs._config = {
  */
 ;(function(util) {
 
-  var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
-  var LINE_RE = /;/g
+  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
+  var STR_RE = /^["']/
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
 
 
   // see ../tests/research/parse-dependencies/test.html
   util.parseDependencies = function(code) {
-    code = code.replace(LINE_RE, '').replace(COMMENT_RE, '')
-
     var ret = [], match
-    REQUIRE_RE.lastIndex = 0
 
+    // Remove comments and regexp
+    code = code.replace(NOISE_RE, function(m) {
+      return STR_RE.test(m) ? m : ''
+    })
+
+    REQUIRE_RE.lastIndex = 0
     while ((match = REQUIRE_RE.exec(code))) {
-      if (match[2]) {
-        ret.push(match[2])
-      }
+      ret.push(match[2])
     }
 
     return util.unique(ret)

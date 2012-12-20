@@ -10,7 +10,7 @@ define(function(require, exports, module) {
   var o = {
     require: function() {
     },
-    f:require('f')
+    f:require('./f')
   };
   o.require('d');
   o.require(require('e'   ));
@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 
   test.assert(require('b').name === 'b', 'b');
   test.assert(require('e').name === 'e', 'e');
-  test.assert(module.dependencies.length === 5, module.dependencies);
+  test.assert(module.dependencies.length === 6, module.dependencies);
 
   test.done();
 
@@ -37,7 +37,7 @@ define(function(require, exports, module) {
   }
 
   /* ok, I will disappear. */
-  var s = '// i am string'; require('x');
+  var s = '// i am string'; require('./x');
   var t = 'i am string too'; // require('z');
 
   /* will not // be removed */ var xx = 'a';
@@ -49,6 +49,7 @@ define(function(require, exports, module) {
   var regex = /\/*.*/;
   var tt = '"\'';
   var r = /\/*require('r')*/;
+  var r2 = /require('r2')/;
   var a = / \/\/ \/b\//g;
 
 });

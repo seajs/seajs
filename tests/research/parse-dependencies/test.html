@@ -11,8 +11,8 @@
         font-family: "Consolas", "Lucida Console", Courier, monospace;
     }
 
-    #code {
-        width: 700px;
+    .code {
+        width: 500px;
         height: 250px;
         font-size: 1em;
         padding: 10px;
@@ -27,7 +27,7 @@
         color: white;
         padding: 10px;
         background: #222;
-        width: 700px;
+        width: 500px;
     }
 </style>
 </head>
@@ -35,7 +35,7 @@
 <body>
 <h1>Dependencies Parser</h1>
 
-<textarea id="code">
+<textarea id="source" class="code">
 define(function(require, exports, module) {
 
   var test = require('../test');
@@ -74,6 +74,7 @@ define(function(require, exports, module) {
   /* ok, I will disappear. */
   var s = '// i am string'; require('x');
   var t = 'i am string too'; // require('z');
+  exports.s = 'xx // xx' + require('s');
 
   /* will not // be removed */ var xx = 'a';
 
@@ -84,11 +85,14 @@ define(function(require, exports, module) {
   var regex = /\/*.*/;
   var tt = '"\'';
   var r = /\/*require('r')*/;
+  var r2 = /require("r2")/
   var a = / \/\/ \/b\//g;
 
   // 不用考虑极端情况，比如
   var a=/ // /b\//g;
 });
+</textarea>
+<textarea id="prepare" class="code">
 </textarea>
 
 <button id="run">Parse Dependencies</button>
@@ -107,13 +111,16 @@ function now() {
 
 
 $('run').onclick = function() {
-  var code = $('code').value
-  var EXPECTED = ['../test', './a', 'b', 'f', 'e', 'x']
+  var EXPECTED = ['../test', './a', 'b', 'f', 'e', 'x', 's']
+  var parser = parserByLuolonghaoAndLifesinger
+
   var result, t
+  var code = $('source').value
+  $('prepare').innerHTML = parser.prepare(code)
 
   t = now()
   for (var i = 0; i < 100; i++) {
-    result = parseDependenciesByLifesinger(code)
+    result = parser.parse(code)
   }
   t = now() - t
 
@@ -133,13 +140,19 @@ $('run').onclick = function() {
 var util = seajs.pluginSDK.util
 
 // PASS
-var parseDependenciesByLifesinger = (function() {
+var parserByLifesinger = (function() {
   var LINE_RE = /;/g
   var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
-    code = code.replace(LINE_RE, ';\n').replace(COMMENT_RE, '')
+  function prepare(code) {
+    return code
+        .replace(LINE_RE, ';\n')
+        .replace(COMMENT_RE, '')
+  }
+
+  function parse(code) {
+    code = prepare(code)
 
     var ret = [], match
     REQUIRE_RE.lastIndex = 0
@@ -152,18 +165,28 @@ var parseDependenciesByLifesinger = (function() {
 
     return util.unique(ret)
   }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
 })()
 
-var parseDependenciesByLifesinger2 = (function() {
+var parserByLifesinger2 = (function() {
   // multi-line comments
   var COMMENT_M_RE = /^\s*\/\*[\s\S]*?\*\/\s*$/mg
   // single-line comments
   var COMMENT_S_RE = /^\s*\/\/.*$/mg
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
-    code = code.replace(/;/g, ';\n')
-    code = code.replace(COMMENT_M_RE, '').replace(COMMENT_S_RE, '')
+  function prepare(code) {
+    return code
+        .replace(COMMENT_M_RE, '')
+        .replace(COMMENT_S_RE, '')
+  }
+
+  function parse(code) {
+    code = prepare(code)
 
     var ret = [], match
     REQUIRE_RE.lastIndex = 0
@@ -176,12 +199,92 @@ var parseDependenciesByLifesinger2 = (function() {
 
     return util.unique(ret)
   }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
 })()
 
-var parseDependenciesByJames = (function() {
+// PASS
+var parserByLifesinger3 = (function() {
+  var cache
+  var QUOTE_RE = /"(?:\\"|[^"]+)"|'(?:\\'|[^']+)'/g
+  var COMMENT_RE = /\/\*[\S\s]*?\*\/|\/\/.*/mg
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*"(\d+)"\s*\)/g
+  var ID_RE = /^[-_.:\w\d\/]+$/
+
+  function prepare(code) {
+    cache = []
+    code = code
+        .replace(QUOTE_RE, function(m) {
+          return '"' + (cache.push(m.slice(1, -1)) - 1) + '"'
+        })
+        .replace(COMMENT_RE, '')
+    return code
+  }
+
+  function parse(code) {
+    code = prepare(code)
+    var ret = []
+
+    code.replace(REQUIRE_RE, function(match, index) {
+      var str = cache[index]
+      if (ID_RE.test(str)) {
+        ret.push(str)
+      }
+    })
+
+    return util.unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
+
+// PASS
+var parserByXingrz = (function() {
+
+  var _strings = [];
+
+  var QUOTE_RE = /(['"])((?:\\\1|.)+?)\1/g
+  var BLOCK_COMMENT_RE = /\/\*[\s\S]*?\*\//mg
+  var LINE_COMMENT_RE = /\/\/.*$/mg
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*"(\d+)"\s*\)/g
+  var FILTER_RE = /^[^"'\s\)]+$/
+
+  function prepare(code) {
+    return code
+        .replace(QUOTE_RE, function(match, quote, str, index) {  // extract all strings
+          return '"' + (_strings.push(str) - 1) + '"'
+        })
+        .replace(BLOCK_COMMENT_RE, '') // remove block comments
+        .replace(LINE_COMMENT_RE, '') // remove line comments
+  }
+
+  function parse(code) {
+    var ret = []
+    code = prepare(code)
+    code.replace(REQUIRE_RE, function(match, index) {  // parse 'require()'
+      if (FILTER_RE.test(_strings[index])) {
+        ret.push(_strings[index])
+      }
+    })
+    return util.unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
+
+var parserByJames = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
+  function parse(code) {
     code = removeComments(code)
 
     var ret = [], match
@@ -280,12 +383,17 @@ var parseDependenciesByJames = (function() {
     }
     return str.join('').slice(2, -2);
   }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
 })()
 
-var parseDependenciesByJames2 = (function() {
+var parserByJames2 = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
+  function parse(code) {
     code = removeComments(code)
 
     var ret = [], match
@@ -347,13 +455,18 @@ var parseDependenciesByJames2 = (function() {
         );
 
   }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
 })()
 
 // PASS
-var parseDependenciesByArmy = (function() {
+var parserByArmy = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
+  function parse(code) {
     code = removeComments(code)
 
     var ret = [], match
@@ -482,12 +595,17 @@ var parseDependenciesByArmy = (function() {
       index += r.length - 1;
     }
   }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
 })()
 
-var parseDependenciesByHaxAndLuolonghao = (function() {
+var parserByHaxAndLuolonghao = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
+  function parse(code) {
     code = removeComments(code)
 
     var ret = [], match
@@ -509,12 +627,17 @@ var parseDependenciesByHaxAndLuolonghao = (function() {
       return $1 || $0;
     });
   }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
 })()
 
-var parseDependenciesByLuolonghao = (function() {
+var parserByLuolonghao = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
+  function parse(code) {
     code = removeComments(code)
 
     var ret = [], match
@@ -535,12 +658,139 @@ var parseDependenciesByLuolonghao = (function() {
       return /^([/][*]|[/][/])/.test(match) ? '' : match;
     });
   }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
 })()
 
-var parseDependenciesByYessky = (function() {
+// PASS
+var parserByLuolonghao2 = (function() {
+  var COMMENT_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?(?:\*\/|$)|\/(?:\\\/|[^/])+\/|\/\/.*/g
+  var COMMENT_PREFIX_RE = /^\/(\*|\/)/
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return util.unique(ret)
+  }
+
+  function removeComments(code) {
+    return code.replace(COMMENT_RE, function(match) {
+      return COMMENT_PREFIX_RE.test(match) ? '' : match
+    })
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+// PASS
+var parserByLuolonghaoAndLifesinger = (function() {
+  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
+  var STR_RE = /^["']/
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
+
+  function parse(code) {
+    code = clean(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      ret.push(match[2])
+    }
+
+    return util.unique(ret)
+  }
+
+  function clean(code) {
+    return code.replace(NOISE_RE, function(m) {
+      return STR_RE.test(m) ? m : ''
+    })
+  }
+
+  return {
+    prepare: clean,
+    parse: parse
+  }
+})()
+
+// PASS
+var parserByLuolonghaoAndLifesinger2 = (function() {
+  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
+  var STR_RE = /^["']/
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
+
+  function parse(code) {
+    code = clean(code)
+
+    var ret = []
+    code.replace(REQUIRE_RE, function(m, m1, m2) {
+      ret.push(m2)
+    })
+
+    return util.unique(ret)
+  }
+
+  function clean(code) {
+    return code.replace(NOISE_RE, function(m) {
+      return STR_RE.test(m) ? m : ''
+    })
+  }
+
+  return {
+    prepare: clean,
+    parse: parse
+  }
+})()
+
+// PASS
+var parserByLuolonghaoAndLifesinger3 = (function() {
+  var NOISE_RE = /"(?:\\"|[^"])+"|'(?:\\'|[^'])+'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
+  var STR_RE = /^["']/
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
+
+  function parse(code) {
+    code = clean(code)
+
+    var ret = []
+    code.replace(REQUIRE_RE, function(m, m1, m2) {
+      ret.push(m2)
+    })
+
+    return util.unique(ret)
+  }
+
+  function clean(code) {
+    return code.replace(NOISE_RE, function(m) {
+      return STR_RE.test(m) ? m : ''
+    })
+  }
+
+  return {
+    prepare: clean,
+    parse: parse
+  }
+})()
+
+var parserByYessky = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
+  function parse(code) {
     code = removeComments(code)
 
     var ret = [], match
@@ -568,12 +818,17 @@ var parseDependenciesByYessky = (function() {
 
     return code;
   }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
 })()
 
-var parseDependenciesByZiyunfei = (function() {
+var parserByZiyunfei = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
 
-  return function(code) {
+  function parse(code) {
     code = removeComments(code)
 
     var ret = [], match
@@ -631,6 +886,11 @@ var parseDependenciesByZiyunfei = (function() {
       output += c || "";
     }
   }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
 })()
 
 </script>
@@ -639,7 +899,7 @@ var parseDependenciesByZiyunfei = (function() {
 <ul>
     <li><a href="../remove-comments-safely/test.html">Comments Removal</a></li>
     <li><a href="https://github.com/seajs/seajs/issues/478">seajs#478</a></li>
-    <li><a href="http://jsperf.com/parse-dependencies">http://jsperf.com/parse-dependencies</a></li>
+    <li><a href="http://jsperf.com/parse-dependencies/3">http://jsperf.com/parse-dependencies/3</a></li>
 </ul>
 </body>
 </html>
