@@ -90,8 +90,37 @@ define(function(require, exports, module) {
   var r2 = /require("r2")/
   var a = / \/\/ \/b\//g;
 
-  var a=/ // /b\//g;
-});
+  var rare=/ // /b\//g;
+
+  var rare2 = 'xxxx \
+  // xxxx\ require("rare2") \
+  '
+
+  var x =/ x /* 333
+  require("rare3")
+  /*
+  ^_^
+  */
+
+  var x =2/ x /* 333
+  require("rare4")
+  /*
+  ^_^
+  */
+
+  if(a+b)/ x /* 333
+  require("rare5")
+  /*
+  ^_^
+  */
+
+  (a+b)/ x /* 333
+  require("rare6")
+  /*
+  ^_^
+  */
+
+  });
 </textarea>
 <textarea id="prepare" class="code">
 </textarea>
