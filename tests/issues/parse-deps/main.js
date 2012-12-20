@@ -21,9 +21,11 @@ define(function(require, exports, module) {
   var xrequire = function() {};
   xrequire('xrequire');
 
+  (function() {})('require("string");');
+
   test.assert(require('b').name === 'b', 'b');
   test.assert(require('e').name === 'e', 'e');
-  test.assert(module.dependencies.length === 5, module.dependencies);
+  test.assert(module.dependencies.length === 6, module.dependencies);
 
   test.done();
 
