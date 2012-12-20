@@ -25,6 +25,8 @@ define(function(require, exports, module) {
 
   test.assert(require('b').name === 'b', 'b');
   test.assert(require('e').name === 'e', 'e');
+  test.assert(module.dependencies.some(function(dep) { return dep.indexOf('/x.js') !== -1; }), 'x');
+  test.assert(!module.dependencies.some(function(dep) { return dep.indexOf('/string.js') !== -1; }), 'string');
   test.assert(module.dependencies.length === 6, module.dependencies);
 
   test.done();
