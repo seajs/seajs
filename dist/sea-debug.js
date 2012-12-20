@@ -686,25 +686,21 @@ seajs._config = {
  */
 ;(function(util) {
 
-  var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
-  var LINE_RE = /;/g
-
-
   // see ../tests/research/parse-dependencies/test.html
   util.parseDependencies = function(code) {
-    code = code.replace(LINE_RE, '').replace(COMMENT_RE, '')
+    var ret = [], _strings = [];
 
-    var ret = [], match
-    REQUIRE_RE.lastIndex = 0
+    code
+      .replace(/(['"])((:?\\\1|.)+?)\1/g, function(match, quote, str, index) {  // extract all strings
+        return '"' + (_strings.push(str) - 1) + '"';
+      })
+      .replace(/\/\*[\s\S]*?\*\//mg, '') // remove block comments
+      .replace(/\/\/.*$/mg, '') // remove line comments
+      .replace(/(?:^|[^.$])\brequire\s*\(\s*"(\d+)"\s*\)/g, function(match, index) {  // parse 'require()'
+        ret.push(_strings[index]);
+      });
 
-    while ((match = REQUIRE_RE.exec(code))) {
-      if (match[2]) {
-        ret.push(match[2])
-      }
-    }
-
-    return util.unique(ret)
+    return util.unique(ret);
   }
 
 })(seajs._util)
