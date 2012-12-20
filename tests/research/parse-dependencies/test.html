@@ -42,9 +42,7 @@ define(function(require, exports, module) {
 
   require('./a');
   require  ('b')
-  require("b");
-  require('"c');require(' c');
-  require('c)');
+  require(  "b"   )  ;
   var o = {
     require: function() {
     },
@@ -52,6 +50,10 @@ define(function(require, exports, module) {
   };
   o.require('d');
   o.require(require('e'   ));
+
+  /**
+  * require('./b')
+  */
 
   var $require = function() {};
   $require('$require');
@@ -88,7 +90,6 @@ define(function(require, exports, module) {
   var r2 = /require("r2")/
   var a = / \/\/ \/b\//g;
 
-  // 不用考虑极端情况，比如
   var a=/ // /b\//g;
 });
 </textarea>
@@ -109,12 +110,10 @@ function now() {
   return new Date().getTime()
 }
 
-
 $('run').onclick = function() {
-  var EXPECTED = ['../test', './a', 'b', 'f', 'e', 'x', 's']
-  var parser = parserByLuolonghaoAndLifesinger
-
   var result, t
+  parser = window[parser]
+
   var code = $('source').value
   $('prepare').innerHTML = parser.prepare(code)
 
@@ -136,18 +135,17 @@ $('run').onclick = function() {
 }
 
 
-// 大家都可以用
+var EXPECTED = ['../test', './a', 'b', 'f', 'e', 'x', 's']
+var parser = 'parserByLuolonghaoAndLifesinger'
 var util = seajs.pluginSDK.util
 
-// PASS
+
 var parserByLifesinger = (function() {
-  var LINE_RE = /;/g
   var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function prepare(code) {
     return code
-        .replace(LINE_RE, ';\n')
         .replace(COMMENT_RE, '')
   }
 
@@ -177,7 +175,7 @@ var parserByLifesinger2 = (function() {
   var COMMENT_M_RE = /^\s*\/\*[\s\S]*?\*\/\s*$/mg
   // single-line comments
   var COMMENT_S_RE = /^\s*\/\/.*$/mg
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function prepare(code) {
     return code
@@ -206,7 +204,6 @@ var parserByLifesinger2 = (function() {
   }
 })()
 
-// PASS
 var parserByLifesinger3 = (function() {
   var cache
   var QUOTE_RE = /"(?:\\"|[^"]+)"|'(?:\\'|[^']+)'/g
@@ -244,7 +241,6 @@ var parserByLifesinger3 = (function() {
   }
 })()
 
-// PASS
 var parserByXingrz = (function() {
 
   var _strings = [];
@@ -282,7 +278,7 @@ var parserByXingrz = (function() {
 })()
 
 var parserByJames = (function() {
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = removeComments(code)
@@ -391,7 +387,8 @@ var parserByJames = (function() {
 })()
 
 var parserByJames2 = (function() {
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
 
   function parse(code) {
     code = removeComments(code)
@@ -464,7 +461,7 @@ var parserByJames2 = (function() {
 
 // PASS
 var parserByArmy = (function() {
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = removeComments(code)
@@ -603,7 +600,7 @@ var parserByArmy = (function() {
 })()
 
 var parserByHaxAndLuolonghao = (function() {
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = removeComments(code)
@@ -635,7 +632,7 @@ var parserByHaxAndLuolonghao = (function() {
 })()
 
 var parserByLuolonghao = (function() {
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = removeComments(code)
@@ -665,11 +662,10 @@ var parserByLuolonghao = (function() {
   }
 })()
 
-// PASS
 var parserByLuolonghao2 = (function() {
   var COMMENT_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?(?:\*\/|$)|\/(?:\\\/|[^/])+\/|\/\/.*/g
   var COMMENT_PREFIX_RE = /^\/(\*|\/)/
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = removeComments(code)
@@ -700,9 +696,9 @@ var parserByLuolonghao2 = (function() {
 
 // PASS
 var parserByLuolonghaoAndLifesinger = (function() {
-  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
+  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*/g
   var STR_RE = /^["']/
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = clean(code)
@@ -729,66 +725,8 @@ var parserByLuolonghaoAndLifesinger = (function() {
   }
 })()
 
-// PASS
-var parserByLuolonghaoAndLifesinger2 = (function() {
-  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
-  var STR_RE = /^["']/
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
-
-  function parse(code) {
-    code = clean(code)
-
-    var ret = []
-    code.replace(REQUIRE_RE, function(m, m1, m2) {
-      ret.push(m2)
-    })
-
-    return util.unique(ret)
-  }
-
-  function clean(code) {
-    return code.replace(NOISE_RE, function(m) {
-      return STR_RE.test(m) ? m : ''
-    })
-  }
-
-  return {
-    prepare: clean,
-    parse: parse
-  }
-})()
-
-// PASS
-var parserByLuolonghaoAndLifesinger3 = (function() {
-  var NOISE_RE = /"(?:\\"|[^"])+"|'(?:\\'|[^'])+'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
-  var STR_RE = /^["']/
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
-
-  function parse(code) {
-    code = clean(code)
-
-    var ret = []
-    code.replace(REQUIRE_RE, function(m, m1, m2) {
-      ret.push(m2)
-    })
-
-    return util.unique(ret)
-  }
-
-  function clean(code) {
-    return code.replace(NOISE_RE, function(m) {
-      return STR_RE.test(m) ? m : ''
-    })
-  }
-
-  return {
-    prepare: clean,
-    parse: parse
-  }
-})()
-
 var parserByYessky = (function() {
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = removeComments(code)
@@ -826,7 +764,7 @@ var parserByYessky = (function() {
 })()
 
 var parserByZiyunfei = (function() {
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
   function parse(code) {
     code = removeComments(code)

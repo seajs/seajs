@@ -5,8 +5,6 @@ define(function(require, exports, module) {
   require('./a');
   require  ('b')
   require("b");
-  require('"c');require(' c');
-  require('c)');
   var o = {
     require: function() {
     },

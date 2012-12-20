@@ -3,9 +3,9 @@
  */
 ;(function(util) {
 
-  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/(?:\\\/|[^/])+\/|\/\*[\S\s]*?\*\/|\/\/.*/g
+  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*/g
   var STR_RE = /^["']/
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([-_.:\w\d\/]+)\1\s*\)/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
 
   // see ../tests/research/parse-dependencies/test.html
