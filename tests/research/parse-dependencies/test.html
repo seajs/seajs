@@ -168,7 +168,7 @@ $('run').onclick = function() {
 
 
 var EXPECTED = ['../test', './a', 'b', 'f', 'e', 'x', 's']
-var parser = 'parserByLuolonghaoAndLifesinger'
+var parser = 'parserByLuolonghaoAndLifesingerAndEthan'
 var util = seajs.pluginSDK.util
 
 
@@ -859,6 +859,45 @@ var parserByZiyunfei = (function() {
 
   return {
     prepare: removeComments,
+    parse: parse
+  }
+})()
+
+
+// pass except rare cases 
+var parserByLuolonghaoAndLifesingerAndEthan = (function() {
+  var NOISE_RE = /(['"])((?:\\\1|[\s\S])+?)\1|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+  
+  // declaring variable at here is unsafe in this case
+  var primatives = [], primIndex = 0
+
+  function parse(code) {
+    code = clean(code)
+
+    var ret = [], match
+    
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      ret.push(primatives[match[2]])
+    }
+	
+    return util.unique(ret)
+  }
+
+  function clean(code) {
+    return code.replace(NOISE_RE, function(m, quot, str) {
+    	if(quot){
+    		primatives[++primIndex] = str
+    		return quot + primIndex + quot
+    	}
+      	return ''
+    })
+  }
+
+  return {
+    prepare: clean,
     parse: parse
   }
 })()
