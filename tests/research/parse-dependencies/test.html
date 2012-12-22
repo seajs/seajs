@@ -91,7 +91,7 @@ define(function(require, exports, module) {
 
   var r = /\/*require('r')*/;
   var r2 = /require("r2")/
-  var a = / \/\/ \/b\//g;
+  var weird = / \/\/ \/b\//g;
 
   var rare=/ // /b\//g;
 
@@ -144,7 +144,7 @@ function now() {
 
 $('run').onclick = function() {
   var result, t
-  parser = window[parser]
+  if (typeof parser === 'string') parser = window[parser]
 
   var code = $('source').value
   $('prepare').innerHTML = parser.prepare(code)
@@ -168,9 +168,61 @@ $('run').onclick = function() {
 
 
 var EXPECTED = ['../test', './a', 'b', 'f', 'e', 'x', 's']
-var parser = 'parserByLuolonghaoAndLifesinger'
+var parser = 'parserBySeaJS'
 var util = seajs.pluginSDK.util
 
+var parserBySeaJS = (function() {
+  var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*|(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    var ret = [], m
+
+    REQUIRE_RE.lastIndex = 0
+    while ((m = REQUIRE_RE.exec(code))) {
+        if(m[2]) ret.push(m[2])
+    }
+
+    return util.unique(ret)
+  }
+
+  return {
+    prepare: function(code) { return parse(code).join('\n') },
+    parse: parse
+  }
+})()
+
+var parserByEthanZhang = (function() {
+  var NOISE_RE = /(['"])((?:\\\1|[\s\S])+?)\1|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+  var primatives = [], primIndex = 0
+
+  function prepare(code) {
+    return code.replace(NOISE_RE, function(m, quot, str) {
+      if(quot){
+        primatives[++primIndex] = str
+        return quot + primIndex + quot
+      }
+      return ''
+    })
+  }
+
+  function parse(code) {
+    code = prepare(code)
+    var ret = [], match
+
+    REQUIRE_RE.lastIndex = 0
+    while ((match = REQUIRE_RE.exec(code))) {
+      ret.push(primatives[match[2]])
+    }
+
+    return util.unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
 
 var parserByLifesinger = (function() {
   var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
@@ -491,7 +543,6 @@ var parserByJames2 = (function() {
   }
 })()
 
-// PASS
 var parserByArmy = (function() {
   var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
 
@@ -726,7 +777,6 @@ var parserByLuolonghao2 = (function() {
   }
 })()
 
-// PASS
 var parserByLuolonghaoAndLifesinger = (function() {
   var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*/g
   var STR_RE = /^["']/
