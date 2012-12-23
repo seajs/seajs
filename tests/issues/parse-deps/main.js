@@ -2,7 +2,15 @@ define(function(require, exports, module) {
 
   var test = require('../../test');
 
-  require('./a');
+  var a = "never-ending line\\";
+  a ='\\';
+  a = 1 / 2; //require("a2")
+
+  a = 1 / 2
+  require("./a")
+  //require("b2")
+
+  require('a');
   require  ('b')
   require("b");
   var o = {
@@ -19,9 +27,10 @@ define(function(require, exports, module) {
   var xrequire = function() {};
   xrequire('xrequire');
 
+  test.assert(require('a').name === 'a', 'a');
   test.assert(require('b').name === 'b', 'b');
   test.assert(require('e').name === 'e', 'e');
-  test.assert(module.dependencies.length === 6, module.dependencies);
+  test.assert(module.dependencies.length === 7, module.dependencies);
 
   test.done();
 
@@ -55,5 +64,6 @@ define(function(require, exports, module) {
 
 });
 
+define('a', { name: 'a' });
 define('b', { name: 'b' });
 define('e', { name: 'e' });
