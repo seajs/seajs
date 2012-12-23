@@ -199,7 +199,7 @@ seajs._config = {
  */
 ;(function(util, config, global) {
 
-  var DIRNAME_RE = /.*(?=\/.*$)/
+  var DIRNAME_RE = /[^?]*(?=\/.*$)/
   var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
   var FILE_EXT_RE = /\.(?:css|js)$/
   var ROOT_RE = /^(.*?\w)(?:\/|$)/
@@ -1235,7 +1235,7 @@ seajs._config = {
   var loaderSrc = (loaderScript && util.getScriptAbsoluteSrc(loaderScript)) ||
       util.pageUri // When sea.js is inline, set base to pageUri.
 
-  var base = util.dirname(getLoaderActualSrc(loaderSrc))
+  var base = util.dirname(loaderSrc)
   util.loaderDir = base
 
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
@@ -1319,24 +1319,6 @@ seajs._config = {
   }
 
   debugSync()
-
-
-  function getLoaderActualSrc(src) {
-    if (src.indexOf('??') === -1) {
-      return src
-    }
-
-    // Such as: http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js
-    // Only support nginx combo style rule. If you use other combo rule, please
-    // explicitly config the base path and the alias for plugins.
-    var parts = src.split('??')
-    var root = parts[0]
-    var paths = util.filter(parts[1].split(','), function(str) {
-      return str.indexOf('sea.js') !== -1
-    })
-
-    return root + paths[0]
-  }
 
   function checkAliasConflict(previous, current, key) {
     if (previous && previous !== current) {
