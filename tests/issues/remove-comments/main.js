@@ -1,4 +1,4 @@
-define(function(require) {
+define(function(require, exports, module) {
 
   var test = require('../../test');
 
@@ -20,11 +20,12 @@ define(function(require) {
   this.require('./404');
 
 
-  test.assert(this.a === undefined, 'remove require ./a');
-  test.assert(this.b === undefined, 'remove require ./b');
-  test.assert(this.c === 'c', 'c.js is loaded successfully');
+  test.assert(this.a === undefined, 'remove require ./a')
+  test.assert(this.b === undefined, 'remove require ./b')
+  test.assert(this.c === 'c', 'c.js is loaded successfully. this.c = ' + this.c)
   test.assert(this.d === undefined, 'remove require ./d')
+  test.assert(module.dependencies.length === 2, module.dependencies)
 
-  test.done();
+  test.done()
 
 });

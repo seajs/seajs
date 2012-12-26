@@ -15,7 +15,7 @@
 
   <property name="src.file" value="${tmp.dir}/${module.name}-src.js"/>
   <property name="debug.file" value="${dist.dir}/${module.name}-debug.js"/>
-  <property name="compress.plugins" value="plugin-base.js,plugin-combo.js,plugin-i18n.js,plugin-warning.js"/>
+  <property name="compress.plugins" value="plugin-combo.js,plugin-warning.js"/>
 
 
   <!-- 合并 -->

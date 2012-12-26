@@ -3,7 +3,7 @@
  */
 ;(function(util, config, global) {
 
-  var DIRNAME_RE = /.*(?=\/.*$)/
+  var DIRNAME_RE = /[^?]*(?=\/.*$)/
   var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
   var FILE_EXT_RE = /\.(?:css|js)$/
   var ROOT_RE = /^(.*?\w)(?:\/|$)/

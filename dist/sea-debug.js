@@ -149,11 +149,6 @@ seajs._config = {
     return keys(o)
   }
 
-
-  util.now = Date.now || function() {
-    return new Date().getTime()
-  }
-
 })(seajs._util)
 
 /**
@@ -204,7 +199,7 @@ seajs._config = {
  */
 ;(function(util, config, global) {
 
-  var DIRNAME_RE = /.*(?=\/.*$)/
+  var DIRNAME_RE = /[^?]*(?=\/.*$)/
   var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
   var FILE_EXT_RE = /\.(?:css|js)$/
   var ROOT_RE = /^(.*?\w)(?:\/|$)/
@@ -688,32 +683,20 @@ seajs._config = {
 
 /**
  * The parser for dependencies
+ * Ref: tests/research/parse-dependencies/test.html
  */
 ;(function(util) {
 
-  var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
-
+  var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+  var SLASH_RE = /\\\\/g
 
   util.parseDependencies = function(code) {
-    // Remove Comments
-    // ref: research/remove-comments-safely
-    code = code.replace(COMMENT_RE, '')
-
-    // Parse these `requires`:
-    //   var a = require('a');
-    //   someMethod(require('b'));
-    //   require('c');
-    //   ...
-    // Doesn't parse:
-    //   someInstance.require(...);
-    var ret = [], match
+    var ret = [], m
     REQUIRE_RE.lastIndex = 0
+    code = code.replace(SLASH_RE, '')
 
-    while ((match = REQUIRE_RE.exec(code))) {
-      if (match[2]) {
-        ret.push(match[2])
-      }
+    while ((m = REQUIRE_RE.exec(code))) {
+      if (m[2]) ret.push(m[2])
     }
 
     return util.unique(ret)
@@ -1240,10 +1223,6 @@ seajs._config = {
  */
 ;(function(seajs, util, config) {
 
-  var noCachePrefix = 'seajs-ts='
-  var noCacheTimeStamp = noCachePrefix + util.now()
-
-
   // Async inserted script
   var loaderScript = document.getElementById('seajsnode')
 
@@ -1256,7 +1235,7 @@ seajs._config = {
   var loaderSrc = (loaderScript && util.getScriptAbsoluteSrc(loaderScript)) ||
       util.pageUri // When sea.js is inline, set base to pageUri.
 
-  var base = util.dirname(getLoaderActualSrc(loaderSrc))
+  var base = util.dirname(loaderSrc)
   util.loaderDir = base
 
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
@@ -1297,18 +1276,11 @@ seajs._config = {
       if (previous && k === 'alias') {
         for (var p in current) {
           if (current.hasOwnProperty(p)) {
-
             var prevValue = previous[p]
             var currValue = current[p]
 
-            // Converts {jquery: '1.7.2'} to {jquery: 'jquery/1.7.2/jquery'}
-            if (/^\d+\.\d+\.\d+$/.test(currValue)) {
-              currValue = p + '/' + currValue + '/' + p
-            }
-
             checkAliasConflict(prevValue, currValue, p)
             previous[p] = currValue
-
           }
         }
       }
@@ -1335,21 +1307,6 @@ seajs._config = {
       config.base = util.id2Uri((util.isRoot(base) ? '' : './') + base + '/')
     }
 
-    // Uses map to implement nocache.
-    if (config.debug === 2) {
-      config.debug = 1
-      seajs.config({
-        map: [
-          [/^.*$/, function(url) {
-            if (url.indexOf(noCachePrefix) === -1) {
-              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
-            }
-            return url
-          }]
-        ]
-      })
-    }
-
     debugSync()
 
     return this
@@ -1362,24 +1319,6 @@ seajs._config = {
   }
 
   debugSync()
-
-
-  function getLoaderActualSrc(src) {
-    if (src.indexOf('??') === -1) {
-      return src
-    }
-
-    // Such as: http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js
-    // Only support nginx combo style rule. If you use other combo rule, please
-    // explicitly config the base path and the alias for plugins.
-    var parts = src.split('??')
-    var root = parts[0]
-    var paths = util.filter(parts[1].split(','), function(str) {
-      return str.indexOf('sea.js') !== -1
-    })
-
-    return root + paths[0]
-  }
 
   function checkAliasConflict(previous, current, key) {
     if (previous && previous !== current) {

@@ -1,9 +1,19 @@
 
 var debugInitialValue = seajs.debug;
 
+var noCachePrefix = 'seajs-ts='
+var noCacheTimeStamp = noCachePrefix + new Date().getTime()
 
 seajs.config({
-  debug: 2
+  debug: true,
+  map: [
+    [/^.*$/, function(url) {
+      if (url.indexOf(noCachePrefix) === -1) {
+        url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
+      }
+      return url
+    }]
+  ]
 });
 
 

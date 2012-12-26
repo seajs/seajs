@@ -1,7 +1,8 @@
-define(function(require, exports) {
+define(function() {
 
-  var lang = require('i18n!lang')
+  function Calendar(config) {
+    this.msg = config.lang.msg
+  }
 
-  exports.msg = lang.msg
-
+  return Calendar
 })

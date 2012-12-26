@@ -108,10 +108,5 @@
     return keys(o)
   }
 
-
-  util.now = Date.now || function() {
-    return new Date().getTime()
-  }
-
 })(seajs._util)
 
