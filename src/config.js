@@ -32,6 +32,9 @@
    * The function to configure the framework
    * config({
    *   'base': 'path/to/base',
+   *   'vars': {
+   *     'locale': 'zh-cn'
+   *   },
    *   'alias': {
    *     'app': 'biz/xx',
    *     'jquery': 'jquery-1.5.2',
@@ -53,7 +56,7 @@
       var previous = config[k]
       var current = o[k]
 
-      if (previous && k === 'alias') {
+      if (previous && (k === 'alias' || k === 'vars')) {
         for (var p in current) {
           if (current.hasOwnProperty(p)) {
             var prevValue = previous[p]

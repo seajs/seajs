@@ -7,6 +7,7 @@
   var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
   var FILE_EXT_RE = /\.(?:css|js)$/
   var ROOT_RE = /^(.*?\w)(?:\/|$)/
+  var VARS_RE = /\{\{([^{}]+)\}\}/g
 
 
   /**
@@ -86,6 +87,22 @@
     }
 
     return uri
+  }
+
+
+  /**
+   * Parses {{xxx}} in the module id.
+   */
+  function parseVars(id) {
+    if (id.indexOf('{') === -1) {
+      return id
+    }
+
+    var vars = config.vars
+
+    return id.replace(VARS_RE, function(m, key) {
+      return vars.hasOwnProperty(key) ? vars[key] : ''
+    })
   }
 
 
@@ -170,7 +187,7 @@
   function id2Uri(id, refUri) {
     if (!id) return ''
 
-    id = parseAlias(id)
+    id = parseAlias(parseVars(id))
     refUri || (refUri = pageUri)
 
     var ret
@@ -247,6 +264,7 @@
   util.realpath = realpath
   util.normalize = normalize
 
+  util.parseVars = parseVars
   util.parseAlias = parseAlias
   util.parseMap = parseMap
   util.unParseMap = unParseMap

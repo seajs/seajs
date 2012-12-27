@@ -6,7 +6,10 @@
 <title>Issue Test</title>
 </head>
 <body>
-<p><a href="https://github.com/seajs/seajs/issues/293">#293</a></p>
+<p>
+  <a href="https://github.com/seajs/seajs/issues/293">#293</a>
+  <a href="https://github.com/seajs/seajs/issues/490">#490</a>
+</p>
 <div id="out"></div>
 
 <script src="../../../dist/sea.js"></script>
@@ -14,10 +17,12 @@
 
 
   seajs.config({
-    locale: 'zh-cn'
+    vars: {
+      locale: 'zh-cn'
+    }
   })
 
-  seajs.use(['seajs/plugin-i18n', './main'])
+  seajs.use(['./main'])
 
 
   function printResults(txt, style) {

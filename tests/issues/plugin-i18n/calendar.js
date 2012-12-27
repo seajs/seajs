@@ -1,7 +1,9 @@
-define(function() {
+define(function(require) {
 
-  function Calendar(config) {
-    this.msg = config.lang.msg
+  var lang = require('./i18n/{{locale}}.js')
+
+  function Calendar() {
+    this.msg = lang.msg
   }
 
   return Calendar
