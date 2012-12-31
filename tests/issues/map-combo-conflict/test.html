@@ -33,12 +33,12 @@
   seajs.use('../../test', function(test) {
     seajs.use(['./a', './c'], function(a, c) {
 
-      test.assert(a.name = 'b', a.name)
+      test.assert(a === null, a)
       test.assert(c.name = 'c', c.name)
       test.assert(g_error === false, g_error)
 
       seajs.use(['./a', './d', './e', './f'], function(a, d, e, f) {
-        test.assert(a.name === 'b', a.name)
+        test.assert(a === null, a)
         test.assert(d.name === 'd', d.name)
         test.assert(e.name === 'e', e.name)
 

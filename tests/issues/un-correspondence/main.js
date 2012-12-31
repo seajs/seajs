@@ -11,7 +11,9 @@ define(function(require) {
 
   // use case
   require.async('./b', function(b) {
-    test.assert(b.name === 'b', b.name)
+//    test.assert(b.name === 'b', b.name)
+    test.assert(b === null, b)
+
     test.done()
   })
 

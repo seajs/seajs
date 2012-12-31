@@ -1,1 +1,1 @@
-define('#a-debug', { name: 'a-debug' })
+define('#a', { name: 'a-debug' })

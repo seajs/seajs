@@ -1,25 +1,24 @@
 
 ;(function() {
 
-  var MODULES_PATH = 'https://a.alipayobjects.com/static/arale/'
+  var baseUri = seajs.pluginSDK.config.base
+  var GALLERY_ROOT = 'https://a.alipayobjects.com/gallery/'
 
   // Ref: https://github.com/miohtama/detectmobile.js
   var isMobile = Math.max(screen.availWidth || screen.availHeight) <= 480
 
 
-  function root(path) {
-    return MODULES_PATH + path
-  }
-
-
   var hash = {
-    '$': root(isMobile ? 'zepto/0.8.0/zepto.js' : 'jquery/1.7.2/jquery.js'),
-    'coffee': root('coffee/1.3.3/coffee-script.js'),
-    'less': root('less/1.3.0/less.js')
+    '$': isMobile ? 'gallery/zepto/1.0.0/zepto' : 'gallery/jquery/1.7.2/jquery',
+    'coffee': 'gallery/coffee/1.4.0/coffee-script',
+    'less': 'gallery/less/1.3.1/less'
   }
 
   seajs.config({
-    alias: hash
+    alias: hash,
+    map: [
+        [baseUri + 'gallery/', GALLERY_ROOT]
+    ]
   })
 
 

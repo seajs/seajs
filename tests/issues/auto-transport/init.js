@@ -2,11 +2,10 @@
 // 配置别名和预加载项
 seajs.config({
   alias: {
-    'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery.js',
-    //'cookie': 'https://raw.github.com/carhartl/jquery-cookie/master/jquery.cookie.js'
+    'jquery': './jquery.js',
     'cookie': './jquery.cookie.js'
   },
-  preload: ["jquery"]
+  preload: ['jquery']
 })
 
 
