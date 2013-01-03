@@ -274,7 +274,7 @@
   var fetchedList = {}
   var callbackList = {}
   var anonymousModuleMeta = null
-  var circularCheckStack = []
+  var circularStack = []
 
   function resolve(ids, refUri) {
     if (util.isString(ids)) {
@@ -381,14 +381,15 @@
     var uri = mod.uri
 
     return util.filter(mod.dependencies, function(dep) {
-      circularCheckStack = [uri]
+      circularStack.push(uri)
 
       var isCircular = isCircularWaiting(cachedModules[dep])
       if (isCircular) {
-        circularCheckStack.push(uri)
-        printCircularLog(circularCheckStack)
+        circularStack.push(uri)
+        printCircularLog(circularStack)
       }
 
+      circularStack.pop()
       return !isCircular
     })
   }
@@ -398,11 +399,11 @@
       return false
     }
 
-    circularCheckStack.push(mod.uri)
+    circularStack.push(mod.uri)
     var deps = mod.dependencies
 
     if (deps.length) {
-      if (isOverlap(deps, circularCheckStack)) {
+      if (isOverlap(deps, circularStack)) {
         return true
       }
 
@@ -413,7 +414,7 @@
       }
     }
 
-    circularCheckStack.pop()
+    circularStack.pop()
     return false
   }
 
