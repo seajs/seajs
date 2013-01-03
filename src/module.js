@@ -8,12 +8,11 @@
   var compileStack = []
 
   var STATUS = {
-    'FETCHING': 1,  // The module file is fetching now.
-    'FETCHED': 2,   // The module file has been fetched.
-    'SAVED': 3,     // The module info has been saved.
-    'READY': 4,     // All dependencies and self are ready to compile.
-    'COMPILING': 5, // The module is in compiling now.
-    'COMPILED': 6   // The module is compiled and module.exports is available.
+    'LOADING': 1,   // The module file is loading.
+    'SAVED': 2,     // The module has been saved to cachedModules.
+    'READY': 3,     // The module and all its dependencies are ready to compile.
+    'COMPILING': 4, // The module is being compiled.
+    'COMPILED': 5   // The module is compiled and module.exports is available.
   }
 
 
@@ -66,9 +65,9 @@
     for (var i = 0; i < length; i++) {
       (function(uri) {
         var mod = cachedModules[uri] ||
-            (cachedModules[uri] = new Module(uri, STATUS.FETCHING))
+            (cachedModules[uri] = new Module(uri, STATUS.LOADING))
 
-        mod.status >= STATUS.FETCHED ? onFetched() : fetch(uri, onFetched)
+        mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
 
         function onFetched() {
           // cachedModules[uri] is changed in un-correspondence case
@@ -310,12 +309,6 @@
         function() {
           fetchedList[requestUri] = true
           delete fetchingList[requestUri]
-
-          // Updates module status
-          var mod = cachedModules[uri]
-          if (mod.status === STATUS.FETCHING) {
-            mod.status = STATUS.FETCHED
-          }
 
           // Saves anonymous module
           if (anonymousModuleMeta) {
