@@ -734,7 +734,7 @@ seajs._config = {
   var STATUS = {
     'LOADING': 1,   // The module file is loading.
     'SAVED': 2,     // The module has been saved to cachedModules.
-    'READY': 3,     // The module and all its dependencies are ready to compile.
+    'LOADED': 3,    // The module and all its dependencies are ready to compile.
     'COMPILING': 4, // The module is being compiled.
     'COMPILED': 5   // The module is compiled and module.exports is available.
   }
@@ -775,7 +775,7 @@ seajs._config = {
   Module.prototype._load = function(uris, callback) {
     var unLoadedUris = util.filter(uris, function(uri) {
       return uri && (!cachedModules[uri] ||
-          cachedModules[uri].status < STATUS.READY)
+          cachedModules[uri].status < STATUS.LOADED)
     })
 
     var length = unLoadedUris.length
@@ -794,25 +794,21 @@ seajs._config = {
         mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
 
         function onFetched() {
-          // cachedModules[uri] is changed in un-correspondence case
-          mod = cachedModules[uri]
-
-          if (mod.status >= STATUS.SAVED) {
-            var deps = getPureDependencies(mod)
-
-            if (deps.length) {
-              Module.prototype._load(deps, function() {
-                cb(mod)
-              })
-            }
-            else {
-              cb(mod)
-            }
-          }
           // Maybe failed to fetch successfully, such as 404 or non-module.
           // In these cases, just call cb function directly.
+          if (mod.status < STATUS.SAVED) {
+            return cb()
+          }
+
+          var deps = getPureDependencies(mod)
+
+          if (deps.length) {
+            Module.prototype._load(deps, function() {
+              cb(mod)
+            })
+          }
           else {
-            cb()
+            cb(mod)
           }
         }
 
@@ -820,7 +816,7 @@ seajs._config = {
     }
 
     function cb(mod) {
-      (mod || {}).status < STATUS.READY && (mod.status = STATUS.READY)
+      (mod || {}).status < STATUS.LOADED && (mod.status = STATUS.LOADED)
       --remain === 0 && callback()
     }
   }
@@ -998,7 +994,7 @@ seajs._config = {
   var fetchedList = {}
   var callbackList = {}
   var anonymousModuleMeta = null
-  var circularCheckStack = []
+  var circularStack = []
 
   function resolve(ids, refUri) {
     if (util.isString(ids)) {
@@ -1105,14 +1101,15 @@ seajs._config = {
     var uri = mod.uri
 
     return util.filter(mod.dependencies, function(dep) {
-      circularCheckStack = [uri]
+      circularStack.push(uri)
 
       var isCircular = isCircularWaiting(cachedModules[dep])
       if (isCircular) {
-        circularCheckStack.push(uri)
-        printCircularLog(circularCheckStack)
+        circularStack.push(uri)
+        printCircularLog(circularStack)
       }
 
+      circularStack.pop()
       return !isCircular
     })
   }
@@ -1122,11 +1119,11 @@ seajs._config = {
       return false
     }
 
-    circularCheckStack.push(mod.uri)
+    circularStack.push(mod.uri)
     var deps = mod.dependencies
 
     if (deps.length) {
-      if (isOverlap(deps, circularCheckStack)) {
+      if (isOverlap(deps, circularStack)) {
         return true
       }
 
@@ -1137,7 +1134,7 @@ seajs._config = {
       }
     }
 
-    circularCheckStack.pop()
+    circularStack.pop()
     return false
   }
 

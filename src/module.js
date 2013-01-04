@@ -70,25 +70,21 @@
         mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
 
         function onFetched() {
-          // cachedModules[uri] is changed in un-correspondence case
-          mod = cachedModules[uri]
-
-          if (mod.status >= STATUS.SAVED) {
-            var deps = getPureDependencies(mod)
-
-            if (deps.length) {
-              Module.prototype._load(deps, function() {
-                cb(mod)
-              })
-            }
-            else {
-              cb(mod)
-            }
-          }
           // Maybe failed to fetch successfully, such as 404 or non-module.
           // In these cases, just call cb function directly.
+          if (mod.status < STATUS.SAVED) {
+            return cb()
+          }
+
+          var deps = getPureDependencies(mod)
+
+          if (deps.length) {
+            Module.prototype._load(deps, function() {
+              cb(mod)
+            })
+          }
           else {
-            cb()
+            cb(mod)
           }
         }
 
