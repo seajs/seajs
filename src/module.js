@@ -10,7 +10,7 @@
   var STATUS = {
     'LOADING': 1,   // The module file is loading.
     'SAVED': 2,     // The module has been saved to cachedModules.
-    'READY': 3,     // The module and all its dependencies are ready to compile.
+    'LOADED': 3,    // The module and all its dependencies are ready to compile.
     'COMPILING': 4, // The module is being compiled.
     'COMPILED': 5   // The module is compiled and module.exports is available.
   }
@@ -51,7 +51,7 @@
   Module.prototype._load = function(uris, callback) {
     var unLoadedUris = util.filter(uris, function(uri) {
       return uri && (!cachedModules[uri] ||
-          cachedModules[uri].status < STATUS.READY)
+          cachedModules[uri].status < STATUS.LOADED)
     })
 
     var length = unLoadedUris.length
@@ -96,7 +96,7 @@
     }
 
     function cb(mod) {
-      (mod || {}).status < STATUS.READY && (mod.status = STATUS.READY)
+      (mod || {}).status < STATUS.LOADED && (mod.status = STATUS.LOADED)
       --remain === 0 && callback()
     }
   }
