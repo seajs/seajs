@@ -92,7 +92,7 @@
     }
 
     function cb(mod) {
-      (mod || {}).status < STATUS.LOADED && (mod.status = STATUS.LOADED)
+      mod && mod.status < STATUS.LOADED && (mod.status = STATUS.LOADED)
       --remain === 0 && callback()
     }
   }
