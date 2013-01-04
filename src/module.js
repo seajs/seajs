@@ -19,13 +19,6 @@
   function Module(uri, status) {
     this.uri = uri
     this.status = status || 0
-
-    // this.id is set when saving
-    // this.dependencies is set when saving
-    // this.factory is set when saving
-    // this.exports is set when compiling
-    // this.parent is set when compiling
-    // this.require is set when compiling
   }
 
 
