@@ -62,6 +62,7 @@ define(function(require, exports, module) {
   test.assert(module instanceof Module, 'module')
   test.assert(util.isString(module.id), 'module.id')
   test.assert(util.isArray(module.dependencies), 'module.dependencies')
+  test.assert(util.isArray(module.waitings), 'module.waitings')
   test.assert(util.isFunction(module.factory), 'module.factory')
   test.assert(util.isObject(module.exports), 'module.exports')
   test.assert(module.parent instanceof Module, 'module.parent')
@@ -69,7 +70,7 @@ define(function(require, exports, module) {
   test.assert(module.status === Module.STATUS.COMPILING, 'module.status')
   test.assert(util.isObject(module.exports), 'module.exports')
   test.assert(util.isFunction(module.require), 'module.require')
-  test.assert(getOwnPropertyCount(module) === 8, getOwnPropertyCount(module))
+  test.assert(getOwnPropertyCount(module) === 9, getOwnPropertyCount(module))
 
 
   test.done()

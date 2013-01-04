@@ -18,7 +18,9 @@
 
   function Module(uri, status) {
     this.uri = uri
-    this.status = status || 0
+    this.status = status || STATUS.LOADING
+    this.dependencies = []
+    this.waitings = []
   }
 
 
@@ -41,13 +43,11 @@
   }
 
 
-  Module.prototype._load = function(uris, callback) {
-    var unLoadedUris = util.filter(uris, function(uri) {
-      return uri && (!cachedModules[uri] ||
-          cachedModules[uri].status < STATUS.LOADED)
-    })
+  Module.prototype._load = function(uris, callback, options) {
+    options = options || {}
+    var unloadedUris = options.filtered ? uris : getUnloadedUris(uris)
+    var length = unloadedUris.length
 
-    var length = unLoadedUris.length
     if (length === 0) {
       callback()
       return
@@ -57,9 +57,7 @@
 
     for (var i = 0; i < length; i++) {
       (function(uri) {
-        var mod = cachedModules[uri] ||
-            (cachedModules[uri] = new Module(uri, STATUS.LOADING))
-
+        var mod = getModule(uri)
         mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
 
         function onFetched() {
@@ -69,23 +67,30 @@
             return cb()
           }
 
-          var deps = getPureDependencies(mod)
-
-          if (deps.length) {
-            Module.prototype._load(deps, function() {
-              cb(mod)
-            })
-          }
-          else {
+          // Breaks circular waiting callbacks.
+          if (isCircularWaiting(mod)) {
+            printCircularLog(circularStack)
+            circularStack.length = 0
             cb(mod)
           }
+
+          var waitings = mod.waitings = getUnloadedUris(mod.dependencies)
+          if (waitings.length === 0) {
+            return cb(mod)
+          }
+
+          Module.prototype._load(waitings, function() {
+            cb(mod)
+          }, { filtered: true })
         }
 
-      })(unLoadedUris[i])
+      })(unloadedUris[i])
     }
 
     function cb(mod) {
-      mod && mod.status < STATUS.LOADED && (mod.status = STATUS.LOADED)
+      if (mod && mod.status < STATUS.LOADED) {
+        mod.status = STATUS.LOADED
+      }
       --remain === 0 && callback()
     }
   }
@@ -265,6 +270,11 @@
   var anonymousModuleMeta = null
   var circularStack = []
 
+  function getModule(uri, status) {
+    return cachedModules[uri] ||
+        (cachedModules[uri] = new Module(uri, status))
+  }
+
   function resolve(ids, refUri) {
     if (util.isString(ids)) {
       return Module._resolve(ids, refUri)
@@ -366,40 +376,26 @@
     }
   }
 
-  function getPureDependencies(mod) {
-    var uri = mod.uri
-
-    return util.filter(mod.dependencies, function(dep) {
-      circularStack.push(uri)
-
-      var isCircular = isCircularWaiting(cachedModules[dep])
-      if (isCircular) {
-        circularStack.push(uri)
-        printCircularLog(circularStack)
-      }
-
-      circularStack.pop()
-      return !isCircular
+  function getUnloadedUris(uris) {
+    return util.filter(uris, function(uri) {
+      return !cachedModules[uri] || cachedModules[uri].status < STATUS.LOADED
     })
   }
 
   function isCircularWaiting(mod) {
-    if (!mod || mod.status !== STATUS.SAVED) {
+    var waitings = mod.waitings
+    if (waitings.length === 0) {
       return false
     }
 
     circularStack.push(mod.uri)
-    var deps = mod.dependencies
+    if (isOverlap(waitings, circularStack)) {
+      return true
+    }
 
-    if (deps.length) {
-      if (isOverlap(deps, circularStack)) {
+    for (var i = 0; i < waitings.length; i++) {
+      if (isCircularWaiting(cachedModules[waitings[i]])) {
         return true
-      }
-
-      for (var i = 0; i < deps.length; i++) {
-        if (isCircularWaiting(cachedModules[deps[i]])) {
-          return true
-        }
       }
     }
 
@@ -407,8 +403,9 @@
     return false
   }
 
-  function printCircularLog(stack, type) {
-    util.log('Found circular dependencies:', stack.join(' --> '), type)
+  function printCircularLog(stack) {
+    stack.push(stack[0])
+    util.log('Found circular dependencies:', stack.join(' --> '))
   }
 
   function isOverlap(arrA, arrB) {
