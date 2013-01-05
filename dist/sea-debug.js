@@ -1030,8 +1030,8 @@ seajs._config = {
         requestUri,
 
         function() {
-          fetchedList[requestUri] = true
           delete fetchingList[requestUri]
+          fetchedList[requestUri] = true
 
           // Saves anonymous module
           if (anonymousModuleMeta) {
@@ -1040,14 +1040,9 @@ seajs._config = {
           }
 
           // Calls callbacks
-          var fns = callbackList[requestUri]
-          if (fns) {
-            delete callbackList[requestUri]
-            util.forEach(fns, function(fn) {
-              fn()
-            })
-          }
-
+          var fn, fns = callbackList[requestUri]
+          delete callbackList[requestUri]
+          while ((fn = fns.shift())) fn()
         },
 
         config.charset
