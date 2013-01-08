@@ -1,20 +1,31 @@
 
-var debugInitialValue = seajs.debug;
+var debugInitialValue = seajs.debug
+
+seajs.config({
+  debug: true
+})
+
 
 var noCachePrefix = 'seajs-ts='
 var noCacheTimeStamp = noCachePrefix + new Date().getTime()
 
-seajs.config({
-  debug: true,
-  map: [
-    [/^.*$/, function(url) {
-      if (url.indexOf(noCachePrefix) === -1) {
-        url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
-      }
-      return url
-    }]
-  ]
-});
+// 在 fetch 时加时间戳
+seajs.on('fetch', function(data) {
+  var url = data.uri
+  if (url.indexOf(noCachePrefix) === -1) {
+    url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
+  }
+  data.uri = url
+})
+
+// 在自动获取到 uri 时去掉时间戳
+seajs.on('derived', function(data) {
+  var url = data.uri
+  if (url.indexOf(noCachePrefix) !== -1) {
+    url = url.replace(noCachePrefix + noCacheTimeStamp, '')
+  }
+  data.uri = url
+})
 
 
 define(function(require) {
