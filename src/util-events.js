@@ -74,11 +74,11 @@
   }
 
 
-  // For handy use.
+  // Emits event and gets the modified data.
   seajs.emitData = function(event, argName, argValue) {
     var data = {}
     data[argName] = argValue
-    seajs.emit(event, data)
+    this.emit(event, data)
     return data[argName]
   }
 
