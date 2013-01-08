@@ -53,8 +53,10 @@
       return
     }
 
-    var remain = length
+    // Emits load event.
+    seajs.emit('load', unloadedUris)
 
+    var remain = length
     for (var i = 0; i < length; i++) {
       (function(uri) {
         var mod = getModule(uri)
@@ -195,6 +197,7 @@
 
       if (script && script.src) {
         derivedUri = util.getScriptAbsoluteSrc(script)
+        derivedUri = seajs.emitData('derived', 'uri', derivedUri)
       }
       else {
         util.log('Failed to derive URI from interactive script for:',
@@ -286,26 +289,30 @@
   }
 
   function fetch(uri, callback) {
-    if (fetchedList[uri]) {
+    // Emits `fetch` event, firing all bound callbacks, and gets
+    // the modified uri.
+    var requestUri = seajs.emitData('fetch', 'uri', uri)
+
+    if (fetchedList[requestUri]) {
       callback()
       return
     }
 
-    if (fetchingList[uri]) {
-      callbackList[uri].push(callback)
+    if (fetchingList[requestUri]) {
+      callbackList[requestUri].push(callback)
       return
     }
 
-    fetchingList[uri] = true
-    callbackList[uri] = [callback]
+    fetchingList[requestUri] = true
+    callbackList[requestUri] = [callback]
 
     // Fetches it
     Module._fetch(
-        uri,
+        requestUri,
 
         function() {
-          delete fetchingList[uri]
-          fetchedList[uri] = true
+          delete fetchingList[requestUri]
+          fetchedList[requestUri] = true
 
           // Saves anonymous module
           if (anonymousModuleMeta) {
@@ -314,8 +321,8 @@
           }
 
           // Calls callbacks
-          var fn, fns = callbackList[uri]
-          delete callbackList[uri]
+          var fn, fns = callbackList[requestUri]
+          delete callbackList[requestUri]
           while ((fn = fns.shift())) fn()
         },
 
