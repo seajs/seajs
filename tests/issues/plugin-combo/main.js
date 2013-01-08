@@ -26,23 +26,19 @@ define(function(require) {
   test.assert(paths[0][1][2] === 'c/e.js', paths[0][1][2])
 
 
-  // map = [ fn ]
-  // the `fn` can convert:
+  // hash:
   //   'http://example.com/p/a.js' ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
   //   'http://example.com/p/c/d.js' ==>'http://example.com/p/??a.js,c/d.js,c/e.js'
   //   'http://example.com/p/c/e.js' ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
   //
-  var map = util.toComboMap(paths)
-  //console.dir(map)
+  util.toComboHash(paths)
+  var hash = util.comboHash
+  console.dir(hash)
 
-  test.assert(map.length === 1, map.length)
-  test.assert(typeof map[0] === 'function', typeof map[0])
-
-  var fn = map[0]
   var comboPath = 'http://example.com/p/??a.js,c/d.js,c/e.js'
-  test.assert(fn('http://example.com/p/a.js') === comboPath, fn('http://example.com/p/a.js'))
-  test.assert(fn('http://example.com/p/c/d.js') === comboPath, fn('http://example.com/p/c/d.js'))
-  test.assert(fn('http://example.com/p/c/e.js') === comboPath, fn('http://example.com/p/c/e.js'))
+  test.assert(hash['http://example.com/p/a.js'] === comboPath, hash['http://example.com/p/a.js'])
+  test.assert(hash['http://example.com/p/c/d.js'] === comboPath, hash['http://example.com/p/c/d.js'])
+  test.assert(hash['http://example.com/p/c/e.js'] === comboPath, hash['http://example.com/p/c/e.js'])
 
 
   // test seajs.use
