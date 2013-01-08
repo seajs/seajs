@@ -17,12 +17,10 @@
 
 <script>
 
-  seajs.config({
-    map: [
-      [/.*(?:a|b)\.js.*/, './combo.js']
-    ]
-  });
-
+  seajs.on('fetch', function(data) {
+    var url = data.uri
+    data.uri = url.replace(/.*(?:a|b)\.js.*/, './combo.js')
+  })
 
   seajs.use(['../../test', 'a', 'b'], function(test, a, b) {
 
