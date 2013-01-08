@@ -13,13 +13,11 @@
 
 <script>
 
-  seajs.config({
-    map: [
-        ['a.js', 'combo.js'],
-        ['b.js', 'combo.js'],
-        ['c.js', 'combo.js']
-    ]
+  seajs.on('fetch', function(data) {
+    var url = data.uri
+    data.uri = url.replace(/\/(a|b|c)\.js/, '/combo.js')
   })
+
 
   seajs.use('./main')
 
