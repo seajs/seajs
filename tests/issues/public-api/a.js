@@ -20,7 +20,8 @@ define(function(require, exports, module) {
   test.assert(seajs.on, 'seajs.on')
   test.assert(seajs.emit, 'seajs.emit')
   test.assert(seajs.off, 'seajs.off')
-  test.assert(getOwnPropertyCount(seajs) === 13, getOwnPropertyCount(seajs))
+  test.assert(seajs.emitData, 'seajs.emitData')
+  test.assert(getOwnPropertyCount(seajs) === 14, getOwnPropertyCount(seajs))
 
   // seajs.pluginSDK
   var pluginSDK = seajs.pluginSDK

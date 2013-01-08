@@ -3,7 +3,7 @@ define(function(require, exports, module) {
   exports.name = 'a';
 
   var test = require('../../test');
-  test.assert(/a\.js$/.test(module.id), module.id);
+  test.assert(/a\.js\?1\?2\?3$/.test(module.id), module.id);
 
 
   var scripts = document.getElementsByTagName('script');

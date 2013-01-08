@@ -23,11 +23,12 @@
   var g_error = false
 
   seajs.config({
-    map: [
-      ['a.js', 'b.js'],
-      ['f.js', 'f.js+f2.js']
-    ],
     comboSyntax: ['', '+']
+  })
+
+  seajs.on('fetch', function(data) {
+    var url = data.uri
+    data.uri = url.replace('a.js', 'b.js').replace('f.js', 'f.js+f2.js')
   })
 
   seajs.use('../../test', function(test) {
@@ -37,12 +38,16 @@
       test.assert(c.name = 'c', c.name)
       test.assert(g_error === false, g_error)
 
-      seajs.use(['./a', './d', './e', './f'], function(a, d, e, f) {
+      seajs.use(['./a', './d', './e'], function(a, d, e) {
         test.assert(a === null, a)
         test.assert(d.name === 'd', d.name)
         test.assert(e.name === 'e', e.name)
 
-        test.done()
+        seajs.use('./f', function(f) {
+          test.assert(f.name === 'f', f.name)
+          test.done()
+        })
+
       })
     })
   })
