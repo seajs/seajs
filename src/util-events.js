@@ -73,5 +73,15 @@
     return this
   }
 
+
+  // For handy use.
+  seajs.emitData = function(event, argName, argValue) {
+    var data = {}
+    data[argName] = argValue
+    seajs.emit(event, data)
+    return data[argName]
+  }
+
+
 })(seajs, seajs._util)
 
