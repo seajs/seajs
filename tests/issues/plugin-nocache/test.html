@@ -12,7 +12,12 @@
 
 <script>
 
-  seajs.use('./main');
+  seajs.config({
+    preload: ['seajs/plugin-nocache']
+  })
+
+  seajs.use('./main')
+
 
   function printResults(txt, style) {
     var d = document.createElement('div');

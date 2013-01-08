@@ -166,7 +166,7 @@
     }
 
     if (ret !== uri) {
-      mapCache[ret] = uri
+      //mapCache[ret] = uri
     }
 
     return ret
@@ -213,7 +213,7 @@
       ret = config.base + '/' + id
     }
 
-    return normalize(ret)
+    return parseMap(normalize(ret))
   }
 
 
