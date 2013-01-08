@@ -3,11 +3,13 @@
  */
 
 seajs.config({
-  base: './assets/',
+  base: 'assets/',
   alias: {
-    'jquery': 'https://a.alipayobjects.com/static/arale/jquery/1.7.2/jquery.js'
+    'jquery': 'https://a.alipayobjects.com/gallery/jquery/1.8.2/jquery.js',
+    'gallery': 'https://a.alipayobjects.com/gallery'
   }
 })
+
 
 define('home', [], function(require) {
 
