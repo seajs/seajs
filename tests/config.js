@@ -102,7 +102,6 @@
     ,'issues/require-async'
     ,'issues/seajs-cache'
     ,'issues/seajs-find'
-    ,'issues/seajs-importStyle'
     ,'issues/seajs-log'
     ,'issues/seajs-map'
     ,'issues/seajs-modify'

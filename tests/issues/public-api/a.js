@@ -14,14 +14,14 @@ define(function(require, exports, module) {
   test.assert(seajs.log, 'seajs.log')
   test.assert(seajs.cache, 'seajs.cache')
   test.assert(seajs.find, 'seajs.find')
-  test.assert(seajs.importStyle, 'seajs.importStyle')
+  //test.assert(seajs.importStyle, 'seajs.importStyle')
   test.assert(/\d\.\d\.\d/.test(seajs.version), seajs.version)
   test.assert(seajs.pluginSDK, 'pluginSDK')
   test.assert(seajs.on, 'seajs.on')
   test.assert(seajs.emit, 'seajs.emit')
   test.assert(seajs.off, 'seajs.off')
   test.assert(seajs.emitData, 'seajs.emitData')
-  test.assert(getOwnPropertyCount(seajs) === 14, getOwnPropertyCount(seajs))
+  test.assert(getOwnPropertyCount(seajs) === 13, getOwnPropertyCount(seajs))
 
   // seajs.pluginSDK
   var pluginSDK = seajs.pluginSDK

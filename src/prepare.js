@@ -7,10 +7,6 @@
   seajs.log = util.log
 
 
-  // Creates a stylesheet from a text blob of rules.
-  seajs.importStyle = util.importStyle
-
-
   // Sets a alias to `sea.js` directory for loading plugins.
   seajs.config({
     alias: { seajs: util.loaderDir }

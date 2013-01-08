@@ -173,31 +173,6 @@
   }
 
 
-  util.importStyle = function(cssText, id) {
-    // Don't add multi times
-    if (id && doc.getElementById(id)) return
-
-    var element = doc.createElement('style')
-    id && (element.id = id)
-
-    // Adds to DOM first to avoid the css hack invalid
-    head.appendChild(element)
-
-    // IE
-    if (element.styleSheet) {
-      element.styleSheet.cssText = cssText
-    }
-    // W3C
-    else {
-      element.appendChild(doc.createTextNode(cssText))
-    }
-
-    // IE NOTICE:
-    // 31 limit: http://msdn.microsoft.com/en-us/library/ms531194(VS.85).aspx
-    // 4095 limit: http://www.blueidea.com/tech/web/2009/7003.asp
-  }
-
-
   var UA = navigator.userAgent
 
   // `onload` event is supported in WebKit since 535.23

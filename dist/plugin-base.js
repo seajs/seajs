@@ -78,7 +78,7 @@ define('seajs/plugin-base', [], function(require, exports) {
     var _fetch = Module._fetch
 
     Module._fetch = function(url, callback, charset) {
-      var pluginName = uriCache[util.unParseMap(url)]
+      var pluginName = uriCache[url]
 
       if (pluginName) {
         pluginsInfo[pluginName].fetch(url, callback, charset)

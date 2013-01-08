@@ -100,7 +100,7 @@ define('seajs/plugin-debug', [], function() {
     var div = document.createElement('div')
     div.innerHTML = html
 
-    seajs.importStyle(style)
+    importStyle(style)
     appendToBody(div)
 
     var buttons = div.getElementsByTagName('button')
@@ -173,6 +173,23 @@ define('seajs/plugin-debug', [], function() {
       setTimeout(function() {
         appendToBody(div)
       }, 200)
+    }
+  }
+
+
+  function importStyle(cssText) {
+    var element = document.createElement('style')
+
+    // Adds to DOM first to avoid the css hack invalid
+    document.getElementsByTagName('head')[0].appendChild(element)
+
+    // IE
+    if (element.styleSheet) {
+      element.styleSheet.cssText = cssText
+    }
+    // W3C
+    else {
+      element.appendChild(document.createTextNode(cssText))
     }
   }
 
