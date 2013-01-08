@@ -14,7 +14,8 @@
 })(function(require, exports) {
 
   exports.testCases = [
-    'unit/util'
+    'unit/events'
+    ,'unit/util'
 
     ,'modules/alias'
     ,'modules/config-map'
@@ -69,7 +70,7 @@
     ,'issues/load-deps'
     ,'issues/local-files'
     ,'issues/map'
-    //,'issues/map-bug'
+    ,'issues/map-bug'
     ,'issues/map-combo-conflict'
     ,'issues/methods-chain'
     ,'issues/module-extend'

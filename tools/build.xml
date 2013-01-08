@@ -33,6 +33,7 @@
       <path path="${src.dir}/sea.js"/>
 
       <path path="${src.dir}/util-lang.js"/>
+      <path path="${src.dir}/util-events.js"/>
       <path path="${src.dir}/util-log.js"/>
       <path path="${src.dir}/util-path.js"/>
       <path path="${src.dir}/util-fetch.js"/>
