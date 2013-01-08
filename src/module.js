@@ -194,7 +194,7 @@
       var script = util.getCurrentScript()
 
       if (script && script.src) {
-        derivedUri = util.unParseMap(util.getScriptAbsoluteSrc(script))
+        derivedUri = util.getScriptAbsoluteSrc(script)
       }
       else {
         util.log('Failed to derive URI from interactive script for:',
@@ -286,28 +286,26 @@
   }
 
   function fetch(uri, callback) {
-    var requestUri = util.parseMap(uri)
-
-    if (fetchedList[requestUri]) {
+    if (fetchedList[uri]) {
       callback()
       return
     }
 
-    if (fetchingList[requestUri]) {
-      callbackList[requestUri].push(callback)
+    if (fetchingList[uri]) {
+      callbackList[uri].push(callback)
       return
     }
 
-    fetchingList[requestUri] = true
-    callbackList[requestUri] = [callback]
+    fetchingList[uri] = true
+    callbackList[uri] = [callback]
 
     // Fetches it
     Module._fetch(
-        requestUri,
+        uri,
 
         function() {
-          delete fetchingList[requestUri]
-          fetchedList[requestUri] = true
+          delete fetchingList[uri]
+          fetchedList[uri] = true
 
           // Saves anonymous module
           if (anonymousModuleMeta) {
@@ -316,8 +314,8 @@
           }
 
           // Calls callbacks
-          var fn, fns = callbackList[requestUri]
-          delete callbackList[requestUri]
+          var fn, fns = callbackList[uri]
+          delete callbackList[uri]
           while ((fn = fns.shift())) fn()
         },
 
