@@ -415,8 +415,6 @@ seajs._config = {
   }
 
 
-  var mapCache = {}
-
   /**
    * Converts the uri according to the map rules.
    */
@@ -453,14 +451,6 @@ seajs._config = {
     }
 
     return ret
-  }
-
-
-  /**
-   * Gets the original uri.
-   */
-  function unParseMap(uri) {
-    return mapCache[uri] || uri
   }
 
 
@@ -550,7 +540,6 @@ seajs._config = {
   util.parseVars = parseVars
   util.parseAlias = parseAlias
   util.parseMap = parseMap
-  util.unParseMap = unParseMap
 
   util.id2Uri = id2Uri
   util.isAbsolute = isAbsolute
