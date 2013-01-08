@@ -4,62 +4,53 @@
 define('seajs/plugin-combo', [], function() {
 
   var pluginSDK = seajs.pluginSDK
+  var STATUS = pluginSDK.Module.STATUS
   var util = pluginSDK.util
   var config = pluginSDK.config
 
-
-  // Hacks load function to inject combo support
-  // -----------------------------------------------
-
-  var Module = pluginSDK.Module
+  var comboHash = {}
   var cachedModules = seajs.cache
 
 
-  function hackLoad() {
-    var MP = Module.prototype
-    var _load = MP._load
+  // Turns off combo in debug mode.
+  if (seajs.debug) {
+    seajs.log('Combo is turned off in debug mode')
+  }
+  // Adds combo support via events.
+  else {
+    seajs.on('load', function(uris) {
+      setComboHash(uris)
+    })
 
-    MP._load = function(uris, callback) {
-      setComboMap(uris)
-      _load.call(this, uris, callback)
-    }
+    seajs.on('fetch', function(data) {
+      var uri = data.uri
+      data.uri = comboHash[uri] || uri
+    })
   }
 
 
-  function setComboMap(uris) {
-    var unFetchingUris = []
+  function setComboHash(uris) {
+    var validUris = []
     var comboExcludes = config.comboExcludes
 
     util.forEach(uris, function(uri) {
-      var module = cachedModules[uri]
+      var mod = cachedModules[uri]
 
-      // Remove fetched or fetching uri
-      if ((!module || module.status < Module.STATUS.FETCHING) &&
-          (!comboExcludes || !comboExcludes.test(uri))) {
-
-        // Parse map before pushing
-        var requestUri = util.parseMap(uri)
-        !isComboUri(requestUri) && unFetchingUris.push(requestUri)
+      // Removes fetching uri, excluded uri and combo uri.
+      if ((!mod || mod.status < STATUS.LOADING) &&
+          (!comboExcludes || !comboExcludes.test(uri)) && !isComboUri(uri)) {
+        validUris.push(uri)
       }
-
     })
 
-    if (unFetchingUris.length > 1) {
-      seajs.config({ map: paths2map(uris2paths(unFetchingUris)) })
+    if (validUris.length > 1) {
+      paths2hash(uris2paths(validUris))
     }
   }
 
 
-  // No combo in debug mode
-  if (seajs.debug) {
-    seajs.log('Combo is turned off in debug mode')
-  } else {
-    hackLoad()
-  }
-
-
-  // Uses map to implement combo support
-  // -----------------------------------------------
+  // Helpers
+  // -------
 
   function uris2paths(uris) {
     return meta2paths(uris2meta(uris))
@@ -198,7 +189,7 @@ define('seajs/plugin-combo', [], function() {
   // ]
   // ==>
   //
-  // a map function to map
+  // a hash cache
   //
   // 'http://example.com/p/a.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
   // 'http://example.com/p/c/d.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
@@ -206,17 +197,14 @@ define('seajs/plugin-combo', [], function() {
   // 'http://example.com/p/a.css'  ==> 'http://example.com/p/??a.css,b.css'
   // 'http://example.com/p/b.css'  ==> 'http://example.com/p/??a.css,b.css'
   //
-  function paths2map(paths) {
+  function paths2hash(paths) {
     var comboSyntax = config.comboSyntax || ['??', ',']
-    var map = []
 
     util.forEach(paths, function(path) {
       var root = path[0] + '/'
       var group = files2group(path[1])
 
       util.forEach(group, function(files) {
-
-        var hash = {}
         var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
 
         // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
@@ -225,18 +213,11 @@ define('seajs/plugin-combo', [], function() {
         }
 
         util.forEach(files, function(part) {
-          hash[root + part] = comboPath
+          comboHash[root + part] = comboPath
         })
-
-        map.push(function(url) {
-          return hash[url] || url
-        })
-
       })
 
     })
-
-    return map
   }
 
 
@@ -283,7 +264,8 @@ define('seajs/plugin-combo', [], function() {
 
   // For test
   util.toComboPaths = uris2paths
-  util.toComboMap = paths2map
+  util.toComboHash = paths2hash
+  util.comboHash = comboHash
 
 })
 
