@@ -4,10 +4,9 @@
 
 seajs.config({
   base: 'assets/',
-  alias: {
-    'jquery': 'https://a.alipayobjects.com/gallery/jquery/1.8.2/jquery.js',
-    'gallery': 'https://a.alipayobjects.com/gallery'
-  }
+  map: [
+      [/^.*\/jquery\.js.*$/, 'https://a.alipayobjects.com/gallery/jquery/1.8.2/jquery.js']
+  ]
 })
 
 
