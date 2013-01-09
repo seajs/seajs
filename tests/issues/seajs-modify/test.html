@@ -24,20 +24,26 @@
 <script>
 
   // modify before `compile`
-  seajs.modify('./a', function(require, exports) {
-    exports.name = 'a'
+  seajs.on('compiled', function(mod) {
+    if (mod.uri.indexOf('a.js') > 0) {
+      mod.exports.name = 'a'
+    }
   })
 
   // multi modifiers
   seajs
-      .modify('./b', function(require, exports) {
-        exports.name = 'b'
-      })
-      .modify('./b', function(require, exports) {
-        exports.getName = function() {
-          return this.name
+      .on('compiled',function(mod) {
+        if (mod.uri.indexOf('b.js') > 0) {
+          mod.exports.name = 'b'
+        }
+      }).on('compiled', function(mod) {
+        if (mod.uri.indexOf('b.js') > 0) {
+          mod.exports.getName = function() {
+            return this.name
+          }
         }
       })
+
 
   seajs.use('./main')
 

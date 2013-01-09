@@ -10,14 +10,18 @@ seajs.config({
 
 
 // 将 jQuery 暴露到全局
-seajs.modify('jquery', function(require, exports) {
-  window.jQuery = window.$ = exports
+seajs.on('compiled', function(mod) {
+  if (mod.uri.indexOf('jquery.js') > -1) {
+    window.jQuery = window.$ = mod.exports
+  }
 })
 
 
 // 将 jQuery Cookie 插件自动包装成 CMD 接口
-seajs.modify('cookie', function(require, exports, module) {
-  module.exports = $.cookie
+seajs.on('compile', function(mod) {
+  if (mod.uri.indexOf('cookie.js') > -1) {
+    mod.exports = $.cookie
+  }
 })
 
 

@@ -5,11 +5,9 @@ define(function(require) {
   var b = require('./b')
 
   // modify after `compile`
-  seajs.modify('./a', function(require, exports) {
-    exports.getName = function() {
-      return this.name
-    }
-  })
+  a.getName = function() {
+    return this.name
+  }
 
   test.assert(a.name === 'a', a.name)
   test.assert(a.getName() === 'a', a.getName())

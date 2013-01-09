@@ -10,7 +10,7 @@ define(function(require, exports, module) {
   // seajs
   test.assert(seajs.config, 'seajs.config')
   test.assert(seajs.use, 'seajs.use')
-  test.assert(seajs.modify, 'seajs.modify')
+  //test.assert(seajs.modify, 'seajs.modify')
   test.assert(seajs.log, 'seajs.log')
   test.assert(seajs.cache, 'seajs.cache')
   test.assert(seajs.find, 'seajs.find')
@@ -21,7 +21,7 @@ define(function(require, exports, module) {
   test.assert(seajs.emit, 'seajs.emit')
   test.assert(seajs.off, 'seajs.off')
   test.assert(seajs.emitData, 'seajs.emitData')
-  test.assert(getOwnPropertyCount(seajs) === 13, getOwnPropertyCount(seajs))
+  test.assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
 
   // seajs.pluginSDK
   var pluginSDK = seajs.pluginSDK
@@ -38,9 +38,10 @@ define(function(require, exports, module) {
   test.assert(Module._fetch, 'Module._fetch')
   test.assert(Module._define, 'Module._define')
   //test.assert(Module._getCompilingModule, 'Module._getCompilingModule')
+  test.assert(Module.compilingStack, 'Module.compilingStack')
   test.assert(Module.cache, 'Module.cache')
   test.assert(Module._find, 'Module._find')
-  test.assert(Module._modify, 'Module._modify')
+  //test.assert(Module._modify, 'Module._modify')
   test.assert(Module.fetchedList, 'Module.fetchedList')
   test.assert(Module._save, 'Module._save')
   test.assert(getOwnPropertyCount(Module) === 9, getOwnPropertyCount(Module))

@@ -4,7 +4,6 @@
 ;(function(seajs, util, config) {
 
   var cachedModules = {}
-  var cachedModifiers = {}
   var compilingStack = []
 
   var STATUS = {
@@ -104,14 +103,17 @@
       return mod.exports
     }
 
+    seajs.emit('compile', mod)
+
     // Just return null when:
     //  1. the module file is 404.
     //  2. the module file is not written with valid module format.
     //  3. other error cases.
-    if (mod.status < STATUS.SAVED && !hasModifiers(mod)) {
+    if (mod.status < STATUS.SAVED && !mod.exports) {
       return null
     }
 
+    compilingStack.push(mod)
     mod.status = STATUS.COMPILING
 
 
@@ -145,20 +147,22 @@
 
 
     mod.require = require
-    mod.exports = {}
+    mod.exports = mod.exports || {}
     var factory = mod.factory
+    var ret = factory
 
     if (util.isFunction(factory)) {
-      compilingStack.push(mod)
-      runInModuleContext(factory, mod)
-      compilingStack.pop()
+      ret = factory(mod.require, mod.exports, mod)
     }
-    else if (factory !== undefined) {
-      mod.exports = factory
+
+    if (ret !== undefined) {
+      mod.exports = ret
     }
 
     mod.status = STATUS.COMPILED
-    execModifiers(mod)
+    compilingStack.pop()
+
+    seajs.emit('compiled', mod)
     return mod.exports
   }
 
@@ -233,22 +237,6 @@
     })
 
     return matches
-  }
-
-
-  Module._modify = function(id, modifier) {
-    var uri = resolve(id)
-    var mod = cachedModules[uri]
-
-    if (mod && mod.status === STATUS.COMPILED) {
-      runInModuleContext(modifier, mod)
-    }
-    else {
-      cachedModifiers[uri] || (cachedModifiers[uri] = [])
-      cachedModifiers[uri].push(modifier)
-    }
-
-    return seajs
   }
 
 
@@ -347,30 +335,6 @@
     return mod
   }
 
-  function runInModuleContext(fn, mod) {
-    var ret = fn(mod.require, mod.exports, mod)
-    if (ret !== undefined) {
-      mod.exports = ret
-    }
-  }
-
-  function hasModifiers(mod) {
-    return !!cachedModifiers[mod.realUri || mod.uri]
-  }
-
-  function execModifiers(mod) {
-    var uri = mod.realUri || mod.uri
-    var modifiers = cachedModifiers[uri]
-
-    if (modifiers) {
-      util.forEach(modifiers, function(modifier) {
-        runInModuleContext(modifier, mod)
-      })
-
-      delete cachedModifiers[uri]
-    }
-  }
-
   function getUnloadedUris(uris) {
     return util.filter(uris, function(uri) {
       return !cachedModules[uri] || cachedModules[uri].status < STATUS.LOADED
@@ -435,12 +399,12 @@
   seajs.define = Module._define
   seajs.cache = Module.cache = cachedModules
   seajs.find = Module._find
-  seajs.modify = Module._modify
 
 
   // For plugin developers
   Module.fetchedList = fetchedList
   Module.compilingStack = compilingStack
+
   seajs.pluginSDK = {
     Module: Module,
     util: util,
