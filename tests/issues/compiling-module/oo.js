@@ -1,6 +1,7 @@
-define(function(require, exports, module) {
+define(function(require, exports, mod) {
 
-  var Module = module.constructor
+  var Module = mod.constructor
+  var compilingStack = Module.compilingStack
 
 
   exports.inherits = function(ctor, superCtor) {
@@ -8,7 +9,7 @@ define(function(require, exports, module) {
     ctor.prototype = createProto(superCtor.prototype)
 
     // Adds meta info
-    var compilingModule = Module._getCompilingModule()
+    var compilingModule = compilingStack[compilingStack.length - 1]
     var filename = compilingModule.uri.split(/[\/\\]/).pop()
 
     if (Object.defineProperties) {

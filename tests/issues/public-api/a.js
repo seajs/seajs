@@ -37,13 +37,13 @@ define(function(require, exports, module) {
   test.assert(Module._resolve, 'Module._resolve')
   test.assert(Module._fetch, 'Module._fetch')
   test.assert(Module._define, 'Module._define')
-  test.assert(Module._getCompilingModule, 'Module._getCompilingModule')
+  //test.assert(Module._getCompilingModule, 'Module._getCompilingModule')
   test.assert(Module.cache, 'Module.cache')
   test.assert(Module._find, 'Module._find')
   test.assert(Module._modify, 'Module._modify')
   test.assert(Module.fetchedList, 'Module.fetchedList')
   test.assert(Module._save, 'Module._save')
-  test.assert(getOwnPropertyCount(Module) === 10, getOwnPropertyCount(Module))
+  test.assert(getOwnPropertyCount(Module) === 9, getOwnPropertyCount(Module))
 
   // seajs.pluginSDK.Module.prototype
   var MP = Module.prototype

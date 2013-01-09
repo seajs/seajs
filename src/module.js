@@ -5,7 +5,7 @@
 
   var cachedModules = {}
   var cachedModifiers = {}
-  var compileStack = []
+  var compilingStack = []
 
   var STATUS = {
     'LOADING': 1,   // The module file is loading.
@@ -149,9 +149,9 @@
     var factory = mod.factory
 
     if (util.isFunction(factory)) {
-      compileStack.push(mod)
+      compilingStack.push(mod)
       runInModuleContext(factory, mod)
-      compileStack.pop()
+      compilingStack.pop()
     }
     else if (factory !== undefined) {
       mod.exports = factory
@@ -218,11 +218,6 @@
       anonymousModuleMeta = meta
     }
 
-  }
-
-
-  Module._getCompilingModule = function() {
-    return compileStack[compileStack.length - 1]
   }
 
 
@@ -445,6 +440,7 @@
 
   // For plugin developers
   Module.fetchedList = fetchedList
+  Module.compilingStack = compilingStack
   seajs.pluginSDK = {
     Module: Module,
     util: util,
