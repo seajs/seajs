@@ -290,7 +290,7 @@ seajs._config = {
   var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
   var FILE_EXT_RE = /\.(?:css|js)$/
   var ROOT_RE = /^(.*?\w)(?:\/|$)/
-  var VARS_RE = /\{\{([^{}]+)\}\}/g
+  var VARS_RE = /{([^{}]+)}/g
 
 
   /**
@@ -460,7 +460,7 @@ seajs._config = {
   function id2Uri(id, refUri) {
     if (!id) return ''
 
-    id = parseAlias(parseVars(id))
+    id = parseVars(parseAlias(id))
     refUri || (refUri = pageUri)
 
     var ret

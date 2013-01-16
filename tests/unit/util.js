@@ -54,10 +54,10 @@ define(function(require) {
       'zz': 'zz.js'
     }
   })
-  test.assert(util.parseVars('./i18n/{{locale}}.js') === './i18n/zh-cn.js', 'parseVars')
-  test.assert(util.parseVars('{{biz}}/js/x') === 'path/to/biz/js/x', 'parseVars')
-  test.assert(util.parseVars('/js/{{xx}}/c.js') === '/js/./xx/c.js', 'parseVars')
-  test.assert(util.parseVars('/js/{{xx}}/{{zz}}') === '/js/./xx/zz.js', 'parseVars')
+  test.assert(util.parseVars('./i18n/{locale}.js') === './i18n/zh-cn.js', 'parseVars')
+  test.assert(util.parseVars('{biz}/js/x') === 'path/to/biz/js/x', 'parseVars')
+  test.assert(util.parseVars('/js/{xx}/c.js') === '/js/./xx/c.js', 'parseVars')
+  test.assert(util.parseVars('/js/{xx}/{zz}') === '/js/./xx/zz.js', 'parseVars')
 
   // issues#302
   var t = 'http://XXX.com.cn/min/index.php?g=commonCss.css'
