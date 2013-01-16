@@ -1,7 +1,9 @@
 define(function(require) {
 
   var test = require('../test')
-  var util = seajs.test
+
+  var util = seajs.pluginSDK.util
+  var util4test = seajs.test
 
   test.assert(util.dirname('a/b/c.js') === 'a/b/', 'dirname')
   test.assert(util.dirname('d.js') === './', 'dirname')
@@ -12,19 +14,19 @@ define(function(require) {
   test.assert(util.dirname('http://example.com/arale/seajs/1.2.0/??sea.js,plugin-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname')
   test.assert(util.dirname('http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js') === 'http://cdn.com/', 'dirname')
 
-  test.assert(util.realpath('./a//b/../c') === 'a/c', 'realpath')
-  test.assert(util.realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
-  test.assert(util.realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
-  test.assert(util.realpath('a/b/c') === 'a/b/c', 'realpath')
+  test.assert(util4test.realpath('./a//b/../c') === 'a/c', 'realpath')
+  test.assert(util4test.realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
+  test.assert(util4test.realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
+  test.assert(util4test.realpath('a/b/c') === 'a/b/c', 'realpath')
 
-  test.assert(util.normalize('a/b/c') === 'a/b/c.js', 'normalize')
-  test.assert(util.normalize('a/b/c.js') === 'a/b/c.js', 'normalize')
-  test.assert(util.normalize('a/b/c.css') === 'a/b/c.css', 'normalize')
-  test.assert(util.normalize('a/b/c.d') === 'a/b/c.d.js', 'normalize')
-  test.assert(util.normalize('c?t=20110525') === 'c?t=20110525', 'normalize')
-  test.assert(util.normalize('c?t=20110525#') === 'c?t=20110525', 'normalize')
-  test.assert(util.normalize('a/b/c.json#') === 'a/b/c.json', 'normalize')
-  test.assert(util.normalize('a/b/') === 'a/b/', 'normalize')
+  test.assert(util4test.normalize('a/b/c') === 'a/b/c.js', 'normalize')
+  test.assert(util4test.normalize('a/b/c.js') === 'a/b/c.js', 'normalize')
+  test.assert(util4test.normalize('a/b/c.css') === 'a/b/c.css', 'normalize')
+  test.assert(util4test.normalize('a/b/c.d') === 'a/b/c.d.js', 'normalize')
+  test.assert(util4test.normalize('c?t=20110525') === 'c?t=20110525', 'normalize')
+  test.assert(util4test.normalize('c?t=20110525#') === 'c?t=20110525', 'normalize')
+  test.assert(util4test.normalize('a/b/c.json#') === 'a/b/c.json', 'normalize')
+  test.assert(util4test.normalize('a/b/') === 'a/b/', 'normalize')
 
   test.assert(util.id2Uri() === '', 'id2Uri')
   test.assert(util.id2Uri('') === '', 'id2Uri')
@@ -39,10 +41,10 @@ define(function(require) {
           ,'router': 'router.js?t=20110525'
         }
       })
-  test.assert(util.parseAlias('jquery-debug') === 'jquery/1.8.0/jquery-debug', 'parseAlias')
+  test.assert(util4test.parseAlias('jquery-debug') === 'jquery/1.8.0/jquery-debug', 'parseAlias')
   //test.assert(util.parseAlias('jquery') === 'jquery/1.8.0/jquery', 'parseAlias')
-  test.assert(util.parseAlias('app') === 'app/1.2/app', 'parseAlias')
-  test.assert(util.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias')
+  test.assert(util4test.parseAlias('app') === 'app/1.2/app', 'parseAlias')
+  test.assert(util4test.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias')
   //test.assert(util.parseAlias('#jquery') === 'jquery', 'parseAlias')
 
 
@@ -54,10 +56,10 @@ define(function(require) {
       'zz': 'zz.js'
     }
   })
-  test.assert(util.parseVars('./i18n/{locale}.js') === './i18n/zh-cn.js', 'parseVars')
-  test.assert(util.parseVars('{biz}/js/x') === 'path/to/biz/js/x', 'parseVars')
-  test.assert(util.parseVars('/js/{xx}/c.js') === '/js/./xx/c.js', 'parseVars')
-  test.assert(util.parseVars('/js/{xx}/{zz}') === '/js/./xx/zz.js', 'parseVars')
+  test.assert(util4test.parseVars('./i18n/{locale}.js') === './i18n/zh-cn.js', 'parseVars')
+  test.assert(util4test.parseVars('{biz}/js/x') === 'path/to/biz/js/x', 'parseVars')
+  test.assert(util4test.parseVars('/js/{xx}/c.js') === '/js/./xx/c.js', 'parseVars')
+  test.assert(util4test.parseVars('/js/{xx}/{zz}') === '/js/./xx/zz.js', 'parseVars')
 
   // issues#302
   var t = 'http://XXX.com.cn/min/index.php?g=commonCss.css'

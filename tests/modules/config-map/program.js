@@ -1,8 +1,7 @@
 
 seajs.config({
       map: [
-        ['a.js', 'b.js']
-        ,[/(b\.js)/i, 'sub/$1']
+        ['a.js', 'sub/b.js']
       ]
     });
 

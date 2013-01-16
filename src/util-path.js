@@ -5,7 +5,7 @@
 
   var DIRNAME_RE = /[^?]*(?=\/.*$)/
   var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
-  var FILE_EXT_RE = /\.(?:css|js)$/
+  var URI_END_RE = /\.(?:css|js)|\/$/
   var ROOT_RE = /^(.*?\w)(?:\/|$)/
   var VARS_RE = /{([^{}]+)}/g
 
@@ -69,15 +69,14 @@
     var lastChar = uri.charAt(uri.length - 1)
 
     // Adds the default `.js` extension except that the uri ends with `#`.
-    // ref: http://jsperf.com/get-the-last-character
     if (lastChar === '#') {
       uri = uri.slice(0, -1)
     }
-    else if (uri.indexOf('?') === -1 && !FILE_EXT_RE.test(uri)) {
+    else if (!URI_END_RE.test(uri) && uri.indexOf('?') === -1) {
       uri += '.js'
     }
 
-    // Removes `:80` for bug in IE.
+    // Fixes `:80` bug in IE.
     uri = uri.replace(':80/', '/')
 
     return uri
@@ -150,35 +149,25 @@
    * Converts the uri according to the map rules.
    */
   function parseMap(uri) {
-    // map: [[match, replace], ...]
     var map = config.map || []
-    if (!map.length) return uri
-
     var ret = uri
+    var len = map.length
 
-    // Apply all matched rules in sequence.
-    for (var i = 0; i < map.length; i++) {
-      var rule = map[i]
+    if (len) {
+      for (var i = 0; i < len; i++) {
+        var rule = map[i]
 
-      if (util.isArray(rule) && rule.length === 2) {
-        var m = rule[0]
+        ret = util.isFunction(rule) ?
+            rule(uri) :
+            uri.replace(rule[0], rule[1])
 
-        if (util.isString(m) && ret.indexOf(m) > -1 ||
-            util.isRegExp(m) && m.test(ret)) {
-          ret = ret.replace(m, rule[1])
-        }
+        // Only apply the first matched rule.
+        if (ret !== uri) break
       }
-      else if (util.isFunction(rule)) {
-        ret = rule(ret)
+
+      if (!isAbsolute(ret)) {
+        ret = realpath(dirname(pageUri) + ret)
       }
-    }
-
-    if (!isAbsolute(ret)) {
-      ret = realpath(dirname(pageUri) + ret)
-    }
-
-    if (ret !== uri) {
-      //mapCache[ret] = uri
     }
 
     return ret
@@ -244,14 +233,17 @@
   }
 
 
+  util.dirname = dirname
+  util.parseAlias = parseAlias // todo 最好能去掉，目前在插件中用到，但没考虑 parseVars
   util.id2Uri = id2Uri
+  util.isAbsolute = isAbsolute
+  util.isRoot = isRoot
   util.pageUri = pageUri
 
 
   if (SEAJS_TEST_MODE) {
     var test = seajs.test
 
-    test.dirname = dirname
     test.realpath = realpath
     test.normalize = normalize
 
@@ -260,9 +252,7 @@
     test.addBase = addBase
     test.parseMap = parseMap
 
-    test.isAbsolute = isAbsolute
     test.isRelative = isRelative
-    test.isRoot = isRoot
     test.isTopLevel = isTopLevel
   }
 
