@@ -94,6 +94,17 @@
   <!-- 压缩 -->
   <target name="compress">
 
+    <!-- SEAJS_TEST_MODE 替换 -->
+    <replaceregexp file="${src.file}"
+                   match="var SEAJS_TEST_MODE = true"
+                   replace=""
+                   encoding="${charset}"/>
+    <replaceregexp file="${src.file}"
+                   match="SEAJS_TEST_MODE"
+                   replace="false"
+                   flags="g"
+                   encoding="${charset}"/>
+
     <!-- 用 Google Closure Compiler 压缩 JS -->
     <apply executable="java" verbose="true" dest="${dist.dir}" failonerror="true">
       <fileset dir="${tmp.dir}" includes="*-src.js"/>

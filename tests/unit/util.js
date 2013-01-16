@@ -1,7 +1,7 @@
 define(function(require) {
 
   var test = require('../test')
-  var util = seajs.pluginSDK.util
+  var util = seajs.test
 
   test.assert(util.dirname('a/b/c.js') === 'a/b/', 'dirname')
   test.assert(util.dirname('d.js') === './', 'dirname')

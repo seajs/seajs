@@ -39,6 +39,14 @@ seajs._config = {
   preload: []
 }
 
+
+// For unit test etc.
+var SEAJS_TEST_MODE = true
+
+if (SEAJS_TEST_MODE) {
+  seajs.test = {}
+}
+
 /**
  * The minimal language enhancement
  */
@@ -297,7 +305,7 @@ seajs._config = {
    * Extracts the directory portion of a path.
    * dirname('a/b/c.js') ==> 'a/b/'
    * dirname('d.js') ==> './'
-   * @see http://jsperf.com/regex-vs-split/2
+   * ref: http://jsperf.com/regex-vs-split/2
    */
   function dirname(path) {
     var s = path.match(DIRNAME_RE)
@@ -351,11 +359,7 @@ seajs._config = {
     uri = realpath(uri)
     var lastChar = uri.charAt(uri.length - 1)
 
-    if (lastChar === '/') {
-      return uri
-    }
-
-    // Adds the default '.js' extension except that the uri ends with #.
+    // Adds the default `.js` extension except that the uri ends with `#`.
     // ref: http://jsperf.com/get-the-last-character
     if (lastChar === '#') {
       uri = uri.slice(0, -1)
@@ -364,10 +368,8 @@ seajs._config = {
       uri += '.js'
     }
 
-    // Remove ':80/' for bug in IE
-    if (uri.indexOf(':80/') > 0) {
-      uri = uri.replace(':80/', '/')
-    }
+    // Removes `:80` for bug in IE.
+    uri = uri.replace(':80/', '/')
 
     return uri
   }
@@ -533,20 +535,27 @@ seajs._config = {
   }
 
 
-  util.dirname = dirname
-  util.realpath = realpath
-  util.normalize = normalize
-
-  util.parseVars = parseVars
-  util.parseAlias = parseAlias
-  util.parseMap = parseMap
-
   util.id2Uri = id2Uri
-  util.isAbsolute = isAbsolute
-  util.isRoot = isRoot
-  util.isTopLevel = isTopLevel
-
   util.pageUri = pageUri
+
+
+  if (SEAJS_TEST_MODE) {
+    var test = seajs.test
+
+    test.dirname = dirname
+    test.realpath = realpath
+    test.normalize = normalize
+
+    test.parseAlias = parseAlias
+    test.parseVars = parseVars
+    test.addBase = addBase
+    test.parseMap = parseMap
+
+    test.isAbsolute = isAbsolute
+    test.isRelative = isRelative
+    test.isRoot = isRoot
+    test.isTopLevel = isTopLevel
+  }
 
 })(seajs._util, seajs._config, this)
 

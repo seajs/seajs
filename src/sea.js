@@ -39,3 +39,11 @@ seajs._config = {
   preload: []
 }
 
+
+// For unit test etc.
+var SEAJS_TEST_MODE = true
+
+if (SEAJS_TEST_MODE) {
+  seajs.test = {}
+}
+
