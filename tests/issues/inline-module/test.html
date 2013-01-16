@@ -16,12 +16,12 @@
 <script>
 
   seajs.config({
-    alias: {
+    vars: {
       '~': location.href.replace(/(.*)\/.*/, '$1')
     }
   });
 
-  define('~/init', function(require, exports, module) {
+  define('{~}/init', function(require, exports, module) {
     var test = require('../../test');
 
     test.assert(true, 'inline module is loaded');
@@ -29,7 +29,7 @@
 
   });
 
-  seajs.use('~/init');
+  seajs.use('{~}/init');
 
 </script>
 

@@ -9,13 +9,13 @@
 
   // Sets a alias to `sea.js` directory for loading plugins.
   seajs.config({
-    alias: { seajs: util.loaderDir }
+    vars: { seajs: util.loaderDir }
   })
 
 
   // Uses `seajs-xxx` flag to load plugin-xxx.
   util.forEach(getStartupPlugins(), function(name) {
-    seajs.use('seajs/plugin-' + name)
+    seajs.use('{seajs}/plugin-' + name)
 
     // Delays `seajs.use` calls to the onload of `mapfile` in debug mode.
     if (name === 'debug') {

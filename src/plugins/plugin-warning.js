@@ -1,7 +1,7 @@
 /**
  * Display warning messages in console according to your rules.
  */
-define('seajs/plugin-warning', [], function() {
+define('{seajs}/plugin-warning', [], function() {
 
   var pluginSDK = seajs.pluginSDK
   var Module = pluginSDK.Module
@@ -35,5 +35,5 @@ define('seajs/plugin-warning', [], function() {
 })
 
 // Runs it immediately
-seajs.use('seajs/plugin-warning');
+seajs.use('{seajs}/plugin-warning');
 

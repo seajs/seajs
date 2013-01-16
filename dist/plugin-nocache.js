@@ -1,7 +1,7 @@
 /**
  * Turn on this plugin to disable cache by adding timestamp.
  */
-define('seajs/plugin-nocache', [], function() {
+define('{seajs}/plugin-nocache', [], function() {
 
   var noCachePrefix = 'seajs-nocache='
   var noCacheTimeStamp = noCachePrefix + new Date().getTime()

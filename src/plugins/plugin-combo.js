@@ -1,7 +1,7 @@
 /**
  * The combo plugin for http concat module
  */
-define('seajs/plugin-combo', [], function() {
+define('{seajs}/plugin-combo', [], function() {
 
   var pluginSDK = seajs.pluginSDK
   var STATUS = pluginSDK.Module.STATUS
@@ -270,5 +270,5 @@ define('seajs/plugin-combo', [], function() {
 })
 
 // Runs it immediately
-seajs.use('seajs/plugin-combo');
+seajs.use('{seajs}/plugin-combo');
 

@@ -1,1 +1,1 @@
-define('#c', { name: 'c' })
+define('c', { name: 'c' })

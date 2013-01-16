@@ -25,7 +25,7 @@
  *
  * https://github.com/seajs/reload-server
  */
-define('seajs/plugin-reload', [], function(require) {
+define('{seajs}/plugin-reload', [], function(require) {
 
   var loc = location.search.match(/seajs-reload=?([^:]*:)?(\d+)?/)
   var host = loc[1] || 'localhost:'

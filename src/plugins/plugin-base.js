@@ -1,7 +1,7 @@
 /**
  * The base utilities for plugin development
  */
-define('seajs/plugin-base', [], function(require, exports) {
+define('{seajs}/plugin-base', [], function(require, exports) {
 
   var pluginSDK = seajs.pluginSDK
   var util = pluginSDK.util
@@ -41,7 +41,7 @@ define('seajs/plugin-base', [], function(require, exports) {
       }
 
       // Parse alias first
-      parsedId = '#' + util.parseAlias(parsedId)
+      parsedId = util.parseAlias(parsedId)
 
       // id = abc.xyz?t=123
       if (!pluginName && (m = parsedId.match(/[^?]*(\.\w+)/))) {

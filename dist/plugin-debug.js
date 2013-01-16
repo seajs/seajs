@@ -1,7 +1,7 @@
 /**
  * The map plugin for auto responder
  */
-define('seajs/plugin-debug', [], function() {
+define('{seajs}/plugin-debug', [], function() {
 
   var util = seajs.pluginSDK.util
   var loc = this.location

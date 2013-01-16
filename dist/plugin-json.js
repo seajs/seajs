@@ -1,7 +1,7 @@
 /**
  * The json plugin
  */
-define('seajs/plugin-json', ['./plugin-base'], function(require) {
+define('{seajs}/plugin-json', ['./plugin-base'], function(require) {
 
   var plugin = require('./plugin-base')
   var util = plugin.util

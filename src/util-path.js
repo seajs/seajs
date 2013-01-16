@@ -91,44 +91,64 @@
 
 
   /**
-   * Parses {{xxx}} in the module id.
+   * Parses aliases.
    */
-  function parseVars(id) {
-    if (id.indexOf('{') === -1) {
-      return id
+  function parseAlias(id) {
+    var alias = config.alias
+
+    // Only top-level id needs to parse alias.
+    if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
+      id = alias[id]
     }
 
-    var vars = config.vars
-
-    return id.replace(VARS_RE, function(m, key) {
-      return vars.hasOwnProperty(key) ? vars[key] : ''
-    })
+    return id
   }
 
 
   /**
-   * Parses alias in the module id. Only parse the first part.
+   * Parses {xxx} variables.
    */
-  function parseAlias(id) {
-    // #xxx means xxx is already alias-parsed.
-    if (id.charAt(0) === '#') {
-      return id.substring(1)
-    }
+  function parseVars(id) {
+    var vars = config.vars
 
-    var alias = config.alias
-
-    // Only top-level id needs to parse alias.
-    if (alias && isTopLevel(id)) {
-      var parts = id.split('/')
-      var first = parts[0]
-
-      if (alias.hasOwnProperty(first)) {
-        parts[0] = alias[first]
-        id = parts.join('/')
-      }
+    if (vars && id.indexOf('{') > -1) {
+      id = id.replace(VARS_RE, function(m, key) {
+        return vars.hasOwnProperty(key) ? vars[key] : key
+      })
     }
 
     return id
+  }
+
+
+  /**
+   * Adds base uri.
+   */
+  function addBase(id, refUri) {
+    var ret
+
+    // absolute id
+    if (isAbsolute(id)) {
+      ret = id
+    }
+    // relative id
+    else if (isRelative(id)) {
+      // Converts './a' to 'a', to avoid unnecessary loop in realpath().
+      if (id.indexOf('./') === 0) {
+        id = id.substring(2)
+      }
+      ret = dirname(refUri) + id
+    }
+    // root id
+    else if (isRoot(id)) {
+      ret = refUri.match(ROOT_RE)[1] + id
+    }
+    // top-level id
+    else {
+      ret = config.base + '/' + id
+    }
+
+    return ret
   }
 
 
@@ -177,33 +197,13 @@
   function id2Uri(id, refUri) {
     if (!id) return ''
 
-    id = parseVars(parseAlias(id))
-    refUri || (refUri = pageUri)
+    id = parseAlias(id)
+    id = parseVars(id)
+    id = addBase(id, refUri || pageUri)
+    id = normalize(id)
+    id = parseMap(id)
 
-    var ret
-
-    // absolute id
-    if (isAbsolute(id)) {
-      ret = id
-    }
-    // relative id
-    else if (isRelative(id)) {
-      // Converts './a' to 'a', to avoid unnecessary loop in realpath.
-      if (id.indexOf('./') === 0) {
-        id = id.substring(2)
-      }
-      ret = dirname(refUri) + id
-    }
-    // root id
-    else if (isRoot(id)) {
-      ret = refUri.match(ROOT_RE)[1] + id
-    }
-    // top-level id
-    else {
-      ret = config.base + '/' + id
-    }
-
-    return parseMap(normalize(ret))
+    return id
   }
 
 

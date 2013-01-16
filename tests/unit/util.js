@@ -43,7 +43,7 @@ define(function(require) {
   //test.assert(util.parseAlias('jquery') === 'jquery/1.8.0/jquery', 'parseAlias')
   test.assert(util.parseAlias('app') === 'app/1.2/app', 'parseAlias')
   test.assert(util.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias')
-  test.assert(util.parseAlias('#jquery') === 'jquery', 'parseAlias')
+  //test.assert(util.parseAlias('#jquery') === 'jquery', 'parseAlias')
 
 
   seajs.config({

@@ -1,6 +1,6 @@
 
 seajs.config({
-  alias: {
+  vars: {
     'sub': './submodule/sub',
     'sub2': './submodule/sub'
   }
@@ -11,8 +11,8 @@ define(function(require) {
   var test = require('../../test');
   var a = require('./a');
   var b = require('./submodule/b');
-  var c = require('sub/c');
-  var c2 = require('sub2/c2');
+  var c = require('{sub}/c');
+  var c2 = require('{sub2}/c2');
   var d = require('./d');
 
   test.assert(a.foo == 'a', 'a.foo should equal to "a"');
@@ -22,7 +22,7 @@ define(function(require) {
   test.assert(d.foo == 'd', 'd.foo should equal to "d"');
 
   
-  require.async(['../../test', 'sub/c'], function(test, c) {
+  require.async(['../../test', '{sub}/c'], function(test, c) {
 
     test.assert((c || 0).foo == 'c', 'c.foo should equal to "c"');
     test.done();

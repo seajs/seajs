@@ -1,7 +1,7 @@
 /**
  * The LESS plugin
  */
-define('seajs/plugin-less', ['./plugin-base', 'less'], function(require) {
+define('{seajs}/plugin-less', ['./plugin-base', 'less'], function(require) {
 
   var plugin = require('./plugin-base')
   var less = require('less')

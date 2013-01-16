@@ -14,8 +14,10 @@
 
   seajs.config({
     debug: true,
+    vars: {
+      'circular-deps': './dist'
+    },
     alias: {
-      'circular-deps': './dist',
       test: '../../../test'
     }
   })
