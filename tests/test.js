@@ -55,11 +55,8 @@
   }
 
 
-  // Catch errors
-  if (typeof process !== 'undefined') {
-    process.on('uncaughtException', error)
-  }
-  else {
+  // Collects errors in browser environment.
+  if (typeof process === 'undefined') {
     var _onerror = window.onerror
     window.onerror = function(err) {
       if (_onerror) _onerror(err)
