@@ -30,6 +30,13 @@ define(function(require) {
     test.assert(true, 'seajs.log')
   }
 
+
+  // ref: #503
+  seajs.debug = true
+  this.console = { log: seajs.log }
+  console.log('hello')
+
+
   test.done()
 
 })

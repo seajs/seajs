@@ -3,6 +3,10 @@
  */
 ;(function(util) {
 
+  // Keeps a reference to the original console. ref: #503
+  var console = this.console
+
+
   /**
    * The safe wrapper of console.log/error/...
    */
@@ -15,7 +19,7 @@
     var last = args[args.length - 1]
     console[last] && (type = args.pop())
 
-    // Only show log info in debug mode
+    // Prints log info in debug mode only.
     if (type === 'log' && !seajs.debug) return
 
     if (console[type].apply) {
@@ -23,7 +27,7 @@
       return
     }
 
-    // See issue#349
+    // ref: issue#349
     var length = args.length
     if (length === 1) {
       console[type](args[0])

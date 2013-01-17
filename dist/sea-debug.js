@@ -251,6 +251,10 @@ if (SEAJS_TEST_MODE) {
  */
 ;(function(util) {
 
+  // Keeps a reference to the original console. ref: #503
+  var console = this.console
+
+
   /**
    * The safe wrapper of console.log/error/...
    */
@@ -263,7 +267,7 @@ if (SEAJS_TEST_MODE) {
     var last = args[args.length - 1]
     console[last] && (type = args.pop())
 
-    // Only show log info in debug mode
+    // Prints log info in debug mode only.
     if (type === 'log' && !seajs.debug) return
 
     if (console[type].apply) {
@@ -271,7 +275,7 @@ if (SEAJS_TEST_MODE) {
       return
     }
 
-    // See issue#349
+    // ref: issue#349
     var length = args.length
     if (length === 1) {
       console[type](args[0])
