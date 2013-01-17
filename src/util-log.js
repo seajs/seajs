@@ -1,10 +1,9 @@
 /**
- * The tiny console
+ * util-log.js - The tiny console
  */
 
-// Keeps a reference to the original console. ref: #503
+// Save a reference to the original console
 var console = global.console
-
 
 // The safe wrapper of console.log/error/...
 function log() {

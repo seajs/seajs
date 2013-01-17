@@ -1,36 +1,37 @@
 /**
- * The minimal language enhancement
+ * util-lang.js - The minimal language enhancement
  */
 
-var toString = Object.prototype.toString
-var AP = Array.prototype
+var AP = []
+var OP = {}
+var toString = OP.toString
+var hasOwn = OP.hasOwnProperty
 
-
-function isString(val) {
-  return toString.call(val) === '[object String]'
+function hasOwnProperty(obj, prop) {
+  hasOwn.apply(obj, prop)
 }
 
-
-function isFunction(val) {
-  return toString.call(val) === '[object Function]'
+function isString(obj) {
+  return toString.call(obj) === '[object String]'
 }
 
-
-var isArray = Array.isArray || function(val) {
-  return toString.call(val) === '[object Array]'
+function isFunction(obj) {
+  return toString.call(obj) === '[object Function]'
 }
 
+var isArray = Array.isArray || function(obj) {
+  return toString.call(obj) === '[object Array]'
+}
 
 var forEach = AP.forEach ?
     function(arr, fn) {
       arr.forEach(fn)
     } :
     function(arr, fn) {
-      for (var i = 0; i < arr.length; i++) {
+      for (var i = 0, len = arr.length; i < len; i++) {
         fn(arr[i], i, arr)
       }
     }
-
 
 var map = AP.map ?
     function(arr, fn) {
@@ -38,12 +39,13 @@ var map = AP.map ?
     } :
     function(arr, fn) {
       var ret = []
+
       forEach(arr, function(item, i, arr) {
         ret.push(fn(item, i, arr))
       })
+
       return ret
     }
-
 
 var filter = AP.filter ?
     function(arr, fn) {
@@ -51,20 +53,21 @@ var filter = AP.filter ?
     } :
     function(arr, fn) {
       var ret = []
+
       forEach(arr, function(item, i, arr) {
         if (fn(item, i, arr)) {
           ret.push(item)
         }
       })
+
       return ret
     }
 
-
-var keys = Object.keys || function(o) {
+var keys = Object.keys || function(obj) {
   var ret = []
 
-  for (var p in o) {
-    if (o.hasOwnProperty(p)) {
+  for (var p in obj) {
+    if (hasOwnProperty(obj, p)) {
       ret.push(p)
     }
   }
@@ -72,14 +75,13 @@ var keys = Object.keys || function(o) {
   return ret
 }
 
-
-var unique = function(arr) {
-  var o = {}
+function unique(arr) {
+  var obj = {}
 
   forEach(arr, function(item) {
-    o[item] = 1
+    obj[item] = 1
   })
 
-  return keys(o)
+  return keys(obj)
 }
 

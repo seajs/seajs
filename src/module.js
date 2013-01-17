@@ -383,12 +383,3 @@ seajs.use = function(ids, callback) {
 
 seajs.cache = cachedModules
 
-// For plugin developers
-seajs.pluginSDK = {
-  config: config,
-  cachedModules: cachedModules,
-  compilingStack: compilingStack,
-  STATUS: STATUS,
-  util: util
-}
-

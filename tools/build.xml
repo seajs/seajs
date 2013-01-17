@@ -115,10 +115,11 @@
       <arg line="-jar"/>
       <arg path="${gcc.jar}"/>
       <arg line="--externs ${tools.dir}/extern.js"/>
-      <arg line="--compilation_level SIMPLE_OPTIMIZATIONS"/>
+      <arg line="--compilation_level=SIMPLE_OPTIMIZATIONS"/>
+      <arg line="--language_in=ECMASCRIPT5_STRICT"/>
 
       <!-- http://code.google.com/p/closure-compiler/wiki/Warnings -->
-      <arg line="--warning_level VERBOSE"/>
+      <arg line="--warning_level=VERBOSE"/>
       <arg line="--jscomp_off=checkTypes"/>
       <arg line="--jscomp_error=checkDebuggerStatement"/>
 

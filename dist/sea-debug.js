@@ -2,76 +2,70 @@
  * @preserve SeaJS - A Module Loader for the Web
  * v2.0.0-dev | seajs.org | MIT Licensed
  */
-;(function(global, undefined) {
+(function(global, undefined) {
 "use strict"
 
-// Avoid conflicting when `sea.js` is loaded multi times.
+// Avoid conflicting when `sea.js` is loaded multiple times
 if (global.seajs) {
   return
 }
 
-
 var seajs = {
   // The current version of SeaJS being used
-  // It will be replaced with `major.minor.patch` when building.
-  version: '2.0.0-dev'
+  version: "2.0.0-dev"
 }
 
-
-// The utilities for internal use
-var util = {}
-
-
-// The configuration data
+// The configuration data for the loader
 var config = {
-  // Debug mode. It will be turned off automatically when building.
-  debug: '@DEBUG',
+  // Debug mode that will be turned off when building
+  debug: "@DEBUG",
 
-  // Modules that are needed to load before all other modules.
+  // Modules that are needed to load before all other modules
   preload: []
 }
 
-
-// The flag for test environment. Such code will be removed when building.
+// The flag for test environment
 var TEST_MODE = true
 
+// Such code bellow will be removed when building
 if (TEST_MODE) {
   var test = seajs.test = {}
 }
 
 /**
- * The minimal language enhancement
+ * util-lang.js - the minimal language enhancement
  */
 
-var toString = Object.prototype.toString
-var AP = Array.prototype
+var AP = []
+var OP = {}
+var toString = OP.toString
+var hasOwn = OP.hasOwnProperty
 
-
-function isString(val) {
-  return toString.call(val) === '[object String]'
+function hasOwnProperty(obj, prop) {
+  hasOwn.apply(obj, prop)
 }
 
-
-function isFunction(val) {
-  return toString.call(val) === '[object Function]'
+function isString(obj) {
+  return toString.call(obj) === '[object String]'
 }
 
-
-var isArray = Array.isArray || function(val) {
-  return toString.call(val) === '[object Array]'
+function isFunction(obj) {
+  return toString.call(obj) === '[object Function]'
 }
 
+var isArray = Array.isArray || function(obj) {
+  return toString.call(obj) === '[object Array]'
+}
 
 var forEach = AP.forEach ?
     function(arr, fn) {
       arr.forEach(fn)
     } :
     function(arr, fn) {
-      for (var i = 0; i < arr.length; i++) {
+      for (var i = 0, len = arr.length; i < len; i++) {
         fn(arr[i], i, arr)
       }
     }
-
 
 var map = AP.map ?
     function(arr, fn) {
@@ -79,12 +73,13 @@ var map = AP.map ?
     } :
     function(arr, fn) {
       var ret = []
+
       forEach(arr, function(item, i, arr) {
         ret.push(fn(item, i, arr))
       })
+
       return ret
     }
-
 
 var filter = AP.filter ?
     function(arr, fn) {
@@ -92,20 +87,21 @@ var filter = AP.filter ?
     } :
     function(arr, fn) {
       var ret = []
+
       forEach(arr, function(item, i, arr) {
         if (fn(item, i, arr)) {
           ret.push(item)
         }
       })
+
       return ret
     }
 
-
-var keys = Object.keys || function(o) {
+var keys = Object.keys || function(obj) {
   var ret = []
 
-  for (var p in o) {
-    if (o.hasOwnProperty(p)) {
+  for (var p in obj) {
+    if (hasOwnProperty(obj, p)) {
       ret.push(p)
     }
   }
@@ -113,68 +109,60 @@ var keys = Object.keys || function(o) {
   return ret
 }
 
-
-var unique = function(arr) {
-  var o = {}
+function unique(arr) {
+  var obj = {}
 
   forEach(arr, function(item) {
-    o[item] = 1
+    obj[item] = 1
   })
 
-  return keys(o)
+  return keys(obj)
 }
 
 /**
- * The minimal events support
+ * util-events.js - the minimal events support
  */
 
 var eventsCache = {}
 
-
-// Binds event.
+// Bind event
 seajs.on = function(event, callback) {
   if (!callback) return this
 
   var list = eventsCache[event] || (eventsCache[event] = [])
   list.push(callback)
+
   return this
 }
 
-
-// Removes event. If `callback` is null, removes all callbacks for the
-// event. If `events` is null, removes all bound callbacks for all events.
+// Remove event. If `callback` is undefined, remove all callbacks for the
+// event. If `event` and `callback` are both undefined, remove all events
 seajs.off = function(event, callback) {
-  // Removing *all* events.
+  // Remove *all* events
   if (!(event || callback)) {
     eventsCache = {}
     return this
   }
 
-  var events = event ? [event] : keys(eventsCache)
-
-  // Loop through the callback list, splicing where appropriate.
-  while (event = events.shift()) {
-    var list = eventsCache[event]
-    if (!list) continue
-
-    if (!callback) {
-      delete eventsCache[event]
-      continue
-    }
-
-    for (var i = list.length - 1; i >= 0; i--) {
-      if (list[i] === callback) {
-        list.splice(i, 1)
+  var list = eventsCache[event]
+  if (list) {
+    if (callback) {
+      for (var i = list.length - 1; i >= 0; i--) {
+        if (list[i] === callback) {
+          list.splice(i, 1)
+        }
       }
+    }
+    else {
+      delete eventsCache[event]
     }
   }
 
   return this
 }
 
-
-// Emits event, firing all bound callbacks. Callbacks are passed the same
-// arguments as `emit` is, apart from the event name.
+// Emit event, firing all bound callbacks. Callbacks are passed the same
+// arguments as `emit` is, apart from the event name
 seajs.emit = function(event) {
   var list = eventsCache[event]
   if (!list) return this
@@ -182,27 +170,26 @@ seajs.emit = function(event) {
   var args = []
 
   // Fill up `args` with the callback arguments.  Since we're only copying
-  // the tail of `arguments`, a loop is much faster than Array#slice.
+  // the tail of `arguments`, a loop is much faster than Array#slice
   for (var i = 1, len = arguments.length; i < len; i++) {
     args[i - 1] = arguments[i]
   }
 
-  // Copy callback lists to prevent modification.
+  // Copy callback lists to prevent modification
   list = list.slice()
 
-  // Execute event callbacks.
+  // Execute event callbacks
   forEach(list, function(fn) {
-    fn.apply(this, args)
+    fn.apply(global, args)
   })
 
   return this
 }
 
-
-// Emits event and gets the specified modified data.
-seajs.emitData = function(event, data, key) {
+// Emit event and return the specified data property
+seajs.emitData = function(event, data, prop) {
   this.emit(event, data)
-  return data[key || keys(data)[0]]
+  return data[prop || keys(data)[0]]
 }
 
 /**
@@ -1082,15 +1069,6 @@ seajs.use = function(ids, callback) {
 
 seajs.cache = cachedModules
 
-// For plugin developers
-seajs.pluginSDK = {
-  config: config,
-  cachedModules: cachedModules,
-  compilingStack: compilingStack,
-  STATUS: STATUS,
-  util: util
-}
-
 /**
  * The configuration
  */
@@ -1268,5 +1246,13 @@ global.define = define
 // Loads the data-main module automatically.
 config.main && seajs.use(config.main)
 
+
+// For plugin developers
+seajs.pluginSDK = {
+  config: config,
+  cachedModules: cachedModules,
+  compilingStack: compilingStack,
+  STATUS: STATUS
+}
 
 })(this);
