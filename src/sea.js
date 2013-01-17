@@ -1,49 +1,29 @@
-/**
- * @preserve SeaJS - A Module Loader for the Web
- * v%VERSION% | seajs.org | MIT Licensed
- */
+
+var seajs = {
+  // The current version of SeaJS being used
+  // It will be replaced with `major.minor.patch` when building.
+  version: '@VERSION'
+}
 
 
-/**
- * Base namespace for the framework.
- */
-this.seajs = { _seajs: this.seajs }
+// The utilities for internal use
+var util = {}
 
 
-/**
- * The version of the framework. It will be replaced with "major.minor.patch"
- * when building.
- */
-seajs.version = '%VERSION%'
+// The configuration data
+var config = {
+  // Debug mode. It will be turned off automatically when building.
+  debug: '@DEBUG',
 
-
-/**
- * The private utilities. Internal use only.
- */
-seajs._util = {}
-
-
-/**
- * The private configuration data. Internal use only.
- */
-seajs._config = {
-
-  /**
-   * Debug mode. It will be turned off automatically when compressing.
-   */
-  debug: '%DEBUG%',
-
-  /**
-   * Modules that are needed to load before all other modules.
-   */
+  // Modules that are needed to load before all other modules.
   preload: []
 }
 
 
-// For unit test etc.
-var SEAJS_TEST_MODE = true
+// The flag for test environment. Such code will be removed when building.
+var TEST_MODE = true
 
-if (SEAJS_TEST_MODE) {
-  seajs.test = {}
+if (TEST_MODE) {
+  var test = seajs.test = {}
 }
 

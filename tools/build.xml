@@ -30,19 +30,22 @@
             encoding="${charset}"
             outputencoding="${charset}">
 
+      <path path="${src.dir}/intro.js"/>
       <path path="${src.dir}/sea.js"/>
 
       <path path="${src.dir}/util-lang.js"/>
       <path path="${src.dir}/util-events.js"/>
       <path path="${src.dir}/util-log.js"/>
       <path path="${src.dir}/util-path.js"/>
-      <path path="${src.dir}/util-fetch.js"/>
+      <path path="${src.dir}/util-request.js"/>
       <path path="${src.dir}/util-deps.js"/>
 
       <path path="${src.dir}/module.js"/>
       <path path="${src.dir}/config.js"/>
       <path path="${src.dir}/prepare.js"/>
       <path path="${src.dir}/bootstrap.js"/>
+
+      <path path="${src.dir}/outro.js"/>
 
     </concat>
   </target>
@@ -53,7 +56,7 @@
 
     <!-- 版本号替换 -->
     <replaceregexp file="${src.file}"
-                   match="%VERSION%"
+                   match="@VERSION"
                    replace="${version}"
                    flags="g"
                    encoding="${charset}"/>
@@ -63,7 +66,7 @@
 
     <!-- %DEBUG% 替换 -->
     <replaceregexp file="${src.file}"
-                   match="%DEBUG%"
+                   match="@DEBUG"
                    replace=""
                    flags="g"
                    encoding="${charset}"/>
@@ -96,11 +99,11 @@
 
     <!-- SEAJS_TEST_MODE 替换 -->
     <replaceregexp file="${src.file}"
-                   match="var SEAJS_TEST_MODE = true"
+                   match="var TEST_MODE = true"
                    replace=""
                    encoding="${charset}"/>
     <replaceregexp file="${src.file}"
-                   match="SEAJS_TEST_MODE"
+                   match="TEST_MODE"
                    replace="false"
                    flags="g"
                    encoding="${charset}"/>

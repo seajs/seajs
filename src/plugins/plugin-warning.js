@@ -27,7 +27,7 @@ define('{seajs}/plugin-warning', [], function() {
     versions.push(uri)
 
     if (versions.length > 1) {
-      seajs.log('WARNING: This module has multiple versions:\n' +
+      seajs.log('This module has multiple versions:\n' +
           versions.join('\n'), 'warn')
     }
   }

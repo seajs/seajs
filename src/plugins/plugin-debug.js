@@ -27,6 +27,25 @@ define('{seajs}/plugin-debug', [], function() {
   }
 
 
+  if (!seajs.find) {
+    var cachedModules = seajs.cache
+
+    seajs.find = function(selector) {
+      var matches = []
+
+      util.forEach(util.keys(cachedModules), function(uri) {
+        if (util.isString(selector) && uri.indexOf(selector) > -1 ||
+            util.isRegExp(selector) && selector.test(uri)) {
+          var mod = cachedModules[uri]
+          mod.exports && matches.push(mod.exports)
+        }
+      })
+
+      return matches
+    }
+  }
+
+
   // Restores the use function
   seajs.use = seajs._use
   delete seajs._use
