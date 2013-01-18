@@ -36,9 +36,9 @@ function request(url, callback, charset) {
     node.src = url
   }
 
-  // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
+  // For some cache cases in IE 6-8, the script executes IMMEDIATELY after
   // the end of the insert execution, so use `currentlyAddingScript` to
-  // hold current node, for deriving url in `define`
+  // hold current node, for deriving url in `define` call
   currentlyAddingScript = node
 
   // ref: #185 & http://dev.jquery.com/ticket/2709
@@ -59,7 +59,6 @@ function assetOnload(node, callback) {
 }
 
 function scriptOnload(node, callback) {
-
   node.onload = node.onerror = node.onreadystatechange = function() {
     if (READY_STATE_RE.test(node.readyState)) {
 
@@ -77,14 +76,12 @@ function scriptOnload(node, callback) {
       callback && callback()
     }
   }
-
 }
 
 function styleOnload(node, callback) {
-
   // for Old WebKit and Old Firefox
   if (isOldWebKit || isOldFirefox) {
-    log('Start poll to fetch css')
+    log('Start css polling')
 
     setTimeout(function() {
       pollCss(node, callback)
@@ -97,29 +94,28 @@ function styleOnload(node, callback) {
       callback && callback()
     }
   }
-
 }
 
 function pollCss(node, callback) {
+  var sheet = node.sheet
   var isLoaded
 
   // for WebKit < 536
   if (isOldWebKit) {
-    if (node['sheet']) {
+    if (sheet) {
       isLoaded = true
     }
   }
   // for Firefox < 9.0
-  else if (node['sheet']) {
+  else if (sheet) {
     try {
-      if (node['sheet'].cssRules) {
+      if (sheet.cssRules) {
         isLoaded = true
       }
     } catch (ex) {
-      // The value of `ex.name` is changed from
-      // 'NS_ERROR_DOM_SECURITY_ERR' to 'SecurityError' since Firefox 13.0
-      // But Firefox is less than 9.0 in here, So it is ok to just rely on
-      // 'NS_ERROR_DOM_SECURITY_ERR'
+      // The value of `ex.name` is changed from 'NS_ERROR_DOM_SECURITY_ERR'
+      // to 'SecurityError' since Firefox 13.0. But Firefox is less than 9.0
+      // in here, So it is ok to just rely on 'NS_ERROR_DOM_SECURITY_ERR'
       if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
         isLoaded = true
       }
@@ -128,9 +124,10 @@ function pollCss(node, callback) {
 
   setTimeout(function() {
     if (isLoaded) {
-      // Place callback in here due to giving time for style rendering.
+      // Place callback in here due to giving time for style rendering
       callback()
-    } else {
+    }
+    else {
       poll(node, callback)
     }
   }, 1)
@@ -145,20 +142,19 @@ function getCurrentScript() {
   // For IE6-9 browsers, the script onload event may not fire right
   // after the the script is evaluated. Kris Zyp found that it
   // could query the script nodes and the one that is in "interactive"
-  // mode indicates the current script.
-  // Ref: http://goo.gl/JHfFW
-  if (interactiveScript &&
-      interactiveScript.readyState === 'interactive') {
+  // mode indicates the current script
+  // ref: http://goo.gl/JHfFW
+  if (interactiveScript && interactiveScript.readyState === 'interactive') {
     return interactiveScript
   }
 
   var scripts = head.getElementsByTagName('script')
 
-  for (var i = 0; i < scripts.length; i++) {
+  for (var i = scripts.length - 1; i >= 0; i--) {
     var script = scripts[i]
     if (script.readyState === 'interactive') {
       interactiveScript = script
-      return script
+      return interactiveScript
     }
   }
 }
