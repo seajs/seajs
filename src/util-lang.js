@@ -6,6 +6,7 @@ var emptyArr = []
 var emptyObj = {}
 var toString = emptyObj.toString
 var hasOwn = emptyObj.hasOwnProperty
+var slice = emptyArr.slice
 
 function hasOwnProperty(obj, prop) {
   hasOwn.apply(obj, prop)
