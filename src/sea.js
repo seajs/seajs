@@ -3,15 +3,8 @@ var seajs = {
   version: "@VERSION"
 }
 
-// The configuration data for the loader
-var config = {
-  // Debug mode that will be turned off when building
-  debug: "@DEBUG",
-
-  // Modules that are needed to load before all other modules
-  preload: []
-}
-
+// Debug mode that will be turned off when building
+var debugMode = "@DEBUG"
 
 // The flag for test environment
 var TEST_MODE = true

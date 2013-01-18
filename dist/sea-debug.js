@@ -24,6 +24,7 @@ var config = {
   preload: []
 }
 
+
 // The flag for test environment
 var TEST_MODE = true
 
@@ -32,14 +33,16 @@ if (TEST_MODE) {
   var test = seajs.test = {}
 }
 
+
 /**
  * util-lang.js - The minimal language enhancement
  */
 
-var AP = []
-var OP = {}
-var toString = OP.toString
-var hasOwn = OP.hasOwnProperty
+var emptyArr = []
+var emptyObj = {}
+var toString = emptyObj.toString
+var hasOwn = emptyObj.hasOwnProperty
+var slice = emptyArr.slice
 
 function hasOwnProperty(obj, prop) {
   hasOwn.apply(obj, prop)
@@ -57,7 +60,7 @@ var isArray = Array.isArray || function(obj) {
   return toString.call(obj) === '[object Array]'
 }
 
-var forEach = AP.forEach ?
+var forEach = emptyArr.forEach ?
     function(arr, fn) {
       arr.forEach(fn)
     } :
@@ -67,7 +70,7 @@ var forEach = AP.forEach ?
       }
     }
 
-var map = AP.map ?
+var map = emptyArr.map ?
     function(arr, fn) {
       return arr.map(fn)
     } :
@@ -81,7 +84,7 @@ var map = AP.map ?
       return ret
     }
 
-var filter = AP.filter ?
+var filter = emptyArr.filter ?
     function(arr, fn) {
       return arr.filter(fn)
     } :
@@ -119,6 +122,40 @@ function unique(arr) {
   return keys(obj)
 }
 
+
+/**
+ * util-log.js - The tiny log function
+ */
+
+var console = global.console
+
+// The safe wrapper for `console.xxx` functions
+// log('message') ==> console.log('message')
+// log('message', 'warn') ==> console.warn('message')
+var log = seajs.log = function() {
+  if (console === undefined) {
+    return
+  }
+
+  var args = slice.call(arguments)
+  var len = args.length
+  var type = console[args[len - 1]] ? args.pop() : 'log'
+
+  // Print log info in debug mode only
+  if (type === 'log' && !seajs.debug) {
+    return
+  }
+
+  var fn = console[type]
+
+  // The console function has no `apply` method in IE9
+  // http://stackoverflow.com/questions/5538972
+  fn = fn.apply ? fn :
+      Function.prototype.bind.call(fn, console)
+  fn.apply(console, args)
+}
+
+
 /**
  * util-events.js - The minimal events support
  */
@@ -127,21 +164,22 @@ var eventsCache = {}
 
 // Bind event
 seajs.on = function(event, callback) {
-  if (!callback) return this
+  if (!callback) return seajs
 
   var list = eventsCache[event] || (eventsCache[event] = [])
   list.push(callback)
 
-  return this
+  return seajs
 }
 
 // Remove event. If `callback` is undefined, remove all callbacks for the
-// event. If `event` and `callback` are both undefined, remove all events
+// event. If `event` and `callback` are both undefined, remove all callbacks
+// for all events
 seajs.off = function(event, callback) {
   // Remove *all* events
   if (!(event || callback)) {
     eventsCache = {}
-    return this
+    return seajs
   }
 
   var list = eventsCache[event]
@@ -158,14 +196,14 @@ seajs.off = function(event, callback) {
     }
   }
 
-  return this
+  return seajs
 }
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-seajs.emit = function(event) {
+var emit = seajs.emit = function(event) {
   var list = eventsCache[event]
-  if (!list) return this
+  if (!list) return seajs
 
   var args = []
 
@@ -183,58 +221,24 @@ seajs.emit = function(event) {
     fn.apply(global, args)
   })
 
-  return this
+  return seajs
 }
 
-// Emit event and return the specified data property
-seajs.emitData = function(event, data, prop) {
-  this.emit(event, data)
+// Emit event and return the specified property of the data
+function emitData(event, data, prop) {
+  emit(event, data)
   return data[prop || keys(data)[0]]
 }
 
-/**
- * util-log.js - The tiny console
- */
 
-// Save a reference to the original console
-var console = global.console
-
-// The safe wrapper of console.log/error/...
-function log() {
-  if (typeof console === 'undefined') return
-
-  var args = Array.prototype.slice.call(arguments)
-
-  var type = 'log'
-  var last = args[args.length - 1]
-  console[last] && (type = args.pop())
-
-  // Prints log info in debug mode only.
-  if (type === 'log' && !seajs.debug) return
-
-  if (console[type].apply) {
-    console[type].apply(console, args)
-    return
-  }
-
-  // ref: issue#349
-  var length = args.length
-  if (length === 1) {
-    console[type](args[0])
-  }
-  else if (length === 2) {
-    console[type](args[0], args[1])
-  }
-  else if (length === 3) {
-    console[type](args[0], args[1], args[2])
-  }
-  else {
-    console[type](args.join(' '))
-  }
+// For test environment
+if(TEST_MODE) {
+  test.emitData = emitData
 }
 
+
 /**
- * Path utilities
+ * util-path.js - The utilities for operating path such as id, uri
  */
 
 var DIRNAME_RE = /[^?]*(?=\/.*$)/
@@ -244,7 +248,7 @@ var ROOT_RE = /^(.*?\w)(?:\/|$)/
 var VARS_RE = /{([^{}]+)}/g
 
 
-// Extracts the directory portion of a path.
+// Extract the directory portion of a path
 // dirname('a/b/c.js') ==> 'a/b/'
 // dirname('d.js') ==> './'
 // ref: http://jsperf.com/regex-vs-split/2
@@ -253,8 +257,7 @@ function dirname(path) {
   return (s ? s[0] : '.') + '/'
 }
 
-
-// Canonicalizes a path.
+// Canonicalize a path
 // realpath('./a//b/../c') ==> 'a/c'
 function realpath(path) {
   MULTIPLE_SLASH_RE.lastIndex = 0
@@ -265,7 +268,7 @@ function realpath(path) {
     path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
   }
 
-  // 'a/b/c', just return.
+  // If 'a/b/c', just return
   if (path.indexOf('.') === -1) {
     return path
   }
@@ -290,14 +293,12 @@ function realpath(path) {
   return ret.join('/')
 }
 
-
-// Normalizes an uri.
+// Normalize an uri
 // normalize('path/to/a') ==> 'path/to/a.js'
 function normalize(uri) {
-  uri = realpath(uri)
   var lastChar = uri.charAt(uri.length - 1)
 
-  // Adds the default `.js` extension except that the uri ends with `#`.
+  // Add the default `.js` extension except that the uri ends with `#`
   if (lastChar === '#') {
     uri = uri.slice(0, -1)
   }
@@ -305,18 +306,17 @@ function normalize(uri) {
     uri += '.js'
   }
 
-  // Fixes `:80` bug in IE.
+  // Fixes `:80` bug in IE
   uri = uri.replace(':80/', '/')
 
-  return uri
+  return realpath(uri)
 }
 
 
-// Parses aliases.
 function parseAlias(id) {
   var alias = config.alias
 
-  // Only top-level id needs to parse alias.
+  // Only parse top-level id
   if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
     id = alias[id]
   }
@@ -324,8 +324,6 @@ function parseAlias(id) {
   return id
 }
 
-
-// Parses {xxx} variables.
 function parseVars(id) {
   var vars = config.vars
 
@@ -338,8 +336,6 @@ function parseVars(id) {
   return id
 }
 
-
-// Adds base uri.
 function addBase(id, refUri) {
   var ret
 
@@ -349,7 +345,7 @@ function addBase(id, refUri) {
   }
   // relative id
   else if (isRelative(id)) {
-    // Converts './a' to 'a', to avoid unnecessary loop in realpath().
+    // Convert './a' to 'a', to avoid unnecessary loop in realpath() call
     if (id.indexOf('./') === 0) {
       id = id.substring(2)
     }
@@ -367,8 +363,6 @@ function addBase(id, refUri) {
   return ret
 }
 
-
-// Converts the uri according to the map rules.
 function parseMap(uri) {
   var map = config.map || []
   var ret = uri
@@ -382,7 +376,7 @@ function parseMap(uri) {
           rule(uri) :
           uri.replace(rule[0], rule[1])
 
-      // Only apply the first matched rule.
+      // Only apply the first matched rule
       if (ret !== uri) break
     }
 
@@ -393,7 +387,6 @@ function parseMap(uri) {
 
   return ret
 }
-
 
 function id2Uri(id, refUri) {
   if (!id) return ''
@@ -412,16 +405,13 @@ function isAbsolute(id) {
   return id.indexOf('://') > 0 || id.indexOf('//') === 0
 }
 
-
 function isRelative(id) {
   return id.indexOf('./') === 0 || id.indexOf('../') === 0
 }
 
-
 function isRoot(id) {
   return id.charAt(0) === '/' && id.charAt(1) !== '/'
 }
-
 
 function isTopLevel(id) {
   var c = id.charAt(0)
@@ -429,24 +419,24 @@ function isTopLevel(id) {
 }
 
 
-// Normalizes pathname to start with '/'
-// ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-function normalizePathname(pathname) {
+var pageUri = (function(loc) {
+  var pathname = loc.pathname
+
+  // Normalize pathname to start with '/'
+  // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
   if (pathname.charAt(0) !== '/') {
     pathname = '/' + pathname
   }
-  return pathname
-}
 
+  var pageUri = loc.protocol + '//' + loc.host + pathname
 
-var loc = global['location']
-var pageUri = loc.protocol + '//' + loc.host +
-    normalizePathname(loc.pathname)
+  // local file in IE: C:\path\to\xx.js
+  if (pageUri.indexOf('\\') > -1) {
+    pageUri = pageUri.replace(/\\/g, '/')
+  }
 
-// local file in IE: C:\path\to\xx.js
-if (pageUri.indexOf('\\') > 0) {
-  pageUri = pageUri.replace(/\\/g, '/')
-}
+  return pageUri
+})(global.location)
 
 
 if (TEST_MODE) {
@@ -465,6 +455,7 @@ if (TEST_MODE) {
   test.isRoot = isRoot
   test.isTopLevel = isTopLevel
 }
+
 
 /**
  * Utilities for requesting script and style files

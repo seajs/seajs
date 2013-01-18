@@ -1,5 +1,6 @@
 /**
- * Utilities for requesting script and style files
+ * util-request.js - The utilities for requesting script and style files
+ * ref: http://seajs.org/tests/research/load-js-css/test.html
  */
 
 var doc = document
@@ -18,14 +19,14 @@ var interactiveScript
 
 function request(url, callback, charset) {
   var isCSS = IS_CSS_RE.test(url)
-  var node = document.createElement(isCSS ? 'link' : 'script')
+  var node = doc.createElement(isCSS ? 'link' : 'script')
 
   if (charset) {
     var cs = isFunction(charset) ? charset(url) : charset
     cs && (node.charset = cs)
   }
 
-  assetOnload(node, callback || noop)
+  assetOnload(node, callback)
 
   if (isCSS) {
     node.rel = 'stylesheet'
@@ -36,8 +37,8 @@ function request(url, callback, charset) {
   }
 
   // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
-  // the end of the insertBefore execution, so use `currentlyAddingScript`
-  // to hold current node, for deriving url in `define`.
+  // the end of the insert execution, so use `currentlyAddingScript` to
+  // hold current node, for deriving url in `define`
   currentlyAddingScript = node
 
   // ref: #185 & http://dev.jquery.com/ticket/2709
@@ -51,7 +52,8 @@ function request(url, callback, charset) {
 function assetOnload(node, callback) {
   if (node.nodeName === 'SCRIPT') {
     scriptOnload(node, callback)
-  } else {
+  }
+  else {
     styleOnload(node, callback)
   }
 }
@@ -65,14 +67,14 @@ function scriptOnload(node, callback) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (node.parentNode && !config.debug) {
+      if (!debugMode) {
         head.removeChild(node)
       }
 
       // Dereference the node
       node = undefined
 
-      callback()
+      callback && callback()
     }
   }
 
@@ -85,20 +87,20 @@ function styleOnload(node, callback) {
     log('Start poll to fetch css')
 
     setTimeout(function() {
-      poll(node, callback)
+      pollCss(node, callback)
     }, 1) // Begin after node insertion
   }
   else {
     node.onload = node.onerror = function() {
       node.onload = node.onerror = null
       node = undefined
-      callback()
+      callback && callback()
     }
   }
 
 }
 
-function poll(node, callback) {
+function pollCss(node, callback) {
   var isLoaded
 
   // for WebKit < 536
@@ -132,9 +134,6 @@ function poll(node, callback) {
       poll(node, callback)
     }
   }, 1)
-}
-
-function noop() {
 }
 
 
@@ -175,23 +174,14 @@ function getScriptAbsoluteSrc(node) {
 var UA = navigator.userAgent
 
 // `onload` event is supported in WebKit since 535.23
-// Ref:
-//  - https://bugs.webkit.org/show_activity.cgi?id=38995
+// ref: https://bugs.webkit.org/show_activity.cgi?id=38995
 var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, '$1')) < 536
 
 // `onload/onerror` event is supported since Firefox 9.0
-// Ref:
+// ref:
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
 var isOldFirefox = UA.indexOf('Firefox') > 0 &&
     !('onload' in document.createElement('link'))
 
-
-/**
- * References:
- *  - http://unixpapa.com/js/dyna.html
- *  - ../tests/research/load-js-css/test.html
- *  - ../tests/issues/load-css/test.html
- *  - http://www.blaze.io/technical/ies-premature-execution-problem/
- */
 

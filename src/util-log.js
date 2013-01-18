@@ -17,7 +17,7 @@ var log = seajs.log = function() {
   var type = console[args[len - 1]] ? args.pop() : 'log'
 
   // Print log info in debug mode only
-  if (type === 'log' && !seajs.debug) {
+  if (type === 'log' && !debugMode) {
     return
   }
 

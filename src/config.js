@@ -2,6 +2,13 @@
  * The configuration
  */
 
+// The configuration data for the loader
+var config = {
+
+  // Modules that are needed to load before all other modules
+  preload: []
+}
+
 // Async inserted script
 var loaderScript = document.getElementById('seajsnode')
 
