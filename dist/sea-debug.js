@@ -33,7 +33,7 @@ if (TEST_MODE) {
 }
 
 /**
- * util-lang.js - the minimal language enhancement
+ * util-lang.js - The minimal language enhancement
  */
 
 var AP = []
@@ -120,7 +120,7 @@ function unique(arr) {
 }
 
 /**
- * util-events.js - the minimal events support
+ * util-events.js - The minimal events support
  */
 
 var eventsCache = {}
@@ -193,12 +193,11 @@ seajs.emitData = function(event, data, prop) {
 }
 
 /**
- * The tiny console
+ * util-log.js - The tiny console
  */
 
-// Keeps a reference to the original console. ref: #503
+// Save a reference to the original console
 var console = global.console
-
 
 // The safe wrapper of console.log/error/...
 function log() {
