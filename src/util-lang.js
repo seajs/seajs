@@ -2,10 +2,10 @@
  * util-lang.js - The minimal language enhancement
  */
 
-var AP = []
-var OP = {}
-var toString = OP.toString
-var hasOwn = OP.hasOwnProperty
+var emptyArr = []
+var emptyObj = {}
+var toString = emptyObj.toString
+var hasOwn = emptyObj.hasOwnProperty
 
 function hasOwnProperty(obj, prop) {
   hasOwn.apply(obj, prop)
@@ -23,7 +23,7 @@ var isArray = Array.isArray || function(obj) {
   return toString.call(obj) === '[object Array]'
 }
 
-var forEach = AP.forEach ?
+var forEach = emptyArr.forEach ?
     function(arr, fn) {
       arr.forEach(fn)
     } :
@@ -33,7 +33,7 @@ var forEach = AP.forEach ?
       }
     }
 
-var map = AP.map ?
+var map = emptyArr.map ?
     function(arr, fn) {
       return arr.map(fn)
     } :
@@ -47,7 +47,7 @@ var map = AP.map ?
       return ret
     }
 
-var filter = AP.filter ?
+var filter = emptyArr.filter ?
     function(arr, fn) {
       return arr.filter(fn)
     } :
