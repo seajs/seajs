@@ -1,6 +1,6 @@
 /**
  * util-request.js - The utilities for requesting script and style files
- * ref: http://seajs.org/tests/research/load-js-css/test.html
+ * ref: tests/research/load-js-css/test.html
  */
 
 var doc = document

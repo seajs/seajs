@@ -1,5 +1,5 @@
 /**
- * The parser for dependencies
+ * util-deps.js - The parser for dependencies
  * ref: tests/research/parse-dependencies/test.html
  */
 
@@ -17,4 +17,5 @@ function parseDependencies(code) {
 
   return unique(ret)
 }
+
 
