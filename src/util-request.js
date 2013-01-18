@@ -128,7 +128,7 @@ function pollCss(node, callback) {
       callback()
     }
     else {
-      poll(node, callback)
+      pollCss(node, callback)
     }
   }, 1)
 }
