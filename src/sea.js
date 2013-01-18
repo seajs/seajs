@@ -12,6 +12,7 @@ var config = {
   preload: []
 }
 
+
 // The flag for test environment
 var TEST_MODE = true
 
@@ -19,4 +20,5 @@ var TEST_MODE = true
 if (TEST_MODE) {
   var test = seajs.test = {}
 }
+
 

@@ -6,21 +6,22 @@ var eventsCache = {}
 
 // Bind event
 seajs.on = function(event, callback) {
-  if (!callback) return this
+  if (!callback) return seajs
 
   var list = eventsCache[event] || (eventsCache[event] = [])
   list.push(callback)
 
-  return this
+  return seajs
 }
 
 // Remove event. If `callback` is undefined, remove all callbacks for the
-// event. If `event` and `callback` are both undefined, remove all events
+// event. If `event` and `callback` are both undefined, remove all callbacks
+// for all events
 seajs.off = function(event, callback) {
   // Remove *all* events
   if (!(event || callback)) {
     eventsCache = {}
-    return this
+    return seajs
   }
 
   var list = eventsCache[event]
@@ -37,14 +38,14 @@ seajs.off = function(event, callback) {
     }
   }
 
-  return this
+  return seajs
 }
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-seajs.emit = function(event) {
+var emit = seajs.emit = function(event) {
   var list = eventsCache[event]
-  if (!list) return this
+  if (!list) return seajs
 
   var args = []
 
@@ -62,12 +63,19 @@ seajs.emit = function(event) {
     fn.apply(global, args)
   })
 
-  return this
+  return seajs
 }
 
-// Emit event and return the specified data property
-seajs.emitData = function(event, data, prop) {
-  this.emit(event, data)
+// Emit event and return the specified property of the data
+function emitData(event, data, prop) {
+  emit(event, data)
   return data[prop || keys(data)[0]]
 }
+
+
+// For test environment
+if(TEST_MODE) {
+  test.emitData = emitData
+}
+
 
