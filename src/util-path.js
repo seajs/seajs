@@ -1,5 +1,5 @@
 /**
- * Path utilities
+ * util-path.js - The utilities for operating path such as id, uri
  */
 
 var DIRNAME_RE = /[^?]*(?=\/.*$)/
@@ -9,7 +9,7 @@ var ROOT_RE = /^(.*?\w)(?:\/|$)/
 var VARS_RE = /{([^{}]+)}/g
 
 
-// Extracts the directory portion of a path.
+// Extract the directory portion of a path
 // dirname('a/b/c.js') ==> 'a/b/'
 // dirname('d.js') ==> './'
 // ref: http://jsperf.com/regex-vs-split/2
@@ -18,8 +18,7 @@ function dirname(path) {
   return (s ? s[0] : '.') + '/'
 }
 
-
-// Canonicalizes a path.
+// Canonicalize a path
 // realpath('./a//b/../c') ==> 'a/c'
 function realpath(path) {
   MULTIPLE_SLASH_RE.lastIndex = 0
@@ -30,7 +29,7 @@ function realpath(path) {
     path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
   }
 
-  // 'a/b/c', just return.
+  // If 'a/b/c', just return
   if (path.indexOf('.') === -1) {
     return path
   }
@@ -55,14 +54,12 @@ function realpath(path) {
   return ret.join('/')
 }
 
-
-// Normalizes an uri.
+// Normalize an uri
 // normalize('path/to/a') ==> 'path/to/a.js'
 function normalize(uri) {
-  uri = realpath(uri)
   var lastChar = uri.charAt(uri.length - 1)
 
-  // Adds the default `.js` extension except that the uri ends with `#`.
+  // Add the default `.js` extension except that the uri ends with `#`
   if (lastChar === '#') {
     uri = uri.slice(0, -1)
   }
@@ -70,18 +67,17 @@ function normalize(uri) {
     uri += '.js'
   }
 
-  // Fixes `:80` bug in IE.
+  // Fixes `:80` bug in IE
   uri = uri.replace(':80/', '/')
 
-  return uri
+  return realpath(uri)
 }
 
 
-// Parses aliases.
 function parseAlias(id) {
   var alias = config.alias
 
-  // Only top-level id needs to parse alias.
+  // Only parse top-level id
   if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
     id = alias[id]
   }
@@ -89,8 +85,6 @@ function parseAlias(id) {
   return id
 }
 
-
-// Parses {xxx} variables.
 function parseVars(id) {
   var vars = config.vars
 
@@ -103,8 +97,6 @@ function parseVars(id) {
   return id
 }
 
-
-// Adds base uri.
 function addBase(id, refUri) {
   var ret
 
@@ -114,7 +106,7 @@ function addBase(id, refUri) {
   }
   // relative id
   else if (isRelative(id)) {
-    // Converts './a' to 'a', to avoid unnecessary loop in realpath().
+    // Convert './a' to 'a', to avoid unnecessary loop in realpath() call
     if (id.indexOf('./') === 0) {
       id = id.substring(2)
     }
@@ -132,8 +124,6 @@ function addBase(id, refUri) {
   return ret
 }
 
-
-// Converts the uri according to the map rules.
 function parseMap(uri) {
   var map = config.map || []
   var ret = uri
@@ -147,7 +137,7 @@ function parseMap(uri) {
           rule(uri) :
           uri.replace(rule[0], rule[1])
 
-      // Only apply the first matched rule.
+      // Only apply the first matched rule
       if (ret !== uri) break
     }
 
@@ -158,7 +148,6 @@ function parseMap(uri) {
 
   return ret
 }
-
 
 function id2Uri(id, refUri) {
   if (!id) return ''
@@ -177,16 +166,13 @@ function isAbsolute(id) {
   return id.indexOf('://') > 0 || id.indexOf('//') === 0
 }
 
-
 function isRelative(id) {
   return id.indexOf('./') === 0 || id.indexOf('../') === 0
 }
 
-
 function isRoot(id) {
   return id.charAt(0) === '/' && id.charAt(1) !== '/'
 }
-
 
 function isTopLevel(id) {
   var c = id.charAt(0)
@@ -194,24 +180,24 @@ function isTopLevel(id) {
 }
 
 
-// Normalizes pathname to start with '/'
-// ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-function normalizePathname(pathname) {
+var pageUri = (function(loc) {
+  var pathname = loc.pathname
+
+  // Normalize pathname to start with '/'
+  // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
   if (pathname.charAt(0) !== '/') {
     pathname = '/' + pathname
   }
-  return pathname
-}
 
+  var pageUri = loc.protocol + '//' + loc.host + pathname
 
-var loc = global['location']
-var pageUri = loc.protocol + '//' + loc.host +
-    normalizePathname(loc.pathname)
+  // local file in IE: C:\path\to\xx.js
+  if (pageUri.indexOf('\\') > -1) {
+    pageUri = pageUri.replace(/\\/g, '/')
+  }
 
-// local file in IE: C:\path\to\xx.js
-if (pageUri.indexOf('\\') > 0) {
-  pageUri = pageUri.replace(/\\/g, '/')
-}
+  return pageUri
+})(global.location)
 
 
 if (TEST_MODE) {
@@ -230,4 +216,5 @@ if (TEST_MODE) {
   test.isRoot = isRoot
   test.isTopLevel = isTopLevel
 }
+
 
