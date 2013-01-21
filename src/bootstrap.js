@@ -11,7 +11,7 @@ var bootstrapPlugins = getBootstrapPlugins()
 
 if (bootstrapPlugins.length) {
   forEach(getBootstrapPlugins(), function(name) {
-    load('{seajs}/plugin-' + name, loadMainModule)
+    use('{seajs}/plugin-' + name, loadMainModule)
   })
 }
 else {
@@ -40,6 +40,6 @@ function getBootstrapPlugins() {
 function loadMainModule() {
   var mainId = loaderScript.getAttribute('data-main')
   if (mainId) {
-    load(mainId)
+    use(mainId)
   }
 }
