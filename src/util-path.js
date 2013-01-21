@@ -180,6 +180,8 @@ function isTopLevel(id) {
 }
 
 
+var doc = document
+
 var pageUri = (function(loc) {
   var pathname = loc.pathname
 
@@ -198,6 +200,18 @@ var pageUri = (function(loc) {
 
   return pageUri
 })(global.location)
+
+// Recommend to add `seajs-node` id for the `sea.js` script element
+var loaderScript = doc.getElementById('seajs-node') || (function() {
+  var scripts = doc.getElementsByTagName('script')
+
+  return scripts[scripts.length - 1] ||
+      // Maybe undefined in some environment such as PhantomJS
+      doc.createElement('script')
+})()
+
+var loaderUri = (loaderScript && getScriptAbsoluteSrc(loaderScript)) ||
+    pageUri // When sea.js is inline, set base to pageUri
 
 
 if (TEST_MODE) {
