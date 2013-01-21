@@ -31,7 +31,7 @@ var config = {
 
 seajs.config = function(obj) {
   for (var configKey in obj) {
-    if (hasOwnProperty(obj, configKey)) {
+    if (hasOwn(obj, configKey)) {
 
       var oldConfig = config[configKey]
       var newConfig = obj[configKey]
@@ -44,7 +44,7 @@ seajs.config = function(obj) {
       // Append properties to object config
       if (configKey === 'alias' || configKey === 'vars') {
         for (var key in newConfig) {
-          if (hasOwnProperty(newConfig, key)) {
+          if (hasOwn(newConfig, key)) {
             var prev = oldConfig[key]
             var curr = newConfig[key]
 

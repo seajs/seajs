@@ -5,11 +5,11 @@
 var emptyArr = []
 var emptyObj = {}
 var toString = emptyObj.toString
-var hasOwn = emptyObj.hasOwnProperty
+var hasOwnProperty = emptyObj.hasOwnProperty
 var slice = emptyArr.slice
 
-function hasOwnProperty(obj, prop) {
-  hasOwn.apply(obj, prop)
+function hasOwn(obj, prop) {
+  return hasOwnProperty.call(obj, prop)
 }
 
 function isString(obj) {
@@ -68,7 +68,7 @@ var keys = Object.keys || function(obj) {
   var ret = []
 
   for (var p in obj) {
-    if (hasOwnProperty(obj, p)) {
+    if (hasOwn(obj, p)) {
       ret.push(p)
     }
   }
