@@ -1,19 +1,45 @@
 /**
- * The bootstrap and entrances
+ * bootstrap.js - Initialize the plugins and load the entry module
  */
 
+seajs.config({
+  // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
+  vars: { seajs: dirname(loaderUri) }
+})
 
-// Assigns to global define.
-global.define = define
+var bootstrapPlugins = getBootstrapPlugins()
 
+if (bootstrapPlugins.length) {
+  forEach(getBootstrapPlugins(), function(name) {
+    load('{seajs}/plugin-' + name, loadMainModule)
+  })
+}
+else {
+  loadMainModule()
+}
 
-// Loads the data-main module automatically.
-config.main && seajs.use(config.main)
+// NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
+function getBootstrapPlugins() {
+  var ret = []
+  var str = global.location.search
 
+  // Convert `seajs-xxx` to `seajs-xxx=1`
+  str = str.replace(/(seajs-\w+)(&|$)/g, '$1=1$2')
 
-// For plugin developers
-seajs.pluginSDK = {
-  config: config,
-  cachedModules: cachedModules,
-  STATUS: STATUS
+  // Add cookie string
+  str += ' ' + doc.cookie
+
+  // Exclude seajs-xxx=0
+  str.replace(/seajs-(\w+)=1/g, function(m, name) {
+    ret.push(name)
+  })
+
+  return unique(ret)
+}
+
+function loadMainModule() {
+  var mainId = loaderScript.getAttribute('data-main')
+  if (mainId) {
+    load(mainId)
+  }
 }
