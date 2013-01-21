@@ -73,7 +73,9 @@ function scriptOnload(node, callback) {
       // Dereference the node
       node = undefined
 
-      callback && callback()
+      if (callback) {
+        callback()
+      }
     }
   }
 }
@@ -91,7 +93,10 @@ function styleOnload(node, callback) {
     node.onload = node.onerror = function() {
       node.onload = node.onerror = null
       node = undefined
-      callback && callback()
+
+      if (callback) {
+        callback()
+      }
     }
   }
 }
