@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
 <title>sandbox</title>
 
+<link rel="stylesheet" href="style.css?20130121.css"/>
 <script src="../dist/sea-debug.js"></script>
 
 <script>
@@ -20,9 +21,17 @@
   seajs.use('./' + search.replace(/&t=\d+/, ''))
 
 })()
-</script>
 
+function printResults(txt, style) {
+  var d = document.createElement('div')
+  d.innerHTML = txt
+  d.className = style
+  document.getElementById('out').appendChild(d)
+}
+
+</script>
 </head>
 <body>
+<div id="out"></div>
 </body>
 </html>
