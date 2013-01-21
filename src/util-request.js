@@ -23,7 +23,9 @@ function request(url, callback, charset) {
 
   if (charset) {
     var cs = isFunction(charset) ? charset(url) : charset
-    cs && (node.charset = cs)
+    if (cs) {
+      node.charset = cs
+    }
   }
 
   assetOnload(node, callback)
