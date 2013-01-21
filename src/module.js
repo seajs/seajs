@@ -350,14 +350,14 @@ function isOverlap(arrA, arrB) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 function preload(callback) {
-  var preloadModules = config.preload || []
+  var preloadModules = config.preload
   var len = preloadModules.length
 
   len ? globalModule.load(preloadModules.splice(0, len), callback) :
       callback()
 }
 
-var use = seajs.use = function(ids, callback) {
+seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
     globalModule.load(ids, callback)
