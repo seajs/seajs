@@ -1169,5 +1169,4 @@ function getBootstrapPlugins() {
 }
 
 
-
 })(this);

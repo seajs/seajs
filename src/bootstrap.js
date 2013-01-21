@@ -35,4 +35,3 @@ function getBootstrapPlugins() {
   return unique(ret)
 }
 
-
