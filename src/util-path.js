@@ -210,8 +210,8 @@ var loaderScript = doc.getElementById('seajs-node') || (function() {
       doc.createElement('script')
 })()
 
-var loaderUri = (loaderScript && getScriptAbsoluteSrc(loaderScript)) ||
-    pageUri // When sea.js is inline, set base to pageUri
+var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
+    pageUri // When `sea.js` is inline, loaderUri is pageUri
 
 
 if (TEST_MODE) {
