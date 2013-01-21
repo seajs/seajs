@@ -3,9 +3,6 @@ var seajs = {
   version: "@VERSION"
 }
 
-// Debug mode that will be turned off when building
-var debugMode = "@DEBUG"
-
 // The flag for test environment
 var TEST_MODE = true
 
