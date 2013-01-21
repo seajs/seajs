@@ -4,19 +4,17 @@
 
 seajs.config({
   // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
-  vars: { seajs: dirname(loaderUri) }
+  vars: { seajs: dirname(loaderUri) },
+
+  // Preload all initial plugins
+  preload: getBootstrapPlugins()
 })
 
-var bootstrapPlugins = getBootstrapPlugins()
+var dataMain = loaderScript.getAttribute('data-main')
+if (dataMain) {
+  seajs.use(dataMain)
+}
 
-if (bootstrapPlugins.length) {
-  forEach(getBootstrapPlugins(), function(name) {
-    use('{seajs}/plugin-' + name, loadMainModule)
-  })
-}
-else {
-  loadMainModule()
-}
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
@@ -31,15 +29,10 @@ function getBootstrapPlugins() {
 
   // Exclude seajs-xxx=0
   str.replace(/seajs-(\w+)=1/g, function(m, name) {
-    ret.push(name)
+    ret.push('{seajs}/plugin-' + name)
   })
 
   return unique(ret)
 }
 
-function loadMainModule() {
-  var mainId = loaderScript.getAttribute('data-main')
-  if (mainId) {
-    use(mainId)
-  }
-}
+
