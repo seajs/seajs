@@ -233,7 +233,9 @@ function save(uri, meta) {
 }
 
 function compile(mod) {
-  if (mod.status === STATUS.COMPILED) {
+  // If status is compiling, just return exports to avoid circularly calling
+  // If status is compiled, just return exports to avoid compiling again
+  if (mod.status >= STATUS.COMPILING) {
     return mod.exports
   }
 
@@ -251,17 +253,11 @@ function compile(mod) {
 
 
   function require(id) {
-    var uri = resolve(id, mod.uri)
-    var child = cachedModules[uri]
+    var child = cachedModules[require.resolve(id)]
 
-    // Just return null when uri is invalid
-    if (!child) {
+    // Return `null` when `uri` is invalid
+    if (child === undefined) {
       return null
-    }
-
-    // Avoid circularly calling
-    if (child.status === STATUS.COMPILING) {
-      return child.exports
     }
 
     child.parent = mod
@@ -270,7 +266,6 @@ function compile(mod) {
 
   require.async = function(ids, callback) {
     mod.load(ids, callback)
-    return require
   }
 
   require.resolve = function(id) {
