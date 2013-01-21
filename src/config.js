@@ -1,121 +1,95 @@
 /**
- * The configuration
+ * config.js - The configuration for the loader
  */
 
-// The configuration data for the loader
 var config = {
+  // the root path to use for id2uri parsing
+  base: (function() {
+    var ret = dirname(loaderUri)
 
-  // Modules that are needed to load before all other modules
-  preload: []
+    // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
+    // should be `http://test.com/libs/`
+    var m = ret.match(/^(.+\/)seajs\/[\.\d]+(?:-dev)?\/$/)
+    if (m) {
+      ret = m[1]
+    }
+
+    return ret
+  })(),
+
+  // The charset for requesting files
+  charset: 'utf-8',
+
+  // Debug mode that will be turned off when building
+  debug: '@DEBUG'
+
+  // alias - The shorthand alias for module id
+  // vars - The {xxx} variables in module id
+  // map - An array containing rules to map module uri
+  // preload - Modules that are needed to load before all other modules
 }
 
-// Async inserted script
-var loaderScript = document.getElementById('seajsnode')
+seajs.config = function(obj) {
+  for (var configKey in obj) {
+    if (hasOwnProperty(obj, configKey)) {
 
-// Static script
-if (!loaderScript) {
-  var scripts = document.getElementsByTagName('script')
-  loaderScript = scripts[scripts.length - 1]
-}
+      var oldConfig = config[configKey]
+      var newConfig = obj[configKey]
 
-var loaderSrc = (loaderScript && getScriptAbsoluteSrc(loaderScript)) ||
-    pageUri // When sea.js is inline, set base to pageUri.
-
-var base = dirname(loaderSrc)
-var loaderDir = base
-
-// When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
-// to "http://test.com/libs/"
-var match = base.match(/^(.+\/)seajs\/[\.\d]+(?:-dev)?\/$/)
-if (match) base = match[1]
-
-config.base = base
-config.main = loaderScript && loaderScript.getAttribute('data-main')
-config.charset = 'utf-8'
-
-
-/**
- * The function to configure the framework
- * config({
-   *   'base': 'path/to/base',
-   *   'vars': {
-   *     'locale': 'zh-cn'
-   *   },
-   *   'alias': {
-   *     'app': 'biz/xx',
-   *     'jquery': 'jquery-1.5.2',
-   *     'cart': 'cart?t=20110419'
-   *   },
-   *   'map': [
-   *     ['test.cdn.cn', 'localhost']
-   *   ],
-   *   preload: [],
-   *   charset: 'utf-8',
-   *   debug: false
-   * })
- *
- */
-seajs.config = function(o) {
-  for (var k in o) {
-    if (!o.hasOwnProperty(k)) continue
-
-    var previous = config[k]
-    var current = o[k]
-
-    if (previous && (k === 'alias' || k === 'vars')) {
-      for (var p in current) {
-        if (current.hasOwnProperty(p)) {
-          var prevValue = previous[p]
-          var currValue = current[p]
-
-          checkAliasConflict(prevValue, currValue, p)
-          previous[p] = currValue
-        }
-      }
-    }
-    else if (previous && (k === 'map' || k === 'preload')) {
-      // for config({ preload: 'some-module' })
-      if (isString(current)) {
-        current = [current]
+      if (oldConfig === undefined) {
+        config[configKey] = newConfig
+        continue
       }
 
-      forEach(current, function(item) {
-        if (item) {
-          previous.push(item)
+      // Append properties to object config
+      if (configKey === 'alias' || configKey === 'vars') {
+        for (var key in newConfig) {
+          if (hasOwnProperty(newConfig, key)) {
+            var prev = oldConfig[key]
+            var curr = newConfig[key]
+
+            checkConfigConflict(prev, curr, key, configKey)
+            oldConfig[key] = curr
+          }
         }
-      })
-    }
-    else {
-      config[k] = current
+      }
+      // Append items to array config
+      else if (configKey === 'map' || configKey === 'preload') {
+        if (isString(newConfig)) {
+          newConfig = [newConfig]
+        }
+
+        forEach(newConfig, function(item) {
+          oldConfig.push(item)
+        })
+      }
+
     }
   }
 
-  // Makes sure config.base is an absolute path.
-  var base = config.base
-  if (base && !isAbsolute(base)) {
-    config.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+  // Make sure that `config.base` is an absolute path
+  if (obj.base) {
+    makeBaseAbsolute()
   }
 
-  debugSync()
-
-  return this
+  return seajs
 }
 
-
-function debugSync() {
-  // For convenient reference
-  seajs.debug = !!config.debug
-}
-
-debugSync()
-
-function checkAliasConflict(previous, current, key) {
-  if (previous && previous !== current) {
-    log('The alias config is conflicted:',
+function checkConfigConflict(prev, curr, key, configKey) {
+  if (prev && prev !== curr) {
+    log('The ' + configKey + ' config is conflicted:',
         'key =', '"' + key + '"',
-        'previous =', '"' + previous + '"',
-        'current =', '"' + current + '"',
+        'previous =', '"' + prev + '"',
+        'current =', '"' + curr + '"',
         'warn')
   }
 }
+
+function makeBaseAbsolute() {
+  var base = config.base
+  if (!isAbsolute(base)) {
+    config.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+  }
+}
+
 
