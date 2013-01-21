@@ -15,6 +15,5 @@ config.main && seajs.use(config.main)
 seajs.pluginSDK = {
   config: config,
   cachedModules: cachedModules,
-  compilingStack: compilingStack,
   STATUS: STATUS
 }
