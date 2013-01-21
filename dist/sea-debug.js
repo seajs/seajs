@@ -15,9 +15,6 @@ var seajs = {
   version: "2.0.0-dev"
 }
 
-// Debug mode that will be turned off when building
-var debugMode = "@DEBUG"
-
 // The flag for test environment
 var TEST_MODE = true
 
@@ -135,7 +132,7 @@ var log = seajs.log = function() {
   var type = console[args[len - 1]] ? args.pop() : 'log'
 
   // Print log info in debug mode only
-  if (type === 'log' && !debugMode) {
+  if (type === 'log' && !config.debugMode) {
     return
   }
 
@@ -412,6 +409,8 @@ function isTopLevel(id) {
 }
 
 
+var doc = document
+
 var pageUri = (function(loc) {
   var pathname = loc.pathname
 
@@ -430,6 +429,18 @@ var pageUri = (function(loc) {
 
   return pageUri
 })(global.location)
+
+// Recommend to add `seajs-node` id for the `sea.js` script element
+var loaderScript = doc.getElementById('seajs-node') || (function() {
+  var scripts = doc.getElementsByTagName('script')
+
+  return scripts[scripts.length - 1] ||
+      // Maybe undefined in some environment such as PhantomJS
+      doc.createElement('script')
+})()
+
+var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
+    pageUri // When `sea.js` is inline, loaderUri is pageUri
 
 
 if (TEST_MODE) {
@@ -455,7 +466,6 @@ if (TEST_MODE) {
  * ref: tests/research/load-js-css/test.html
  */
 
-var doc = document
 var head = doc.head ||
     doc.getElementsByTagName('head')[0] ||
     doc.documentElement
@@ -475,7 +485,9 @@ function request(url, callback, charset) {
 
   if (charset) {
     var cs = isFunction(charset) ? charset(url) : charset
-    cs && (node.charset = cs)
+    if (cs) {
+      node.charset = cs
+    }
   }
 
   assetOnload(node, callback)
@@ -518,7 +530,7 @@ function scriptOnload(node, callback) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!debugMode) {
+      if (!config.debug) {
         head.removeChild(node)
       }
 
@@ -635,7 +647,7 @@ var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, '$1')) < 536
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
 var isOldFirefox = UA.indexOf('Firefox') > 0 &&
-    !('onload' in document.createElement('link'))
+    !('onload' in doc.createElement('link'))
 
 
 /**
@@ -1002,22 +1014,23 @@ function printCircularLog(stack) {
 
 function isOverlap(arrA, arrB) {
   var arrC = arrA.concat(arrB)
-  return arrC.length > unique(arrC).length
+  return  unique(arrC).length < arrC.length
 }
 
 
 // Public API
 
 var globalModule = new Module(pageUri, STATUS.COMPILED)
-var preloadModules = []
 
 function preload(callback) {
+  var preloadModules = config.preload || []
   var len = preloadModules.length
+
   len ? globalModule.load(preloadModules.splice(0, len), callback) :
       callback()
 }
 
-var use = seajs.use = function(ids, callback) {
+seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
     globalModule.load(ids, callback)
@@ -1029,195 +1042,144 @@ global.define = define
 
 
 /**
- * The configuration
+ * config.js - The configuration for the loader
  */
 
-// The configuration data for the loader
 var config = {
+  // the root path to use for id2uri parsing
+  base: (function() {
+    var ret = dirname(loaderUri)
 
-  // Modules that are needed to load before all other modules
-  preload: []
+    // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
+    // should be `http://test.com/libs/`
+    var m = ret.match(/^(.+\/)seajs\/[\.\d]+(?:-dev)?\/$/)
+    if (m) {
+      ret = m[1]
+    }
+
+    return ret
+  })(),
+
+  // The charset for requesting files
+  charset: 'utf-8',
+
+  // Debug mode that will be turned off when building
+  debug: true
+
+  // alias - The shorthand alias for module id
+  // vars - The {xxx} variables in module id
+  // map - An array containing rules to map module uri
+  // preload - Modules that are needed to load before all other modules
 }
 
-// Async inserted script
-var loaderScript = document.getElementById('seajsnode')
+seajs.config = function(obj) {
+  for (var configKey in obj) {
+    if (hasOwnProperty(obj, configKey)) {
 
-// Static script
-if (!loaderScript) {
-  var scripts = document.getElementsByTagName('script')
-  loaderScript = scripts[scripts.length - 1]
-}
+      var oldConfig = config[configKey]
+      var newConfig = obj[configKey]
 
-var loaderSrc = (loaderScript && getScriptAbsoluteSrc(loaderScript)) ||
-    pageUri // When sea.js is inline, set base to pageUri.
-
-var base = dirname(loaderSrc)
-var loaderDir = base
-
-// When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
-// to "http://test.com/libs/"
-var match = base.match(/^(.+\/)seajs\/[\.\d]+(?:-dev)?\/$/)
-if (match) base = match[1]
-
-config.base = base
-config.main = loaderScript && loaderScript.getAttribute('data-main')
-config.charset = 'utf-8'
-
-
-/**
- * The function to configure the framework
- * config({
-   *   'base': 'path/to/base',
-   *   'vars': {
-   *     'locale': 'zh-cn'
-   *   },
-   *   'alias': {
-   *     'app': 'biz/xx',
-   *     'jquery': 'jquery-1.5.2',
-   *     'cart': 'cart?t=20110419'
-   *   },
-   *   'map': [
-   *     ['test.cdn.cn', 'localhost']
-   *   ],
-   *   preload: [],
-   *   charset: 'utf-8',
-   *   debug: false
-   * })
- *
- */
-seajs.config = function(o) {
-  for (var k in o) {
-    if (!o.hasOwnProperty(k)) continue
-
-    var previous = config[k]
-    var current = o[k]
-
-    if (previous && (k === 'alias' || k === 'vars')) {
-      for (var p in current) {
-        if (current.hasOwnProperty(p)) {
-          var prevValue = previous[p]
-          var currValue = current[p]
-
-          checkAliasConflict(prevValue, currValue, p)
-          previous[p] = currValue
-        }
-      }
-    }
-    else if (previous && (k === 'map' || k === 'preload')) {
-      // for config({ preload: 'some-module' })
-      if (isString(current)) {
-        current = [current]
+      if (oldConfig === undefined) {
+        config[configKey] = newConfig
+        continue
       }
 
-      forEach(current, function(item) {
-        if (item) {
-          previous.push(item)
+      // Append properties to object config
+      if (configKey === 'alias' || configKey === 'vars') {
+        for (var key in newConfig) {
+          if (hasOwnProperty(newConfig, key)) {
+            var prev = oldConfig[key]
+            var curr = newConfig[key]
+
+            checkConfigConflict(prev, curr, key, configKey)
+            oldConfig[key] = curr
+          }
         }
-      })
-    }
-    else {
-      config[k] = current
+      }
+      // Append items to array config
+      else if (configKey === 'map' || configKey === 'preload') {
+        if (isString(newConfig)) {
+          newConfig = [newConfig]
+        }
+
+        forEach(newConfig, function(item) {
+          oldConfig.push(item)
+        })
+      }
+
     }
   }
 
-  // Makes sure config.base is an absolute path.
-  var base = config.base
-  if (base && !isAbsolute(base)) {
-    config.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+  // Make sure that `config.base` is an absolute path
+  if (obj.base) {
+    makeBaseAbsolute()
   }
 
-  debugSync()
-
-  return this
+  return seajs
 }
 
-
-function debugSync() {
-  // For convenient reference
-  seajs.debug = !!config.debug
-}
-
-debugSync()
-
-function checkAliasConflict(previous, current, key) {
-  if (previous && previous !== current) {
-    log('The alias config is conflicted:',
+function checkConfigConflict(prev, curr, key, configKey) {
+  if (prev && prev !== curr) {
+    log('The ' + configKey + ' config is conflicted:',
         'key =', '"' + key + '"',
-        'previous =', '"' + previous + '"',
-        'current =', '"' + current + '"',
+        'previous =', '"' + prev + '"',
+        'current =', '"' + curr + '"',
         'warn')
   }
 }
 
+function makeBaseAbsolute() {
+  var base = config.base
+  if (!isAbsolute(base)) {
+    config.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+  }
+}
+
+
 /**
- * Prepare for bootstrapping
+ * bootstrap.js - Initialize the plugins and load the entry module
  */
 
-  // The safe and convenient version of console.log
-seajs.log = log
-
-
-// Sets a alias to `sea.js` directory for loading plugins.
 seajs.config({
-  vars: { seajs: loaderDir }
+  // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
+  vars: { seajs: dirname(loaderUri) }
 })
 
+var bootstrapPlugins = getBootstrapPlugins()
 
-// Uses `seajs-xxx` flag to load plugin-xxx.
-forEach(getStartupPlugins(), function(name) {
-  seajs.use('{seajs}/plugin-' + name)
+if (bootstrapPlugins.length) {
+  forEach(getBootstrapPlugins(), function(name) {
+    load('{seajs}/plugin-' + name, loadMainModule)
+  })
+}
+else {
+  loadMainModule()
+}
 
-  // Delays `seajs.use` calls to the onload of `mapfile` in debug mode.
-  if (name === 'debug') {
-    seajs._use = seajs.use
-    seajs._useArgs = []
-    seajs.use = function() {
-      seajs._useArgs.push(arguments);
-      return seajs
-    }
-  }
-})
-
-
-// Helpers
-// -------
-
-function getStartupPlugins() {
+// NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
+function getBootstrapPlugins() {
   var ret = []
   var str = global.location.search
 
-  // Converts `seajs-xxx` to `seajs-xxx=1`
+  // Convert `seajs-xxx` to `seajs-xxx=1`
   str = str.replace(/(seajs-\w+)(&|$)/g, '$1=1$2')
 
   // Add cookie string
-  str += ' ' + document.cookie
+  str += ' ' + doc.cookie
 
-  // Excludes seajs-xxx=0
-  str.replace(/seajs-(\w+)=[1-9]/g, function(m, name) {
+  // Exclude seajs-xxx=0
+  str.replace(/seajs-(\w+)=1/g, function(m, name) {
     ret.push(name)
   })
 
   return unique(ret)
 }
 
-/**
- * The bootstrap and entrances
- */
-
-
-// Assigns to global define.
-global.define = define
-
-
-// Loads the data-main module automatically.
-config.main && seajs.use(config.main)
-
-
-// For plugin developers
-seajs.pluginSDK = {
-  config: config,
-  cachedModules: cachedModules,
-  STATUS: STATUS
+function loadMainModule() {
+  var mainId = loaderScript.getAttribute('data-main')
+  if (mainId) {
+    load(mainId)
+  }
 }
 
 })(this);
