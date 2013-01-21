@@ -269,7 +269,7 @@ function compile(mod) {
   }
 
   require.async = function(ids, callback) {
-    mod.use(ids, callback)
+    mod.load(ids, callback)
     return require
   }
 
@@ -282,6 +282,8 @@ function compile(mod) {
 
   mod.require = require
   mod.exports = mod.exports || {}
+  delete mod.waitings
+
   var factory = mod.factory
   var exports = factory
 
