@@ -357,7 +357,7 @@ function preload(callback) {
       callback()
 }
 
-var use = seajs.use = function(ids, callback) {
+seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
     globalModule.load(ids, callback)
