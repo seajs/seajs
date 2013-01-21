@@ -17,7 +17,6 @@
     sendMessage('printResults', txt, style || 'info')
   }
 
-
   exports.assert = function (guard, message) {
     if (typeof message === 'undefined') {
       message = ''
@@ -25,18 +24,17 @@
 
     if (guard) {
       exports.print('[PASS] ' + message, 'pass')
-    } else {
+    }
+    else {
       exports.print('[FAIL] ' + message, 'fail')
     }
   }
 
-
   exports.next = function() {
     setTimeout(function() {
       sendMessage('testNext')
-    }, 500) // 留 500ms 空隙，使得异步操作能有时间完成。
+    }, 500) // Leave time for async operation
   }
-
 
   exports.done = function() {
     exports.print('[DONE]')
@@ -45,17 +43,14 @@
 
 
   function error(err) {
-    // Firefox 和 Old Safari 在 script 404 时会抛出异常，下面仅处理了 Firefox 的情况
-    // Old Safari 的在具体 test case 中排除
+    // Firefox will throw an error when script is 404
     if (err !== 'Error loading script') {
       exports.print('[ERROR] ' + err, 'error')
     }
-
     exports.next()
   }
 
-
-  // Collects errors in browser environment.
+  // Collect errors in browser environment
   if (typeof process === 'undefined') {
     var _onerror = window.onerror
     window.onerror = function(err) {
@@ -64,9 +59,6 @@
     }
   }
 
-
-  // Helpers
-  // -------
 
   function sendMessage(fn, msg, type) {
     var p = this

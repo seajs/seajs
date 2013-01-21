@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>SeaJS Test Suite</title>
-<link rel="stylesheet" href="style.css?20121112.css"/>
+<link rel="stylesheet" href="style.css?20130121.css"/>
 </head>
 <body>
-<script src="config.js?20121223.js"></script>
+<script src="config.js?20130121.js"></script>
 <script>
 var result
 
@@ -233,11 +233,11 @@ var result
 
 
   function makeSureGoOn(test) {
-    // Wait 20s
+    // Wait 10s
     timeoutTimer = setTimeout(function() {
       printResults('[WARN] Time is out for this test case: ' + test, 'warn')
       testNext()
-    }, 20000)
+    }, 10000)
   }
 
 

@@ -5,22 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
 <title>sandbox</title>
 
-<script src="../dist/sea-debug.js?20121112.js"></script>
+<script src="../dist/sea-debug.js"></script>
 
 <script>
 (function(){
-
   // no cache
-  seajs.config({
-    debug: 2
-  })
+  document.cookie = 'seajs-nocache=1'
 
-  // no plugin-debug
-  document.cookie = 'seajs-debug=0``0; path=/; expires=' + new Date(0)
+  // no debug
+  document.cookie = 'seajs-debug=0'
 
-  // load test case
-  var file = decodeURIComponent((location.search || '?').substring(1))
-  seajs.use('./' + file.replace(/&t=\d+/, ''))
+  // Load test cases
+  var search = decodeURIComponent((location.search || '?').substring(1))
+  seajs.use('./' + search.replace(/&t=\d+/, ''))
 
 })()
 </script>
