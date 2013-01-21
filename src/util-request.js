@@ -3,7 +3,6 @@
  * ref: tests/research/load-js-css/test.html
  */
 
-var doc = document
 var head = doc.head ||
     doc.getElementsByTagName('head')[0] ||
     doc.documentElement
@@ -68,7 +67,7 @@ function scriptOnload(node, callback) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!debugMode) {
+      if (!config.debug) {
         head.removeChild(node)
       }
 
@@ -185,6 +184,6 @@ var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, '$1')) < 536
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
 var isOldFirefox = UA.indexOf('Firefox') > 0 &&
-    !('onload' in document.createElement('link'))
+    !('onload' in doc.createElement('link'))
 
 
