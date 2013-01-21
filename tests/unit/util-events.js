@@ -1,6 +1,7 @@
 define(function(require) {
 
   var test = require('../test')
+  var assert = test.assert
 
   var obj = seajs
   obj.counter = 0
@@ -12,20 +13,20 @@ define(function(require) {
   })
 
   obj.emit('event')
-  test.assert(obj.counter === 1, obj.counter)
+  assert(obj.counter === 1, obj.counter)
 
   obj.emit('event')
   obj.emit('event')
   obj.emit('event')
   obj.emit('event')
-  test.assert(obj.counter === 5, obj.counter)
+  assert(obj.counter === 5, obj.counter)
 
 
   // off all events
   obj.off()
   obj.counter = 0
   obj.emit('event')
-  test.assert(obj.counter === 0, obj.counter)
+  assert(obj.counter === 0, obj.counter)
 
 
   // on, then unbind all functions
@@ -40,7 +41,7 @@ define(function(require) {
   obj.emit('event')
   obj.off('event')
   obj.emit('event')
-  test.assert(obj.counter === 1, obj.counter)
+  assert(obj.counter === 1, obj.counter)
 
 
   // bind two callbacks, unbind only one
@@ -61,8 +62,8 @@ define(function(require) {
   obj.off('event', callback2)
   obj.emit('event')
 
-  test.assert(obj.counterA === 1, obj.counterA)
-  test.assert(obj.counterB === 2, obj.counterB)
+  assert(obj.counterA === 1, obj.counterA)
+  assert(obj.counterB === 2, obj.counterB)
 
 
   // unbind a callback in the midst of it firing
@@ -79,7 +80,7 @@ define(function(require) {
   obj.emit('event')
   obj.emit('event')
 
-  test.assert(obj.counter === 1, obj.counter)
+  assert(obj.counter === 1, obj.counter)
 
 
   // two binds that unbind themeselves
@@ -103,8 +104,8 @@ define(function(require) {
   obj.emit('event')
   obj.emit('event')
 
-  test.assert(obj.counterA === 1, obj.counterA)
-  test.assert(obj.counterB === 1, obj.counterB)
+  assert(obj.counterA === 1, obj.counterA)
+  assert(obj.counterB === 1, obj.counterB)
 
 
   // splice bug for `off`
@@ -124,15 +125,7 @@ define(function(require) {
   obj.on('event', f2)
 
   obj.emit('event')
-  test.assert(counter === 3, counter)
-
-
-  obj.off(null, f1)
-  obj.off(null, f2)
-
-  obj.emit('event')
-  test.assert(counter === 3, counter)
-
+  assert(counter === 3, counter)
 
 
   test.done()
