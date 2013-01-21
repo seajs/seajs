@@ -233,15 +233,16 @@ function save(uri, meta) {
 }
 
 function compile(mod) {
-  // If status is compiling, just return exports to avoid circularly calling
-  // If status is compiled, just return exports to avoid compiling again
+  // When module is compiled, DO NOT compile it again. When module
+  // is being compiled, just return `module.exports` too, for avoiding
+  // circularly calling
   if (mod.status >= STATUS.COMPILING) {
     return mod.exports
   }
 
   emit('compile', mod)
 
-  // Just return null when:
+  // Just return `null` when:
   //  1. the module file is 404
   //  2. the module file is not written with valid module format
   //  3. other error cases
@@ -340,7 +341,7 @@ function printCircularLog(stack) {
 
 function isOverlap(arrA, arrB) {
   var arrC = arrA.concat(arrB)
-  return arrC.length > unique(arrC).length
+  return  unique(arrC).length < arrC.length
 }
 
 
