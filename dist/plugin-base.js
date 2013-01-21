@@ -1,11 +1,10 @@
 /**
  * The base utilities for plugin development
  */
-define('{seajs}/plugin-base', [], function(require, exports) {
+define('{seajs}/plugin-base', ['./plugin-sdk'], function(require, exports) {
 
-  var pluginSDK = seajs.pluginSDK
+  var pluginSDK = require('./plugin-sdk')
   var util = pluginSDK.util
-  var Module = pluginSDK.Module
 
   var pluginsInfo = {}
   var uriCache = {}
@@ -13,12 +12,6 @@ define('{seajs}/plugin-base', [], function(require, exports) {
 
   exports.add = function(o) {
     pluginsInfo[o.name] = o
-  }
-
-
-  exports.util = {
-    xhr: xhr,
-    globalEval: globalEval
   }
 
 
@@ -35,7 +28,7 @@ define('{seajs}/plugin-base', [], function(require, exports) {
 
       // id = text!path/to/some
       var m = id.match(/^(\w+)!(.+)$/)
-      if (m && isPluginName(m[1])) {
+      if (m && isPlugin(m[1])) {
         pluginName = m[1]
         parsedId = m[2]
       }
@@ -48,7 +41,7 @@ define('{seajs}/plugin-base', [], function(require, exports) {
         var ext = m[1]
 
         for (var k in pluginsInfo) {
-          if (isPluginName(k) &&
+          if (isPlugin(k) &&
               util.indexOf(pluginsInfo[k].ext, ext) > -1) {
             pluginName = k
             break
@@ -65,7 +58,7 @@ define('{seajs}/plugin-base', [], function(require, exports) {
       // Don't pollute id when pluginName is not found
       var uri = _resolve(pluginName ? parsedId : id, refUri)
 
-      if (isPluginName(pluginName) && !uriCache[uri]) {
+      if (isPlugin(pluginName) && !uriCache[uri]) {
         uriCache[uri] = pluginName
       }
 
@@ -75,53 +68,21 @@ define('{seajs}/plugin-base', [], function(require, exports) {
 
 
   function extendFetch() {
-    var _fetch = Module._fetch
-
-    Module._fetch = function(url, callback, charset) {
+    seajs.on('request', function(data) {
+      var url = data.uri
       var pluginName = uriCache[url]
 
       if (pluginName) {
-        pluginsInfo[pluginName].fetch(url, callback, charset)
-        return
+        pluginsInfo[pluginName].fetch(url, data.callback, data.charset)
+        data.requested = true
       }
-
-      _fetch(url, callback, charset)
-    }
+    })
   }
 
 
-  function xhr(url, callback) {
-    var r = window.ActiveXObject ?
-        new window.ActiveXObject('Microsoft.XMLHTTP')
-        : new window.XMLHttpRequest()
+  // Helpers
 
-    r.open('GET', url, true)
-
-    r.onreadystatechange = function() {
-      if (r.readyState === 4) {
-        if (r.status === 200) {
-          callback(r.responseText)
-        }
-        else {
-          throw new Error('Could not load: ' + url + ', status = ' + r.status)
-        }
-      }
-    }
-
-    return r.send(null)
-  }
-
-
-  function globalEval(data) {
-    if (data && /\S/.test(data)) {
-      (window.execScript || function(data) {
-        window['eval'].call(window, data)
-      })(data)
-    }
-  }
-
-
-  function isPluginName(name) {
+  function isPlugin(name) {
     return name && pluginsInfo.hasOwnProperty(name)
   }
 
