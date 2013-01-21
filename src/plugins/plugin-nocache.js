@@ -1,29 +1,31 @@
 /**
- * Turn on this plugin to disable cache by adding timestamp.
+ * Disable cache by adding a timestamp to each http request
  */
+
 define('{seajs}/plugin-nocache', [], function() {
 
   var noCachePrefix = 'seajs-nocache='
   var noCacheTimeStamp = noCachePrefix + new Date().getTime()
+  var uriCache = {}
 
-
-  // 在 fetch 时加时间戳
+  // Add a timestamp to each request
   seajs.on('fetch', function(data) {
-    var url = data.uri
-    if (url.indexOf(noCachePrefix) === -1) {
-      url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
+    var uri = data.uri
+    var requestUri = uri
+
+    if (uri.indexOf(noCachePrefix) === -1) {
+      requestUri = uri + (uri.indexOf('?') === -1 ? '?' : '&')
+          + noCacheTimeStamp
+      uriCache[requestUri] = uri
     }
-    data.uri = url
+
+    data.uri = requestUri
   })
 
-
-  // 在自动获取 uri 时去掉时间戳
+  // Restore the original uri in automatically deriving case
   seajs.on('derived', function(data) {
-    var url = data.uri
-    if (url.indexOf(noCachePrefix) !== -1) {
-      url = url.replace(noCachePrefix + noCacheTimeStamp, '')
-    }
-    data.uri = url
+    var requestUri = data.uri
+    data.uri = uriCache[requestUri] || requestUri
   })
 
 });
