@@ -42,7 +42,6 @@
 
       <path path="${src.dir}/module.js"/>
       <path path="${src.dir}/config.js"/>
-      <path path="${src.dir}/prepare.js"/>
       <path path="${src.dir}/bootstrap.js"/>
 
       <path path="${src.dir}/outro.js"/>
@@ -64,9 +63,9 @@
     <!-- 得到 sea-debug.js -->
     <copy file="${src.file}" tofile="${debug.file}" overwrite="true"/>
 
-    <!-- %DEBUG% 替换 -->
+    <!-- DEBUG 替换 -->
     <replaceregexp file="${src.file}"
-                   match="@DEBUG"
+                   match="debug: true"
                    replace=""
                    flags="g"
                    encoding="${charset}"/>
