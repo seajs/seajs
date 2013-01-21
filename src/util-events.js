@@ -73,9 +73,3 @@ function emitData(event, data, prop) {
 }
 
 
-// For test environment
-if(TEST_MODE) {
-  test.emitData = emitData
-}
-
-
