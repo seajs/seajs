@@ -348,10 +348,11 @@ function isOverlap(arrA, arrB) {
 // Public API
 
 var globalModule = new Module(pageUri, STATUS.COMPILED)
-var preloadModules = []
 
 function preload(callback) {
+  var preloadModules = config.preload || []
   var len = preloadModules.length
+
   len ? globalModule.load(preloadModules.splice(0, len), callback) :
       callback()
 }
