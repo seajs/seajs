@@ -10,7 +10,8 @@ if (global.seajs) {
   return
 }
 
-var seajs = {
+
+var seajs = global.seajs = {
   // The current version of SeaJS being used
   version: "2.0.0-dev"
 }
@@ -31,11 +32,11 @@ if (TEST_MODE) {
 var emptyArr = []
 var emptyObj = {}
 var toString = emptyObj.toString
-var hasOwn = emptyObj.hasOwnProperty
+var hasOwnProperty = emptyObj.hasOwnProperty
 var slice = emptyArr.slice
 
-function hasOwnProperty(obj, prop) {
-  hasOwn.apply(obj, prop)
+function hasOwn(obj, prop) {
+  return hasOwnProperty.call(obj, prop)
 }
 
 function isString(obj) {
@@ -94,7 +95,7 @@ var keys = Object.keys || function(obj) {
   var ret = []
 
   for (var p in obj) {
-    if (hasOwnProperty(obj, p)) {
+    if (hasOwn(obj, p)) {
       ret.push(p)
     }
   }
@@ -221,12 +222,6 @@ function emitData(event, data, prop) {
 }
 
 
-// For test environment
-if(TEST_MODE) {
-  test.emitData = emitData
-}
-
-
 /**
  * util-path.js - The utilities for operating path such as id, uri
  */
@@ -307,7 +302,7 @@ function parseAlias(id) {
   var alias = config.alias
 
   // Only parse top-level id
-  if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
+  if (alias && hasOwn(alias, id) && isTopLevel(id)) {
     id = alias[id]
   }
 
@@ -319,7 +314,7 @@ function parseVars(id) {
 
   if (vars && id.indexOf('{') > -1) {
     id = id.replace(VARS_RE, function(m, key) {
-      return vars.hasOwnProperty(key) ? vars[key] : key
+      return hasOwn(vars, key) ? vars[key] : key
     })
   }
 
@@ -1023,7 +1018,7 @@ function isOverlap(arrA, arrB) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 function preload(callback) {
-  var preloadModules = config.preload || []
+  var preloadModules = config.preload
   var len = preloadModules.length
 
   len ? globalModule.load(preloadModules.splice(0, len), callback) :
@@ -1074,7 +1069,7 @@ var config = {
 
 seajs.config = function(obj) {
   for (var configKey in obj) {
-    if (hasOwnProperty(obj, configKey)) {
+    if (hasOwn(obj, configKey)) {
 
       var oldConfig = config[configKey]
       var newConfig = obj[configKey]
@@ -1087,7 +1082,7 @@ seajs.config = function(obj) {
       // Append properties to object config
       if (configKey === 'alias' || configKey === 'vars') {
         for (var key in newConfig) {
-          if (hasOwnProperty(newConfig, key)) {
+          if (hasOwn(newConfig, key)) {
             var prev = oldConfig[key]
             var curr = newConfig[key]
 
@@ -1142,19 +1137,17 @@ function makeBaseAbsolute() {
 
 seajs.config({
   // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
-  vars: { seajs: dirname(loaderUri) }
+  vars: { seajs: dirname(loaderUri) },
+
+  // Preload all initial plugins
+  preload: getBootstrapPlugins()
 })
 
-var bootstrapPlugins = getBootstrapPlugins()
+var dataMain = loaderScript.getAttribute('data-main')
+if (dataMain) {
+  seajs.use(dataMain)
+}
 
-if (bootstrapPlugins.length) {
-  forEach(getBootstrapPlugins(), function(name) {
-    load('{seajs}/plugin-' + name, loadMainModule)
-  })
-}
-else {
-  loadMainModule()
-}
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
@@ -1169,17 +1162,12 @@ function getBootstrapPlugins() {
 
   // Exclude seajs-xxx=0
   str.replace(/seajs-(\w+)=1/g, function(m, name) {
-    ret.push(name)
+    ret.push('{seajs}/plugin-' + name)
   })
 
   return unique(ret)
 }
 
-function loadMainModule() {
-  var mainId = loaderScript.getAttribute('data-main')
-  if (mainId) {
-    load(mainId)
-  }
-}
+
 
 })(this);
