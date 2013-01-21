@@ -21,7 +21,7 @@ var config = {
   charset: 'utf-8',
 
   // Debug mode that will be turned off when building
-  debug: '@DEBUG'
+  debug: true
 
   // alias - The shorthand alias for module id
   // vars - The {xxx} variables in module id
