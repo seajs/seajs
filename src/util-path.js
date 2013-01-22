@@ -21,11 +21,11 @@ function dirname(path) {
 // Canonicalize a path
 // realpath('./a//b/../c') ==> 'a/c'
 function realpath(path) {
-  MULTIPLE_SLASH_RE.lastIndex = 0
 
   // 'file:///a//b/c' ==> 'file:///a/b/c'
   // 'http://a//b/c' ==> 'http://a/b/c'
-  if (MULTIPLE_SLASH_RE.test(path)) {
+  // 'https://a//b/c' ==> 'https://a/b/c'
+  if (path.substring(7).indexOf('//') > 0) {
     path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
   }
 
@@ -57,9 +57,12 @@ function realpath(path) {
 // Normalize an uri
 // normalize('path/to/a') ==> 'path/to/a.js'
 function normalize(uri) {
-  var lastChar = uri.charAt(uri.length - 1)
+  // Call realpath() before adding extension, so that most of uris will
+  // contains no `.` and will just return in realpath() call
+  uri = realpath(uri)
 
   // Add the default `.js` extension except that the uri ends with `#`
+  var lastChar = uri.charAt(uri.length - 1)
   if (lastChar === '#') {
     uri = uri.slice(0, -1)
   }
@@ -70,7 +73,7 @@ function normalize(uri) {
   // Fixes `:80` bug in IE
   uri = uri.replace(':80/', '/')
 
-  return realpath(uri)
+  return uri
 }
 
 
