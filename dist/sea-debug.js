@@ -314,7 +314,7 @@ function parseVars(id) {
 
   if (vars && id.indexOf('{') > -1) {
     id = id.replace(VARS_RE, function(m, key) {
-      return hasOwn(vars, key) ? vars[key] : key
+      return hasOwn(vars, key) ? vars[key] : '{' + key + '}'
     })
   }
 
@@ -342,7 +342,7 @@ function addBase(id, refUri) {
   }
   // top-level id
   else {
-    ret = config.base + '/' + id
+    ret = config.base + id
   }
 
   return ret
@@ -358,15 +358,11 @@ function parseMap(uri) {
       var rule = map[i]
 
       ret = isFunction(rule) ?
-          rule(uri) :
+          (rule(uri) || uri) :
           uri.replace(rule[0], rule[1])
 
       // Only apply the first matched rule
       if (ret !== uri) break
-    }
-
-    if (!isAbsolute(ret)) {
-      ret = realpath(dirname(pageUri) + ret)
     }
   }
 
@@ -449,10 +445,8 @@ if (TEST_MODE) {
   test.parseMap = parseMap
   test.id2Uri = id2Uri
 
-  test.isAbsolute = isAbsolute
-  test.isRelative = isRelative
-  test.isRoot = isRoot
-  test.isTopLevel = isTopLevel
+  test.pageUri = pageUri
+  test.loaderUri = loaderUri
 }
 
 
