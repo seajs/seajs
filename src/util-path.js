@@ -25,7 +25,7 @@ function realpath(path) {
   // 'file:///a//b/c' ==> 'file:///a/b/c'
   // 'http://a//b/c' ==> 'http://a/b/c'
   // 'https://a//b/c' ==> 'https://a/b/c'
-  if (path.substring(7).indexOf('//') > 0) {
+  if (path.lastIndexOf('//') > 7) {
     path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
   }
 
