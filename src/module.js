@@ -23,8 +23,10 @@ Module.prototype.load = function(ids, callback) {
   var uris = resolve(isArray(ids) ? ids : [ids], this.uri)
 
   load(uris, function() {
-    var exports = map(uris, function(uri) {
-      return compile(cachedModules[uri])
+    var exports = []
+
+    forEach(uris, function(uri, i) {
+      exports[i] = compile(cachedModules[uri])
     })
 
     if (callback) {
@@ -35,16 +37,15 @@ Module.prototype.load = function(ids, callback) {
 
 function resolve(ids, refUri) {
   if (isArray(ids)) {
-    return map(ids, function(id) {
-      return resolve(id, refUri)
-    })
+    // Use `for` loop instead of `forEach` or `map` function for performance
+    var ret = []
+    for (var i = 0, len = ids.length; i < len; i++) {
+      ret[i] = resolve(ids[i], refUri)
+    }
+    return ret
   }
 
-  var id = ids, uri
-  id = emitData('resolve', { id: id, refUri: refUri }, 'id')
-  uri = id2Uri(id, refUri)
-  uri = emitData('resolved', { uri: uri })
-  return uri
+  return id2Uri(ids, refUri)
 }
 
 function load(uris, callback, options) {
@@ -306,9 +307,14 @@ function createModule(uri, status) {
 }
 
 function getUnloadedUris(uris) {
-  return filter(uris, function(uri) {
-    return createModule(uri).status < STATUS.LOADED
+  var ret = []
+
+  forEach(uris, function(uri) {
+    if (createModule(uri).status < STATUS.LOADED) {
+      ret.push(uri)
+    }
   })
+  return ret
 }
 
 var circularStack = []
