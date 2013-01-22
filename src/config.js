@@ -55,7 +55,7 @@ seajs.config = function(obj) {
       }
       // Append items to array config
       else if (configKey === 'map' || configKey === 'preload') {
-        if (isString(newConfig)) {
+        if (!isArray(newConfig)) {
           newConfig = [newConfig]
         }
 
