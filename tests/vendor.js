@@ -1,5 +1,5 @@
 
-;(function() {
+(function() {
 
   var baseUri = seajs.pluginSDK.config.base
   var GALLERY_ROOT = 'https://a.alipayobjects.com/gallery/'
