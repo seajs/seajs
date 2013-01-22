@@ -12,10 +12,6 @@ function hasOwn(obj, prop) {
   return hasOwnProperty.call(obj, prop)
 }
 
-function isString(obj) {
-  return toString.call(obj) === '[object String]'
-}
-
 function isFunction(obj) {
   return toString.call(obj) === '[object Function]'
 }
@@ -32,36 +28,6 @@ var forEach = emptyArr.forEach ?
       for (var i = 0, len = arr.length; i < len; i++) {
         fn(arr[i], i, arr)
       }
-    }
-
-var map = emptyArr.map ?
-    function(arr, fn) {
-      return arr.map(fn)
-    } :
-    function(arr, fn) {
-      var ret = []
-
-      forEach(arr, function(item, i, arr) {
-        ret.push(fn(item, i, arr))
-      })
-
-      return ret
-    }
-
-var filter = emptyArr.filter ?
-    function(arr, fn) {
-      return arr.filter(fn)
-    } :
-    function(arr, fn) {
-      var ret = []
-
-      forEach(arr, function(item, i, arr) {
-        if (fn(item, i, arr)) {
-          ret.push(item)
-        }
-      })
-
-      return ret
     }
 
 var keys = Object.keys || function(obj) {
