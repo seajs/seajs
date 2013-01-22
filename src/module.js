@@ -220,7 +220,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = cachedModules[uri]
+  var mod = createModule(uri)
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
