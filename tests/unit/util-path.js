@@ -18,11 +18,10 @@ define(function(require) {
   assert(util.dirname('http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js') === 'http://cdn.com/', 'dirname')
 
 
-  assert(util.realpath('./a//b/../c') === 'a/c', 'realpath')
-  assert(util.realpath('/a/b/../../c') === '/c', 'realpath')
+  assert(util.realpath('http://test.com/./a//b/../c') === 'http://test.com/a/c', 'realpath')
+  assert(util.realpath('https://test.com/a/b/../../c') === 'https://test.com/c', 'realpath')
   assert(util.realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
   assert(util.realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
-  assert(util.realpath('a/b/c') === 'a/b/c', 'realpath')
 
 
   assert(util.normalize('a/b/c') === 'a/b/c.js', 'normalize')
