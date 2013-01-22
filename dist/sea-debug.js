@@ -39,10 +39,6 @@ function hasOwn(obj, prop) {
   return hasOwnProperty.call(obj, prop)
 }
 
-function isString(obj) {
-  return toString.call(obj) === '[object String]'
-}
-
 function isFunction(obj) {
   return toString.call(obj) === '[object Function]'
 }
@@ -59,36 +55,6 @@ var forEach = emptyArr.forEach ?
       for (var i = 0, len = arr.length; i < len; i++) {
         fn(arr[i], i, arr)
       }
-    }
-
-var map = emptyArr.map ?
-    function(arr, fn) {
-      return arr.map(fn)
-    } :
-    function(arr, fn) {
-      var ret = []
-
-      forEach(arr, function(item, i, arr) {
-        ret.push(fn(item, i, arr))
-      })
-
-      return ret
-    }
-
-var filter = emptyArr.filter ?
-    function(arr, fn) {
-      return arr.filter(fn)
-    } :
-    function(arr, fn) {
-      var ret = []
-
-      forEach(arr, function(item, i, arr) {
-        if (fn(item, i, arr)) {
-          ret.push(item)
-        }
-      })
-
-      return ret
     }
 
 var keys = Object.keys || function(obj) {
@@ -245,11 +211,11 @@ function dirname(path) {
 // Canonicalize a path
 // realpath('./a//b/../c') ==> 'a/c'
 function realpath(path) {
-  MULTIPLE_SLASH_RE.lastIndex = 0
 
   // 'file:///a//b/c' ==> 'file:///a/b/c'
   // 'http://a//b/c' ==> 'http://a/b/c'
-  if (MULTIPLE_SLASH_RE.test(path)) {
+  // 'https://a//b/c' ==> 'https://a/b/c'
+  if (path.lastIndexOf('//') > 7) {
     path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
   }
 
@@ -281,9 +247,12 @@ function realpath(path) {
 // Normalize an uri
 // normalize('path/to/a') ==> 'path/to/a.js'
 function normalize(uri) {
-  var lastChar = uri.charAt(uri.length - 1)
+  // Call realpath() before adding extension, so that most of uris will
+  // contains no `.` and will just return in realpath() call
+  uri = realpath(uri)
 
   // Add the default `.js` extension except that the uri ends with `#`
+  var lastChar = uri.charAt(uri.length - 1)
   if (lastChar === '#') {
     uri = uri.slice(0, -1)
   }
@@ -294,7 +263,7 @@ function normalize(uri) {
   // Fixes `:80` bug in IE
   uri = uri.replace(':80/', '/')
 
-  return realpath(uri)
+  return uri
 }
 
 
@@ -685,8 +654,10 @@ Module.prototype.load = function(ids, callback) {
   var uris = resolve(isArray(ids) ? ids : [ids], this.uri)
 
   load(uris, function() {
-    var exports = map(uris, function(uri) {
-      return compile(cachedModules[uri])
+    var exports = []
+
+    forEach(uris, function(uri, i) {
+      exports[i] = compile(cachedModules[uri])
     })
 
     if (callback) {
@@ -697,16 +668,15 @@ Module.prototype.load = function(ids, callback) {
 
 function resolve(ids, refUri) {
   if (isArray(ids)) {
-    return map(ids, function(id) {
-      return resolve(id, refUri)
-    })
+    // Use `for` loop instead of `forEach` or `map` function for performance
+    var ret = []
+    for (var i = 0, len = ids.length; i < len; i++) {
+      ret[i] = resolve(ids[i], refUri)
+    }
+    return ret
   }
 
-  var id = ids, uri
-  id = emitData('resolve', { id: id, refUri: refUri }, 'id')
-  uri = id2Uri(id, refUri)
-  uri = emitData('resolved', { uri: uri })
-  return uri
+  return id2Uri(ids, refUri)
 }
 
 function load(uris, callback, options) {
@@ -882,7 +852,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = cachedModules[uri]
+  var mod = createModule(uri)
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -968,9 +938,14 @@ function createModule(uri, status) {
 }
 
 function getUnloadedUris(uris) {
-  return filter(uris, function(uri) {
-    return createModule(uri).status < STATUS.LOADED
+  var ret = []
+
+  forEach(uris, function(uri) {
+    if (createModule(uri).status < STATUS.LOADED) {
+      ret.push(uri)
+    }
   })
+  return ret
 }
 
 var circularStack = []
@@ -1087,7 +1062,7 @@ seajs.config = function(obj) {
       }
       // Append items to array config
       else if (configKey === 'map' || configKey === 'preload') {
-        if (isString(newConfig)) {
+        if (!isArray(newConfig)) {
           newConfig = [newConfig]
         }
 

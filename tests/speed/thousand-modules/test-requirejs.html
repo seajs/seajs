@@ -8,13 +8,15 @@
 <body>
 <div id="out"></div>
 
-<script src="../../../dist/sea.js"></script>
-<script src="thousand-modules.js"></script>
+<script src="http://requirejs.org/docs/release/2.1.2/minified/require.js"></script>
+<!--<script src="https://raw.github.com/jrburke/almond/latest/almond.js"></script>-->
+
+<script src="thousand-modules-requirejs.js"></script>
 
 <script>
   var start = new Date().getTime()
 
-  seajs.use('module-999', function (mod) {
+  require(['module-999'], function (mod) {
     var end = new Date().getTime()
 
     printResults(mod.value)
