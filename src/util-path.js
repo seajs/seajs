@@ -78,7 +78,7 @@ function normalize(uri) {
 
 
 function parseAlias(id) {
-  var alias = config.alias
+  var alias = settings.alias
 
   // Only parse top-level id
   if (alias && hasOwn(alias, id) && isTopLevel(id)) {
@@ -89,7 +89,7 @@ function parseAlias(id) {
 }
 
 function parseVars(id) {
-  var vars = config.vars
+  var vars = settings.vars
 
   if (vars && id.indexOf('{') > -1) {
     id = id.replace(VARS_RE, function(m, key) {
@@ -121,14 +121,14 @@ function addBase(id, refUri) {
   }
   // top-level id
   else {
-    ret = config.base + id
+    ret = settings.base + id
   }
 
   return ret
 }
 
 function parseMap(uri) {
-  var map = config.map || []
+  var map = settings.map || []
   var ret = uri
   var len = map.length
 

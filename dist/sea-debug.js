@@ -99,7 +99,7 @@ var log = seajs.log = function() {
   var type = console[args[len - 1]] ? args.pop() : 'log'
 
   // Print log info in debug mode only
-  if (type === 'log' && !config.debugMode) {
+  if (type === 'log' && !settings.debugMode) {
     return
   }
 
@@ -268,7 +268,7 @@ function normalize(uri) {
 
 
 function parseAlias(id) {
-  var alias = config.alias
+  var alias = settings.alias
 
   // Only parse top-level id
   if (alias && hasOwn(alias, id) && isTopLevel(id)) {
@@ -279,7 +279,7 @@ function parseAlias(id) {
 }
 
 function parseVars(id) {
-  var vars = config.vars
+  var vars = settings.vars
 
   if (vars && id.indexOf('{') > -1) {
     id = id.replace(VARS_RE, function(m, key) {
@@ -311,14 +311,14 @@ function addBase(id, refUri) {
   }
   // top-level id
   else {
-    ret = config.base + id
+    ret = settings.base + id
   }
 
   return ret
 }
 
 function parseMap(uri) {
-  var map = config.map || []
+  var map = settings.map || []
   var ret = uri
   var len = map.length
 
@@ -488,7 +488,7 @@ function scriptOnload(node, callback) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!config.debug) {
+      if (!settings.debug) {
         head.removeChild(node)
       }
 
@@ -768,7 +768,7 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Send request
-  var charset = config.charset
+  var charset = settings.charset
   var requested = emitData('request',
       { uri: requestUri, callback: onRequested, charset: charset },
       'requested')
@@ -908,24 +908,17 @@ function compile(mod) {
   require.cache = cachedModules
 
 
-  mod.require = require
-  mod.exports = mod.exports || {}
-  delete mod.waitings
-
   var factory = mod.factory
-  var exports = factory
+  var exports = factory === undefined ? mod.exports : factory
 
   if (isFunction(factory)) {
     exports = factory(mod.require, mod.exports, mod)
   }
 
-  if (exports !== undefined) {
-    mod.exports = exports
-  }
-
+  mod.exports = exports === undefined ? {} : exports
   mod.status = STATUS.COMPILED
-  emit('compiled', mod)
 
+  emit('compiled', mod)
   return mod.exports
 }
 
@@ -987,7 +980,7 @@ function isOverlap(arrA, arrB) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 function preload(callback) {
-  var preloadModules = config.preload
+  var preloadModules = settings.preload
   var len = preloadModules.length
 
   len ? globalModule.load(preloadModules.splice(0, len), callback) :
@@ -1009,7 +1002,7 @@ global.define = define
  * config.js - The configuration for the loader
  */
 
-var config = {
+var settings = seajs.settings = {
   // the root path to use for id2uri parsing
   base: (function() {
     var ret = dirname(loaderUri)
@@ -1040,11 +1033,11 @@ seajs.config = function(obj) {
   for (var configKey in obj) {
     if (hasOwn(obj, configKey)) {
 
-      var oldConfig = config[configKey]
+      var oldConfig = settings[configKey]
       var newConfig = obj[configKey]
 
       if (oldConfig === undefined) {
-        config[configKey] = newConfig
+        settings[configKey] = newConfig
         continue
       }
 
@@ -1074,7 +1067,7 @@ seajs.config = function(obj) {
     }
   }
 
-  // Make sure that `config.base` is an absolute path
+  // Make sure that `settings.base` is an absolute path
   if (obj.base) {
     makeBaseAbsolute()
   }
@@ -1093,9 +1086,9 @@ function checkConfigConflict(prev, curr, key, configKey) {
 }
 
 function makeBaseAbsolute() {
-  var base = config.base
+  var base = settings.base
   if (!isAbsolute(base)) {
-    config.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+    settings.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
   }
 }
 
