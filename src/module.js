@@ -288,10 +288,6 @@ function compile(mod) {
   mod.status = STATUS.COMPILED
 
   emit('compiled', mod)
-
-  delete mod.factory
-  delete mod.waitings
-
   return mod.exports
 }
 
