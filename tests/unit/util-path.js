@@ -1,37 +1,37 @@
 define(function(require) {
 
   var test = require('../test')
+  test.print('unit/util-path.js')
+
   var assert = test.assert
 
-  var util = seajs.test
+
+  assert(dirname('./a/b/c.js') === './a/b/', 'dirname')
+  assert(dirname('a/b/c.js') === 'a/b/', 'dirname')
+  assert(dirname('/a/b/c.js') === '/a/b/', 'dirname')
+  assert(dirname('d.js') === './', 'dirname')
+  assert(dirname('') === './', 'dirname')
+  assert(dirname('xxx') === './', 'dirname')
+  assert(dirname('http://cdn.com/js/file.js') === 'http://cdn.com/js/', 'dirname')
+  assert(dirname('http://cdn.com/js/file.js?t=xxx') === 'http://cdn.com/js/', 'dirname')
+  assert(dirname('http://example.com/arale/seajs/1.2.0/??sea.js,plugin-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname')
+  assert(dirname('http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js') === 'http://cdn.com/', 'dirname')
 
 
-  assert(util.dirname('./a/b/c.js') === './a/b/', 'dirname')
-  assert(util.dirname('a/b/c.js') === 'a/b/', 'dirname')
-  assert(util.dirname('/a/b/c.js') === '/a/b/', 'dirname')
-  assert(util.dirname('d.js') === './', 'dirname')
-  assert(util.dirname('') === './', 'dirname')
-  assert(util.dirname('xxx') === './', 'dirname')
-  assert(util.dirname('http://cdn.com/js/file.js') === 'http://cdn.com/js/', 'dirname')
-  assert(util.dirname('http://cdn.com/js/file.js?t=xxx') === 'http://cdn.com/js/', 'dirname')
-  assert(util.dirname('http://example.com/arale/seajs/1.2.0/??sea.js,plugin-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname')
-  assert(util.dirname('http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js') === 'http://cdn.com/', 'dirname')
+  assert(realpath('http://test.com/./a//b/../c') === 'http://test.com/a/c', 'realpath')
+  assert(realpath('https://test.com/a/b/../../c') === 'https://test.com/c', 'realpath')
+  assert(realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
+  assert(realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
 
 
-  assert(util.realpath('http://test.com/./a//b/../c') === 'http://test.com/a/c', 'realpath')
-  assert(util.realpath('https://test.com/a/b/../../c') === 'https://test.com/c', 'realpath')
-  assert(util.realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
-  assert(util.realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
-
-
-  assert(util.normalize('a/b/c') === 'a/b/c.js', 'normalize')
-  assert(util.normalize('a/b/c.js') === 'a/b/c.js', 'normalize')
-  assert(util.normalize('a/b/c.css') === 'a/b/c.css', 'normalize')
-  assert(util.normalize('a/b/c.d') === 'a/b/c.d.js', 'normalize')
-  assert(util.normalize('a/b/c.json#') === 'a/b/c.json', 'normalize')
-  assert(util.normalize('c?t=20110525') === 'c?t=20110525', 'normalize')
-  assert(util.normalize('c?t=20110525#') === 'c?t=20110525', 'normalize')
-  assert(util.normalize('a/b/') === 'a/b/', 'normalize')
+  assert(normalize('a/b/c') === 'a/b/c.js', 'normalize')
+  assert(normalize('a/b/c.js') === 'a/b/c.js', 'normalize')
+  assert(normalize('a/b/c.css') === 'a/b/c.css', 'normalize')
+  assert(normalize('a/b/c.d') === 'a/b/c.d.js', 'normalize')
+  assert(normalize('a/b/c.json#') === 'a/b/c.json', 'normalize')
+  assert(normalize('c?t=20110525') === 'c?t=20110525', 'normalize')
+  assert(normalize('c?t=20110525#') === 'c?t=20110525', 'normalize')
+  assert(normalize('a/b/') === 'a/b/', 'normalize')
 
 
   seajs.config({
@@ -45,12 +45,12 @@ define(function(require) {
         }
       })
 
-  assert(util.parseAlias('jquery-debug') === 'jquery/1.8.0/jquery-debug', 'parseAlias')
-  assert(util.parseAlias('app') === 'app/1.2/app', 'parseAlias')
-  assert(util.parseAlias('biz/a') === 'path/to/biz/a.js', 'parseAlias')
-  assert(util.parseAlias('./b') === './b', 'parseAlias')
-  assert(util.parseAlias('/c') === '/c', 'parseAlias')
-  assert(util.parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias')
+  assert(parseAlias('jquery-debug') === 'jquery/1.8.0/jquery-debug', 'parseAlias')
+  assert(parseAlias('app') === 'app/1.2/app', 'parseAlias')
+  assert(parseAlias('biz/a') === 'path/to/biz/a.js', 'parseAlias')
+  assert(parseAlias('./b') === './b', 'parseAlias')
+  assert(parseAlias('/c') === '/c', 'parseAlias')
+  assert(parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias')
 
 
   seajs.config({
@@ -64,22 +64,22 @@ define(function(require) {
     }
   })
 
-  assert(util.parseVars('./i18n/{locale}.js') === './i18n/zh-cn.js', 'parseVars')
-  assert(util.parseVars('{biz}/js/x') === 'path/to/biz/js/x', 'parseVars')
-  assert(util.parseVars('/js/{xx}/c.js') === '/js/./xx/c.js', 'parseVars')
-  assert(util.parseVars('/js/{xx}/{zz}') === '/js/./xx/zz.js', 'parseVars')
-  assert(util.parseVars('{a/b}') === 'path/to/a/b.js', 'parseVars')
-  assert(util.parseVars('{not-existed}') === '{not-existed}', 'parseVars')
-  assert(util.parseVars('{c}') === '{path}/to/c.js', 'parseVars')
+  assert(parseVars('./i18n/{locale}.js') === './i18n/zh-cn.js', 'parseVars')
+  assert(parseVars('{biz}/js/x') === 'path/to/biz/js/x', 'parseVars')
+  assert(parseVars('/js/{xx}/c.js') === '/js/./xx/c.js', 'parseVars')
+  assert(parseVars('/js/{xx}/{zz}') === '/js/./xx/zz.js', 'parseVars')
+  assert(parseVars('{a/b}') === 'path/to/a/b.js', 'parseVars')
+  assert(parseVars('{not-existed}') === '{not-existed}', 'parseVars')
+  assert(parseVars('{c}') === '{path}/to/c.js', 'parseVars')
 
 
-  var pageDir = util.dirname(util.pageUri)
-  var loaderDir = util.dirname(util.loaderUri)
+  var pageDir = dirname(pageUri)
+  var loaderDir = dirname(loaderUri)
 
-  assert(util.addBase('http://a.com/b.js') === 'http://a.com/b.js', 'addBase')
-  assert(util.addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/a.js', 'addBase')
-  assert(util.addBase('/b.js', 'http://test.com/path/to/c.js') === 'http://test.com/b.js', 'addBase')
-  assert(util.addBase('c', 'http://test.com/path/to/c.js') === loaderDir + 'c', 'addBase')
+  assert(addBase('http://a.com/b.js') === 'http://a.com/b.js', 'addBase')
+  assert(addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/a.js', 'addBase')
+  assert(addBase('/b.js', 'http://test.com/path/to/c.js') === 'http://test.com/b.js', 'addBase')
+  assert(addBase('c', 'http://test.com/path/to/c.js') === loaderDir + 'c', 'addBase')
 
 
   seajs.config({
@@ -98,31 +98,28 @@ define(function(require) {
     ]
   })
 
-  assert(util.parseMap('path/to/aa.js') === 'path/to/aa-debug.js', 'parseMap')
-  assert(util.parseMap('jquery/2.0.0/jquery') === 'http://localhost/jquery.js', 'parseMap')
-  assert(util.parseMap('jquery/2.0.0/jquery-debug') === 'http://localhost/jquery.js', 'parseMap')
-  assert(util.parseMap('path/to/js/a') === 'path/to/script/a', 'parseMap')
-  assert(util.parseMap('path/to/function/b') === 'http://test.com/path/to/function.js', 'parseMap')
-  assert(util.parseMap('cc.js') === './cc.js', 'parseMap')
+  assert(parseMap('path/to/aa.js') === 'path/to/aa-debug.js', 'parseMap')
+  assert(parseMap('jquery/2.0.0/jquery') === 'http://localhost/jquery.js', 'parseMap')
+  assert(parseMap('jquery/2.0.0/jquery-debug') === 'http://localhost/jquery.js', 'parseMap')
+  assert(parseMap('path/to/js/a') === 'path/to/script/a', 'parseMap')
+  assert(parseMap('path/to/function/b') === 'http://test.com/path/to/function.js', 'parseMap')
+  assert(parseMap('cc.js') === './cc.js', 'parseMap')
 
 
-  assert(util.id2Uri('path/to/a') === loaderDir + 'path/to/a.js', 'id2Uri')
-  assert(util.id2Uri('path/to/a.js') === loaderDir + 'path/to/a.js', 'id2Uri')
-  assert(util.id2Uri('path/to/a.js#') === loaderDir + 'path/to/a.js', 'id2Uri')
-  assert(util.id2Uri('path/to/z.js?t=1234') === loaderDir + 'path/to/z.js?t=1234', 'id2Uri')
-  assert(util.id2Uri('path/to/z?t=1234') === loaderDir + 'path/to/z?t=1234', 'id2Uri')
-  assert(util.id2Uri('./b', 'http://test.com/path//to/x.js') === 'http://test.com/path/to/b.js', 'id2Uri')
-  assert(util.id2Uri('/c', 'http://test.com/path/x.js') === 'http://test.com/c.js', 'id2Uri')
-  assert(util.id2Uri('http://test.com/x.js') === 'http://test.com/x.js', 'id2Uri')
-  assert(util.id2Uri('http://test.com/x.js#') === 'http://test.com/x.js', 'id2Uri')
-  assert(util.id2Uri('./z.js', 'http://test.com/x.js') === 'http://test.com/z.js', 'id2Uri')
-  assert(util.id2Uri('') === '', 'id2Uri')
-  assert(util.id2Uri() === '', 'id2Uri')
-  assert(util.id2Uri('http://XXX.com.cn/min/index.php?g=commonCss.css') === 'http://XXX.com.cn/min/index.php?g=commonCss.css', 'id2Uri')
-  assert(util.id2Uri('./front/jquery.x.queue.js#') === pageDir + 'front/jquery.x.queue.js', 'id2Uri')
-
-
-  test.done()
+  assert(id2Uri('path/to/a') === loaderDir + 'path/to/a.js', 'id2Uri')
+  assert(id2Uri('path/to/a.js') === loaderDir + 'path/to/a.js', 'id2Uri')
+  assert(id2Uri('path/to/a.js#') === loaderDir + 'path/to/a.js', 'id2Uri')
+  assert(id2Uri('path/to/z.js?t=1234') === loaderDir + 'path/to/z.js?t=1234', 'id2Uri')
+  assert(id2Uri('path/to/z?t=1234') === loaderDir + 'path/to/z?t=1234', 'id2Uri')
+  assert(id2Uri('./b', 'http://test.com/path//to/x.js') === 'http://test.com/path/to/b.js', 'id2Uri')
+  assert(id2Uri('/c', 'http://test.com/path/x.js') === 'http://test.com/c.js', 'id2Uri')
+  assert(id2Uri('http://test.com/x.js') === 'http://test.com/x.js', 'id2Uri')
+  assert(id2Uri('http://test.com/x.js#') === 'http://test.com/x.js', 'id2Uri')
+  assert(id2Uri('./z.js', 'http://test.com/x.js') === 'http://test.com/z.js', 'id2Uri')
+  assert(id2Uri('') === '', 'id2Uri')
+  assert(id2Uri() === '', 'id2Uri')
+  assert(id2Uri('http://XXX.com.cn/min/index.php?g=commonCss.css') === 'http://XXX.com.cn/min/index.php?g=commonCss.css', 'id2Uri')
+  assert(id2Uri('./front/jquery.x.queue.js#') === pageDir + 'front/jquery.x.queue.js', 'id2Uri')
 
 });
 

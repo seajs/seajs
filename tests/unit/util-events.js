@@ -1,8 +1,9 @@
 define(function(require) {
 
   var test = require('../test')
-  var assert = test.assert
+  test.print('unit/util-events.js')
 
+  var assert = test.assert
   var obj = seajs
   obj.counter = 0
 
@@ -126,9 +127,6 @@ define(function(require) {
 
   obj.emit('event')
   assert(counter === 3, counter)
-
-
-  test.done()
 
 });
 

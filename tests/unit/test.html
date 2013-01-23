@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Unit Test</title>
+</head>
+<body>
+<div id="out"></div>
+
+<script>
+  function printResults(txt) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    document.getElementById('out').appendChild(d)
+  }
+
+  document.cookie = 'seajs-nocache=0'
+  document.cookie = 'seajs-debug=0'
+
+  var global = this
+</script>
+
+<script src="../../src/sea.js"></script>
+
+<script src="../../src/util-lang.js"></script>
+<script src="../../src/util-log.js"></script>
+<script src="../../src/util-events.js"></script>
+<script src="../../src/util-path.js"></script>
+<script src="../../src/util-request.js"></script>
+<script src="../../src/util-deps.js"></script>
+
+<script src="../../src/module.js"></script>
+<script src="../../src/config.js"></script>
+<script src="../../src/bootstrap.js"></script>
+
+<script>
+  seajs.use(['../test', './util-events', './util-path'], function(test) {
+    test.done()
+  })
+</script>
+
+</body>
+</html>
