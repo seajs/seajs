@@ -14,8 +14,7 @@
 })(function(require, exports) {
 
   exports.testCases = [
-    'unit/util-events',
-    'unit/util-path',
+    'unit',
 
     'modules/alias',
     'modules/config-map',

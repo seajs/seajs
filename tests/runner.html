@@ -144,9 +144,6 @@ var result
     if (test.indexOf('modules/') === 0) {
       url = 'sandbox.html?' + encodeURIComponent(test + '/program.js')
     }
-    else if (test.indexOf('unit/') === 0) {
-      url = 'sandbox.html?' + encodeURIComponent(test)
-    }
     else if (test.indexOf('bootstrap/') === 0) {
       url = test + '.html'
     }
