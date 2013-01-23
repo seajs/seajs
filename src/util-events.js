@@ -55,9 +55,6 @@ var emit = seajs.emit = function(event) {
     args[i - 1] = arguments[i]
   }
 
-  // Copy callback lists to prevent modification
-  list = list.slice()
-
   // Execute event callbacks
   forEach(list, function(fn) {
     fn.apply(global, args)
