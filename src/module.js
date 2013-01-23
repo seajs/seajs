@@ -277,23 +277,20 @@ function compile(mod) {
   require.cache = cachedModules
 
 
-  mod.require = require
-  mod.exports = mod.exports || {}
-  delete mod.waitings
-
   var factory = mod.factory
-  var exports = factory
+  var exports = factory === undefined ? mod.exports : factory
 
   if (isFunction(factory)) {
     exports = factory(mod.require, mod.exports, mod)
   }
 
-  if (exports !== undefined) {
-    mod.exports = exports
-  }
-
+  mod.exports = exports === undefined ? {} : exports
   mod.status = STATUS.COMPILED
+
   emit('compiled', mod)
+
+  delete mod.factory
+  delete mod.waitings
 
   return mod.exports
 }
