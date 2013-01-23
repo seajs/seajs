@@ -16,14 +16,6 @@ var seajs = global.seajs = {
   version: "2.0.0-dev"
 }
 
-// The flag for test environment
-var TEST_MODE = true
-
-// Such code bellow will be removed when building
-if (TEST_MODE) {
-  var test = seajs.test = {}
-}
-
 
 /**
  * util-lang.js - The minimal language enhancement
@@ -401,22 +393,6 @@ var loaderScript = doc.getElementById('seajs-node') || (function() {
 
 var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
     pageUri // When `sea.js` is inline, loaderUri is pageUri
-
-
-if (TEST_MODE) {
-  test.dirname = dirname
-  test.realpath = realpath
-  test.normalize = normalize
-
-  test.parseAlias = parseAlias
-  test.parseVars = parseVars
-  test.addBase = addBase
-  test.parseMap = parseMap
-  test.id2Uri = id2Uri
-
-  test.pageUri = pageUri
-  test.loaderUri = loaderUri
-}
 
 
 /**
@@ -912,10 +888,10 @@ function compile(mod) {
   var exports = factory === undefined ? mod.exports : factory
 
   if (isFunction(factory)) {
-    exports = factory(mod.require, mod.exports, mod)
+    exports = factory(require, mod.exports = {}, mod)
   }
 
-  mod.exports = exports === undefined ? {} : exports
+  mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.COMPILED
 
   emit('compiled', mod)
