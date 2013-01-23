@@ -394,6 +394,13 @@ var loaderScript = doc.getElementById('seajs-node') || (function() {
 var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
     pageUri // When `sea.js` is inline, loaderUri is pageUri
 
+function getScriptAbsoluteSrc(node) {
+  return node.hasAttribute ? // non-IE6/7
+      node.src :
+    // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+      node.getAttribute('src', 4)
+}
+
 
 /**
  * util-request.js - The utilities for requesting script and style files
@@ -536,7 +543,6 @@ function pollCss(node, callback) {
   }, 1)
 }
 
-
 function getCurrentScript() {
   if (currentlyAddingScript) {
     return currentlyAddingScript
@@ -560,13 +566,6 @@ function getCurrentScript() {
       return interactiveScript
     }
   }
-}
-
-function getScriptAbsoluteSrc(node) {
-  return node.hasAttribute ? // non-IE6/7
-      node.src :
-    // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-      node.getAttribute('src', 4)
 }
 
 
