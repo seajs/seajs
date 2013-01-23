@@ -30,40 +30,36 @@ var settings = seajs.settings = {
 }
 
 seajs.config = function(obj) {
-  for (var configKey in obj) {
-    if (hasOwn(obj, configKey)) {
+  for (var key in obj) {
+    if (hasOwn(obj, key)) {
 
-      var oldConfig = settings[configKey]
-      var newConfig = obj[configKey]
+      var prev = settings[key]
+      var curr = obj[key]
 
-      if (oldConfig === undefined) {
-        settings[configKey] = newConfig
-        continue
-      }
+      if (prev && (key === 'alias' || key === 'vars')) {
+        for (var k in curr) {
+          if (hasOwn(curr, k)) {
 
-      // Append properties to object config
-      if (configKey === 'alias' || configKey === 'vars') {
-        for (var key in newConfig) {
-          if (hasOwn(newConfig, key)) {
-            var prev = oldConfig[key]
-            var curr = newConfig[key]
+            var p = prev[k]
+            var c = curr[k]
 
-            checkConfigConflict(prev, curr, key, configKey)
-            oldConfig[key] = curr
+            checkConfigConflict(p, c, k, key)
+            prev[k] = c
           }
         }
       }
-      // Append items to array config
-      else if (configKey === 'map' || configKey === 'preload') {
-        if (!isArray(newConfig)) {
-          newConfig = [newConfig]
+      else if (prev && (key === 'map' || key === 'preload')) {
+        if (!isArray(curr)) {
+          curr = [curr]
         }
 
-        forEach(newConfig, function(item) {
-          oldConfig.push(item)
+        forEach(curr, function(item) {
+          prev.push(item)
         })
       }
-
+      else {
+        settings[key] = curr
+      }
     }
   }
 
@@ -75,10 +71,10 @@ seajs.config = function(obj) {
   return seajs
 }
 
-function checkConfigConflict(prev, curr, key, configKey) {
+function checkConfigConflict(prev, curr, k, key) {
   if (prev && prev !== curr) {
-    log('The ' + configKey + ' config is conflicted:',
-        'key =', '"' + key + '"',
+    log('The ' + key + ' config is conflicted:',
+        'key =', '"' + k + '"',
         'previous =', '"' + prev + '"',
         'current =', '"' + curr + '"',
         'warn')
