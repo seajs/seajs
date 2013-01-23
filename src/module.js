@@ -281,10 +281,10 @@ function compile(mod) {
   var exports = factory === undefined ? mod.exports : factory
 
   if (isFunction(factory)) {
-    exports = factory(mod.require, mod.exports, mod)
+    exports = factory(require, mod.exports = {}, mod)
   }
 
-  mod.exports = exports === undefined ? {} : exports
+  mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.COMPILED
 
   emit('compiled', mod)
