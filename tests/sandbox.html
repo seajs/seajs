@@ -13,9 +13,6 @@
   // no cache
   document.cookie = 'seajs-nocache=1'
 
-  // no debug
-  document.cookie = 'seajs-debug=0'
-
   // Load test cases
   var search = decodeURIComponent((location.search || '?').substring(1))
   seajs.use('./' + search.replace(/&t=\d+/, ''))
@@ -28,7 +25,6 @@ function printResults(txt, style) {
   d.className = style
   document.getElementById('out').appendChild(d)
 }
-
 </script>
 </head>
 <body>

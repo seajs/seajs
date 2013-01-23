@@ -139,16 +139,10 @@ var result
 
 
   function getUrl(test) {
-    var url = ''
+    var url = test
 
-    if (test.indexOf('modules/') === 0) {
-      url = 'sandbox.html?' + encodeURIComponent(test + '/program.js')
-    }
-    else if (test.indexOf('bootstrap/') === 0) {
-      url = test + '.html'
-    }
-    else {
-      url = test + '/test.html'
+    if (url.indexOf('test.html') === -1) {
+      url = 'sandbox.html?' + encodeURIComponent(test + '/main.js')
     }
 
     url += (url.indexOf('?') > 0 ? '&' : '?') + 't=' + new Date().getTime()
