@@ -852,7 +852,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = createModule(uri)
+  var mod = getModule(uri)
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -932,7 +932,7 @@ function compile(mod) {
 
 // Helpers
 
-function createModule(uri, status) {
+function getModule(uri, status) {
   return cachedModules[uri] ||
       (cachedModules[uri] = new Module(uri, status))
 }
@@ -941,7 +941,7 @@ function getUnloadedUris(uris) {
   var ret = []
 
   forEach(uris, function(uri) {
-    if (createModule(uri).status < STATUS.LOADED) {
+    if (getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
     }
   })
