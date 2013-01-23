@@ -213,19 +213,3 @@ var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
     pageUri // When `sea.js` is inline, loaderUri is pageUri
 
 
-if (TEST_MODE) {
-  test.dirname = dirname
-  test.realpath = realpath
-  test.normalize = normalize
-
-  test.parseAlias = parseAlias
-  test.parseVars = parseVars
-  test.addBase = addBase
-  test.parseMap = parseMap
-  test.id2Uri = id2Uri
-
-  test.pageUri = pageUri
-  test.loaderUri = loaderUri
-}
-
-
