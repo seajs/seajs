@@ -22,6 +22,8 @@
     , 'specs/config-charset'
     , 'specs/config-debug/test.html'
     , 'specs/config-map'
+    , 'specs/config-preload'
+    , 'specs/config-vars'
 
   ]
 
