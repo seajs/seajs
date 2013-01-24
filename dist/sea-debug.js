@@ -32,11 +32,11 @@ function hasOwn(obj, prop) {
 }
 
 function isFunction(obj) {
-  return toString.call(obj) === '[object Function]'
+  return toString.call(obj) === "[object Function]"
 }
 
 var isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === '[object Array]'
+  return toString.call(obj) === "[object Array]"
 }
 
 var forEach = emptyArr.forEach ?
@@ -79,8 +79,8 @@ function unique(arr) {
 var console = global.console
 
 // The safe wrapper for `console.xxx` functions
-// log('message') ==> console.log('message')
-// log('message', 'warn') ==> console.warn('message')
+// log("message") ==> console.log("message")
+// log("message", "warn") ==> console.warn("message")
 var log = seajs.log = function() {
   if (console === undefined) {
     return
@@ -88,10 +88,10 @@ var log = seajs.log = function() {
 
   var args = slice.call(arguments)
   var len = args.length
-  var type = console[args[len - 1]] ? args.pop() : 'log'
+  var type = console[args[len - 1]] ? args.pop() : "log"
 
   // Print log info in debug mode only
-  if (type === 'log' && !configData.debug) {
+  if (type === "log" && !configData.debug) {
     return
   }
 
@@ -192,52 +192,52 @@ var VARS_RE = /{([^{}]+)}/g
 
 
 // Extract the directory portion of a path
-// dirname('a/b/c.js') ==> 'a/b/'
-// dirname('d.js') ==> './'
+// dirname("a/b/c.js") ==> "a/b/"
+// dirname("d.js") ==> "./"
 // ref: http://jsperf.com/regex-vs-split/2
 function dirname(path) {
   var s = path.match(DIRNAME_RE)
-  return (s ? s[0] : '.') + '/'
+  return (s ? s[0] : ".") + "/"
 }
 
 // Canonicalize a path
-// realpath('./a//b/../c') ==> 'a/c'
+// realpath("./a//b/../c") ==> "a/c"
 function realpath(path) {
 
-  // 'file:///a//b/c' ==> 'file:///a/b/c'
-  // 'http://a//b/c' ==> 'http://a/b/c'
-  // 'https://a//b/c' ==> 'https://a/b/c'
-  if (path.lastIndexOf('//') > 7) {
-    path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
+  // "file:///a//b/c" ==> "file:///a/b/c"
+  // "http://a//b/c" ==> "http://a/b/c"
+  // "https://a//b/c" ==> "https://a/b/c"
+  if (path.lastIndexOf("//") > 7) {
+    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
   }
 
-  // If 'a/b/c', just return
-  if (path.indexOf('.') === -1) {
+  // If "a/b/c", just return
+  if (path.indexOf(".") === -1) {
     return path
   }
 
-  var original = path.split('/')
+  var original = path.split("/")
   var ret = [], part
 
   for (var i = 0; i < original.length; i++) {
     part = original[i]
 
-    if (part === '..') {
+    if (part === "..") {
       if (ret.length === 0) {
-        throw new Error('The path is invalid: ' + path)
+        throw new Error("The path is invalid: " + path)
       }
       ret.pop()
     }
-    else if (part !== '.') {
+    else if (part !== ".") {
       ret.push(part)
     }
   }
 
-  return ret.join('/')
+  return ret.join("/")
 }
 
 // Normalize an uri
-// normalize('path/to/a') ==> 'path/to/a.js'
+// normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
   // Call realpath() before adding extension, so that most of uris will
   // contains no `.` and will just return in realpath() call
@@ -245,15 +245,15 @@ function normalize(uri) {
 
   // Add the default `.js` extension except that the uri ends with `#`
   var lastChar = uri.charAt(uri.length - 1)
-  if (lastChar === '#') {
+  if (lastChar === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri) && uri.indexOf('?') === -1) {
-    uri += '.js'
+  else if (!URI_END_RE.test(uri) && uri.indexOf("?") === -1) {
+    uri += ".js"
   }
 
   // Fixes `:80` bug in IE
-  uri = uri.replace(':80/', '/')
+  uri = uri.replace(":80/", "/")
 
   return uri
 }
@@ -273,9 +273,9 @@ function parseAlias(id) {
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf('{') > -1) {
+  if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
-      return hasOwn(vars, key) ? vars[key] : '{' + key + '}'
+      return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
     })
   }
 
@@ -291,8 +291,8 @@ function addBase(id, refUri) {
   }
   // relative id
   else if (isRelative(id)) {
-    // Convert './a' to 'a', to avoid unnecessary loop in realpath() call
-    if (id.indexOf('./') === 0) {
+    // Convert "./a" to "a", to avoid unnecessary loop in realpath() call
+    if (id.indexOf("./") === 0) {
       id = id.substring(2)
     }
     ret = dirname(refUri) + id
@@ -331,7 +331,7 @@ function parseMap(uri) {
 }
 
 function id2Uri(id, refUri) {
-  if (!id) return ''
+  if (!id) return ""
 
   id = parseAlias(id)
   id = parseVars(id)
@@ -344,20 +344,20 @@ function id2Uri(id, refUri) {
 
 
 function isAbsolute(id) {
-  return id.indexOf('://') > 0 || id.indexOf('//') === 0
+  return id.indexOf("://") > 0 || id.indexOf("//") === 0
 }
 
 function isRelative(id) {
-  return id.indexOf('./') === 0 || id.indexOf('../') === 0
+  return id.indexOf("./") === 0 || id.indexOf("../") === 0
 }
 
 function isRoot(id) {
-  return id.charAt(0) === '/' && id.charAt(1) !== '/'
+  return id.charAt(0) === "/" && id.charAt(1) !== "/"
 }
 
 function isTopLevel(id) {
   var c = id.charAt(0)
-  return id.indexOf('://') === -1 && c !== '.' && c !== '/'
+  return id.indexOf("://") === -1 && c !== "." && c !== "/"
 }
 
 
@@ -366,29 +366,29 @@ var doc = document
 var pageUri = (function(loc) {
   var pathname = loc.pathname
 
-  // Normalize pathname to start with '/'
+  // Normalize pathname to start with "/"
   // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-  if (pathname.charAt(0) !== '/') {
-    pathname = '/' + pathname
+  if (pathname.charAt(0) !== "/") {
+    pathname = "/" + pathname
   }
 
-  var pageUri = loc.protocol + '//' + loc.host + pathname
+  var pageUri = loc.protocol + "//" + loc.host + pathname
 
   // local file in IE: C:\path\to\xx.js
-  if (pageUri.indexOf('\\') > -1) {
-    pageUri = pageUri.replace(/\\/g, '/')
+  if (pageUri.indexOf("\\") > -1) {
+    pageUri = pageUri.replace(/\\/g, "/")
   }
 
   return pageUri
 })(global.location)
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
-var loaderScript = doc.getElementById('seajs-node') || (function() {
-  var scripts = doc.getElementsByTagName('script')
+var loaderScript = doc.getElementById("seajs-node") || (function() {
+  var scripts = doc.getElementsByTagName("script")
 
   return scripts[scripts.length - 1] ||
       // Maybe undefined in some environment such as PhantomJS
-      doc.createElement('script')
+      doc.createElement("script")
 })()
 
 var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
@@ -398,7 +398,7 @@ function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
       node.src :
     // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-      node.getAttribute('src', 4)
+      node.getAttribute("src", 4)
 }
 
 
@@ -408,10 +408,10 @@ function getScriptAbsoluteSrc(node) {
  */
 
 var head = doc.head ||
-    doc.getElementsByTagName('head')[0] ||
+    doc.getElementsByTagName("head")[0] ||
     doc.documentElement
 
-var baseElement = head.getElementsByTagName('base')[0]
+var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
 var READY_STATE_RE = /loaded|complete|undefined/
@@ -422,7 +422,7 @@ var interactiveScript
 
 function request(url, callback, charset) {
   var isCSS = IS_CSS_RE.test(url)
-  var node = doc.createElement(isCSS ? 'link' : 'script')
+  var node = doc.createElement(isCSS ? "link" : "script")
 
   if (charset) {
     var cs = isFunction(charset) ? charset(url) : charset
@@ -434,10 +434,10 @@ function request(url, callback, charset) {
   assetOnload(node, callback)
 
   if (isCSS) {
-    node.rel = 'stylesheet'
+    node.rel = "stylesheet"
     node.href = url
   } else {
-    node.async = 'async'
+    node.async = "async"
     node.src = url
   }
 
@@ -455,7 +455,7 @@ function request(url, callback, charset) {
 }
 
 function assetOnload(node, callback) {
-  if (node.nodeName === 'SCRIPT') {
+  if (node.nodeName === "SCRIPT") {
     scriptOnload(node, callback)
   }
   else {
@@ -488,7 +488,7 @@ function scriptOnload(node, callback) {
 function styleOnload(node, callback) {
   // for Old WebKit and Old Firefox
   if (isOldWebKit || isOldFirefox) {
-    log('Start css polling')
+    log("Start css polling")
 
     setTimeout(function() {
       pollCss(node, callback)
@@ -523,10 +523,10 @@ function pollCss(node, callback) {
         isLoaded = true
       }
     } catch (ex) {
-      // The value of `ex.name` is changed from 'NS_ERROR_DOM_SECURITY_ERR'
-      // to 'SecurityError' since Firefox 13.0. But Firefox is less than 9.0
-      // in here, So it is ok to just rely on 'NS_ERROR_DOM_SECURITY_ERR'
-      if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
+      // The value of `ex.name` is changed from "NS_ERROR_DOM_SECURITY_ERR"
+      // to "SecurityError" since Firefox 13.0. But Firefox is less than 9.0
+      // in here, So it is ok to just rely on "NS_ERROR_DOM_SECURITY_ERR"
+      if (ex.name === "NS_ERROR_DOM_SECURITY_ERR") {
         isLoaded = true
       }
     }
@@ -553,15 +553,15 @@ function getCurrentScript() {
   // could query the script nodes and the one that is in "interactive"
   // mode indicates the current script
   // ref: http://goo.gl/JHfFW
-  if (interactiveScript && interactiveScript.readyState === 'interactive') {
+  if (interactiveScript && interactiveScript.readyState === "interactive") {
     return interactiveScript
   }
 
-  var scripts = head.getElementsByTagName('script')
+  var scripts = head.getElementsByTagName("script")
 
   for (var i = scripts.length - 1; i >= 0; i--) {
     var script = scripts[i]
-    if (script.readyState === 'interactive') {
+    if (script.readyState === "interactive") {
       interactiveScript = script
       return interactiveScript
     }
@@ -573,14 +573,14 @@ var UA = navigator.userAgent
 
 // `onload` event is supported in WebKit since 535.23
 // ref: https://bugs.webkit.org/show_activity.cgi?id=38995
-var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, '$1')) < 536
+var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) < 536
 
 // `onload/onerror` event is supported since Firefox 9.0
 // ref:
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldFirefox = UA.indexOf('Firefox') > 0 &&
-    !('onload' in doc.createElement('link'))
+var isOldFirefox = UA.indexOf("Firefox") > 0 &&
+    !("onload" in doc.createElement("link"))
 
 
 /**
@@ -611,11 +611,11 @@ function parseDependencies(code) {
 var cachedModules = seajs.cache = {}
 
 var STATUS = {
-  'LOADING': 1,   // The module file is loading
-  'SAVED': 2,     // The module data has been saved to cachedModules
-  'LOADED': 3,    // The module and all its dependencies are ready to compile
-  'COMPILING': 4, // The module is being compiled
-  'COMPILED': 5   // The module is compiled and `module.exports` is available
+  "LOADING": 1,   // The module file is loading
+  "SAVED": 2,     // The module data has been saved to cachedModules
+  "LOADED": 3,    // The module and all its dependencies are ready to compile
+  "COMPILING": 4, // The module is being compiled
+  "COMPILED": 5   // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
@@ -664,7 +664,7 @@ function load(uris, callback, options) {
   }
 
   // Emit load event for plugins such as combo plugin
-  emit('load', unloadedUris)
+  emit("load", unloadedUris)
 
   var len = unloadedUris.length
   var remain = len
@@ -725,9 +725,9 @@ var anonymousModuleMeta = null
 function fetch(uri, callback) {
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
-  var requestUri = emitData('fetch',
+  var requestUri = emitData("fetch",
       { uri: uri, fetchedList: fetchedList },
-      'uri')
+      "uri")
 
   if (fetchedList[requestUri]) {
     callback()
@@ -744,9 +744,9 @@ function fetch(uri, callback) {
 
   // Send request
   var charset = configData.charset
-  var requested = emitData('request',
+  var requested = emitData("request",
       { uri: requestUri, callback: onRequested, charset: charset },
-      'requested')
+      "requested")
 
   if (!requested) {
     request(requestUri, onRequested, charset)
@@ -803,11 +803,11 @@ function define(id, deps, factory) {
 
     if (script && script.src) {
       derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData('derived', { uri: derivedUri })
+      derivedUri = emitData("derived", { uri: derivedUri })
     }
     else {
-      log('Failed to derive URI from interactive script for:',
-          factory.toString(), 'warn')
+      log("Failed to derive URI from interactive script for:",
+          factory.toString(), "warn")
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
@@ -847,7 +847,7 @@ function compile(mod) {
     return mod.exports
   }
 
-  emit('compile', mod)
+  emit("compile", mod)
 
   // Just return `null` when:
   //  1. the module file is 404
@@ -893,7 +893,7 @@ function compile(mod) {
   mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.COMPILED
 
-  emit('compiled', mod)
+  emit("compiled", mod)
   return mod.exports
 }
 
@@ -941,7 +941,7 @@ function isCircularWaiting(mod) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log('Found circular dependencies:', stack.join(' --> '))
+  log("Found circular dependencies:", stack.join(" --> "))
 }
 
 function isOverlap(arrA, arrB) {
@@ -978,13 +978,13 @@ global.define = define
  */
 
 var configData = {
-  // the root path to use for id2uri parsing
+  // The root path to use for id2uri parsing
   base: (function() {
     var ret = dirname(loaderUri)
 
     // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
     // should be `http://test.com/libs/`
-    var m = ret.match(/^(.+\/)seajs\/[\.\d]+(?:-dev)?\/$/)
+    var m = ret.match(/^(.+\/)seajs\/[^/]+\/$/)
     if (m) {
       ret = m[1]
     }
@@ -993,7 +993,7 @@ var configData = {
   })(),
 
   // The charset for requesting files
-  charset: 'utf-8'
+  charset: "utf-8"
 
   // debug: false - Debug mode
   // alias - The shorthand alias for module id
@@ -1009,19 +1009,20 @@ seajs.config = function(obj) {
       var prev = configData[key]
       var curr = obj[key]
 
-      if (prev && (key === 'alias' || key === 'vars')) {
+      if (prev && (key === "alias" || key === "vars")) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
-            var p = prev[k]
-            var c = curr[k]
+            var val = curr[k]
+            if (k in prev) {
+              checkConfigConflict(prev[k], val, k, key)
+            }
 
-            checkConfigConflict(p, c, k, key)
-            prev[k] = c
+            prev[k] = val
           }
         }
       }
-      else if (prev && (key === 'map' || key === 'preload')) {
+      else if (prev && (key === "map" || key === "preload")) {
         if (!isArray(curr)) {
           curr = [curr]
         }
@@ -1048,19 +1049,16 @@ seajs.config.data = configData
 
 
 function checkConfigConflict(prev, curr, k, key) {
-  if (prev && prev !== curr) {
-    log('The ' + key + ' config is conflicted:',
-        'key =', '"' + k + '"',
-        'previous =', '"' + prev + '"',
-        'current =', '"' + curr + '"',
-        'warn')
+  if (prev !== curr) {
+    log("The config of " + key + '["' + k + '"] is changed from "' +
+        prev + '" to "' + curr + '"', "warn")
   }
 }
 
 function makeBaseAbsolute() {
   var base = configData.base
   if (!isAbsolute(base)) {
-    configData.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+    configData.base = id2Uri((isRoot(base) ? "" : "./") + base + "/")
   }
 }
 
@@ -1077,7 +1075,7 @@ seajs.config({
   preload: getBootstrapPlugins()
 })
 
-var dataMain = loaderScript.getAttribute('data-main')
+var dataMain = loaderScript.getAttribute("data-main")
 if (dataMain) {
   seajs.use(dataMain)
 }
@@ -1089,14 +1087,14 @@ function getBootstrapPlugins() {
   var str = global.location.search
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
-  str = str.replace(/(seajs-\w+)(&|$)/g, '$1=1$2')
+  str = str.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
   // Add cookie string
-  str += ' ' + doc.cookie
+  str += " " + doc.cookie
 
   // Exclude seajs-xxx=0
   str.replace(/seajs-(\w+)=1/g, function(m, name) {
-    ret.push('{seajs}/plugin-' + name)
+    ret.push("{seajs}/plugin-" + name)
   })
 
   return unique(ret)
