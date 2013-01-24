@@ -10,6 +10,15 @@ define(function(require) {
   var a = require('a')
 
   test.assert(a.name === 'a', a.name)
+
+
+  seajs.config({
+    base: '../'
+  })
+
+  var base = seajs.config.data.base
+  test.assert(/seajs\/$/.test(base), base)
+
   test.done()
 
 })
