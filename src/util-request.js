@@ -67,7 +67,7 @@ function scriptOnload(node, callback) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!settings.debug) {
+      if (!configData.debug) {
         head.removeChild(node)
       }
 

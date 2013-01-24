@@ -91,7 +91,7 @@ var log = seajs.log = function() {
   var type = console[args[len - 1]] ? args.pop() : 'log'
 
   // Print log info in debug mode only
-  if (type === 'log' && !settings.debug) {
+  if (type === 'log' && !configData.debug) {
     return
   }
 
@@ -260,7 +260,7 @@ function normalize(uri) {
 
 
 function parseAlias(id) {
-  var alias = settings.alias
+  var alias = configData.alias
 
   // Only parse top-level id
   if (alias && hasOwn(alias, id) && isTopLevel(id)) {
@@ -271,7 +271,7 @@ function parseAlias(id) {
 }
 
 function parseVars(id) {
-  var vars = settings.vars
+  var vars = configData.vars
 
   if (vars && id.indexOf('{') > -1) {
     id = id.replace(VARS_RE, function(m, key) {
@@ -303,14 +303,14 @@ function addBase(id, refUri) {
   }
   // top-level id
   else {
-    ret = settings.base + id
+    ret = configData.base + id
   }
 
   return ret
 }
 
 function parseMap(uri) {
-  var map = settings.map || []
+  var map = configData.map || []
   var ret = uri
   var len = map.length
 
@@ -471,7 +471,7 @@ function scriptOnload(node, callback) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!settings.debug) {
+      if (!configData.debug) {
         head.removeChild(node)
       }
 
@@ -743,7 +743,7 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Send request
-  var charset = settings.charset
+  var charset = configData.charset
   var requested = emitData('request',
       { uri: requestUri, callback: onRequested, charset: charset },
       'requested')
@@ -955,7 +955,7 @@ function isOverlap(arrA, arrB) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 function preload(callback) {
-  var preloadModules = settings.preload
+  var preloadModules = configData.preload
   var len = preloadModules.length
 
   len ? globalModule.load(preloadModules.splice(0, len), callback) :
@@ -977,7 +977,7 @@ global.define = define
  * config.js - The configuration for the loader
  */
 
-var settings = seajs.settings = {
+var configData = {
   // the root path to use for id2uri parsing
   base: (function() {
     var ret = dirname(loaderUri)
@@ -1006,7 +1006,7 @@ seajs.config = function(obj) {
   for (var key in obj) {
     if (hasOwn(obj, key)) {
 
-      var prev = settings[key]
+      var prev = configData[key]
       var curr = obj[key]
 
       if (prev && (key === 'alias' || key === 'vars')) {
@@ -1031,18 +1031,21 @@ seajs.config = function(obj) {
         })
       }
       else {
-        settings[key] = curr
+        configData[key] = curr
       }
     }
   }
 
-  // Make sure that `settings.base` is an absolute path
+  // Make sure that `configData.base` is an absolute path
   if (obj.base) {
     makeBaseAbsolute()
   }
 
   return seajs
 }
+
+seajs.config.data = configData
+
 
 function checkConfigConflict(prev, curr, k, key) {
   if (prev && prev !== curr) {
@@ -1055,9 +1058,9 @@ function checkConfigConflict(prev, curr, k, key) {
 }
 
 function makeBaseAbsolute() {
-  var base = settings.base
+  var base = configData.base
   if (!isAbsolute(base)) {
-    settings.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+    configData.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
   }
 }
 

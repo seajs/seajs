@@ -2,7 +2,7 @@
  * config.js - The configuration for the loader
  */
 
-var settings = seajs.settings = {
+var configData = {
   // the root path to use for id2uri parsing
   base: (function() {
     var ret = dirname(loaderUri)
@@ -31,7 +31,7 @@ seajs.config = function(obj) {
   for (var key in obj) {
     if (hasOwn(obj, key)) {
 
-      var prev = settings[key]
+      var prev = configData[key]
       var curr = obj[key]
 
       if (prev && (key === 'alias' || key === 'vars')) {
@@ -56,18 +56,21 @@ seajs.config = function(obj) {
         })
       }
       else {
-        settings[key] = curr
+        configData[key] = curr
       }
     }
   }
 
-  // Make sure that `settings.base` is an absolute path
+  // Make sure that `configData.base` is an absolute path
   if (obj.base) {
     makeBaseAbsolute()
   }
 
   return seajs
 }
+
+seajs.config.data = configData
+
 
 function checkConfigConflict(prev, curr, k, key) {
   if (prev && prev !== curr) {
@@ -80,9 +83,9 @@ function checkConfigConflict(prev, curr, k, key) {
 }
 
 function makeBaseAbsolute() {
-  var base = settings.base
+  var base = configData.base
   if (!isAbsolute(base)) {
-    settings.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+    configData.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
   }
 }
 

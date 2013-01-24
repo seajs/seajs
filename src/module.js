@@ -137,7 +137,7 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Send request
-  var charset = settings.charset
+  var charset = configData.charset
   var requested = emitData('request',
       { uri: requestUri, callback: onRequested, charset: charset },
       'requested')
@@ -349,7 +349,7 @@ function isOverlap(arrA, arrB) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 function preload(callback) {
-  var preloadModules = settings.preload
+  var preloadModules = configData.preload
   var len = preloadModules.length
 
   len ? globalModule.load(preloadModules.splice(0, len), callback) :
