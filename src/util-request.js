@@ -4,10 +4,10 @@
  */
 
 var head = doc.head ||
-    doc.getElementsByTagName('head')[0] ||
+    doc.getElementsByTagName("head")[0] ||
     doc.documentElement
 
-var baseElement = head.getElementsByTagName('base')[0]
+var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
 var READY_STATE_RE = /loaded|complete|undefined/
@@ -18,7 +18,7 @@ var interactiveScript
 
 function request(url, callback, charset) {
   var isCSS = IS_CSS_RE.test(url)
-  var node = doc.createElement(isCSS ? 'link' : 'script')
+  var node = doc.createElement(isCSS ? "link" : "script")
 
   if (charset) {
     var cs = isFunction(charset) ? charset(url) : charset
@@ -30,10 +30,10 @@ function request(url, callback, charset) {
   assetOnload(node, callback)
 
   if (isCSS) {
-    node.rel = 'stylesheet'
+    node.rel = "stylesheet"
     node.href = url
   } else {
-    node.async = 'async'
+    node.async = "async"
     node.src = url
   }
 
@@ -51,7 +51,7 @@ function request(url, callback, charset) {
 }
 
 function assetOnload(node, callback) {
-  if (node.nodeName === 'SCRIPT') {
+  if (node.nodeName === "SCRIPT") {
     scriptOnload(node, callback)
   }
   else {
@@ -84,7 +84,7 @@ function scriptOnload(node, callback) {
 function styleOnload(node, callback) {
   // for Old WebKit and Old Firefox
   if (isOldWebKit || isOldFirefox) {
-    log('Start css polling')
+    log("Start css polling")
 
     setTimeout(function() {
       pollCss(node, callback)
@@ -119,10 +119,10 @@ function pollCss(node, callback) {
         isLoaded = true
       }
     } catch (ex) {
-      // The value of `ex.name` is changed from 'NS_ERROR_DOM_SECURITY_ERR'
-      // to 'SecurityError' since Firefox 13.0. But Firefox is less than 9.0
-      // in here, So it is ok to just rely on 'NS_ERROR_DOM_SECURITY_ERR'
-      if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
+      // The value of `ex.name` is changed from "NS_ERROR_DOM_SECURITY_ERR"
+      // to "SecurityError" since Firefox 13.0. But Firefox is less than 9.0
+      // in here, So it is ok to just rely on "NS_ERROR_DOM_SECURITY_ERR"
+      if (ex.name === "NS_ERROR_DOM_SECURITY_ERR") {
         isLoaded = true
       }
     }
@@ -149,15 +149,15 @@ function getCurrentScript() {
   // could query the script nodes and the one that is in "interactive"
   // mode indicates the current script
   // ref: http://goo.gl/JHfFW
-  if (interactiveScript && interactiveScript.readyState === 'interactive') {
+  if (interactiveScript && interactiveScript.readyState === "interactive") {
     return interactiveScript
   }
 
-  var scripts = head.getElementsByTagName('script')
+  var scripts = head.getElementsByTagName("script")
 
   for (var i = scripts.length - 1; i >= 0; i--) {
     var script = scripts[i]
-    if (script.readyState === 'interactive') {
+    if (script.readyState === "interactive") {
       interactiveScript = script
       return interactiveScript
     }
@@ -169,13 +169,13 @@ var UA = navigator.userAgent
 
 // `onload` event is supported in WebKit since 535.23
 // ref: https://bugs.webkit.org/show_activity.cgi?id=38995
-var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, '$1')) < 536
+var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) < 536
 
 // `onload/onerror` event is supported since Firefox 9.0
 // ref:
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldFirefox = UA.indexOf('Firefox') > 0 &&
-    !('onload' in doc.createElement('link'))
+var isOldFirefox = UA.indexOf("Firefox") > 0 &&
+    !("onload" in doc.createElement("link"))
 
 

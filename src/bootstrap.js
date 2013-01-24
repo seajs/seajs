@@ -10,7 +10,7 @@ seajs.config({
   preload: getBootstrapPlugins()
 })
 
-var dataMain = loaderScript.getAttribute('data-main')
+var dataMain = loaderScript.getAttribute("data-main")
 if (dataMain) {
   seajs.use(dataMain)
 }
@@ -22,14 +22,14 @@ function getBootstrapPlugins() {
   var str = global.location.search
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
-  str = str.replace(/(seajs-\w+)(&|$)/g, '$1=1$2')
+  str = str.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
   // Add cookie string
-  str += ' ' + doc.cookie
+  str += " " + doc.cookie
 
   // Exclude seajs-xxx=0
   str.replace(/seajs-(\w+)=1/g, function(m, name) {
-    ret.push('{seajs}/plugin-' + name)
+    ret.push("{seajs}/plugin-" + name)
   })
 
   return unique(ret)

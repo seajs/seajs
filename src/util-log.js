@@ -5,8 +5,8 @@
 var console = global.console
 
 // The safe wrapper for `console.xxx` functions
-// log('message') ==> console.log('message')
-// log('message', 'warn') ==> console.warn('message')
+// log("message") ==> console.log("message")
+// log("message", "warn") ==> console.warn("message")
 var log = seajs.log = function() {
   if (console === undefined) {
     return
@@ -14,10 +14,10 @@ var log = seajs.log = function() {
 
   var args = slice.call(arguments)
   var len = args.length
-  var type = console[args[len - 1]] ? args.pop() : 'log'
+  var type = console[args[len - 1]] ? args.pop() : "log"
 
   // Print log info in debug mode only
-  if (type === 'log' && !configData.debug) {
+  if (type === "log" && !configData.debug) {
     return
   }
 

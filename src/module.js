@@ -5,11 +5,11 @@
 var cachedModules = seajs.cache = {}
 
 var STATUS = {
-  'LOADING': 1,   // The module file is loading
-  'SAVED': 2,     // The module data has been saved to cachedModules
-  'LOADED': 3,    // The module and all its dependencies are ready to compile
-  'COMPILING': 4, // The module is being compiled
-  'COMPILED': 5   // The module is compiled and `module.exports` is available
+  "LOADING": 1,   // The module file is loading
+  "SAVED": 2,     // The module data has been saved to cachedModules
+  "LOADED": 3,    // The module and all its dependencies are ready to compile
+  "COMPILING": 4, // The module is being compiled
+  "COMPILED": 5   // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
@@ -58,7 +58,7 @@ function load(uris, callback, options) {
   }
 
   // Emit load event for plugins such as combo plugin
-  emit('load', unloadedUris)
+  emit("load", unloadedUris)
 
   var len = unloadedUris.length
   var remain = len
@@ -119,9 +119,9 @@ var anonymousModuleMeta = null
 function fetch(uri, callback) {
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
-  var requestUri = emitData('fetch',
+  var requestUri = emitData("fetch",
       { uri: uri, fetchedList: fetchedList },
-      'uri')
+      "uri")
 
   if (fetchedList[requestUri]) {
     callback()
@@ -138,9 +138,9 @@ function fetch(uri, callback) {
 
   // Send request
   var charset = configData.charset
-  var requested = emitData('request',
+  var requested = emitData("request",
       { uri: requestUri, callback: onRequested, charset: charset },
-      'requested')
+      "requested")
 
   if (!requested) {
     request(requestUri, onRequested, charset)
@@ -197,11 +197,11 @@ function define(id, deps, factory) {
 
     if (script && script.src) {
       derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData('derived', { uri: derivedUri })
+      derivedUri = emitData("derived", { uri: derivedUri })
     }
     else {
-      log('Failed to derive URI from interactive script for:',
-          factory.toString(), 'warn')
+      log("Failed to derive URI from interactive script for:",
+          factory.toString(), "warn")
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
@@ -241,7 +241,7 @@ function compile(mod) {
     return mod.exports
   }
 
-  emit('compile', mod)
+  emit("compile", mod)
 
   // Just return `null` when:
   //  1. the module file is 404
@@ -287,7 +287,7 @@ function compile(mod) {
   mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.COMPILED
 
-  emit('compiled', mod)
+  emit("compiled", mod)
   return mod.exports
 }
 
@@ -335,7 +335,7 @@ function isCircularWaiting(mod) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log('Found circular dependencies:', stack.join(' --> '))
+  log("Found circular dependencies:", stack.join(" --> "))
 }
 
 function isOverlap(arrA, arrB) {

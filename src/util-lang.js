@@ -13,11 +13,11 @@ function hasOwn(obj, prop) {
 }
 
 function isFunction(obj) {
-  return toString.call(obj) === '[object Function]'
+  return toString.call(obj) === "[object Function]"
 }
 
 var isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === '[object Array]'
+  return toString.call(obj) === "[object Array]"
 }
 
 var forEach = emptyArr.forEach ?

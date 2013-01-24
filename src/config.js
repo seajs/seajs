@@ -18,7 +18,7 @@ var configData = {
   })(),
 
   // The charset for requesting files
-  charset: 'utf-8'
+  charset: "utf-8"
 
   // debug: false - Debug mode
   // alias - The shorthand alias for module id
@@ -34,7 +34,7 @@ seajs.config = function(obj) {
       var prev = configData[key]
       var curr = obj[key]
 
-      if (prev && (key === 'alias' || key === 'vars')) {
+      if (prev && (key === "alias" || key === "vars")) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
@@ -46,7 +46,7 @@ seajs.config = function(obj) {
           }
         }
       }
-      else if (prev && (key === 'map' || key === 'preload')) {
+      else if (prev && (key === "map" || key === "preload")) {
         if (!isArray(curr)) {
           curr = [curr]
         }
@@ -74,18 +74,18 @@ seajs.config.data = configData
 
 function checkConfigConflict(prev, curr, k, key) {
   if (prev && prev !== curr) {
-    log('The ' + key + ' config is conflicted:',
-        'key =', '"' + k + '"',
-        'previous =', '"' + prev + '"',
-        'current =', '"' + curr + '"',
-        'warn')
+    log("The " + key + " config is conflicted:",
+        "key =", k,
+        "previous =", prev,
+        "current =", curr,
+        "warn")
   }
 }
 
 function makeBaseAbsolute() {
   var base = configData.base
   if (!isAbsolute(base)) {
-    configData.base = id2Uri((isRoot(base) ? '' : './') + base + '/')
+    configData.base = id2Uri((isRoot(base) ? "" : "./") + base + "/")
   }
 }
 

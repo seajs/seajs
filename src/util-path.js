@@ -10,52 +10,52 @@ var VARS_RE = /{([^{}]+)}/g
 
 
 // Extract the directory portion of a path
-// dirname('a/b/c.js') ==> 'a/b/'
-// dirname('d.js') ==> './'
+// dirname("a/b/c.js") ==> "a/b/"
+// dirname("d.js") ==> "./"
 // ref: http://jsperf.com/regex-vs-split/2
 function dirname(path) {
   var s = path.match(DIRNAME_RE)
-  return (s ? s[0] : '.') + '/'
+  return (s ? s[0] : ".") + "/"
 }
 
 // Canonicalize a path
-// realpath('./a//b/../c') ==> 'a/c'
+// realpath("./a//b/../c") ==> "a/c"
 function realpath(path) {
 
-  // 'file:///a//b/c' ==> 'file:///a/b/c'
-  // 'http://a//b/c' ==> 'http://a/b/c'
-  // 'https://a//b/c' ==> 'https://a/b/c'
-  if (path.lastIndexOf('//') > 7) {
-    path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
+  // "file:///a//b/c" ==> "file:///a/b/c"
+  // "http://a//b/c" ==> "http://a/b/c"
+  // "https://a//b/c" ==> "https://a/b/c"
+  if (path.lastIndexOf("//") > 7) {
+    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
   }
 
-  // If 'a/b/c', just return
-  if (path.indexOf('.') === -1) {
+  // If "a/b/c", just return
+  if (path.indexOf(".") === -1) {
     return path
   }
 
-  var original = path.split('/')
+  var original = path.split("/")
   var ret = [], part
 
   for (var i = 0; i < original.length; i++) {
     part = original[i]
 
-    if (part === '..') {
+    if (part === "..") {
       if (ret.length === 0) {
-        throw new Error('The path is invalid: ' + path)
+        throw new Error("The path is invalid: " + path)
       }
       ret.pop()
     }
-    else if (part !== '.') {
+    else if (part !== ".") {
       ret.push(part)
     }
   }
 
-  return ret.join('/')
+  return ret.join("/")
 }
 
 // Normalize an uri
-// normalize('path/to/a') ==> 'path/to/a.js'
+// normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
   // Call realpath() before adding extension, so that most of uris will
   // contains no `.` and will just return in realpath() call
@@ -63,15 +63,15 @@ function normalize(uri) {
 
   // Add the default `.js` extension except that the uri ends with `#`
   var lastChar = uri.charAt(uri.length - 1)
-  if (lastChar === '#') {
+  if (lastChar === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri) && uri.indexOf('?') === -1) {
-    uri += '.js'
+  else if (!URI_END_RE.test(uri) && uri.indexOf("?") === -1) {
+    uri += ".js"
   }
 
   // Fixes `:80` bug in IE
-  uri = uri.replace(':80/', '/')
+  uri = uri.replace(":80/", "/")
 
   return uri
 }
@@ -91,9 +91,9 @@ function parseAlias(id) {
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf('{') > -1) {
+  if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
-      return hasOwn(vars, key) ? vars[key] : '{' + key + '}'
+      return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
     })
   }
 
@@ -109,8 +109,8 @@ function addBase(id, refUri) {
   }
   // relative id
   else if (isRelative(id)) {
-    // Convert './a' to 'a', to avoid unnecessary loop in realpath() call
-    if (id.indexOf('./') === 0) {
+    // Convert "./a" to "a", to avoid unnecessary loop in realpath() call
+    if (id.indexOf("./") === 0) {
       id = id.substring(2)
     }
     ret = dirname(refUri) + id
@@ -149,7 +149,7 @@ function parseMap(uri) {
 }
 
 function id2Uri(id, refUri) {
-  if (!id) return ''
+  if (!id) return ""
 
   id = parseAlias(id)
   id = parseVars(id)
@@ -162,20 +162,20 @@ function id2Uri(id, refUri) {
 
 
 function isAbsolute(id) {
-  return id.indexOf('://') > 0 || id.indexOf('//') === 0
+  return id.indexOf("://") > 0 || id.indexOf("//") === 0
 }
 
 function isRelative(id) {
-  return id.indexOf('./') === 0 || id.indexOf('../') === 0
+  return id.indexOf("./") === 0 || id.indexOf("../") === 0
 }
 
 function isRoot(id) {
-  return id.charAt(0) === '/' && id.charAt(1) !== '/'
+  return id.charAt(0) === "/" && id.charAt(1) !== "/"
 }
 
 function isTopLevel(id) {
   var c = id.charAt(0)
-  return id.indexOf('://') === -1 && c !== '.' && c !== '/'
+  return id.indexOf("://") === -1 && c !== "." && c !== "/"
 }
 
 
@@ -184,29 +184,29 @@ var doc = document
 var pageUri = (function(loc) {
   var pathname = loc.pathname
 
-  // Normalize pathname to start with '/'
+  // Normalize pathname to start with "/"
   // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-  if (pathname.charAt(0) !== '/') {
-    pathname = '/' + pathname
+  if (pathname.charAt(0) !== "/") {
+    pathname = "/" + pathname
   }
 
-  var pageUri = loc.protocol + '//' + loc.host + pathname
+  var pageUri = loc.protocol + "//" + loc.host + pathname
 
   // local file in IE: C:\path\to\xx.js
-  if (pageUri.indexOf('\\') > -1) {
-    pageUri = pageUri.replace(/\\/g, '/')
+  if (pageUri.indexOf("\\") > -1) {
+    pageUri = pageUri.replace(/\\/g, "/")
   }
 
   return pageUri
 })(global.location)
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
-var loaderScript = doc.getElementById('seajs-node') || (function() {
-  var scripts = doc.getElementsByTagName('script')
+var loaderScript = doc.getElementById("seajs-node") || (function() {
+  var scripts = doc.getElementsByTagName("script")
 
   return scripts[scripts.length - 1] ||
       // Maybe undefined in some environment such as PhantomJS
-      doc.createElement('script')
+      doc.createElement("script")
 })()
 
 var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
@@ -216,7 +216,7 @@ function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
       node.src :
     // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-      node.getAttribute('src', 4)
+      node.getAttribute("src", 4)
 }
 
 
