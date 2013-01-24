@@ -1,8 +1,6 @@
 define(function(require) {
 
-  var test = require('../test')
-  test.print('unit/util-path.js')
-
+  var test = require('../../test')
   var assert = test.assert
 
 
@@ -120,6 +118,9 @@ define(function(require) {
   assert(id2Uri() === '', 'id2Uri')
   assert(id2Uri('http://XXX.com.cn/min/index.php?g=commonCss.css') === 'http://XXX.com.cn/min/index.php?g=commonCss.css', 'id2Uri')
   assert(id2Uri('./front/jquery.x.queue.js#') === pageDir + 'front/jquery.x.queue.js', 'id2Uri')
+
+
+  test.done()
 
 });
 

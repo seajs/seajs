@@ -14,12 +14,13 @@
 })(function(require, exports) {
 
   exports.testCases = [
-    'unit/test.html',
+    'specs/util-events/test.html',
+    'specs/util-path/test.html',
 
-    'modules/config-alias',
-    'modules/config-base',
-    'modules/config-charset',
-    'modules/config-debug/test.html'
+    'specs/config-alias',
+    'specs/config-base',
+    'specs/config-charset',
+    'specs/config-debug/test.html'
 
   ]
 
