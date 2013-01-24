@@ -1,11 +1,38 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="gbk"/>
-<title>Test</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
+<title>test</title>
+<link rel="stylesheet" href="../../style.css?20130121.css"/>
+<script>
+  var _console = window.console
+  var consoleMsg = ''
+
+  // Hack console function for testing
+  window.console = {
+    warn: function(msg) {
+      consoleMsg = msg
+      _console.warn(msg)
+    }
+  }
+
+  function printResults(txt, style) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    d.className = style
+    document.getElementById('out').appendChild(d)
+  }
+
+</script>
+
+<script src="../../../dist/sea-debug.js"></script>
+<script>
+  seajs.use('./main')
+</script>
+
 </head>
 <body>
-<script>
-</script>
+<div id="out"></div>
 </body>
 </html>

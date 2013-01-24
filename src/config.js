@@ -38,11 +38,12 @@ seajs.config = function(obj) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
-            var p = prev[k]
-            var c = curr[k]
+            var val = curr[k]
+            if (k in prev) {
+              checkConfigConflict(prev[k], val, k, key)
+            }
 
-            checkConfigConflict(p, c, k, key)
-            prev[k] = c
+            prev[k] = val
           }
         }
       }
@@ -73,11 +74,9 @@ seajs.config.data = configData
 
 
 function checkConfigConflict(prev, curr, k, key) {
-  if (prev && prev !== curr) {
-    log("The " + key + " config is conflicted:",
-        "key =", k,
-        "previous =", prev,
-        "current =", curr,
+  if (prev !== curr) {
+    log("The config of " + key + '["' + k + '"] is changed from "'
+        + prev + '" to "' + curr + '"',
         "warn")
   }
 }
