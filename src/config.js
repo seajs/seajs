@@ -9,7 +9,7 @@ var configData = {
 
     // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
     // should be `http://test.com/libs/`
-    var m = ret.match(/^(.+\/)seajs\/[\.\d]+(?:-dev)?\/$/)
+    var m = ret.match(/^(.+\/)seajs\/[^/]+\/$/)
     if (m) {
       ret = m[1]
     }
@@ -75,9 +75,8 @@ seajs.config.data = configData
 
 function checkConfigConflict(prev, curr, k, key) {
   if (prev !== curr) {
-    log("The config of " + key + '["' + k + '"] is changed from "'
-        + prev + '" to "' + curr + '"',
-        "warn")
+    log("The config of " + key + '["' + k + '"] is changed from "' +
+        prev + '" to "' + curr + '"', "warn")
   }
 }
 
