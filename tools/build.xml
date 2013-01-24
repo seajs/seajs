@@ -1,16 +1,14 @@
-<project name="seajs-build" default="build" basedir="../">
+<project name="seajs-build" default="build_seajs" basedir="../">
   <description>SeaJS Build File</description>
 
   <dirname property="root.dir" file="${ant.file.seajs-build}/../"/>
+  <property name="tools.dir" location="${root.dir}/tools/"/>
   <property name="src.dir" location="${root.dir}/src/"/>
   <property name="dist.dir" location="${root.dir}/dist/"/>
   <property name="tmp.dir" location="${dist.dir}/tmp/"/>
 
   <property name="module.name" value="sea"/>
   <property name="version" value="2.0.0-dev"/>
-
-  <property name="tools.dir" location="${root.dir}/tools/"/>
-  <property name="gcc.jar" location="${tools.dir}/compiler.jar"/>
   <property name="charset" value="utf-8"/>
 
   <property name="src.file" value="${tmp.dir}/${module.name}-src.js"/>
@@ -52,7 +50,6 @@
                    flags="g"
                    encoding="${charset}"/>
 
-    <!-- Generate sea-debug.js -->
     <copy file="${src.file}" tofile="${debug.file}" overwrite="true"/>
   </target>
 
@@ -63,13 +60,15 @@
 
     <mkdir dir="${tmp.dir}"/>
 
-    <!-- Move compress plugins to tmp folder -->
+    <!-- Move online plugins to tmp folder for compressing -->
     <move todir="${tmp.dir}">
       <fileset dir="${dist.dir}" includes="${online.plugins}"/>
       <mapper type="regexp"
               from="^(.*)\.(js|css)$"
               to="\1-src.\2"/>
     </move>
+
+    <move file="${map.file}" tofile="${map.file}.bak"/>
   </target>
 
   <target name="compress">
@@ -77,7 +76,7 @@
       <fileset dir="${tmp.dir}" includes="*-src.js"/>
 
       <arg line="-jar"/>
-      <arg path="${gcc.jar}"/>
+      <arg path="${tools.dir}/compiler.jar"/>
       <arg line="--externs ${tools.dir}/extern.js"/>
       <arg line="--compilation_level=SIMPLE_OPTIMIZATIONS"/>
       <arg line="--language_in=ECMASCRIPT5_STRICT"/>
@@ -119,11 +118,14 @@
     <move file="${min.file}.tmp" tofile="${min.file}" overwrite="true"/>
   </target>
 
+  <target name="compress_plugins" depends="compress">
+    <move file="${map.file}.bak" tofile="${map.file}" overwrite="true"/>
+  </target>
+
   <target name="clean">
     <delete dir="${tmp.dir}"/>
   </target>
 
   <target name="build_seajs" depends="prepare_seajs,compress_seajs,clean"/>
-  <target name="build_plugins" depends="prepare_plugins,compress,clean"/>
-  <target name="build" depends="build_seajs,build_plugins"/>
+  <target name="build_plugins" depends="prepare_plugins,compress_plugins,clean"/>
 </project>
