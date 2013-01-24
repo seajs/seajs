@@ -18,11 +18,9 @@ var settings = seajs.settings = {
   })(),
 
   // The charset for requesting files
-  charset: 'utf-8',
+  charset: 'utf-8'
 
-  // Debug mode that will be turned off when building
-  debug: true
-
+  // debug: false - Debug mode
   // alias - The shorthand alias for module id
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
