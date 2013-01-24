@@ -1,1 +1,1 @@
-this.B = 'b';
+this.B = 'b'

@@ -1,3 +1,3 @@
 define(function() {
-  this.A = 'a';
+  this.A = 'a'
 });
