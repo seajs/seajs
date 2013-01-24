@@ -4,31 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
 <title>sandbox</title>
-
 <link rel="stylesheet" href="style.css"/>
+
+<script>
+  function printResults(txt, style) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    d.className = style
+    document.getElementById('out').appendChild(d)
+  }
+
+  document.cookie = 'seajs-nocache=1'
+</script>
+
 <script src="../dist/sea.js"></script>
 
 <script>
-(function(){
-  document.cookie = 'seajs-nocache=1'
-
-  // Load test cases
-  var file = decodeURIComponent((location.search || '?')
+  seajs.use('./' +
+      decodeURIComponent((location.search || '?')
       .substring(1))
-      .replace(/&t=\d+/, '')
-
-  seajs.use('./' + file, function() {
+      .replace(/&t=\d+/, ''), function() {
     document.cookie = 'seajs-nocache=; expires=' + new Date(0)
   })
-
-})()
-
-function printResults(txt, style) {
-  var d = document.createElement('div')
-  d.innerHTML = txt
-  d.className = style
-  document.getElementById('out').appendChild(d)
-}
 </script>
 </head>
 <body>
