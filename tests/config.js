@@ -21,6 +21,7 @@
     , 'specs/config-base'
     , 'specs/config-charset'
     , 'specs/config-debug/test.html'
+    , 'specs/config-map'
 
   ]
 
