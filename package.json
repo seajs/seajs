@@ -6,9 +6,8 @@
   "keywords": [
     "loader",
     "module",
-    "CommonJS",
-    "browser", 
-    "CMD"
+    "CMD",
+    "browser"
   ],
   "author": "Frank Wang <lifesinger@gmail.com>",
   "engines": {
@@ -20,19 +19,5 @@
     "url" : "git://github.com/seajs/seajs.git"
   },
   "main": "./lib/sea-node.js",
-  "preferGlobal": true,
-  "output": {
-    "sea.js": [
-      "sea.js",
-      "util-lang.js",
-      "util-log.js",
-      "util-path.js",
-      "util-fetch.js",
-      "util-deps.js",
-      "module.js",
-      "config.js",
-      "prepare.js",
-      "bootstrap.js"
-    ]
-  }
+  "preferGlobal": true
 }
