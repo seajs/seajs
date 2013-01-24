@@ -3,7 +3,7 @@
  */
 
 var configData = {
-  // the root path to use for id2uri parsing
+  // The root path to use for id2uri parsing
   base: (function() {
     var ret = dirname(loaderUri)
 
