@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
 <title>sandbox</title>
 
-<link rel="stylesheet" href="style.css?20130121.css"/>
+<link rel="stylesheet" href="style.css"/>
 <script src="../dist/sea.js"></script>
 
 <script>
@@ -13,9 +13,11 @@
   document.cookie = 'seajs-nocache=1'
 
   // Load test cases
-  var search = decodeURIComponent((location.search || '?').substring(1))
+  var file = decodeURIComponent((location.search || '?')
+      .substring(1))
+      .replace(/&t=\d+/, '')
 
-  seajs.use('./' + search.replace(/&t=\d+/, ''), function() {
+  seajs.use('./' + file, function() {
     document.cookie = 'seajs-nocache=; expires=' + new Date(0)
   })
 
