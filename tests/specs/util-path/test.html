@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>test</title>
+<link rel="stylesheet" href="../../style.css"/>
 </head>
 <body>
 <div id="out"></div>
 
 <script>
-  function printResults(txt) {
+  function printResults(txt, style) {
     var d = document.createElement('div')
     d.innerHTML = txt
+    d.className = style
     document.getElementById('out').appendChild(d)
   }
-
-  document.cookie = 'seajs-nocache=0'
 
   var global = this
 </script>

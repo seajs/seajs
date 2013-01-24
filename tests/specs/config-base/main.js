@@ -1,6 +1,6 @@
 
 seajs.config({
-  base: './modules/config-base/'
+  base: './specs/config-base/'
 })
 
 
