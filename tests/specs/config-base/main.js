@@ -13,11 +13,11 @@ define(function(require) {
 
 
   seajs.config({
-    base: '../'
+    base: './'
   })
 
   var base = seajs.config.data.base
-  test.assert(/seajs\/$/.test(base), base)
+  test.assert(/tests\/$/.test(base), base)
 
   test.done()
 
