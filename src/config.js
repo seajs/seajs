@@ -9,7 +9,7 @@ var configData = {
 
     // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
     // should be `http://test.com/libs/`
-    var m = ret.match(/^(.+\/)seajs\/[^/]+\/$/)
+    var m = ret.match(/^(.+\/)seajs\/\d[^/]+\/$/)
     if (m) {
       ret = m[1]
     }
