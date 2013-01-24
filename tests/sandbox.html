@@ -10,12 +10,14 @@
 
 <script>
 (function(){
-  // no cache
   document.cookie = 'seajs-nocache=1'
 
   // Load test cases
   var search = decodeURIComponent((location.search || '?').substring(1))
-  seajs.use('./' + search.replace(/&t=\d+/, ''))
+
+  seajs.use('./' + search.replace(/&t=\d+/, ''), function() {
+    document.cookie = 'seajs-nocache=; expires=' + new Date(0)
+  })
 
 })()
 
