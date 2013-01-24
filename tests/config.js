@@ -14,13 +14,14 @@
 })(function(require, exports) {
 
   exports.testCases = [
-    'specs/util-events/test.html'
-    ,'specs/util-path/test.html'
+      'specs/util-events/test.html'
+    , 'specs/util-path/test.html'
 
-    ,'specs/config-alias/test.html'
-    ,'specs/config-base'
-    ,'specs/config-charset'
-    //,'specs/config-debug/test.html'
+    , 'specs/config-alias/test.html'
+    , 'specs/config-base'
+    , 'specs/config-charset'
+    , 'specs/config-debug/test.html'
+
   ]
 
   //exports.testCases = ['unit/test.html']
