@@ -15,17 +15,14 @@
 
   <property name="src.file" value="${tmp.dir}/${module.name}-src.js"/>
   <property name="debug.file" value="${dist.dir}/${module.name}-debug.js"/>
-  <property name="compress.plugins" value="plugin-combo.js,plugin-warning.js"/>
+  <property name="min.file" value="${dist.dir}/${module.name}.js"/>
+  <property name="map.file" value="${dist.dir}/${module.name}.js.map"/>
+  <property name="online.plugins" value="plugin-combo.js,plugin-warning.js"/>
 
-
-  <!-- 合并 -->
   <target name="concat">
-
-    <!-- 目录准备 -->
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${tmp.dir}"/>
 
-    <!-- 合并 package 文件 -->
     <concat destfile="${src.file}"
             encoding="${charset}"
             outputencoding="${charset}">
@@ -45,58 +42,37 @@
       <path path="${src.dir}/bootstrap.js"/>
 
       <path path="${src.dir}/outro.js"/>
-
     </concat>
   </target>
 
-
-  <!-- 预处理 -->
-  <target name="prepare" depends="concat">
-
-    <!-- 版本号替换 -->
+  <target name="prepare_seajs" depends="concat">
     <replaceregexp file="${src.file}"
                    match="@VERSION"
                    replace="${version}"
                    flags="g"
                    encoding="${charset}"/>
 
-    <!-- 得到 sea-debug.js -->
+    <!-- Generate sea-debug.js -->
     <copy file="${src.file}" tofile="${debug.file}" overwrite="true"/>
-
-    <!-- DEBUG 替换 -->
-    <replaceregexp file="${src.file}"
-                   match="debug: true"
-                   replace=""
-                   flags="g"
-                   encoding="${charset}"/>
-
   </target>
 
   <target name="prepare_plugins">
-
-    <!-- 复制 plugin 到 dist 目录 -->
     <copy todir="${dist.dir}" overwrite="true">
       <fileset dir="${src.dir}/plugins" includes="*.js"/>
     </copy>
 
-    <!-- 目录准备 -->
     <mkdir dir="${tmp.dir}"/>
 
-    <!-- 将需要压缩的 plugin 移动到 tmp 目录 -->
+    <!-- Move compress plugins to tmp folder -->
     <move todir="${tmp.dir}">
-      <fileset dir="${dist.dir}" includes="${compress.plugins}"/>
+      <fileset dir="${dist.dir}" includes="${online.plugins}"/>
       <mapper type="regexp"
               from="^(.*)\.(js|css)$"
               to="\1-src.\2"/>
     </move>
-
   </target>
 
-
-  <!-- 压缩 -->
   <target name="compress">
-
-    <!-- 用 Google Closure Compiler 压缩 JS -->
     <apply executable="java" verbose="true" dest="${dist.dir}" failonerror="true">
       <fileset dir="${tmp.dir}" includes="*-src.js"/>
 
@@ -113,25 +89,41 @@
 
       <arg line="--js"/>
       <srcfile/>
-      <arg value="--js_output_file"/>
+      <arg line="--js_output_file"/>
       <targetfile/>
       <mapper type="regexp" from="^(.*)-src\.js$" to="\1.js"/>
+
+      <arg line="--source_map_format=V3"/>
+      <arg line="--create_source_map=${map.file}"/>
     </apply>
-
   </target>
 
+  <target name="compress_seajs" depends="compress">
+    <replaceregexp file="${map.file}"
+                   match="[\w\/]+sea.js"
+                   replace="sea.js"
+                   encoding="${charset}"/>
 
-  <!-- 扫尾 -->
-  <target name="destroy">
+    <replaceregexp file="${map.file}"
+                   match="[\w\/]+sea-src.js"
+                   replace="sea-debug.js"
+                   encoding="${charset}"/>
 
+    <concat destfile="${min.file}.tmp"
+            encoding="${charset}"
+            outputencoding="${charset}">
+      <path path="${min.file}"/>
+      <footer>//@ sourceMappingURL=sea.js.map</footer>
+    </concat>
+
+    <move file="${min.file}.tmp" tofile="${min.file}" overwrite="true"/>
+  </target>
+
+  <target name="clean">
     <delete dir="${tmp.dir}"/>
-
   </target>
 
-
-  <!-- 入口 -->
-  <target name="build_seajs" depends="prepare,compress,destroy"/>
-  <target name="build_plugins" depends="prepare_plugins,compress,destroy"/>
-  <target name="build" depends="prepare,prepare_plugins,compress,destroy"/>
-
+  <target name="build_seajs" depends="prepare_seajs,compress_seajs,clean"/>
+  <target name="build_plugins" depends="prepare_plugins,compress,clean"/>
+  <target name="build" depends="build_seajs,build_plugins"/>
 </project>
