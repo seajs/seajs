@@ -1,9 +1,10 @@
 
 build:
-	ant -buildfile tools/build.xml build_seajs
+	ant -buildfile tools/build.xml
 
 build_all:
-	ant -buildfile tools/build.xml
+	ant -buildfile tools/build.xml build_seajs
+	ant -buildfile tools/build.xml build_plugins
 
 test:
 	node tests/runner.js
