@@ -163,7 +163,7 @@ define(function(require, exports) {
 
   function parseIdFromUri() {
     return decodeURIComponent(location.search)
-        .replace(/&t=\d+/, '').substring(1)
+        .replace(/&?t=\d+/, '').substring(1)
   }
 
   function id2File(id) {
@@ -172,9 +172,11 @@ define(function(require, exports) {
   }
 
   function printElapsedTime() {
-    var diff = now() - time
-    var style = diff > WARNING_TIME ? 'warn' : 'info'
-    time && exports.print('[TIME] ' + diff + 'ms', style)
+    if (time) {
+      var diff = now() - time
+      var style = diff > WARNING_TIME ? 'warn' : 'info'
+      exports.print('Elapsed time: ' + diff + 'ms', style + ' time')
+    }
   }
 
   function now() {

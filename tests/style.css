@@ -83,6 +83,10 @@ a.hash {
   color: #F89406;
 }
 
+.time {
+  color: #666;
+}
+
 /* for mobile device */
 @media screen and (max-width: 480px) {
   body, button { font-size: 12px }
