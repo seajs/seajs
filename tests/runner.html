@@ -11,7 +11,7 @@
 <script>
 var result
 
-(function() {
+(function(global) {
 
   var container, summary, reporter, go
   var current, running, timeoutTimer
@@ -20,7 +20,7 @@ var result
   var consoleMode = location.search.indexOf('console') > 0
 
 
-  window.onload = function() {
+  global.onload = function() {
     container = document.getElementById('container')
     reporter = document.getElementById('reporter')
     summary = document.getElementById('summary')
@@ -68,7 +68,7 @@ var result
   function resume() {
     running = true
     go.innerHTML = 'Pause'
-    testNext()
+    testNextPage()
   }
 
 
@@ -87,7 +87,7 @@ var result
   }
 
 
-  window.testNext = function() {
+  global.testNextPage = function() {
     var test = tests[current++]
     clearTimeout(timeoutTimer)
     clear()
@@ -118,7 +118,7 @@ var result
   }
 
 
-  window.printResults = function(txt, style, stopped) {
+  global.printResults = function(txt, style, stopped) {
     var d = document.createElement('div')
     d.innerHTML = txt
     d.className = style
@@ -167,7 +167,7 @@ var result
   }
 
 
-  function printHeader(test, url) {
+  global.printHeader = function(test, url) {
     var h = document.createElement('h3')
     h.innerHTML = test +
         (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
@@ -227,7 +227,7 @@ var result
     // Wait 10s
     timeoutTimer = setTimeout(function() {
       printResults('[WARN] Time is out for this test case: ' + test, 'warn')
-      testNext()
+      testNextPage()
     }, 10000)
   }
 
@@ -237,7 +237,7 @@ var result
     console[type](msg)
   }
 
-})()
+})(this)
 </script>
 
 <div id="container">
