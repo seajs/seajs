@@ -3,7 +3,7 @@ var count = 0
 
 function done(test) {
   if (++count === 2) {
-    test.done()
+    test.next()
   }
 }
 
@@ -11,12 +11,12 @@ function done(test) {
 var preloadConfig = seajs.config.data.preload
 
 seajs.config({
-  preload: ['./specs/config-preload/a']
+  preload: ['./preload/a']
 })
 
 var lenBeforeUse = preloadConfig.length
 
-seajs.use(['./test'], function(test) {
+seajs.use(['../../test'], function(test) {
   test.assert(lenBeforeUse === 1, lenBeforeUse)
   test.assert(preloadConfig.length === 0, preloadConfig.length)
   test.assert(this.A === 'a', 'preload a.js')
@@ -24,10 +24,10 @@ seajs.use(['./test'], function(test) {
 })
 
 seajs.config({
-  preload: ['./specs/config-preload/b']
+  preload: ['./preload/b']
 })
 
-seajs.use(['./test'], function(test) {
+seajs.use(['../../test'], function(test) {
   test.assert(preloadConfig.length === 0, preloadConfig.length)
   test.assert(this.B === 'b', 'preload b.js')
   done(test)

@@ -1,6 +1,6 @@
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
   var global = this
   var configData = seajs.config.data
 
@@ -31,7 +31,7 @@ define(function(require) {
     test.assert(a.name === 'a', 'a.name = ' + a.name)
     test.assert(hasScript('a.js') === true, 'The inserted script is remained in DOM, when debug is true')
 
-    test.done()
+    test.next()
   })
 
 

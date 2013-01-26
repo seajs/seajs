@@ -11,7 +11,7 @@ seajs.config({
 
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
   var isPhantomJS = navigator.userAgent.indexOf('PhantomJS') > 0
 
   var a = require('./a.js')
@@ -23,7 +23,7 @@ define(function(require) {
 
   test.assert(b.message === '你好 UTF-8', 'UTF-8')
 
-  test.done()
+  test.next()
 
 });
 

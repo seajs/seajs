@@ -9,7 +9,7 @@ seajs.config({
 
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
   var global = this
 
   var a = require('a')
@@ -31,7 +31,7 @@ define(function(require) {
 
   require.async('c', function(c) {
     test.assert(c.name === 'c', c.name)
-    test.done()
+    test.next()
   })
 
 })

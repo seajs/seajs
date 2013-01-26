@@ -18,7 +18,7 @@ seajs.config({
 
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
 
 
   var configData = seajs.config.data
@@ -44,7 +44,7 @@ define(function(require) {
   require.async('./a', function(a) {
     test.assert(configData.map.length === 5, configData.map.length)
     test.assert(a.name === 'a', a.name)
-    test.done()
+    test.next()
   })
 
 });

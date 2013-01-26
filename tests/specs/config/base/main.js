@@ -1,12 +1,12 @@
 
 seajs.config({
-  base: './specs/config-base/'
+  base: './base/'
 })
 
 
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
   var a = require('a')
 
   test.assert(a.name === 'a', a.name)
@@ -17,9 +17,9 @@ define(function(require) {
   })
 
   var base = seajs.config.data.base
-  test.assert(/tests\/$/.test(base), base)
+  test.assert(/tests\/specs\/config\/$/.test(base), base)
 
-  test.done()
+  test.next()
 
 })
 

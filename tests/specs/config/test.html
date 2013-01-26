@@ -4,35 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
 <title>test</title>
-<link rel="stylesheet" href="../../style.css"/>
-<script>
-  var _console = window.console
-  var consoleMsg
-
-  // Hack console function for testing
-  window.console = {
-    warn: function(msg) {
-      consoleMsg = msg
-      _console.warn(msg)
-    }
-  }
-
-  function printResults(txt, style) {
-    var d = document.createElement('div')
-    d.innerHTML = txt
-    d.className = style
-    document.getElementById('out').appendChild(d)
-  }
-
-</script>
-
 <script src="../../../dist/sea.js"></script>
-<script>
-  seajs.use('./main')
-</script>
-
 </head>
 <body>
 <div id="out"></div>
+<script>
+  seajs.use('../../test', function(test) {
+    test.run([
+      'specs/config/alias',
+      'specs/config/base',
+      'specs/config/charset',
+      'specs/config/debug',
+      'specs/config/map',
+      'specs/config/preload',
+      'specs/config/vars'
+    ])
+  })
+</script>
 </body>
 </html>

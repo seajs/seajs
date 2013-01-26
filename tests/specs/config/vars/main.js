@@ -9,7 +9,7 @@ seajs.config({
 
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
 
   var lang = require('./i18n/{locale}')
   test.assert(lang.name = '中国', lang.name)
@@ -17,7 +17,7 @@ define(function(require) {
   var resolvedUri = require.resolve('./path/to/{xx}')
   test.assert(resolvedUri.indexOf('{brace_in_value}') > 0, resolvedUri)
 
-  test.done()
+  test.next()
 
 });
 
