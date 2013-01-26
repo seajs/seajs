@@ -44,6 +44,7 @@ define(function(require, exports) {
   require.async('./style.css')
   handleGlobalError()
 
+
   exports.print = function(txt, style) {
     sendMessage('printResults', txt, style || 'info')
   }
@@ -85,6 +86,7 @@ define(function(require, exports) {
 
   exports.done = function() {
     exports.print('[DONE]')
+    //document.cookie = 'seajs-nocache=; expires=' + new Date(0)
     sendMessage('testNextPage')
   }
 
