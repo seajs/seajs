@@ -58,14 +58,14 @@ body, button {
   border: 1px solid #ddd;
 }
 
-#reporter h3 {
+h3 {
   font: bold 15px Arial;
   margin-top: 15px;
   margin-bottom: 10px;
   color: #555;
 }
 
-#reporter a.hash {
+a.hash {
   color: #999;
   text-decoration: none;
 }
