@@ -38,6 +38,8 @@ function printHeader(test, url) {
 define(function(require, exports) {
   var global = this
   var queue = []
+  var time
+  var WARNING_TIME = isLocal() ? 50 : 5000
 
   require.async('./style.css')
   handleGlobalError()
@@ -60,14 +62,17 @@ define(function(require, exports) {
   }
 
   exports.next = function() {
-    reset()
-
     if (queue.length) {
+      printElapsedTime()
+      reset()
+
       var id = queue.shift()
       sendMessage('printHeader', id, getSingleSpecUri(id))
-      seajs.use(configData.base + '../tests/' + id + '/main.js')
+      time = now()
+      seajs.use(id2File(id))
     }
     else {
+      printElapsedTime()
       exports.done()
     }
   }
@@ -159,5 +164,25 @@ define(function(require, exports) {
         .replace(/&t=\d+/, '').substring(1)
   }
 
+  function id2File(id) {
+    var file = id = id.indexOf('.js') > 0 ? id : id + '/main.js'
+    return configData.base + '../tests/' + file
+  }
+
+  function printElapsedTime() {
+    var diff = now() - time
+    var style = diff > WARNING_TIME ? 'warn' : 'info'
+    time && exports.print('[TIME] ' + diff + 'ms', style)
+  }
+
+  function now() {
+    return new Date().getTime()
+  }
+
+  function isLocal() {
+    var host = location.host
+    return location.href.indexOf('file://') === 0 ||
+        host === 'localhost' || host === '127.0.0.1'
+  }
 });
 
