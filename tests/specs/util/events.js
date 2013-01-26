@@ -127,7 +127,7 @@ define(function(require) {
   assert(counter === 3, counter)
 
 
-  test.done()
+  test.next()
 
 });
 

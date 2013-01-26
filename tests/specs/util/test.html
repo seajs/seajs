@@ -4,22 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>test</title>
-<link rel="stylesheet" href="../../style.css"/>
-</head>
-<body>
-<div id="out"></div>
-
 <script>
-  function printResults(txt, style) {
-    var d = document.createElement('div')
-    d.innerHTML = txt
-    d.className = style
-    document.getElementById('out').appendChild(d)
-  }
-
   var global = this
 </script>
-
 <script src="../../../src/sea.js"></script>
 
 <script src="../../../src/util-lang.js"></script>
@@ -32,10 +19,16 @@
 <script src="../../../src/module.js"></script>
 <script src="../../../src/config.js"></script>
 <script src="../../../src/bootstrap.js"></script>
-
+</head>
+<body>
+<div id="out"></div>
 <script>
-  seajs.use('./util-path')
+  seajs.use('../../test', function(test) {
+    test.run([
+      'specs/util/events.js',
+      'specs/util/path.js'
+    ])
+  })
 </script>
-
 </body>
 </html>

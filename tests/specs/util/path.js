@@ -120,7 +120,7 @@ define(function(require) {
   assert(id2Uri('./front/jquery.x.queue.js#') === pageDir + 'front/jquery.x.queue.js', 'id2Uri')
 
 
-  test.done()
+  test.next()
 
 });
 
