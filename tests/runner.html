@@ -183,7 +183,7 @@
           var suite = suites[i]
           printResult('[' + type.toUpperCase() + '] ' + suite.title + ' ' +
               (consoleMode ?
-                  suite.url :
+                  '' :
                   '<a class="hash" target="_blank" href="' + suite.url + '">#</a>'),
               type + ' error-summary')
         }
@@ -224,10 +224,8 @@
   }
 
   function print2Console(msg, type) {
-    if (type !== 'warn' && type !== 'error') {
-      type = 'log'
-    }
-    console[type](msg)
+    type = type ? type.split(' ')[0] : 'info'
+    console.log(type + '`' + msg)
   }
 
   function scroll() {
