@@ -85,7 +85,6 @@ define(function(require, exports) {
   }
 
   exports.done = function() {
-    document.cookie = 'seajs-nocache=; expires=' + new Date(0)
     sendMessage('testNextPage')
   }
 
