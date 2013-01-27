@@ -1,4 +1,3 @@
 define('d', function(require, exports) {
-  exports.name = 'd';
+  exports.name = 'd'
 });
-
