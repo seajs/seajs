@@ -24,7 +24,8 @@
 
 (function(global) {
   var result = global.result = {}
-  var currentPage, isRunning, timeoutTimer
+  var currentPage, currentSuite
+  var isRunning, timeoutTimer
   var startTime, endTime
   var consoleMode = location.search.indexOf('console') > 0
 
@@ -90,7 +91,7 @@
     if (page) {
       // Paused
       if (isRunning === false) {
-        printResults('[PAUSED]', 'warn')
+        printResult('[PAUSED]', 'warn')
         printStepInfo()
         printErrors()
         return
@@ -114,7 +115,7 @@
     }
   }
 
-  global.printResults = function(txt, style, stopped) {
+  global.printResult = function(txt, style) {
     var d = document.createElement('div')
     d.innerHTML = txt
     d.className = style
@@ -122,49 +123,29 @@
     reporter.appendChild(d)
     scroll()
 
-    if (!stopped) {
-      var r = result[style]
-      if (r) {
-        r.count += 1
-        r.cases.push(testPages[currentPage - 1])
-      }
+    var r = result[style]
+    if (r) {
+      r.count += 1
+      r.cases.push(testPages[currentPage - 1])
     }
 
     consoleMode && print2Console(txt, style)
   }
 
-  global.printHeader = function(test, url, tag) {
+  global.printHeader = function(info, url, tag) {
     var h = document.createElement(tag || 'h3')
-    h.innerHTML = test +
+    h.innerHTML = info +
         (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
-
     reporter.appendChild(h)
+
+    currentSuite = { info: info, url: url }
     scroll()
 
-    consoleMode && print2Console(test)
+    consoleMode && print2Console(info)
   }
 
 
   // Helpers
-
-  function getUrl(page) {
-    return page + '/test.html' + '?t=' + now()
-  }
-
-  function clear() {
-    var iframes = document.getElementsByTagName('iframe')
-    var length = iframes.length
-
-    for (var i = 0; i < length; i++) {
-      iframes[i].parentNode.removeChild(iframes[i])
-    }
-  }
-
-  function load(url) {
-    var frame = document.createElement('iframe')
-    container.appendChild(frame)
-    frame.src = url
-  }
 
   function printStepInfo() {
     var test = testPages[currentPage - 1]
@@ -196,9 +177,9 @@
       if (obj.count) {
         var cases = obj.cases
 
-        for (var i = 0; i < cases.length; i++) {
+        for (var i = 0, len = cases.length; i < len; i++) {
           var test = cases[i]
-          printResults('[' + type.toUpperCase() + '] ' + test + ' ' +
+          printResult('[' + type.toUpperCase() + '] ' + test + ' ' +
               (consoleMode ?
                   getUrl(test) :
                   '<a class="hash" target="_blank" href="' + getUrl(test) + '">#</a>'),
@@ -207,13 +188,32 @@
       }
     }
 
-    printResults('[DONE]')
+    printResult('[DONE]')
+  }
+
+  function getUrl(page) {
+    return page + '/test.html' + '?t=' + now()
+  }
+
+  function clear() {
+    var iframes = document.getElementsByTagName('iframe')
+    var length = iframes.length
+
+    for (var i = 0; i < length; i++) {
+      iframes[i].parentNode.removeChild(iframes[i])
+    }
+  }
+
+  function load(url) {
+    var frame = document.createElement('iframe')
+    container.appendChild(frame)
+    frame.src = url
   }
 
   function makeSureGoOn(test) {
     // Wait 10s
     timeoutTimer = setTimeout(function() {
-      printResults('[WARN] Time is out for this test case: ' + test, 'warn')
+      printResult('[WARN] Time is out for this test case: ' + test, 'warn')
       testNextPage()
     }, 10000)
   }

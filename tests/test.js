@@ -20,7 +20,7 @@
   }
 })(this)
 
-function printResults(txt, style) {
+function printResult(txt, style) {
   var d = document.createElement('div')
   d.innerHTML = txt
   d.className = style
