@@ -145,7 +145,7 @@ define(function(require, exports) {
     if (typeof window === 'undefined') return
 
     window.onerror = function(err) {
-      // Ignore 404 error that Firefox will throw when script is not found
+      // Old Safari and Firefox will throw an error when script is 404
       if (err !== 'Error loading script') {
         exports.print('[ERROR] ' + err, 'error')
       }
