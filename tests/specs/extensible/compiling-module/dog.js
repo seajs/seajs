@@ -12,4 +12,5 @@ define(function(require) {
   Dog.prototype.isDog = true
   return Dog
 
-})
+});
+

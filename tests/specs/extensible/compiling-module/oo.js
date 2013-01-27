@@ -1,14 +1,23 @@
-define(function(require, exports, mod) {
+(function() {
 
-  var Module = mod.constructor
-  var compilingStack = Module.compilingStack
+var compilingStack = []
 
+seajs.on('compile', function(mod) {
+  compilingStack.push(mod)
+})
+
+seajs.on('compiled', function() {
+  compilingStack.pop()
+})
+
+
+define(function(require, exports) {
 
   exports.inherits = function(ctor, superCtor) {
 
     ctor.prototype = createProto(superCtor.prototype)
 
-    // Adds meta info
+    // Add meta info
     var compilingModule = compilingStack[compilingStack.length - 1]
     var filename = compilingModule.uri.split(/[\/\\]/).pop()
 
@@ -25,7 +34,7 @@ define(function(require, exports, mod) {
   }
 
 
-  // Shared empty constructor function to aid in prototype-chain creation.
+  // Shared empty constructor function to aid in prototype-chain creation
   function Ctor() {
   }
 
@@ -40,3 +49,6 @@ define(function(require, exports, mod) {
       }
 
 })
+
+})();
+

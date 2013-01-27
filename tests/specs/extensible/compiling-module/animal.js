@@ -11,4 +11,5 @@ define(function(require) {
   Animal.prototype.isAnimal = true
   return Animal
 
-})
+});
+
