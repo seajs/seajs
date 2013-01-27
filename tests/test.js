@@ -46,7 +46,7 @@ define(function(require, exports) {
 
 
   exports.print = function(txt, style) {
-    sendMessage('printResults', txt, style || 'info')
+    sendMessage('printResult', txt, style || 'info')
   }
 
   exports.assert = function (guard, message) {
@@ -85,8 +85,7 @@ define(function(require, exports) {
   }
 
   exports.done = function() {
-    exports.print('[DONE]')
-    //document.cookie = 'seajs-nocache=; expires=' + new Date(0)
+    document.cookie = 'seajs-nocache=; expires=' + new Date(0)
     sendMessage('testNextPage')
   }
 

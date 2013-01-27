@@ -72,10 +72,10 @@
 
   function reset() {
     currentPage = 0
-    result.pass = { count: 0, cases: [] }
-    result.fail = { count: 0, cases: [] }
-    result.warn = { count: 0, cases: [] }
-    result.error = { count: 0, cases: [] }
+    result.pass = { count: 0, suites: [] }
+    result.fail = { count: 0, suites: [] }
+    result.warn = { count: 0, suites: [] }
+    result.error = { count: 0, suites: [] }
 
     isRunning = false
     go.innerHTML = 'Go'
@@ -115,6 +115,18 @@
     }
   }
 
+  global.printHeader = function(title, url, tag) {
+    var h = document.createElement(tag || 'h3')
+    h.innerHTML = title +
+        (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
+    reporter.appendChild(h)
+
+    currentSuite = { title: title, url: url }
+    scroll()
+
+    consoleMode && print2Console(title)
+  }
+
   global.printResult = function(txt, style) {
     var d = document.createElement('div')
     d.innerHTML = txt
@@ -126,22 +138,10 @@
     var r = result[style]
     if (r) {
       r.count += 1
-      r.cases.push(testPages[currentPage - 1])
+      r.suites.push(currentSuite)
     }
 
     consoleMode && print2Console(txt, style)
-  }
-
-  global.printHeader = function(info, url, tag) {
-    var h = document.createElement(tag || 'h3')
-    h.innerHTML = info +
-        (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
-    reporter.appendChild(h)
-
-    currentSuite = { info: info, url: url }
-    scroll()
-
-    consoleMode && print2Console(info)
   }
 
 
@@ -168,27 +168,25 @@
 
   function printErrors() {
     if (result.fail.count + result.error.count + result.warn.count === 0) return
-    printHeader('Error Cases:', '', 'h2')
+    printHeader('Error cases:', '', 'h2')
 
     for (var type in result) {
       if (type === 'pass') continue
       var obj = result[type]
 
       if (obj.count) {
-        var cases = obj.cases
+        var suites = obj.suites
 
-        for (var i = 0, len = cases.length; i < len; i++) {
-          var test = cases[i]
-          printResult('[' + type.toUpperCase() + '] ' + test + ' ' +
+        for (var i = 0, len = suites.length; i < len; i++) {
+          var suite = suites[i]
+          printResult('[' + type.toUpperCase() + '] ' + suite.title + ' ' +
               (consoleMode ?
-                  getUrl(test) :
-                  '<a class="hash" target="_blank" href="' + getUrl(test) + '">#</a>'),
-              type, true)
+                  suite.url :
+                  '<a class="hash" target="_blank" href="' + suite.url + '">#</a>'),
+              type)
         }
       }
     }
-
-    printResult('[DONE]')
   }
 
   function getUrl(page) {
