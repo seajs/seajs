@@ -1,8 +1,10 @@
 define(function (require, exports) {
 
+  exports.name = 'b'
+
   var a = require('./a')
 
-  exports.b = function () {
+  exports.getA = function () {
     return a
   }
 

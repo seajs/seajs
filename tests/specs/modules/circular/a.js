@@ -1,6 +1,8 @@
 define(function(require, exports) {
 
-  exports.a = function () {
+  exports.name = 'a'
+
+  exports.getB = function () {
     return b
   }
 
