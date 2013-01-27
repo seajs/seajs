@@ -92,8 +92,10 @@ a.hash {
   color: #666;
 }
 
+.hide-pass h2,
 .hide-pass .pass,
-.hide-pass .info {
+.hide-pass .info,
+.hide-pass .error-summary {
   display: none;
 }
 
