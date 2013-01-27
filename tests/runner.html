@@ -72,7 +72,7 @@
 
   function reset() {
     currentPage = 0
-    result.pass = { count: 0, suites: [] }
+    result.pass = { count: 0 }
     result.fail = { count: 0, suites: [] }
     result.warn = { count: 0, suites: [] }
     result.error = { count: 0, suites: [] }
@@ -91,7 +91,7 @@
     if (page) {
       // Paused
       if (isRunning === false) {
-        printResult('[PAUSED]', 'warn')
+        printResult('[PAUSED]', 'warn paused')
         printStepInfo()
         printErrors()
         return
@@ -117,13 +117,12 @@
 
   global.printHeader = function(title, url, tag) {
     var h = document.createElement(tag || 'h3')
-    h.innerHTML = title +
-        (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
-    reporter.appendChild(h)
+    h.innerHTML = title + getHeaderLink(url)
 
-    currentSuite = { title: title, url: url }
+    reporter.appendChild(h)
     scroll()
 
+    currentSuite = { title: title, url: url }
     consoleMode && print2Console(title)
   }
 
@@ -138,7 +137,7 @@
     var r = result[style]
     if (r) {
       r.count += 1
-      r.suites.push(currentSuite)
+      r.suites && r.suites.push(currentSuite)
     }
 
     consoleMode && print2Console(txt, style)
@@ -148,7 +147,7 @@
   // Helpers
 
   function printStepInfo() {
-    var test = testPages[currentPage - 1]
+    var page = testPages[currentPage - 1]
 
     var html = summary.innerHTML =
         (currentPage - 1) + ' / ' + testPages.length + ' { &nbsp;' +
@@ -156,18 +155,21 @@
             'Failed: <span class="fail">' + result.fail.count + '</span> ' +
             'Errors: <span class="error">' + result.error.count + '</span>}' +
             '&nbsp; ' +
-            (test ?
-                'Running ' + test + ' ... ' :
-                'Elapsed Time: ' + (endTime - startTime) / 1000 + 's')
+            (page ?
+                'Running ' + page + ' ... ' :
+                'Elapsed time: ' + (endTime - startTime) / 1000 + 's')
 
-    if (!test && consoleMode) {
+    if (!page && consoleMode) {
       printHeader('Summary', '', 'h2')
       print2Console(html.replace(/&nbsp;/g, '').replace(/<\/?span[^>]*>/g, ''))
     }
   }
 
   function printErrors() {
-    if (result.fail.count + result.error.count + result.warn.count === 0) return
+    if (result.fail.count + result.error.count + result.warn.count === 0) {
+      return
+    }
+
     printHeader('Error cases:', '', 'h2')
 
     for (var type in result) {
@@ -190,7 +192,7 @@
   }
 
   function getUrl(page) {
-    return page + '/test.html' + '?t=' + now()
+    return page + '/test.html'
   }
 
   function clear() {
@@ -208,12 +210,17 @@
     frame.src = url
   }
 
-  function makeSureGoOn(test) {
-    // Wait 10s
+  function getHeaderLink(url) {
+    return url ?
+        ' <a class="hash" target="_blank" href="' + url + '">#</a>' :
+        ''
+  }
+
+  function makeSureGoOn(page) {
     timeoutTimer = setTimeout(function() {
-      printResult('[WARN] Time is out for this test case: ' + test, 'warn')
+      printResult('[WARN] Time is out for ' + page, 'warn')
       testNextPage()
-    }, 10000)
+    }, 10000) // Wait 10s
   }
 
   function print2Console(msg, type) {
