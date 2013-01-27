@@ -1,3 +1,3 @@
 define('xxlib', function(require, exports) {
-  exports.name = 'xxlib';
+  exports.name = 'xxlib'
 });
