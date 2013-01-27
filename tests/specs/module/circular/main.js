@@ -22,8 +22,7 @@ define(function(require) {
   var global = this
   var msg = global.consoleMsg
   test.assert(msg.indexOf('Found circular dependencies') === 0, 'Check circular dependencies')
-  test.assert(msg.indexOf('a.js') > 0, 'Check circular dependencies')
-  test.assert(msg.indexOf('b.js') > 0, 'Check circular dependencies')
+  test.assert(msg.indexOf('-->') > 0, 'Check circular dependencies')
 
   var m = require('./monkeys/m')
   test.assert(m.name === 'monkeys', m.name)
