@@ -1,12 +1,11 @@
 define(function(require){
 	
-	var c = require('c');
+	var a = require('./a')
 
 	return {
 		init : function(){
-			log('b');
-      c.init();
+			execOrder.log('c')
 		}
-	};
+	}
 
 });
