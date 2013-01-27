@@ -1,5 +1,6 @@
 define(function(require, exports) {
 
-  exports.name = 'b'
+  exports.foo = function () {
+  }
 
-})
+});
