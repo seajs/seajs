@@ -1,5 +1,6 @@
 
 seajs.config({
+  base: './',
   alias: {
     'biz': '//com.seajs/biz'
   }
@@ -21,10 +22,8 @@ define('biz/e', function(require, exports) {
   exports.name = 'e'
 });
 
-define('./anywhere/main', function(require) {
-  require('./biz')
-
-  var test = require('../../../test')
+define('anywhere-main', function(require) {
+  var test = require('../../test')
 
   var a = require('biz/a')
   var b = require('biz/b')
@@ -45,5 +44,7 @@ define('./anywhere/main', function(require) {
   test.next()
 })
 
-seajs.use('./anywhere/main');
+seajs.use('./anywhere/biz', function() {
+  seajs.use('anywhere-main')
+});
 
