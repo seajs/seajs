@@ -1,0 +1,1 @@
+define('anonymous-d', [], { name: 'anonymous-d' });
