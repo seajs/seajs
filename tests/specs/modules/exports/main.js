@@ -24,6 +24,6 @@ define(function(require, exports) {
 
   test.assert(require('./exact').mainExports() === exports, 'exact exports')
 
-  test.done()
+  test.next()
 
 });
