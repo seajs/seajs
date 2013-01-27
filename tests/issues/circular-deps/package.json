@@ -1,7 +1,0 @@
-{
-  "name": "circular-deps",
-  "root": "",
-  "output": {
-    "main": "."
-  }
-}
