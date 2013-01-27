@@ -95,6 +95,7 @@ define(function(require, exports) {
   var defaultConfig = copy(configData, {})
 
   function reset() {
+    seajs.off()
     copy(defaultConfig, configData)
     global.consoleMsg = undefined
   }
