@@ -1,5 +1,5 @@
 define(function(require, exports) {
 
-  exports.foo = require('./c').foo;
+  exports.foo = require('./c').foo
 
 });

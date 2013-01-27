@@ -25,6 +25,10 @@ define(function(require) {
   test.assert(msg.indexOf('a.js') > 0, 'Check circular dependencies')
   test.assert(msg.indexOf('b.js') > 0, 'Check circular dependencies')
 
+  var m = require('./monkeys/m')
+  test.assert(m.name === 'monkeys', m.name)
+  test.assert(m.count === 10, 'monkeys are permitted')
+
   test.next()
 
 });

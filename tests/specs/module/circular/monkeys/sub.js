@@ -1,6 +1,6 @@
 define(function(require) {
 
-  require('./main').monkey = 10
+  require('./m').count = 10
 
 });
 
