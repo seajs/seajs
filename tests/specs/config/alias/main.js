@@ -21,7 +21,7 @@ define(function(require) {
 
   seajs.config({
     alias: {
-      'a': 'x',
+      'a': 'x', // override alias
       'c': './path/to/c'
     }
   })

@@ -1,0 +1,1 @@
+define(pageBase + 'b.js', { name: 'b' });
