@@ -1,9 +1,9 @@
 define(function(require, exports) {
 
-  exports.foo = 'a';
+  exports.foo = 'a'
 
   setTimeout(function() {
-    exports.foo2 = 'a2';
-  }, 0);
+    exports.foo2 = 'a2'
+  }, 0)
 
 });
