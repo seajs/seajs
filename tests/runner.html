@@ -4,119 +4,115 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>SeaJS Test Suite</title>
-<link rel="stylesheet" href="style.css?20130121.css"/>
+<link rel="stylesheet" href="style.css"/>
+<script src="config.js"></script>
 </head>
 <body>
-<script src="config.js?20130121.js"></script>
+<div id="container">
+  <div id="header">
+    <h1 id="title">Test Suite for SeaJS</h1>
+    <div id="summary"></div>
+  </div>
+  <div id="reporter"></div>
+  <button id="go" class="btn" autocomplete="off">Go</button>
+  <input id="hide-pass" type="checkbox">
+  <label for="hide-pass">Hide passed</label>
+  <p id="info"></p>
+</div>
+
 <script>
-var result
 
 (function(global) {
-
-  var container, summary, reporter, go
-  var current, running, timeoutTimer
+  var result = global.result = {}
+  var currentPage, isRunning, timeoutTimer
   var startTime, endTime
-  var tests = this['testCases']
   var consoleMode = location.search.indexOf('console') > 0
 
+  var container = document.getElementById('container')
+  var summary = document.getElementById('summary')
+  var reporter = document.getElementById('reporter')
 
-  global.onload = function() {
-    container = document.getElementById('container')
-    reporter = document.getElementById('reporter')
-    summary = document.getElementById('summary')
+  document.getElementById('info').innerHTML = navigator.userAgent
 
-    go = document.getElementById('go')
-    go.setAttribute('autocomplete', 'off')
-
-    go.onclick = function() {
-      // start
-      if (current === 0) {
-        start()
-      }
-      // pause
-      else if (running) {
-        pause()
-      }
-      // resume
-      else {
-        resume()
-      }
-    }
-
-    // Start automatically
-    start()
-
-    document.getElementById('info').innerHTML = navigator.userAgent
+  document.getElementById('hide-pass').onclick = function() {
+    reporter.className = this.checked ? 'hide-pass' : ''
   }
+
+  document.getElementById('go').onclick = function() {
+    if (currentPage === 0) {
+      start()
+    }
+    else {
+      isRunning ? pause() : next()
+    }
+  }
+
+
+  global.onload = start
 
 
   function start() {
     reporter.innerHTML = ''
-    startTime = new Date().getTime()
-
     reset()
-    resume()
+    startTime = now()
+    next()
   }
 
-
-  function pause() {
-    running = false
-    go.innerHTML = 'Resume'
-  }
-
-
-  function resume() {
-    running = true
+  function next() {
+    isRunning = true
     go.innerHTML = 'Pause'
     testNextPage()
   }
 
+  function pause() {
+    isRunning = false
+    go.innerHTML = 'Resume'
+  }
 
   function reset() {
-    current = 0
-    result = {
-      pass: { count: 0, cases: [] },
-      fail: { count: 0, cases: [] },
-      warn: { count: 0, cases: [] },
-      error: { count: 0, cases: [] }
-    }
+    currentPage = 0
+    result.pass = { count: 0, cases: [] }
+    result.fail = { count: 0, cases: [] }
+    result.warn = { count: 0, cases: [] }
+    result.error = { count: 0, cases: [] }
 
-    running = false
+    isRunning = false
     go.innerHTML = 'Go'
     timeoutTimer = 0
   }
 
 
   global.testNextPage = function() {
-    var test = tests[current++]
+    var page = testPages[currentPage++]
     clearTimeout(timeoutTimer)
     clear()
 
-    if (test) {
-      // paused
-      if (running === false) {
+    if (page) {
+      // Paused
+      if (isRunning === false) {
         printResults('[PAUSED]', 'warn')
         printStepInfo()
         printErrors()
         return
       }
 
-      var url = getUrl(test)
-      printHeader(test, url)
+      // Load page
+      var url = getUrl(page)
+      printHeader(page, url, 'h2')
       load(url)
-      makeSureGoOn(test)
+      makeSureGoOn(page)
 
       printStepInfo()
     }
+    // All done
     else {
-      endTime = new Date().getTime()
+      endTime = now()
       printStepInfo()
       printErrors()
-      printResults('[END]')
+      printHeader('END', '', 'h2')
       reset()
     }
   }
-
 
   global.printResults = function(txt, style, stopped) {
     var d = document.createElement('div')
@@ -124,31 +120,36 @@ var result
     d.className = style
 
     reporter.appendChild(d)
-    reporter.scrollTop = reporter.scrollHeight
+    scroll()
 
     if (!stopped) {
       var r = result[style]
       if (r) {
         r.count += 1
-        r.cases.push(tests[current - 1])
+        r.cases.push(testPages[currentPage - 1])
       }
     }
 
     consoleMode && print2Console(txt, style)
   }
 
+  global.printHeader = function(test, url, tag) {
+    var h = document.createElement(tag || 'h3')
+    h.innerHTML = test +
+        (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
 
-  function getUrl(test) {
-    var url = test
+    reporter.appendChild(h)
+    scroll()
 
-    if (url.indexOf('test.html') === -1) {
-      url = 'sandbox.html?' + encodeURIComponent(test + '/main.js')
-    }
-
-    url += (url.indexOf('?') > 0 ? '&' : '?') + 't=' + new Date().getTime()
-    return url
+    consoleMode && print2Console(test)
   }
 
+
+  // Helpers
+
+  function getUrl(page) {
+    return page + '/test.html' + '?t=' + now()
+  }
 
   function clear() {
     var iframes = document.getElementsByTagName('iframe')
@@ -159,29 +160,17 @@ var result
     }
   }
 
-
   function load(url) {
     var frame = document.createElement('iframe')
     container.appendChild(frame)
     frame.src = url
   }
 
-
-  global.printHeader = function(test, url) {
-    var h = document.createElement('h3')
-    h.innerHTML = test +
-        (url ? ' <a class="hash" target="_blank" href="' + url + '">#</a>' : '')
-    reporter.appendChild(h)
-
-    consoleMode && print2Console(test)
-  }
-
-
   function printStepInfo() {
-    var test = tests[current - 1]
+    var test = testPages[currentPage - 1]
 
     var html = summary.innerHTML =
-        (current - 1) + ' / ' + tests.length + ' { &nbsp;' +
+        (currentPage - 1) + ' / ' + testPages.length + ' { &nbsp;' +
             'Passed: <span class="pass">' + result.pass.count + '</span> ' +
             'Failed: <span class="fail">' + result.fail.count + '</span> ' +
             'Errors: <span class="error">' + result.error.count + '</span>}' +
@@ -191,15 +180,14 @@ var result
                 'Elapsed Time: ' + (endTime - startTime) / 1000 + 's')
 
     if (!test && consoleMode) {
-      printHeader('Summary')
+      printHeader('Summary', '', 'h2')
       print2Console(html.replace(/&nbsp;/g, '').replace(/<\/?span[^>]*>/g, ''))
     }
   }
 
-
   function printErrors() {
     if (result.fail.count + result.error.count + result.warn.count === 0) return
-    printHeader('Error Cases:')
+    printHeader('Error Cases:', '', 'h2')
 
     for (var type in result) {
       if (type === 'pass') continue
@@ -222,7 +210,6 @@ var result
     printResults('[DONE]')
   }
 
-
   function makeSureGoOn(test) {
     // Wait 10s
     timeoutTimer = setTimeout(function() {
@@ -231,24 +218,22 @@ var result
     }, 10000)
   }
 
-
   function print2Console(msg, type) {
-    if (type !== 'warn' && type !== 'error') type = 'log'
+    if (type !== 'warn' && type !== 'error') {
+      type = 'log'
+    }
     console[type](msg)
+  }
+
+  function scroll() {
+    reporter.scrollTop = reporter.scrollHeight
+  }
+
+  function now() {
+    return new Date().getTime()
   }
 
 })(this)
 </script>
-
-<div id="container">
-  <div id="header">
-    <div id="title">Test Suite for SeaJS</div>
-    <div id="summary"></div>
-  </div>
-  <div id="reporter"></div>
-  <button id="go" class="btn">Go</button>
-  <p id="info"></p>
-</div>
-
 </body>
 </html>
