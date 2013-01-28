@@ -1057,7 +1057,8 @@ function checkConfigConflict(prev, curr, k, key) {
 function makeBaseAbsolute() {
   var base = configData.base
   if (!isAbsolute(base)) {
-    configData.base = id2Uri((isRoot(base) ? "" : "./") + base + "/")
+    configData.base = id2Uri((isRoot(base) ? "" : "./") + base
+        + (base.charAt(base.length - 1) === "/" ? "" : "/"))
   }
 }
 

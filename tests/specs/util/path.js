@@ -120,6 +120,15 @@ define(function(require) {
   assert(id2Uri('./front/jquery.x.queue.js#') === pageDir + 'front/jquery.x.queue.js', 'id2Uri')
 
 
+  assert(isAbsolute('http://test.com/') === true, 'isAbsolute')
+  assert(isAbsolute('//test.com/') === true, 'isAbsolute')
+  assert(isAbsolute('file:///c/') === true, 'isAbsolute')
+  assert(isRelative('./') === true, 'isRelative')
+  assert(isRelative('../') === true, 'isRelative')
+  assert(isRoot('/') === true, 'isRoot')
+  assert(isTopLevel('xxx') === true, 'isTopLevel')
+
+
   test.next()
 
 });
