@@ -1,4 +1,4 @@
 define(function(require) {
   require('./a')
-  stack.push('init b')
-})
+  module_singleton_stack.push('init b')
+});
