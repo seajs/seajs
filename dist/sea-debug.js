@@ -436,7 +436,8 @@ function request(url, callback, charset) {
   if (isCSS) {
     node.rel = "stylesheet"
     node.href = url
-  } else {
+  }
+  else {
     node.async = "async"
     node.src = url
   }
@@ -908,7 +909,7 @@ function getUnloadedUris(uris) {
   var ret = []
 
   forEach(uris, function(uri) {
-    if (getModule(uri).status < STATUS.LOADED) {
+    if (uri && getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
     }
   })

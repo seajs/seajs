@@ -302,7 +302,7 @@ function getUnloadedUris(uris) {
   var ret = []
 
   forEach(uris, function(uri) {
-    if (getModule(uri).status < STATUS.LOADED) {
+    if (uri && getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
     }
   })
