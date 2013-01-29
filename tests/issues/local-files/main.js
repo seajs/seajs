@@ -10,6 +10,6 @@ define(function(require) {
   test.assert(b.b === 'b', 'b is ok');
   test.assert(c.c === 'c', 'c is ok');
 
-  test.done();
+  //test.done();
 
 });

@@ -1,7 +1,20 @@
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
   var count = 0
+
+  // prepare DOM elements
+  var out = document.getElementById('out')
+
+  var red = document.createElement('p')
+  red.id = 'load-css-red'
+  red.innerHTML = 'This paragraph should be red'
+  out.appendChild(red)
+
+  var blue = document.createElement('p')
+  blue.id = 'load-css-blue'
+  blue.innerHTML = 'This paragraph should be blue'
+  out.appendChild(blue)
 
 
   // normal case
@@ -19,12 +32,11 @@ define(function(require) {
 
   // not-existed case
   require.async('./not-existed.css', function() {
-    test.print('[PASS] 404 is ok')
+    test.assert(true, '404 is ok')
     done()
   })
-  // 注意：Opera 下不会触发回调
   if (window.opera) {
-    test.print('[FUCK] Opera do NOT fire onerror event of css file')
+    test.assert(true, '**NOTICE: Opera do NOT fire onerror event of css file')
     done()
   }
 
@@ -33,7 +45,7 @@ define(function(require) {
   var linkCount = document.getElementsByTagName('link').length
   require.async('./red.css', function() {
     var currentLinkCount = document.getElementsByTagName('link').length
-    test.assert(currentLinkCount === linkCount, 'do NOT load duplicate link')
+    test.assert(currentLinkCount === linkCount, 'do NOT load a link multiple times')
     done()
   })
 
@@ -42,9 +54,10 @@ define(function(require) {
 
   function done() {
     if (++count === MAX) {
-      test.done()
+      test.next()
     }
   }
+
 
   function hasThisLinkStyle(flag) {
     var links = document.getElementsByTagName('link')
