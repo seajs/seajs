@@ -8,5 +8,6 @@ var testPages = [
   , 'specs/package'
 
   , 'specs/misc/data-main'
+  , 'specs/misc/ie-cache'
 ]
 

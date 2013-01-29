@@ -1,5 +1,3 @@
 define(function(require, exports) {
-
-  exports.a = 'a';
-
+  exports.name = 'a'
 });
