@@ -6,4 +6,4 @@
   Last update: 2013/01/29
   Language: Chinese
   Doctype: HTML5
-  Standards: XHTML,5 CSS3
+  Standards: XHTML5, CSS3
