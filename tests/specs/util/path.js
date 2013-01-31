@@ -111,6 +111,7 @@ define(function(require) {
   assert(id2Uri('path/to/z?t=1234') === loaderDir + 'path/to/z?t=1234', 'id2Uri')
   assert(id2Uri('./b', 'http://test.com/path//to/x.js') === 'http://test.com/path/to/b.js', 'id2Uri')
   assert(id2Uri('/c', 'http://test.com/path/x.js') === 'http://test.com/c.js', 'id2Uri')
+  assert(id2Uri('/root/', 'file:///Users/lifesinger/tests/specs/util/test.html') === 'file:///root/', 'id2Uri')
   assert(id2Uri('http://test.com/x.js') === 'http://test.com/x.js', 'id2Uri')
   assert(id2Uri('http://test.com/x.js#') === 'http://test.com/x.js', 'id2Uri')
   assert(id2Uri('./z.js', 'http://test.com/x.js') === 'http://test.com/z.js', 'id2Uri')

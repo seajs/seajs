@@ -187,7 +187,7 @@ function emitData(event, data, prop) {
 var DIRNAME_RE = /[^?]*(?=\/.*$)/
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
 var URI_END_RE = /\.(?:css|js)|\/$/
-var ROOT_RE = /^(.*?\w)(?:\/|$)/
+var ROOT_RE = /^(.*?:\/\/.*?)(?:\/|$)/
 var VARS_RE = /{([^{}]+)}/g
 
 

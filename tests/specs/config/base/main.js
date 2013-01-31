@@ -30,7 +30,9 @@ define(function(require) {
     return location.protocol + '//' + location.host + '/root-path/' + str + '.js'
   }
 
-  test.assert(require.resolve('z') === expectedPath('z'), require.resolve('z'))
+  test.assert(require.resolve('z') === expectedPath('z'),
+      'actual = ' + require.resolve('z')
+          + ' expected = ' + expectedPath('z'))
 
 
   // rare but allowed case
