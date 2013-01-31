@@ -2,7 +2,7 @@
 var count = 0
 
 function done(test) {
-  if (++count === 2) {
+  if (++count === 3) {
     test.next()
   }
 }
@@ -30,6 +30,20 @@ seajs.config({
 seajs.use(['../../test'], function(test) {
   test.assert(preloadConfig.length === 0, preloadConfig.length)
   test.assert(this.B === 'b', 'preload b.js')
+  done(test)
+})
+
+
+seajs.config({
+  preload: [
+    [].map ? '' : './es5-safe',
+    this.JSON ? '' : './json2'
+  ]
+})
+
+seajs.use(['../../test'], function(test) {
+  test.assert([].map, 'preload es5-safe')
+  test.assert(this.JSON, 'preload json2')
   done(test)
 });
 
