@@ -1,3 +1,9 @@
+
+seajs.config({
+  base: './dependencies'
+});
+
+
 define(function(require, exports, mod) {
 
   var test = require('../../../test')
@@ -34,9 +40,18 @@ define(function(require, exports, mod) {
   test.assert(require('a').name === 'a', 'a');
   test.assert(require('b').name === 'b', 'b');
   test.assert(require('e').name === 'e', 'e');
-  test.assert(mod.dependencies.length === 8, mod.dependencies);
+  test.assert(mod.dependencies.length === 8, getFiles(mod.dependencies).join(' | '));
 
   test.next()
+
+
+  function getFiles(uris) {
+    var ret = []
+    for (var i = 0; i < uris.length; i++) {
+      ret[i] = uris[i].split('/').pop()
+    }
+    return ret
+  }
 
 
   /**
