@@ -4,7 +4,7 @@
 
 var cachedModules = seajs.cache = {}
 
-var STATUS = {
+var STATUS = Module.STATUS = {
   "LOADING": 1,   // The module file is loading
   "SAVED": 2,     // The module data has been saved to cachedModules
   "LOADED": 3,    // The module and all its dependencies are ready to compile

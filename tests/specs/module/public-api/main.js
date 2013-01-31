@@ -1,5 +1,4 @@
 define(function(require) {
+  require('./api')
+});
 
-  require('./a')
-
-})

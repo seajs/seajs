@@ -2,11 +2,11 @@
  * util-lang.js - The minimal language enhancement
  */
 
-var emptyArr = []
-var emptyObj = {}
-var toString = emptyObj.toString
-var hasOwnProperty = emptyObj.hasOwnProperty
-var slice = emptyArr.slice
+var ARRAY = []
+var OBJECT = {}
+var toString = OBJECT.toString
+var hasOwnProperty = OBJECT.hasOwnProperty
+var slice = ARRAY.slice
 
 function hasOwn(obj, prop) {
   return hasOwnProperty.call(obj, prop)
@@ -20,7 +20,7 @@ var isArray = Array.isArray || function(obj) {
   return toString.call(obj) === "[object Array]"
 }
 
-var forEach = emptyArr.forEach ?
+var forEach = ARRAY.forEach ?
     function(arr, fn) {
       arr.forEach(fn)
     } :
