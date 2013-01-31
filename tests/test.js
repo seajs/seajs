@@ -4,18 +4,19 @@
   var console = global.console
   if (!console) return
 
+  global.consoleMsgStack = []
   console._log = console.log
   console._warn = console.warn
 
   console.log = function(arg1, arg2) {
     var msg = arg2 ? arg1 + ' ' + arg2 : arg1
-    global.consoleMsg = msg
+    global.consoleMsgStack.push(msg)
     console._log(msg)
   }
 
   console.warn = function(arg1, arg2) {
     var msg = arg2 ? arg1 + ' ' + arg2 : arg1
-    global.consoleMsg = msg
+    global.consoleMsgStack.push(msg)
     console._warn(msg)
   }
 })(this)
@@ -97,7 +98,7 @@ define(function(require, exports) {
   function reset() {
     seajs.off()
     copy(defaultConfig, configData)
-    global.consoleMsg = undefined
+    global.consoleMsgStack = []
   }
 
   function copy(from, to) {

@@ -2,6 +2,7 @@ define(function(require) {
 
   var test = require('../../../test')
   var global = this
+  var consoleMsgStack = global.consoleMsgStack
   var configData = seajs.config.data
 
   test.assert(configData.debug === undefined, 'debug = ' + configData.debug)
@@ -9,20 +10,20 @@ define(function(require) {
 
 
   seajs.log('1')
-  test.assert(global.consoleMsg === undefined, 'DO NOT show log info in console when debug is off')
+  test.assert(consoleMsgStack.pop() === undefined, 'DO NOT show log info in console when debug is off')
 
   seajs.log('2', 'warn')
-  test.assert(global.consoleMsg === '2', 'Show warn info in console at anytime')
+  test.assert(consoleMsgStack.pop() === '2', 'Show warn info in console at anytime')
 
   seajs.config({
     debug: true
   })
 
   seajs.log('3')
-  test.assert(global.consoleMsg === '3', 'Show log info in console when debug is on')
+  test.assert(consoleMsgStack.pop() === '3', 'Show log info in console when debug is on')
 
   seajs.log('4', 'warn')
-  test.assert(global.consoleMsg === '4', 'Show warn info in console at anytime')
+  test.assert(consoleMsgStack.pop() === '4', 'Show warn info in console at anytime')
 
 
   test.assert(configData.debug === true, 'debug = ' + configData.debug)

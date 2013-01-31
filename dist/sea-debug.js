@@ -61,14 +61,18 @@ var keys = Object.keys || function(obj) {
   return ret
 }
 
-function unique(arr) {
+function arr2obj(arr) {
   var obj = {}
 
   forEach(arr, function(item) {
     obj[item] = 1
   })
 
-  return keys(obj)
+  return obj
+}
+
+function unique(arr) {
+  return keys(arr2obj(arr))
 }
 
 
@@ -692,7 +696,7 @@ function load(uris, callback, options) {
         if (isCircularWaiting(mod)) {
           printCircularLog(circularStack)
           circularStack.length = 0
-          done(mod)
+          done()
           return
         }
 
@@ -703,7 +707,8 @@ function load(uris, callback, options) {
           return
         }
 
-        load(waitings, function() {
+        // Copy waitings to prevent modification
+        load(waitings.slice(), function() {
           done(mod)
         }, { filtered: true })
       }
@@ -936,6 +941,7 @@ function isCircularWaiting(mod) {
 
   circularStack.push(mod.uri)
   if (isOverlap(waitings, circularStack)) {
+    cutWaitings(waitings)
     return true
   }
 
@@ -949,14 +955,25 @@ function isCircularWaiting(mod) {
   return false
 }
 
-function printCircularLog(stack) {
-  stack.push(stack[0])
-  log("Found circular dependencies:", stack.join(" --> "))
-}
-
 function isOverlap(arrA, arrB) {
   var arrC = arrA.concat(arrB)
   return  unique(arrC).length < arrC.length
+}
+
+function cutWaitings(waitings) {
+  var uri = circularStack[0]
+
+  for (var i = waitings.length - 1; i >= 0; i--) {
+    if (waitings[i] === uri) {
+      waitings.splice(i, 1)
+      break
+    }
+  }
+}
+
+function printCircularLog(stack) {
+  stack.push(stack[0])
+  log("Found circular dependencies:", stack.join(" --> "))
 }
 
 
