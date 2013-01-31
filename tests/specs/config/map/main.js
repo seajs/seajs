@@ -43,7 +43,7 @@ define(function(require) {
 
   seajs.config({
     map: [
-      ['a.js', 'sub/sub/a.js']
+      ['/map/a.js', 'sub/sub/a.js']
     ]})
 
   require.async('./a', function(a) {
