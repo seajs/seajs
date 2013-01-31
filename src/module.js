@@ -33,6 +33,8 @@ Module.prototype.load = function(ids, callback) {
       callback.apply(global, exports)
     }
   })
+
+  return this
 }
 
 function resolve(ids, refUri) {
@@ -233,6 +235,11 @@ function save(uri, meta) {
 }
 
 function compile(mod) {
+  // Return null when mod is invalid
+  if (!mod) {
+    return null
+  }
+
   // When module is compiled, DO NOT compile it again. When module
   // is being compiled, just return `module.exports` too, for avoiding
   // circularly calling
@@ -267,6 +274,7 @@ function compile(mod) {
 
   require.async = function(ids, callback) {
     mod.load(ids, callback)
+    return require
   }
 
   require.resolve = function(id) {

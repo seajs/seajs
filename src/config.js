@@ -63,7 +63,7 @@ seajs.config = function(obj) {
   }
 
   // Make sure that `configData.base` is an absolute path
-  if (obj.base) {
+  if (obj && obj.base) {
     makeBaseAbsolute()
   }
 

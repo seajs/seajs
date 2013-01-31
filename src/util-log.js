@@ -9,7 +9,7 @@ var console = global.console
 // log("message", "warn") ==> console.warn("message")
 var log = seajs.log = function() {
   if (console === undefined) {
-    return
+    return seajs
   }
 
   var args = slice.call(arguments)
@@ -18,7 +18,7 @@ var log = seajs.log = function() {
 
   // Print log info in debug mode only
   if (type === "log" && !configData.debug) {
-    return
+    return seajs
   }
 
   var fn = console[type]
@@ -28,6 +28,8 @@ var log = seajs.log = function() {
   fn = fn.apply ? fn :
       Function.prototype.bind.call(fn, console)
   fn.apply(console, args)
+
+  return seajs
 }
 
 

@@ -83,7 +83,7 @@ var console = global.console
 // log("message", "warn") ==> console.warn("message")
 var log = seajs.log = function() {
   if (console === undefined) {
-    return
+    return seajs
   }
 
   var args = slice.call(arguments)
@@ -92,7 +92,7 @@ var log = seajs.log = function() {
 
   // Print log info in debug mode only
   if (type === "log" && !configData.debug) {
-    return
+    return seajs
   }
 
   var fn = console[type]
@@ -102,6 +102,8 @@ var log = seajs.log = function() {
   fn = fn.apply ? fn :
       Function.prototype.bind.call(fn, console)
   fn.apply(console, args)
+
+  return seajs
 }
 
 
@@ -640,6 +642,8 @@ Module.prototype.load = function(ids, callback) {
       callback.apply(global, exports)
     }
   })
+
+  return this
 }
 
 function resolve(ids, refUri) {
@@ -840,6 +844,11 @@ function save(uri, meta) {
 }
 
 function compile(mod) {
+  // Return null when mod is invalid
+  if (!mod) {
+    return null
+  }
+
   // When module is compiled, DO NOT compile it again. When module
   // is being compiled, just return `module.exports` too, for avoiding
   // circularly calling
@@ -874,6 +883,7 @@ function compile(mod) {
 
   require.async = function(ids, callback) {
     mod.load(ids, callback)
+    return require
   }
 
   require.resolve = function(id) {
@@ -1038,7 +1048,7 @@ seajs.config = function(obj) {
   }
 
   // Make sure that `configData.base` is an absolute path
-  if (obj.base) {
+  if (obj && obj.base) {
     makeBaseAbsolute()
   }
 
