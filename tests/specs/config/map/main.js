@@ -1,7 +1,7 @@
 
 seajs.config({
   map: [
-    ['a.js', 'sub/a.js'],
+    ['/map/a.js', '/map/sub/a.js'],
     [/^(.+\/)b\.js(.*)$/, '$1sub/b.js$2'],
     [/^(.+\/)c\.js(.*)$/, function(m, m1, m2) {
       return m1 + 'sub/c.js' + m2
@@ -11,7 +11,8 @@ seajs.config({
         url = url.replace('/d.js', '/sub/d.js')
       }
       return url
-    }
+    },
+    ['/debug/a.js', '/debug/a-debug.js']
   ]
 })
 
@@ -22,7 +23,7 @@ define(function(require) {
 
 
   var configData = seajs.config.data
-  test.assert(configData.map.length === 4, configData.map.length)
+  test.assert(configData.map.length === 5, configData.map.length)
 
 
   var a = require('./a')
@@ -36,13 +37,17 @@ define(function(require) {
   test.assert(d.name === 'd', d.name)
 
 
+  var debugA = require('./debug/a')
+  test.assert(debugA.name === 'a', a.name)
+
+
   seajs.config({
     map: [
       ['a.js', 'sub/sub/a.js']
     ]})
 
   require.async('./a', function(a) {
-    test.assert(configData.map.length === 5, configData.map.length)
+    test.assert(configData.map.length === 6, configData.map.length)
     test.assert(a.name === 'a', a.name)
     test.next()
   })
