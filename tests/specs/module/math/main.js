@@ -1,4 +1,4 @@
-define(function(require) {
+define(function(require, exports, module) {
 
   var test = require('../../../test')
   var inc = require('./increment').increment
