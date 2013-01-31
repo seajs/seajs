@@ -12,15 +12,8 @@
 
 <script>
 
-  function printResults(txt, style) {
-    var d = document.createElement('div')
-    d.innerHTML = txt
-    d.className = style
-    document.getElementById('out').appendChild(d)
-  }
-
   function print(msg) {
-    this['printResults'](msg)
+    this['printResult'](msg)
   }
 
 </script>
