@@ -127,6 +127,10 @@ define(function(require) {
   assert(counter === 3, counter)
 
 
+  delete obj.counter
+  delete obj.counterA
+  delete obj.counterB
+
   test.next()
 
 });

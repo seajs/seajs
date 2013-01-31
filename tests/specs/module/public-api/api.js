@@ -3,6 +3,16 @@ define(function(require, exports, mod) {
   var test = require('../../../test')
   var assert = test.assert
 
+  var toString = {}.toString
+
+  function isFunction(obj) {
+    return toString.call(obj) === "[object Function]"
+  }
+
+  var isArray = Array.isArray || function(obj) {
+    return toString.call(obj) === "[object Array]"
+  }
+
   
   // define
   assert(isFunction(define), 'define')

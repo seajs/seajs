@@ -21,11 +21,11 @@ var seajs = global.seajs = {
  * util-lang.js - The minimal language enhancement
  */
 
-var emptyArr = []
-var emptyObj = {}
-var toString = emptyObj.toString
-var hasOwnProperty = emptyObj.hasOwnProperty
-var slice = emptyArr.slice
+var ARRAY = []
+var OBJECT = {}
+var toString = OBJECT.toString
+var hasOwnProperty = OBJECT.hasOwnProperty
+var slice = ARRAY.slice
 
 function hasOwn(obj, prop) {
   return hasOwnProperty.call(obj, prop)
@@ -39,7 +39,7 @@ var isArray = Array.isArray || function(obj) {
   return toString.call(obj) === "[object Array]"
 }
 
-var forEach = emptyArr.forEach ?
+var forEach = ARRAY.forEach ?
     function(arr, fn) {
       arr.forEach(fn)
     } :
@@ -617,7 +617,7 @@ function parseDependencies(code) {
 
 var cachedModules = seajs.cache = {}
 
-var STATUS = {
+var STATUS = Module.STATUS = {
   "LOADING": 1,   // The module file is loading
   "SAVED": 2,     // The module data has been saved to cachedModules
   "LOADED": 3,    // The module and all its dependencies are ready to compile
