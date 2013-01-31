@@ -258,7 +258,7 @@ function normalize(uri) {
     uri += ".js"
   }
 
-  // Fixes `:80` bug in IE
+  // issue #256: fix `:80` bug in IE
   uri = uri.replace(":80/", "/")
 
   return uri
