@@ -23,26 +23,6 @@
 <script src="../../../dist/sea.js"></script>
 <script>
 
-  // modify before `compile`
-  seajs.on('compiled', function(mod) {
-    if (mod.uri.indexOf('a.js') > 0) {
-      mod.exports.name = 'a'
-    }
-  })
-
-  // multi modifiers
-  seajs
-      .on('compiled',function(mod) {
-        if (mod.uri.indexOf('b.js') > 0) {
-          mod.exports.name = 'b'
-        }
-      }).on('compiled', function(mod) {
-        if (mod.uri.indexOf('b.js') > 0) {
-          mod.exports.getName = function() {
-            return this.name
-          }
-        }
-      })
 
 
   seajs.use('./main')
