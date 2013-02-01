@@ -1,12 +1,11 @@
 
 // Hack console for testing
 (function(global) {
-  var console = global.console
-  if (!console) return
+  var console = global.console || {}
 
   global.consoleMsgStack = []
-  console._log = console.log
-  console._warn = console.warn
+  console._log = console.log || noop
+  console._warn = console.warn || noop
 
   console.log = function(arg1, arg2) {
     var msg = arg2 ? arg1 + ' ' + arg2 : arg1
@@ -19,6 +18,9 @@
     global.consoleMsgStack.push(msg)
     console._warn(msg)
   }
+
+  function noop() {}
+
 })(this)
 
 function printResult(txt, style) {
