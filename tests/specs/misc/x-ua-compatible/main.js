@@ -1,8 +1,8 @@
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
 
-  var compatibleElement = document.getElementsByTagName('meta')[1]
+  var compatibleElement = document.getElementsByTagName('meta')[2]
   var baseElement = document.getElementsByTagName('base')[0]
 
   var head = document.getElementsByTagName('head')[0]
@@ -15,10 +15,11 @@ define(function(require) {
   test.assert(nextElement === firstScript, 'script after compatible meta')
 
 
-  var prevElement = previousSiblingElement(baseElement)
+  var linkElement = previousSiblingElement(baseElement)
+  var prevElement = previousSiblingElement(linkElement)
   test.assert(prevElement === lastScript, 'script before base element')
 
-  test.done()
+  test.next()
 
 
   function nextSiblingElement(node) {
