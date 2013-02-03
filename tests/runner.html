@@ -21,8 +21,8 @@
 </div>
 
 <script>
-
 (function(global) {
+
   var result = global.result = {}
   var currentPage, currentSuite
   var isRunning, timeoutTimer
@@ -32,6 +32,7 @@
   var container = document.getElementById('container')
   var summary = document.getElementById('summary')
   var reporter = document.getElementById('reporter')
+  var go = document.getElementById('go')
 
   document.getElementById('info').innerHTML = navigator.userAgent
 
@@ -39,7 +40,7 @@
     reporter.className = this.checked ? 'hide-pass' : ''
   }
 
-  document.getElementById('go').onclick = function() {
+  go.onclick = function() {
     if (currentPage === 0) {
       start()
     }
