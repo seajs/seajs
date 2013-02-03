@@ -40,7 +40,7 @@ define(function(require, exports, mod) {
   test.assert(require('a').name === 'a', 'a');
   test.assert(require('b').name === 'b', 'b');
   test.assert(require('e').name === 'e', 'e');
-  test.assert(mod.dependencies.length === 8, getFiles(mod.dependencies).join(' | '));
+  test.assert(mod.dependencies.length === 7, getFiles(mod.dependencies).join(' | '));
 
   test.next()
 
