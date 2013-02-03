@@ -1,0 +1,153 @@
+/*
+ * coup-web
+ * Copyright 2011 Baidu Inc. All rights reserved.
+ * 
+ * path:    base.css
+ * desc:    基础样式定义
+ * author:  zhaolei,erik
+ * date:    $Date: 2011-03-25 12:59:14 +0800 (星期五, 25 三月 2011) $
+ */
+
+/**
+ * ie6下最小宽度
+ */
+*html .ie6-out{margin-left:1024px;zoom:1;}
+*html .ie6-in{position:relative;float:left;margin-left:-1024px;}
+
+/**
+ * reset部分
+ */
+body, div, p, dl, dt, dd, ul, ol, li, hr, pre, table, td, th, fieldset, legend,
+input, button, textarea, form, img, h1, h2, h3, h4, h5, h6 {
+    margin:0;
+    padding:0;
+}
+
+table {
+    border-collapse: collapse;
+    table-layout:fixed;
+}
+
+fieldset, iframe, img {
+    border: 0;
+}
+
+a img {
+    display:block;
+}
+
+caption, th {
+    text-align: left;
+}
+
+li {
+    list-style: none;
+}
+
+
+/**
+ * base部分
+ * 
+ */
+html {
+    background: #FFF;
+    color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    overflow-y: scroll;
+}
+
+a {
+    color: #37a;
+    text-decoration: underline;
+    cursor:pointer;
+}
+
+a:hover {
+    color: #f60;
+}
+
+/* 用于需要隐藏的元素 */
+.hide {
+    display:none;
+}
+
+/* 用于需要显示的元素 */
+.show {
+    display:block;
+}
+
+
+.wrapper {
+    min-width:1024px;
+    zoom:1;
+}
+
+.container {
+    padding:10px;
+    zoom:1;
+}
+
+.footer {
+    color:#aaa;
+    padding:10px 0;
+    text-align:center;
+    line-height:20px;
+    clear:both;
+}
+.footer a {
+    color:#aaa;
+}
+
+/* 侧边栏部分 */
+.sidebar {
+    float:left;
+    width:180px;
+    background:#FFF;
+    border:1px solid #CCC;
+}
+
+/* 主列表部分 */
+.main {
+    background:#FFF;
+    border:1px solid #CCC;
+    border-top:0;
+    border-bottom:0;
+}
+
+/* 显示sidebar时给main增加这个class */
+.add-sidebar {
+    margin-left:190px;
+}
+
+.floatright {
+    float:right;
+}
+
+.floatleft {
+    float:left;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+/* required comment for clearfix to work in Opera \*/
+* html .clearfix {
+    height:1%;
+}
+.clearfix {
+    display:block;
+}
+/* clearfix end */
+
+.baidu-inline-block {
+  position: relative;
+  display: -moz-inline-box; /* Ignored by FF3 and later. */
+  display: inline-block;
+  *display:inline;
+  *zoom:1;
+}

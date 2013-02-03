@@ -1,0 +1,336 @@
+/*
+ * ESUI (Enterprise Simple UI)
+ * Copyright 2010 Baidu Inc. All rights reserved.
+ * 
+ * path:    ui-button.css
+ * desc:    按钮样式
+ * author:  erik, zhaolei
+ * date:    2011/01/19
+ */
+
+/**
+ * 基础按钮样式
+ */
+.ui-button, .ui-button-label {
+    overflow:hidden;
+    cursor:pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.ui-button {
+    background:url(esui.png);
+    border:1px solid #a8adb6;
+    cursor:pointer;
+    /* Hack: 宋体是衬线字体，Arial是无衬线字体，一起用会高低不平。
+     * 因为按钮高度太小且无英文，此处统一改设为宋体来保持高度居中，
+     * 为兼容Mac下显示效果，前面增加STHeiti */
+    font-family:STHeiti, "WenQuanYi Micro Hei", SimSun;
+    font-size:12px;
+    text-align:center;
+    color:#333;
+    height:20px;
+    display:inline-block;
+    *display:inline;
+    *margin-bottom:8px;
+    zoom:1;
+    border-radius:2px;
+    -webkit-border-radius:2px;
+    -o-border-radius:2px;
+    -moz-border-radius:2px;
+    -ms-border-radius:2px;
+}
+
+.ui-button-label {
+    display:block;
+    float:left;
+    padding:0 10px;
+    line-height:19px;
+    border:1px solid #FFF;
+    border-radius:1px;
+    -webkit-border-radius:1px;
+    -o-border-radius:1px;
+    -moz-border-radius:1px;
+    -ms-border-radius:1px;
+}
+
+.ui-button-label-minwidth {
+    width:40px;
+}
+
+/**
+ * 基础按钮样式状态
+ */
+.ui-button-hover,
+.ui-button-press, 
+.ui-button-active {
+    border:1px solid #888f9b;
+}
+
+
+.ui-button-press,
+.ui-button-active {
+    background:url(esui.png) repeat-x 0 -20px;
+}
+
+.ui-button-press .ui-button-label,
+.ui-button-active .ui-button-label {
+    border:1px solid #f0a73c;
+    /* padding:0 8px 0 10px; */
+    height:18px;
+}
+
+.ui-button-disabled {
+    background:#f6f6f6;
+    border-color:#cfcfcf;
+    color:#999;
+}
+
+/* 高亮按钮 */
+.skin-button-em-label {
+    height:18px;
+    line-height:19px;
+    border:1px solid #8ad7f3;
+    padding:0 9px;
+}
+.skin-button-em-hover .ui-button-label {
+    border:1px solid #8ad3ee;
+}
+
+.skin-button-em-press .ui-button-label,
+.skin-button-em-active .ui-button-label {
+    line-height:21px;
+    border:1px solid #f0a73c;
+}
+
+/* 大号按钮 */
+.skin-button-large {
+    height:24px;
+    font-size:14px;
+    background:url(esui.png) 0 -40px;
+}
+
+.skin-button-large-label {
+    line-height:25px;
+}
+
+.skin-button-large-press .ui-button-label,
+.skin-button-large-active .ui-button-label {
+    height:22px;
+    background:url(esui.png) repeat-x 0 -65px;
+}
+
+/* 大号重要按钮 */
+.skin-button-largeem {
+    height:24px;
+    background:url(esui.png) 0 -40px;
+    font-size:14px;
+}
+
+.skin-button-largeem-label {
+    height:22px;
+    line-height:23px;
+    border:1px solid #8ad7f3;
+    padding:0 9px;
+}
+.skin-button-largeem-hover .ui-button-label {
+    border:1px solid #8ad3ee;
+}
+
+.skin-button-largeem-press .ui-button-label,
+.skin-button-largeem-active .ui-button-label {
+    line-height:25px;
+    background:url(esui.png) repeat-x 0 -65px;
+    height:22px;
+    border:1px solid #f0a73c;
+}
+
+/* 后退按钮 */
+.skin-button-back {
+    height:20px;
+    width:20px;
+    background:url(esui.png) 0 -200px;
+    font-size:1px;
+}
+
+.skin-button-back-label {
+    display:none;
+}
+.skin-button-back-press {
+    background:url(esui.png) 0 -220px;
+}
+
+.skin-button-back-disabled {
+    background:url(esui.png) 0 -240px;
+    cursor:default;
+}
+
+/* 前进按钮 */
+.skin-button-forward {
+    height:20px;
+    width:20px;
+    background:url(esui.png) -20px -200px;
+    font-size:1px;
+}
+
+.skin-button-forward-label {
+    display:none;
+}
+.skin-button-forward-press {
+    background:url(esui.png) -20px -220px;
+}
+.skin-button-forward-disabled {
+    background:url(esui.png) -20px -240px;
+    cursor:default;
+}
+
+/* 浮层关闭按钮 */
+.skin-button-layerclose {
+    height:12px;
+    width:12px;
+    background:url(esui.png) -37px -88px;
+    position:absolute;
+    right:5px;
+    top:5px;
+    border:0;
+    overflow:hidden;
+}
+
+.skin-button-layerclose-label {
+    display:none;
+}
+.skin-button-layerclose-press {
+    background:url(esui.png) -25px -88px;
+}
+
+/* 锦囊里的Dialog关闭按钮 */
+.skin-button-dialogclose {
+    height:10px;
+    width:10px;
+    background:url(gcoupui.png) -144px -122px;
+    -background-image:url(gcoupui-fs8.png);
+    position:absolute;
+    right:10px;
+    top:10px;
+    border:0;
+    overflow:hidden;
+}
+
+.skin-button-dialogclose-label {
+    display:none;
+}
+.skin-button-dialogclose-press {
+    background:url(gcoupui.png) -144px -122px;
+    -background-image:url(gcoupui-fs8.png);
+}
+
+/* btnback */
+.skin-button-btnback-press {
+    -webkit-border-radius:3px 3px 3px 3px;
+    -o-border-radius:3px 3px 3px 3px;
+    -ms-border-radius:3px 3px 3px 3px;
+    -moz-border-radius:3px 3px 3px 3px;
+    border-radius:3px 3px 3px 3px;
+}
+
+/* 创建、下载、邮件按钮 */
+.skin-button-create-press,
+.skin-button-download-press,
+.skin-button-mail-press,
+.skin-button-right-arrow-press {
+    -webkit-border-radius:3px 3px 3px 3px;
+    -o-border-radius:3px 3px 3px 3px;
+    -ms-border-radius:3px 3px 3px 3px;
+    -moz-border-radius:3px 3px 3px 3px;
+    border-radius:3px 3px 3px 3px;
+}
+
+.skin-button-create .ui-button-bg-left,
+.skin-button-download .ui-button-bg-left {
+    background:url(gcoupui.png) no-repeat;
+    -background-image:url(gcoupui-fs8.png);
+    width:12px;
+    height:13px;
+    float:left;
+    margin:4px -17px 3px 5px;
+    _display:inline;
+}
+
+.skin-button-create-label {
+    font-weight:bold;
+}
+
+.skin-button-create .skin-button-create-label,
+.skin-button-download .skin-button-download-label {
+    padding:0px 10px 0px 22px;
+}
+
+.skin-button-mail .skin-button-mail-label {
+    padding:0px 10px 0px 28px
+}
+
+.skin-button-create .ui-button-bg-left {
+    background-position:-142px -69px;
+}
+
+.skin-button-download .ui-button-bg-left {
+    background-position:-142px -88px;
+}
+
+.skin-button-mail .ui-button-bg-left {
+    _display:inline;
+    background:url(glm-mail.png) no-repeat 0 0;
+    width:16px;
+    height:16px;
+    float:left;
+    margin:2px -22px 2px 6px;
+}
+
+.skin-button-right-arrow {
+    *text-align:right; /** fix ie6&7 float bug */
+    *vertical-align:top; /** fix ie6&ie7 float bug */
+}
+
+.skin-button-right-arrow .ui-button-bg-left {
+    display:none;
+}
+
+/*右侧含有向右箭头的按钮*/
+.skin-button-right-arrow .ui-button-bg-right {
+    background:url(gcoupui.png) -4px -13px no-repeat;
+    -background-image:url(gcoupui-fs8.png);
+    width:17px;
+    height:13px;
+    float:right;
+    margin:4px 5px 3px -22px;
+    
+    *float:none;
+    *display:inline;
+    zoom:1;
+}
+
+.skin-button-right-arrow .skin-button-right-arrow-label {
+    padding:0px 29px 0px 10px;
+    background:transparent;
+}
+
+/* ui.Button, skin:activity-create */
+.skin-button-activity-create {
+    background:url(gicon-tieba-activity-create.png);
+    border: none;
+    height: 54px;
+    color: #ffffff;
+    text-shadow: 0 1px 1px #566A86;
+}
+
+.skin-button-activity-create-press .ui-button-label,
+.skin-button-activity-create-active .ui-button-label {
+    border: none;
+    height: auto;
+}
+
+.skin-button-activity-create-label {
+    border: none;
+    width: 190px;
+    line-height: 54px;
+}
