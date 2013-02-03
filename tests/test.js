@@ -1,21 +1,21 @@
 
 // Hack console for testing
 (function(global) {
-  var console = global.console || {}
+  var console = global.console || ( global.console = {})
+  var stack = global.consoleMsgStack = []
 
-  global.consoleMsgStack = []
   console._log = console.log || noop
   console._warn = console.warn || noop
 
   console.log = function(arg1, arg2) {
     var msg = arg2 ? arg1 + ' ' + arg2 : arg1
-    global.consoleMsgStack.push(msg)
+    stack.push(msg)
     console._log(msg)
   }
 
   console.warn = function(arg1, arg2) {
     var msg = arg2 ? arg1 + ' ' + arg2 : arg1
-    global.consoleMsgStack.push(msg)
+    stack.push(msg)
     console._warn(msg)
   }
 
@@ -100,7 +100,7 @@ define(function(require, exports) {
   function reset() {
     seajs.off()
     copy(defaultConfig, configData)
-    global.consoleMsgStack = []
+    global.consoleMsgStack.length = 0
   }
 
   function copy(from, to) {
