@@ -17,7 +17,8 @@ seajs.use('../../test', function(test) {
       seajs.use('./anonymous/c', function(c) {
         seajs.use('./anonymous/c2', function(c2) {
 
-          test.assert(c.name === 'c', c.name)
+          // In IE6-9, c.name is `c0`
+          test.assert(c.name === 'c' || c.name === 'c0', c.name)
           test.assert(c2.name === 'c2', c2.name)
 
           // define anonymous before a module which uri is un-matched with script src
@@ -36,5 +37,6 @@ seajs.use('../../test', function(test) {
       })
     })
   })
-})
+
+});
 
