@@ -223,7 +223,7 @@
     timeoutTimer = setTimeout(function() {
       printResult('[WARN] Time is out for ' + page, 'warn')
       testNextPage()
-    }, 60000) // Wait 60s
+    }, 2 * 60 * 1000) // Wait 120s
   }
 
   function print2Console(msg, type) {
