@@ -11,7 +11,7 @@ page.onConsoleMessage = function(arg) {
       return result
     })
 
-    if (result.error.count + result.fail.count + result.warn.count) {
+    if (result.error.count + result.fail.count) {
       phantom.exit(1)
     } else {
       phantom.exit(0)
