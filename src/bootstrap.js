@@ -2,19 +2,25 @@
  * bootstrap.js - Initialize the plugins and load the entry module
  */
 
+var preloadMods = getBootstrapPlugins()
+var dataConfig = loaderScript.getAttribute("data-config")
+var dataMain = loaderScript.getAttribute("data-main")
+
+if (dataConfig) {
+  preloadMods.push(dataConfig)
+}
+
 seajs.config({
   // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
   vars: { seajs: dirname(loaderUri) },
 
   // Preload all initial plugins
-  preload: getBootstrapPlugins()
+  preload: preloadMods
 })
 
-var dataMain = loaderScript.getAttribute("data-main")
 if (dataMain) {
   seajs.use(dataMain)
 }
-
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {

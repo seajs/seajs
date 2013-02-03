@@ -21,11 +21,11 @@ var seajs = global.seajs = {
  * util-lang.js - The minimal language enhancement
  */
 
-var emptyArr = []
-var emptyObj = {}
-var toString = emptyObj.toString
-var hasOwnProperty = emptyObj.hasOwnProperty
-var slice = emptyArr.slice
+var ARRAY = []
+var OBJECT = {}
+var toString = OBJECT.toString
+var hasOwnProperty = OBJECT.hasOwnProperty
+var slice = ARRAY.slice
 
 function hasOwn(obj, prop) {
   return hasOwnProperty.call(obj, prop)
@@ -39,7 +39,7 @@ var isArray = Array.isArray || function(obj) {
   return toString.call(obj) === "[object Array]"
 }
 
-var forEach = emptyArr.forEach ?
+var forEach = ARRAY.forEach ?
     function(arr, fn) {
       arr.forEach(fn)
     } :
@@ -61,14 +61,18 @@ var keys = Object.keys || function(obj) {
   return ret
 }
 
-function unique(arr) {
+function arr2obj(arr) {
   var obj = {}
 
   forEach(arr, function(item) {
     obj[item] = 1
   })
 
-  return keys(obj)
+  return obj
+}
+
+function unique(arr) {
+  return keys(arr2obj(arr))
 }
 
 
@@ -76,14 +80,14 @@ function unique(arr) {
  * util-log.js - The tiny log function
  */
 
-var console = global.console
-
 // The safe wrapper for `console.xxx` functions
 // log("message") ==> console.log("message")
 // log("message", "warn") ==> console.warn("message")
 var log = seajs.log = function() {
+  var console = global.console
+
   if (console === undefined) {
-    return seajs
+    return
   }
 
   var args = slice.call(arguments)
@@ -92,18 +96,13 @@ var log = seajs.log = function() {
 
   // Print log info in debug mode only
   if (type === "log" && !configData.debug) {
-    return seajs
+    return
   }
 
   var fn = console[type]
 
-  // The console function has no `apply` method in IE9
-  // http://stackoverflow.com/questions/5538972
-  fn = fn.apply ? fn :
-      Function.prototype.bind.call(fn, console)
-  fn.apply(console, args)
-
-  return seajs
+  // The console function has no `apply` method in IE6-9
+  fn = fn.apply ? fn.apply(console, args) : fn(args.join(' '))
 }
 
 
@@ -254,7 +253,7 @@ function normalize(uri) {
     uri += ".js"
   }
 
-  // Fixes `:80` bug in IE
+  // issue #256: fix `:80` bug in IE
   uri = uri.replace(":80/", "/")
 
   return uri
@@ -603,7 +602,7 @@ function parseDependencies(code) {
     if (m[2]) ret.push(m[2])
   }
 
-  return unique(ret)
+  return ret
 }
 
 
@@ -613,7 +612,7 @@ function parseDependencies(code) {
 
 var cachedModules = seajs.cache = {}
 
-var STATUS = {
+var STATUS = Module.STATUS = {
   "LOADING": 1,   // The module file is loading
   "SAVED": 2,     // The module data has been saved to cachedModules
   "LOADED": 3,    // The module and all its dependencies are ready to compile
@@ -692,7 +691,7 @@ function load(uris, callback, options) {
         if (isCircularWaiting(mod)) {
           printCircularLog(circularStack)
           circularStack.length = 0
-          done(mod)
+          done()
           return
         }
 
@@ -703,7 +702,8 @@ function load(uris, callback, options) {
           return
         }
 
-        load(waitings, function() {
+        // Copy waitings to prevent modification
+        load(waitings.slice(), function() {
           done(mod)
         }, { filtered: true })
       }
@@ -835,10 +835,14 @@ function save(uri, meta) {
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri // Let anonymous module id equal to its uri
-    mod.dependencies = resolve(meta.dependencies || [], uri)
-    mod.factory = meta.factory
 
+    // Let anonymous module id equal to its uri
+    mod.id = meta.id || uri
+
+    // Remove duplicated dependencies
+    mod.dependencies = unique(resolve(meta.dependencies || [], uri))
+
+    mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
 }
@@ -936,6 +940,7 @@ function isCircularWaiting(mod) {
 
   circularStack.push(mod.uri)
   if (isOverlap(waitings, circularStack)) {
+    cutWaitings(waitings)
     return true
   }
 
@@ -949,14 +954,25 @@ function isCircularWaiting(mod) {
   return false
 }
 
-function printCircularLog(stack) {
-  stack.push(stack[0])
-  log("Found circular dependencies:", stack.join(" --> "))
-}
-
 function isOverlap(arrA, arrB) {
   var arrC = arrA.concat(arrB)
   return  unique(arrC).length < arrC.length
+}
+
+function cutWaitings(waitings) {
+  var uri = circularStack[0]
+
+  for (var i = waitings.length - 1; i >= 0; i--) {
+    if (waitings[i] === uri) {
+      waitings.splice(i, 1)
+      break
+    }
+  }
+}
+
+function printCircularLog(stack) {
+  stack.push(stack[0])
+  log("Found circular dependencies:", stack.join(" --> "))
 }
 
 
@@ -1078,19 +1094,25 @@ function makeBaseAbsolute() {
  * bootstrap.js - Initialize the plugins and load the entry module
  */
 
+var preloadMods = getBootstrapPlugins()
+var dataConfig = loaderScript.getAttribute("data-config")
+var dataMain = loaderScript.getAttribute("data-main")
+
+if (dataConfig) {
+  preloadMods.push(dataConfig)
+}
+
 seajs.config({
   // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
   vars: { seajs: dirname(loaderUri) },
 
   // Preload all initial plugins
-  preload: getBootstrapPlugins()
+  preload: preloadMods
 })
 
-var dataMain = loaderScript.getAttribute("data-main")
 if (dataMain) {
   seajs.use(dataMain)
 }
-
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {

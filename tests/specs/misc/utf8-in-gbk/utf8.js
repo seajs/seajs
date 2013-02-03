@@ -1,0 +1,1 @@
+printResult('中文')

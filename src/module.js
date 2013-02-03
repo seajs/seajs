@@ -4,7 +4,7 @@
 
 var cachedModules = seajs.cache = {}
 
-var STATUS = {
+var STATUS = Module.STATUS = {
   "LOADING": 1,   // The module file is loading
   "SAVED": 2,     // The module data has been saved to cachedModules
   "LOADED": 3,    // The module and all its dependencies are ready to compile
@@ -83,7 +83,7 @@ function load(uris, callback, options) {
         if (isCircularWaiting(mod)) {
           printCircularLog(circularStack)
           circularStack.length = 0
-          done(mod)
+          done()
           return
         }
 
@@ -94,7 +94,8 @@ function load(uris, callback, options) {
           return
         }
 
-        load(waitings, function() {
+        // Copy waitings to prevent modification
+        load(waitings.slice(), function() {
           done(mod)
         }, { filtered: true })
       }
@@ -226,10 +227,14 @@ function save(uri, meta) {
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri // Let anonymous module id equal to its uri
-    mod.dependencies = resolve(meta.dependencies || [], uri)
-    mod.factory = meta.factory
 
+    // Let anonymous module id equal to its uri
+    mod.id = meta.id || uri
+
+    // Remove duplicated dependencies
+    mod.dependencies = unique(resolve(meta.dependencies || [], uri))
+
+    mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
 }
@@ -327,6 +332,7 @@ function isCircularWaiting(mod) {
 
   circularStack.push(mod.uri)
   if (isOverlap(waitings, circularStack)) {
+    cutWaitings(waitings)
     return true
   }
 
@@ -340,14 +346,25 @@ function isCircularWaiting(mod) {
   return false
 }
 
-function printCircularLog(stack) {
-  stack.push(stack[0])
-  log("Found circular dependencies:", stack.join(" --> "))
-}
-
 function isOverlap(arrA, arrB) {
   var arrC = arrA.concat(arrB)
   return  unique(arrC).length < arrC.length
+}
+
+function cutWaitings(waitings) {
+  var uri = circularStack[0]
+
+  for (var i = waitings.length - 1; i >= 0; i--) {
+    if (waitings[i] === uri) {
+      waitings.splice(i, 1)
+      break
+    }
+  }
+}
+
+function printCircularLog(stack) {
+  stack.push(stack[0])
+  log("Found circular dependencies:", stack.join(" --> "))
 }
 
 

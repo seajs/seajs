@@ -15,7 +15,7 @@ function parseDependencies(code) {
     if (m[2]) ret.push(m[2])
   }
 
-  return unique(ret)
+  return ret
 }
 
 

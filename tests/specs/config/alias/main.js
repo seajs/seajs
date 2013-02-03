@@ -26,7 +26,7 @@ define(function(require) {
     }
   })
 
-  var consoleMsg = global.consoleMsg
+  var consoleMsg = global.consoleMsgStack.pop()
   test.assert(consoleMsg === 'The config of alias["a"] is changed from "./path/to/a.js" to "x"', consoleMsg)
 
   require.async('c', function(c) {

@@ -8,7 +8,7 @@ define(function(require, exports, mod) {
   test.assert(seajs.emit() === seajs, 'sea.emit is chainable')
   test.assert(seajs.on() === seajs, 'sea.on is chainable')
   test.assert(seajs.off() === seajs, 'sea.off is chainable')
-  test.assert(seajs.log() === seajs, 'sea.log is chainable')
+  test.assert(seajs.log() === undefined, 'sea.log is NOT chainable')
   test.assert(seajs.use() === seajs, 'sea.use is chainable')
 
   seajs.log(require.resolve('./a'))

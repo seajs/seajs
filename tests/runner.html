@@ -21,8 +21,8 @@
 </div>
 
 <script>
-
 (function(global) {
+
   var result = global.result = {}
   var currentPage, currentSuite
   var isRunning, timeoutTimer
@@ -32,6 +32,7 @@
   var container = document.getElementById('container')
   var summary = document.getElementById('summary')
   var reporter = document.getElementById('reporter')
+  var go = document.getElementById('go')
 
   document.getElementById('info').innerHTML = navigator.userAgent
 
@@ -39,7 +40,7 @@
     reporter.className = this.checked ? 'hide-pass' : ''
   }
 
-  document.getElementById('go').onclick = function() {
+  go.onclick = function() {
     if (currentPage === 0) {
       start()
     }
@@ -205,9 +206,11 @@
   }
 
   function load(url) {
-    var frame = document.createElement('iframe')
-    container.appendChild(frame)
-    frame.src = url
+    setTimeout(function() {
+      var frame = document.createElement('iframe')
+      container.appendChild(frame)
+      frame.src = url
+    }, 0) // Give a break for IE to work properly
   }
 
   function getHeaderLink(url) {
@@ -220,7 +223,7 @@
     timeoutTimer = setTimeout(function() {
       printResult('[WARN] Time is out for ' + page, 'warn')
       testNextPage()
-    }, 10000) // Wait 10s
+    }, 2 * 60 * 1000) // Wait 120s
   }
 
   function print2Console(msg, type) {
