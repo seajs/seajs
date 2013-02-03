@@ -205,9 +205,11 @@
   }
 
   function load(url) {
-    var frame = document.createElement('iframe')
-    container.appendChild(frame)
-    frame.src = url
+    setTimeout(function() {
+      var frame = document.createElement('iframe')
+      container.appendChild(frame)
+      frame.src = url
+    }, 0) // Give a break for IE to work properly
   }
 
   function getHeaderLink(url) {
