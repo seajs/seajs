@@ -101,11 +101,8 @@ var log = seajs.log = function() {
 
   var fn = console[type]
 
-  // The console function has no `apply` method in IE9
-  // http://stackoverflow.com/questions/5538972
-  fn = fn.apply ? fn :
-      Function.prototype.bind.call(fn, console)
-  fn.apply(console, args)
+  // The console function has no `apply` method in IE6-9
+  fn = fn.apply ? fn.apply(console, args) : fn(args.join(' '))
 }
 
 
