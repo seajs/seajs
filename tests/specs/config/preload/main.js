@@ -36,8 +36,8 @@ seajs.use(['../../test'], function(test) {
 
 seajs.config({
   preload: [
-    [].map ? '' : './es5-safe',
-    this.JSON ? '' : './json2'
+    [].map ? '' : './preload/es5-safe',
+    this.JSON ? '' : './preload/json2'
   ]
 })
 
