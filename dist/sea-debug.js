@@ -605,7 +605,7 @@ function parseDependencies(code) {
     if (m[2]) ret.push(m[2])
   }
 
-  return unique(ret)
+  return ret
 }
 
 
@@ -838,10 +838,14 @@ function save(uri, meta) {
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri // Let anonymous module id equal to its uri
-    mod.dependencies = resolve(meta.dependencies || [], uri)
-    mod.factory = meta.factory
 
+    // Let anonymous module id equal to its uri
+    mod.id = meta.id || uri
+
+    // Remove duplicated dependencies
+    mod.dependencies = unique(resolve(meta.dependencies || [], uri))
+
+    mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
 }
