@@ -80,12 +80,12 @@ function unique(arr) {
  * util-log.js - The tiny log function
  */
 
-var console = global.console
-
 // The safe wrapper for `console.xxx` functions
 // log("message") ==> console.log("message")
 // log("message", "warn") ==> console.warn("message")
 var log = seajs.log = function() {
+  var console = global.console
+
   if (console === undefined) {
     return
   }
