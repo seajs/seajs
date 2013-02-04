@@ -51,10 +51,7 @@ seajs.config = function(obj) {
         if (!isArray(curr)) {
           curr = [curr]
         }
-
-        forEach(curr, function(item) {
-          prev.push(item)
-        })
+        configData[key] = prev.concat(curr)
       }
       else {
         configData[key] = curr

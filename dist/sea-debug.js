@@ -21,54 +21,33 @@ var seajs = global.seajs = {
  * util-lang.js - The minimal language enhancement
  */
 
-var ARRAY = []
-var OBJECT = {}
-var toString = OBJECT.toString
-var hasOwnProperty = OBJECT.hasOwnProperty
-var slice = ARRAY.slice
+var hasOwnProperty = {}.hasOwnProperty
 
 function hasOwn(obj, prop) {
   return hasOwnProperty.call(obj, prop)
 }
 
 function isFunction(obj) {
-  return toString.call(obj) === "[object Function]"
+  return typeof obj === "function"
 }
 
 var isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === "[object Array]"
-}
-
-var forEach = ARRAY.forEach ?
-    function(arr, fn) {
-      arr.forEach(fn)
-    } :
-    function(arr, fn) {
-      for (var i = 0, len = arr.length; i < len; i++) {
-        fn(arr[i], i, arr)
-      }
-    }
-
-var keys = Object.keys || function(obj) {
-  var ret = []
-
-  for (var p in obj) {
-    if (hasOwn(obj, p)) {
-      ret.push(p)
-    }
-  }
-
-  return ret
+  return obj instanceof Array
 }
 
 function unique(arr) {
   var obj = {}
+  var ret = []
 
-  forEach(arr, function(item) {
-    obj[item] = 1
-  })
+  for (var i = 0, len = arr.length; i < len; i++) {
+    var item = arr[i]
+    if (!obj[item]) {
+      obj[item] = 1
+      ret.push(item)
+    }
+  }
 
-  return keys(obj)
+  return ret
 }
 
 
@@ -86,7 +65,7 @@ var log = seajs.log = function() {
     return
   }
 
-  var args = slice.call(arguments)
+  var args = [].slice.call(arguments)
   var len = args.length
   var type = console[args[len - 1]] ? args.pop() : "log"
 
@@ -163,9 +142,9 @@ var emit = seajs.emit = function(event) {
   list = list.slice()
 
   // Execute event callbacks
-  forEach(list, function(fn) {
-    fn.apply(global, args)
-  })
+  for (i = 0, len = list.length; i < len; i++) {
+    list[i].apply(global, args)
+  }
 
   return seajs
 }
@@ -173,7 +152,7 @@ var emit = seajs.emit = function(event) {
 // Emit event and return the specified property of the data
 function emitData(event, data, prop) {
   emit(event, data)
-  return data[prop || keys(data)[0]]
+  return data[prop]
 }
 
 
@@ -629,9 +608,9 @@ Module.prototype.load = function(ids, callback) {
   load(uris, function() {
     var exports = []
 
-    forEach(uris, function(uri, i) {
-      exports[i] = compile(cachedModules[uri])
-    })
+    for (var i = 0, len = uris.length; i < len; i++) {
+      exports[i] = compile(cachedModules[uris[i]])
+    }
 
     if (callback) {
       callback.apply(global, exports)
@@ -804,7 +783,7 @@ function define(id, deps, factory) {
 
     if (script && script.src) {
       derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData("derived", { uri: derivedUri })
+      derivedUri = emitData("derived", { uri: derivedUri }, 'uri')
     }
     else {
       log("Failed to derive script URI: ", factory.toString())
@@ -918,11 +897,13 @@ function getModule(uri, status) {
 function getUnloadedUris(uris) {
   var ret = []
 
-  forEach(uris, function(uri) {
+  for (var i = 0, len = uris.length; i < len; i++) {
+    var uri = uris[i]
     if (uri && getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
     }
-  })
+  }
+
   return ret
 }
 
@@ -1048,10 +1029,7 @@ seajs.config = function(obj) {
         if (!isArray(curr)) {
           curr = [curr]
         }
-
-        forEach(curr, function(item) {
-          prev.push(item)
-        })
+        configData[key] = prev.concat(curr)
       }
       else {
         configData[key] = curr

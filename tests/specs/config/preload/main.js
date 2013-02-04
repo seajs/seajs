@@ -8,17 +8,17 @@ function done(test) {
 }
 
 
-var preloadConfig = seajs.config.data.preload
+var configData = seajs.config.data
 
 seajs.config({
   preload: ['./preload/a']
 })
 
-var lenBeforeUse = preloadConfig.length
+var lenBeforeUse = configData.preload.length
 
 seajs.use(['../../test'], function(test) {
   test.assert(lenBeforeUse === 1, lenBeforeUse)
-  test.assert(preloadConfig.length === 0, preloadConfig.length)
+  test.assert(configData.preload.length === 0, configData.preload.length)
   test.assert(this.A === 'a', 'preload a.js')
   done(test)
 })
@@ -28,7 +28,7 @@ seajs.config({
 })
 
 seajs.use(['../../test'], function(test) {
-  test.assert(preloadConfig.length === 0, preloadConfig.length)
+  test.assert(configData.preload.length === 0, configData.preload.length)
   test.assert(this.B === 'b', 'preload b.js')
   done(test)
 })

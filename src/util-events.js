@@ -59,9 +59,9 @@ var emit = seajs.emit = function(event) {
   list = list.slice()
 
   // Execute event callbacks
-  forEach(list, function(fn) {
-    fn.apply(global, args)
-  })
+  for (i = 0, len = list.length; i < len; i++) {
+    list[i].apply(global, args)
+  }
 
   return seajs
 }
@@ -69,7 +69,7 @@ var emit = seajs.emit = function(event) {
 // Emit event and return the specified property of the data
 function emitData(event, data, prop) {
   emit(event, data)
-  return data[prop || keys(data)[0]]
+  return data[prop]
 }
 
 

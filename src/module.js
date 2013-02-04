@@ -25,9 +25,9 @@ Module.prototype.load = function(ids, callback) {
   load(uris, function() {
     var exports = []
 
-    forEach(uris, function(uri, i) {
-      exports[i] = compile(cachedModules[uri])
-    })
+    for (var i = 0, len = uris.length; i < len; i++) {
+      exports[i] = compile(cachedModules[uris[i]])
+    }
 
     if (callback) {
       callback.apply(global, exports)
@@ -200,7 +200,7 @@ function define(id, deps, factory) {
 
     if (script && script.src) {
       derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData("derived", { uri: derivedUri })
+      derivedUri = emitData("derived", { uri: derivedUri }, 'uri')
     }
     else {
       log("Failed to derive script URI: ", factory.toString())
@@ -314,11 +314,13 @@ function getModule(uri, status) {
 function getUnloadedUris(uris) {
   var ret = []
 
-  forEach(uris, function(uri) {
+  for (var i = 0, len = uris.length; i < len; i++) {
+    var uri = uris[i]
     if (uri && getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
     }
-  })
+  }
+
   return ret
 }
 

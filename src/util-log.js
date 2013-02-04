@@ -12,7 +12,7 @@ var log = seajs.log = function() {
     return
   }
 
-  var args = slice.call(arguments)
+  var args = [].slice.call(arguments)
   var len = args.length
   var type = console[args[len - 1]] ? args.pop() : "log"
 
