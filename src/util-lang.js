@@ -42,18 +42,14 @@ var keys = Object.keys || function(obj) {
   return ret
 }
 
-function arr2obj(arr) {
+function unique(arr) {
   var obj = {}
 
   forEach(arr, function(item) {
     obj[item] = 1
   })
 
-  return obj
-}
-
-function unique(arr) {
-  return keys(arr2obj(arr))
+  return keys(obj)
 }
 
 
