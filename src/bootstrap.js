@@ -10,7 +10,7 @@ if (dataConfig) {
   preloadMods.push(dataConfig)
 }
 
-seajs.config({
+config({
   // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
   vars: { seajs: dirname(loaderUri) },
 
