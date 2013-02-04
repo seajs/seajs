@@ -26,7 +26,7 @@ if (dataMain) {
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
   var ret = []
-  var str = global.location.search
+  var str = loc.search
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
   str = str.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
