@@ -5,16 +5,16 @@
 var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
-  "LOADING": 1,   // The module file is loading
-  "SAVED": 2,     // The module data has been saved to cachedModules
-  "LOADED": 3,    // The module and all its dependencies are ready to compile
-  "COMPILING": 4, // The module is being compiled
-  "COMPILED": 5   // The module is compiled and `module.exports` is available
+  "INITIALIZED": 1, // The module is initialized
+  "SAVED": 2,       // The module data has been saved to cachedModules
+  "LOADED": 3,      // The module and all its dependencies are ready to compile
+  "COMPILING": 4,   // The module is being compiled
+  "COMPILED": 5     // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
   this.uri = uri
-  this.status = status || STATUS.LOADING
+  this.status = status || STATUS.INITIALIZED
   this.dependencies = []
   this.waitings = []
 }
@@ -374,19 +374,15 @@ function printCircularLog(stack) {
 
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
-function preload(callback) {
-  var preloadModules = configData.preload
-  var len = preloadModules.length
-
-  len ? globalModule.load(preloadModules.splice(0, len), callback) :
-      callback()
-}
-
 seajs.use = function(ids, callback) {
+  var preloadModules = configData.preload
+  configData.preload = []
+
   // Load preload modules before all other modules
-  preload(function() {
+  globalModule.load(preloadModules, function() {
     globalModule.load(ids, callback)
   })
+
   return seajs
 }
 
