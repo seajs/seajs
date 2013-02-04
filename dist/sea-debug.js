@@ -465,8 +465,6 @@ function scriptOnload(node, callback) {
 function styleOnload(node, callback) {
   // for Old WebKit and Old Firefox
   if (isOldWebKit || isOldFirefox) {
-    log("Start css polling")
-
     setTimeout(function() {
       pollCss(node, callback)
     }, 1) // Begin after node insertion
@@ -786,7 +784,7 @@ function define(id, deps, factory) {
       derivedUri = emitData("derived", { uri: derivedUri }, 'uri')
     }
     else {
-      log("Failed to derive script URI: ", factory.toString())
+      log("Failed to derive script:", factory)
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri

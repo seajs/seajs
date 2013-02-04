@@ -85,8 +85,6 @@ function scriptOnload(node, callback) {
 function styleOnload(node, callback) {
   // for Old WebKit and Old Firefox
   if (isOldWebKit || isOldFirefox) {
-    log("Start css polling")
-
     setTimeout(function() {
       pollCss(node, callback)
     }, 1) // Begin after node insertion

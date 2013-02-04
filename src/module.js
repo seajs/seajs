@@ -203,7 +203,7 @@ function define(id, deps, factory) {
       derivedUri = emitData("derived", { uri: derivedUri }, 'uri')
     }
     else {
-      log("Failed to derive script URI: ", factory.toString())
+      log("Failed to derive script:", factory)
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
