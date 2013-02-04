@@ -22,6 +22,7 @@ if (dataMain) {
   seajs.use(dataMain)
 }
 
+
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
   var ret = []

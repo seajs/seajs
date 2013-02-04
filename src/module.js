@@ -375,11 +375,11 @@ function printCircularLog(stack) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 seajs.use = function(ids, callback) {
-  var preloadModules = configData.preload
+  var preloadMods = configData.preload
   configData.preload = []
 
   // Load preload modules before all other modules
-  globalModule.load(preloadModules, function() {
+  globalModule.load(preloadMods, function() {
     globalModule.load(ids, callback)
   })
 
