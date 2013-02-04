@@ -34,7 +34,7 @@ function request(url, callback, charset) {
     node.href = url
   }
   else {
-    node.async = "async"
+    node.async = true
     node.src = url
   }
 
@@ -86,7 +86,7 @@ function styleOnload(node, callback) {
   // for Old WebKit and Old Firefox
   if (isOldWebKit || isOldFirefox) {
     setTimeout(function() {
-      pollCss(node, callback)
+      pollStyle(node, callback)
     }, 1) // Begin after node insertion
   }
   else {
@@ -101,7 +101,7 @@ function styleOnload(node, callback) {
   }
 }
 
-function pollCss(node, callback) {
+function pollStyle(node, callback) {
   var sheet = node.sheet
   var isLoaded
 
@@ -133,7 +133,7 @@ function pollCss(node, callback) {
       callback()
     }
     else {
-      pollCss(node, callback)
+      pollStyle(node, callback)
     }
   }, 1)
 }
