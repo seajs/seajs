@@ -41,7 +41,7 @@ function unique(arr) {
 
   for (var i = 0, len = arr.length; i < len; i++) {
     var item = arr[i]
-    if (!obj[item]) {
+    if (obj[item] !== 1) {
       obj[item] = 1
       ret.push(item)
     }
