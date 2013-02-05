@@ -1,6 +1,5 @@
 /**
- * @preserve SeaJS - A Module Loader for the Web
- * v@VERSION | seajs.org | MIT Licensed
+ * @preserve SeaJS v@VERSION | seajs.org/license
  */
 (function(global, undefined) {
 "use strict"
