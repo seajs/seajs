@@ -38,4 +38,3 @@ function getBootstrapPlugins() {
 if (dataMain) {
   seajs.use(dataMain)
 }
-
