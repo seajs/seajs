@@ -559,7 +559,7 @@ var SLASH_RE = /\\\\/g
 function parseDependencies(code) {
   var ret = [], m
   REQUIRE_RE.lastIndex = 0
-  code = code.replace(SLASH_RE, '')
+  code = code.replace(SLASH_RE, "")
 
   while ((m = REQUIRE_RE.exec(code))) {
     if (m[2]) ret.push(m[2])
@@ -1027,7 +1027,7 @@ function config(data) {
         configData[key] = curr
 
         // Make sure that `configData.base` is an absolute path
-        if (key === 'base') {
+        if (key === "base") {
           makeBaseAbsolute()
         }
       }
@@ -1045,7 +1045,7 @@ function plugin2preload(arr) {
   isArray(arr) || (arr = [arr])
 
   while ((name = arr.shift())) {
-    ret.push('{seajs}/plugin-' + name)
+    ret.push("{seajs}/plugin-" + name)
   }
 
   return ret

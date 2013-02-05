@@ -65,7 +65,7 @@ function config(data) {
         configData[key] = curr
 
         // Make sure that `configData.base` is an absolute path
-        if (key === 'base') {
+        if (key === "base") {
           makeBaseAbsolute()
         }
       }
@@ -83,7 +83,7 @@ function plugin2preload(arr) {
   isArray(arr) || (arr = [arr])
 
   while ((name = arr.shift())) {
-    ret.push('{seajs}/plugin-' + name)
+    ret.push("{seajs}/plugin-" + name)
   }
 
   return ret
