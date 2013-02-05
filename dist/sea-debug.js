@@ -1,6 +1,5 @@
 /**
- * @preserve SeaJS - A Module Loader for the Web
- * v2.0.0-dev | seajs.org | MIT Licensed
+ * @preserve SeaJS v2.0.0-beta | seajs.org/license
  */
 (function(global, undefined) {
 "use strict"
@@ -13,7 +12,7 @@ if (global.seajs) {
 
 var seajs = global.seajs = {
   // The current version of SeaJS being used
-  version: "2.0.0-dev"
+  version: "2.0.0-beta"
 }
 
 
