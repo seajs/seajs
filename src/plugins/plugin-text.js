@@ -1,99 +1,65 @@
 /**
  * The plugin to load text resources such as template, json
  */
-define("{seajs}/plugin-text", [], function(require, exports) {
+(function(global) {
 
-  var pluginsInfo = {}
-  var uriCache = {}
+  var plugins = {}
 
-
-  function registerTextPlugin(o) {
-    pluginsInfo[o.name] = o
+  function addPlugin(o) {
+    plugins[o.name] = o
   }
 
   // normal text
-  registerTextPlugin({
+  addPlugin({
     name: "text",
 
     ext: [".tpl", ".htm", ".html"],
 
-    fetch: function(url, callback) {
-      util.xhr(url, function(data) {
-        var str = jsEscape(data)
-        util.globalEval('define([], "' + str + '")')
-        callback()
-      })
+    exec: function(data) {
+      globalEval('define("' + jsEscape(data) + '")')
     }
   })
 
   // json
-  registerTextPlugin({
+  addPlugin({
     name: "json",
 
     ext: [".json"],
 
-    fetch: function(url, callback) {
-      xhr(url, function(text) {
-        globalEval("define(" + text + ")")
-        callback()
-      })
+    exec: function(data) {
+      globalEval("define(" + data + ")")
     }
   })
 
 
-  seajs.on('resolve', function(data) {
+  seajs.on("resolve", function(data) {
     var id = data.id
-    var refUri = data.refUri
 
-    var pluginName
-    var parsedId = id
-
-    // id = text!path/to/some
+    // text!path/to/some ==> path/to/some#text#
     var m = id.match(/^(\w+)!(.+)$/)
     if (m && isPlugin(m[1])) {
-      pluginName = m[1]
-      parsedId = m[2]
+      data.id = m[2] + "#" + m[1] + "#"
+      return
     }
 
-    // Parse alias first
-    parsedId = util.parseAlias(parsedId)
-
-    // id = abc.xyz?t=123
-    if (!pluginName && (m = parsedId.match(/[^?]*(\.\w+)/))) {
-      var ext = m[1]
-
-      for (var k in pluginsInfo) {
-        if (isPlugin(k) &&
-            util.indexOf(pluginsInfo[k].ext, ext) > -1) {
-          pluginName = k
-          break
-        }
-      }
+    // path/to/a.tpl?v2  ==> path/to/a.tpl?v2#text#
+    m = id.match(/[^?]+(\.\w+)/)
+    if (m) {
+      data.id = id + "#" + getPluginName(m[1]) + "#"
     }
-
-    // Prevents adding the default `.js` extension
-    if (pluginName && !/\?|#$/.test(parsedId)) {
-      parsedId += '#'
-    }
-
-
-    // Don't pollute id when pluginName is not found
-    var uri = _resolve(pluginName ? parsedId : id, refUri)
-
-    if (isPlugin(pluginName) && !uriCache[uri]) {
-      uriCache[uri] = pluginName
-    }
-
-    return uri
   })
 
 
-  seajs.on('request', function(data) {
-    var url = data.uri
-    var pluginName = uriCache[url]
+  seajs.on("request", function(data) {
+    var uri = data.uri
+    var m = uri.match(/^(.+)#(\w+)$/)
 
-    if (pluginName) {
-      pluginsInfo[pluginName].fetch(url, data.callback, data.charset)
+    if (m && isPlugin(m[2])) {
+      xhr(uri, function(data) {
+        plugins[m[2]].exec(data)
+        data.callback()
+      })
+
       data.requested = true
     }
   })
@@ -101,10 +67,21 @@ define("{seajs}/plugin-text", [], function(require, exports) {
 
   // Helpers
 
-  var global = this
-
   function isPlugin(name) {
-    return name && pluginsInfo.hasOwnProperty(name)
+    return name && plugins.hasOwnProperty(name)
+  }
+
+  function getPluginName(ext) {
+    for (var k in plugins) {
+
+      if (isPlugin(k)) {
+        var exts = "," + plugins[k].ext.join(",") + ","
+        if (exts.indexOf("," + ext + ",") > -1) {
+          return k
+        }
+      }
+
+    }
   }
 
   function xhr(url, callback) {
@@ -147,5 +124,5 @@ define("{seajs}/plugin-text", [], function(require, exports) {
         .replace(/[\u2029]/g, "\\u2029")
   }
 
-});
+})(this);
 
