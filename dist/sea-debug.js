@@ -338,8 +338,9 @@ function isTopLevel(id) {
 
 
 var doc = document
+var loc = global.location
 
-var pageUri = (function(loc) {
+var pageUri = (function() {
   var pathname = loc.pathname
 
   // Normalize pathname to start with "/"
@@ -356,7 +357,7 @@ var pageUri = (function(loc) {
   }
 
   return pageUri
-})(global.location)
+})()
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajs-node") || (function() {
@@ -586,16 +587,16 @@ function parseDependencies(code) {
 var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
-  "LOADING": 1,   // The module file is loading
-  "SAVED": 2,     // The module data has been saved to cachedModules
-  "LOADED": 3,    // The module and all its dependencies are ready to compile
-  "COMPILING": 4, // The module is being compiled
-  "COMPILED": 5   // The module is compiled and `module.exports` is available
+  "INITIALIZED": 1, // The module is initialized
+  "SAVED": 2,       // The module data has been saved to cachedModules
+  "LOADED": 3,      // The module and all its dependencies are ready to compile
+  "COMPILING": 4,   // The module is being compiled
+  "COMPILED": 5     // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
   this.uri = uri
-  this.status = status || STATUS.LOADING
+  this.status = status || STATUS.INITIALIZED
   this.dependencies = []
   this.waitings = []
 }
@@ -955,19 +956,15 @@ function printCircularLog(stack) {
 
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
-function preload(callback) {
-  var preloadModules = configData.preload
-  var len = preloadModules.length
-
-  len ? globalModule.load(preloadModules.splice(0, len), callback) :
-      callback()
-}
-
 seajs.use = function(ids, callback) {
+  var preloadMods = configData.preload
+  configData.preload = []
+
   // Load preload modules before all other modules
-  preload(function() {
+  globalModule.load(preloadMods, function() {
     globalModule.load(ids, callback)
   })
+
   return seajs
 }
 
@@ -978,7 +975,7 @@ global.define = define
  * config.js - The configuration for the loader
  */
 
-var configData = {
+var configData = config.data = {
   // The root path to use for id2uri parsing
   base: (function() {
     var ret = dirname(loaderUri)
@@ -1001,16 +998,24 @@ var configData = {
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
   // preload - Modules that are needed to load before all other modules
+  // plugins - An array containing needed plugins
 }
 
-seajs.config = function(obj) {
-  for (var key in obj) {
-    if (hasOwn(obj, key)) {
+function config(data) {
+  for (var key in data) {
+    var curr = data[key]
+
+    if (hasOwn(data, key) && curr !== undefined) {
+      // Convert plugins to preload config
+      if (key === "plugins") {
+        key = "preload"
+        curr = plugin2preload(curr)
+      }
 
       var prev = configData[key]
-      var curr = obj[key]
 
-      if (prev && (key === "alias" || key === "vars")) {
+      // For alias, vars
+      if (prev && /alias|vars/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
@@ -1023,28 +1028,39 @@ seajs.config = function(obj) {
           }
         }
       }
-      else if (prev && (key === "map" || key === "preload")) {
-        if (!isArray(curr)) {
-          curr = [curr]
-        }
-        configData[key] = prev.concat(curr)
-      }
       else {
+        // For map, preload
+        if (isArray(prev)) {
+          curr = prev.concat(curr)
+        }
+
+        // Set config
         configData[key] = curr
+
+        // Make sure that `configData.base` is an absolute path
+        if (key === 'base') {
+          makeBaseAbsolute()
+        }
       }
     }
-  }
-
-  // Make sure that `configData.base` is an absolute path
-  if (obj && obj.base) {
-    makeBaseAbsolute()
   }
 
   return seajs
 }
 
-seajs.config.data = configData
+seajs.config = config
 
+
+function plugin2preload(arr) {
+  var ret = [], name
+  isArray(arr) || (arr = [arr])
+
+  while ((name = arr.shift())) {
+    ret.push('{seajs}/plugin-' + name)
+  }
+
+  return ret
+}
 
 function checkConfigConflict(prev, curr, k, key) {
   if (prev !== curr) {
@@ -1066,43 +1082,41 @@ function makeBaseAbsolute() {
  * bootstrap.js - Initialize the plugins and load the entry module
  */
 
-var preloadMods = getBootstrapPlugins()
 var dataConfig = loaderScript.getAttribute("data-config")
 var dataMain = loaderScript.getAttribute("data-main")
 
-if (dataConfig) {
-  preloadMods.push(dataConfig)
-}
-
-seajs.config({
+config({
   // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
   vars: { seajs: dirname(loaderUri) },
 
-  // Preload all initial plugins
-  preload: preloadMods
-})
+  // Add data-config to preload modules
+  preload: dataConfig ? [dataConfig] : undefined,
 
-if (dataMain) {
-  seajs.use(dataMain)
-}
+  // Load initial plugins
+  plugins: getBootstrapPlugins()
+})
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
   var ret = []
-  var str = global.location.search
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
-  str = str.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
+  var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
   // Add cookie string
   str += " " + doc.cookie
 
   // Exclude seajs-xxx=0
   str.replace(/seajs-(\w+)=1/g, function(m, name) {
-    ret.push("{seajs}/plugin-" + name)
+    ret.push(name)
   })
 
-  return unique(ret)
+  return ret.length ? unique(ret) : undefined
+}
+
+
+if (dataMain) {
+  seajs.use(dataMain)
 }
 
 
