@@ -4,6 +4,7 @@
 (function(global) {
 
   var plugins = {}
+  var uriCache = {}
 
   function addPlugin(o) {
     plugins[o.name] = o
@@ -31,35 +32,38 @@
     }
   })
 
-
   seajs.on("resolve", function(data) {
     var id = data.id
     var pluginName
     var m
 
-    // text!path/to/some ==> path/to/some!text#
+    // text!path/to/some.xx
     if ((m = id.match(/^(\w+)!(.+)$/)) && isPlugin(m[1])) {
       pluginName = m[1]
       id = m[2]
     }
-    // path/to/a.tpl?v2  ==> path/to/a.tpl?v2!text#
+    // path/to/a.html
+    // path/to/c.tpl?v2
     else if ((m = id.match(/[^?]+(\.\w+)/))) {
       pluginName = getPluginName(m[1])
     }
 
     if (pluginName) {
-      data.id = normalize(id) + "!" + pluginName + "#"
+      var uri = data.id2Uri(id, data.refUri)
+      uri = uri.replace(/\.js$/, "")
+
+      uriCache[uri] = pluginName
+      data.id = addEndTag(uri)
     }
   })
 
-
   seajs.on("request", function(data) {
     var uri = data.uri
-    var m = uri.match(/^(.+)!(\w+)$/)
+    var name = uriCache[uri]
 
-    if (m && isPlugin(m[2])) {
-      xhr(m[1], function(content) {
-        plugins[m[2]].exec(content)
+    if (name) {
+      xhr(uri, function(content) {
+        plugins[name].exec(content)
         data.callback()
       })
 
@@ -87,10 +91,9 @@
     }
   }
 
-  function normalize(id) {
-    var lastChar = id.charAt(id.length - 1)
-    if (lastChar === "#") {
-      id = id.slice(0, -1)
+  function addEndTag(id) {
+    if (!/\?|#$/.test(id)) {
+      id += "#"
     }
     return id
   }

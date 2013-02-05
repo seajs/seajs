@@ -47,7 +47,10 @@ function resolve(ids, refUri) {
     return ret
   }
 
-  var id = emitData("resolve", { id: ids }, "id")
+  var id = emitData("resolve",
+      { id: ids, refUri: refUri, id2Uri: id2Uri },
+      "id")
+
   return id2Uri(id, refUri)
 }
 
