@@ -200,10 +200,10 @@ function define(id, deps, factory) {
 
     if (script && script.src) {
       derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData("derived", { uri: derivedUri }, 'uri')
+      derivedUri = emitData("derived", { uri: derivedUri }, "uri")
     }
     else {
-      log("Failed to derive script:", factory)
+      log("Failed to derive script: " + factory)
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
@@ -366,7 +366,7 @@ function cutWaitings(waitings) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log("Found circular dependencies:", stack.join(" --> "))
+  log("Found circular dependencies: " + stack.join(" --> "))
 }
 
 
