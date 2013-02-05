@@ -1,5 +1,5 @@
 /*
- SeaJS v2.0.0-beta | seajs.org/license
+ SeaJS v2.0.0-beta | seajs.org/LICENSE.md
 */
 'use strict';(function(t,p){function A(b){return"function"===typeof b}function I(b){for(var c={},a=[],d=0,f=b.length;d<f;d++){var j=b[d];1!==c[j]&&(c[j]=1,a.push(j))}return a}function J(b,c,a){B(b,c);return c[a]}function K(b){b=b.match(ca);return(b?b[0]:".")+"/"}function R(b,c){if(!b)return"";var a=b,d=m.alias,f;if(f=d)if(f=C.call(d,a)){f=a;var j=f.charAt(0);f=-1===f.indexOf("://")&&"."!==j&&"/"!==j}f&&(a=d[a]);var L=m.vars;L&&-1<a.indexOf("{")&&(a=a.replace(da,function(a,b){return C.call(L,b)?L[b]:
 "{"+b+"}"}));d=c||D;0<a.indexOf("://")||0===a.indexOf("//")||(0===a.indexOf("./")||0===a.indexOf("../")?(0===a.indexOf("./")&&(a=a.substring(2)),a=K(d)+a):a="/"===a.charAt(0)&&"/"!==a.charAt(1)?d.match(ea)[1]+a:m.base+a);7<a.lastIndexOf("//")&&(a=a.replace(fa,"$1/"));if(-1!==a.indexOf(".")){d=a.split("/");f=[];for(var e=0;e<d.length;e++)if(j=d[e],".."===j){if(0===f.length)throw Error("The path is invalid: "+a);f.pop()}else"."!==j&&f.push(j);a=f.join("/")}"#"===a.charAt(a.length-1)?a=a.slice(0,-1):

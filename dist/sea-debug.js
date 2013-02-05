@@ -1,5 +1,5 @@
 /**
- * @preserve SeaJS v2.0.0-beta | seajs.org/license
+ * @preserve SeaJS v2.0.0-beta | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 "use strict"
