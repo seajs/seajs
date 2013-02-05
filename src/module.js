@@ -5,16 +5,16 @@
 var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
-  "LOADING": 1,   // The module file is loading
-  "SAVED": 2,     // The module data has been saved to cachedModules
-  "LOADED": 3,    // The module and all its dependencies are ready to compile
-  "COMPILING": 4, // The module is being compiled
-  "COMPILED": 5   // The module is compiled and `module.exports` is available
+  "INITIALIZED": 1, // The module is initialized
+  "SAVED": 2,       // The module data has been saved to cachedModules
+  "LOADED": 3,      // The module and all its dependencies are ready to compile
+  "COMPILING": 4,   // The module is being compiled
+  "COMPILED": 5     // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
   this.uri = uri
-  this.status = status || STATUS.LOADING
+  this.status = status || STATUS.INITIALIZED
   this.dependencies = []
   this.waitings = []
 }
@@ -25,9 +25,9 @@ Module.prototype.load = function(ids, callback) {
   load(uris, function() {
     var exports = []
 
-    forEach(uris, function(uri, i) {
-      exports[i] = compile(cachedModules[uri])
-    })
+    for (var i = 0, len = uris.length; i < len; i++) {
+      exports[i] = compile(cachedModules[uris[i]])
+    }
 
     if (callback) {
       callback.apply(global, exports)
@@ -200,10 +200,10 @@ function define(id, deps, factory) {
 
     if (script && script.src) {
       derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData("derived", { uri: derivedUri })
+      derivedUri = emitData("derived", { uri: derivedUri }, "uri")
     }
     else {
-      log("Failed to derive script URI: ", factory.toString())
+      log("Failed to derive script: " + factory)
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
@@ -314,11 +314,13 @@ function getModule(uri, status) {
 function getUnloadedUris(uris) {
   var ret = []
 
-  forEach(uris, function(uri) {
+  for (var i = 0, len = uris.length; i < len; i++) {
+    var uri = uris[i]
     if (uri && getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
     }
-  })
+  }
+
   return ret
 }
 
@@ -364,7 +366,7 @@ function cutWaitings(waitings) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log("Found circular dependencies:", stack.join(" --> "))
+  log("Found circular dependencies: " + stack.join(" --> "))
 }
 
 
@@ -372,19 +374,15 @@ function printCircularLog(stack) {
 
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
-function preload(callback) {
-  var preloadModules = configData.preload
-  var len = preloadModules.length
-
-  len ? globalModule.load(preloadModules.splice(0, len), callback) :
-      callback()
-}
-
 seajs.use = function(ids, callback) {
+  var preloadMods = configData.preload
+  configData.preload = []
+
   // Load preload modules before all other modules
-  preload(function() {
+  globalModule.load(preloadMods, function() {
     globalModule.load(ids, callback)
   })
+
   return seajs
 }
 

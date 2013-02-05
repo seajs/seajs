@@ -2,7 +2,7 @@
  * config.js - The configuration for the loader
  */
 
-var configData = {
+var configData = config.data = {
   // The root path to use for id2uri parsing
   base: (function() {
     var ret = dirname(loaderUri)
@@ -25,16 +25,24 @@ var configData = {
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
   // preload - Modules that are needed to load before all other modules
+  // plugins - An array containing needed plugins
 }
 
-seajs.config = function(obj) {
-  for (var key in obj) {
-    if (hasOwn(obj, key)) {
+function config(data) {
+  for (var key in data) {
+    var curr = data[key]
+
+    if (hasOwn(data, key) && curr !== undefined) {
+      // Convert plugins to preload config
+      if (key === "plugins") {
+        key = "preload"
+        curr = plugin2preload(curr)
+      }
 
       var prev = configData[key]
-      var curr = obj[key]
 
-      if (prev && (key === "alias" || key === "vars")) {
+      // For alias, vars
+      if (prev && /alias|vars/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
@@ -47,31 +55,39 @@ seajs.config = function(obj) {
           }
         }
       }
-      else if (prev && (key === "map" || key === "preload")) {
-        if (!isArray(curr)) {
-          curr = [curr]
+      else {
+        // For map, preload
+        if (isArray(prev)) {
+          curr = prev.concat(curr)
         }
 
-        forEach(curr, function(item) {
-          prev.push(item)
-        })
-      }
-      else {
+        // Set config
         configData[key] = curr
+
+        // Make sure that `configData.base` is an absolute path
+        if (key === 'base') {
+          makeBaseAbsolute()
+        }
       }
     }
-  }
-
-  // Make sure that `configData.base` is an absolute path
-  if (obj && obj.base) {
-    makeBaseAbsolute()
   }
 
   return seajs
 }
 
-seajs.config.data = configData
+seajs.config = config
 
+
+function plugin2preload(arr) {
+  var ret = [], name
+  isArray(arr) || (arr = [arr])
+
+  while ((name = arr.shift())) {
+    ret.push('{seajs}/plugin-' + name)
+  }
+
+  return ret
+}
 
 function checkConfigConflict(prev, curr, k, key) {
   if (prev !== curr) {

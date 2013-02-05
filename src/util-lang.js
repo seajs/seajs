@@ -2,54 +2,33 @@
  * util-lang.js - The minimal language enhancement
  */
 
-var ARRAY = []
-var OBJECT = {}
-var toString = OBJECT.toString
-var hasOwnProperty = OBJECT.hasOwnProperty
-var slice = ARRAY.slice
+var hasOwnProperty = {}.hasOwnProperty
 
 function hasOwn(obj, prop) {
   return hasOwnProperty.call(obj, prop)
 }
 
 function isFunction(obj) {
-  return toString.call(obj) === "[object Function]"
+  return typeof obj === "function"
 }
 
 var isArray = Array.isArray || function(obj) {
-  return toString.call(obj) === "[object Array]"
-}
-
-var forEach = ARRAY.forEach ?
-    function(arr, fn) {
-      arr.forEach(fn)
-    } :
-    function(arr, fn) {
-      for (var i = 0, len = arr.length; i < len; i++) {
-        fn(arr[i], i, arr)
-      }
-    }
-
-var keys = Object.keys || function(obj) {
-  var ret = []
-
-  for (var p in obj) {
-    if (hasOwn(obj, p)) {
-      ret.push(p)
-    }
-  }
-
-  return ret
+  return obj instanceof Array
 }
 
 function unique(arr) {
   var obj = {}
+  var ret = []
 
-  forEach(arr, function(item) {
-    obj[item] = 1
-  })
+  for (var i = 0, len = arr.length; i < len; i++) {
+    var item = arr[i]
+    if (obj[item] !== 1) {
+      obj[item] = 1
+      ret.push(item)
+    }
+  }
 
-  return keys(obj)
+  return ret
 }
 
 

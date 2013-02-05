@@ -7,8 +7,7 @@ define(function(require) {
   assert(seajs.log('seajs.log test', 'group') === undefined, 'group')
 
   assert(seajs.log('a') === undefined, 'log')
-  assert(seajs.log('a', 'b') === undefined, 'log')
-  assert(seajs.log('a', 'b', 1) === undefined, 'log')
+  assert(seajs.log('a ' + 1) === undefined, 'log')
 
   assert(seajs.log('a', 'warn') === undefined, 'warn')
   assert(seajs.log('a', 'info') === undefined, 'info')

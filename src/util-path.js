@@ -180,8 +180,9 @@ function isTopLevel(id) {
 
 
 var doc = document
+var loc = global.location
 
-var pageUri = (function(loc) {
+var pageUri = (function() {
   var pathname = loc.pathname
 
   // Normalize pathname to start with "/"
@@ -198,7 +199,7 @@ var pageUri = (function(loc) {
   }
 
   return pageUri
-})(global.location)
+})()
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajs-node") || (function() {
