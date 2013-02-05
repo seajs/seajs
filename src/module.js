@@ -47,7 +47,8 @@ function resolve(ids, refUri) {
     return ret
   }
 
-  return id2Uri(ids, refUri)
+  var id = emitData("resolve", { id: ids }, "id")
+  return emitData("resolved", { uri: id2Uri(id, refUri) }, "uri")
 }
 
 function load(uris, callback, options) {
