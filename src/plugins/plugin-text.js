@@ -15,8 +15,8 @@
 
     ext: [".tpl", ".htm", ".html"],
 
-    exec: function(data) {
-      globalEval('define("' + jsEscape(data) + '")')
+    exec: function(content) {
+      globalEval('define("' + jsEscape(content) + '")')
     }
   })
 
@@ -26,37 +26,40 @@
 
     ext: [".json"],
 
-    exec: function(data) {
-      globalEval("define(" + data + ")")
+    exec: function(content) {
+      globalEval("define(" + content + ")")
     }
   })
 
 
   seajs.on("resolve", function(data) {
     var id = data.id
+    var pluginName
+    var m
 
-    // text!path/to/some ==> path/to/some#text#
-    var m = id.match(/^(\w+)!(.+)$/)
-    if (m && isPlugin(m[1])) {
-      data.id = m[2] + "#" + m[1] + "#"
-      return
+    // text!path/to/some ==> path/to/some!text#
+    if ((m = id.match(/^(\w+)!(.+)$/)) && isPlugin(m[1])) {
+      pluginName = m[1]
+      id = m[2]
+    }
+    // path/to/a.tpl?v2  ==> path/to/a.tpl?v2!text#
+    else if ((m = id.match(/[^?]+(\.\w+)/))) {
+      pluginName = getPluginName(m[1])
     }
 
-    // path/to/a.tpl?v2  ==> path/to/a.tpl?v2#text#
-    m = id.match(/[^?]+(\.\w+)/)
-    if (m) {
-      data.id = id + "#" + getPluginName(m[1]) + "#"
+    if (pluginName) {
+      data.id = normalize(id) + "!" + pluginName + "#"
     }
   })
 
 
   seajs.on("request", function(data) {
     var uri = data.uri
-    var m = uri.match(/^(.+)#(\w+)$/)
+    var m = uri.match(/^(.+)!(\w+)$/)
 
     if (m && isPlugin(m[2])) {
-      xhr(uri, function(data) {
-        plugins[m[2]].exec(data)
+      xhr(m[1], function(content) {
+        plugins[m[2]].exec(content)
         data.callback()
       })
 
@@ -82,6 +85,14 @@
       }
 
     }
+  }
+
+  function normalize(id) {
+    var lastChar = id.charAt(id.length - 1)
+    if (lastChar === "#") {
+      id = id.slice(0, -1)
+    }
+    return id
   }
 
   function xhr(url, callback) {
