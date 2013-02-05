@@ -58,26 +58,16 @@ function unique(arr) {
 // The safe wrapper for `console.xxx` functions
 // log("message") ==> console.log("message")
 // log("message", "warn") ==> console.warn("message")
-var log = seajs.log = function() {
+var log = seajs.log = function(msg, type) {
   var console = global.console
 
-  if (console === undefined) {
-    return
+  if (console) {
+    // Do NOT print `log(msg)` in non-debug mode
+    if (type || configData.debug) {
+      console[type || "log"](msg)
+    }
   }
 
-  var args = [].slice.call(arguments)
-  var len = args.length
-  var type = console[args[len - 1]] ? args.pop() : "log"
-
-  // Print log info in debug mode only
-  if (type === "log" && !configData.debug) {
-    return
-  }
-
-  var fn = console[type]
-
-  // The console function has no `apply` method in IE6-9
-  fn = fn.apply ? fn.apply(console, args) : fn(args.join(' '))
 }
 
 
@@ -782,10 +772,10 @@ function define(id, deps, factory) {
 
     if (script && script.src) {
       derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData("derived", { uri: derivedUri }, 'uri')
+      derivedUri = emitData("derived", { uri: derivedUri }, "uri")
     }
     else {
-      log("Failed to derive script:", factory)
+      log("Failed to derive script: " + factory)
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
@@ -948,7 +938,7 @@ function cutWaitings(waitings) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log("Found circular dependencies:", stack.join(" --> "))
+  log("Found circular dependencies: " + stack.join(" --> "))
 }
 
 
