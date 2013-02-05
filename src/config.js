@@ -25,14 +25,21 @@ var configData = config.data = {
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
   // preload - Modules that are needed to load before all other modules
+  // plugins - An array containing needed plugins
 }
 
 function config(data) {
   for (var key in data) {
-    if (hasOwn(data, key)) {
+    var curr = data[key]
+
+    if (hasOwn(data, key) && curr !== undefined) {
+      // Convert plugins to preload config
+      if (key === "plugins") {
+        key = "preload"
+        curr = plugin2preload(curr)
+      }
 
       var prev = configData[key]
-      var curr = data[key]
 
       // For alias, vars
       if (prev && /alias|vars/.test(key)) {
@@ -62,7 +69,6 @@ function config(data) {
           makeBaseAbsolute()
         }
       }
-
     }
   }
 
@@ -71,6 +77,17 @@ function config(data) {
 
 seajs.config = config
 
+
+function plugin2preload(arr) {
+  var ret = [], name
+  isArray(arr) || (arr = [arr])
+
+  while ((name = arr.shift())) {
+    ret.push('{seajs}/plugin-' + name)
+  }
+
+  return ret
+}
 
 function checkConfigConflict(prev, curr, k, key) {
   if (prev !== curr) {
