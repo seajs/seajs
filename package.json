@@ -18,6 +18,5 @@
     "type": "git",
     "url" : "git://github.com/seajs/seajs.git"
   },
-  "main": "./lib/sea-node.js",
-  "preferGlobal": true
+  "main": "./lib/sea-node.js"
 }
