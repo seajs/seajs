@@ -1,5 +1,3 @@
-define(function(require, exports, module) {
-
-  exports.uri = module.uri;
-
+define(function(require, exports, mod) {
+  exports.uri = mod.uri
 });

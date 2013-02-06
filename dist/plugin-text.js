@@ -92,13 +92,6 @@
     }
   }
 
-  function addEndTag(id) {
-    if (!/\?|#$/.test(id)) {
-      id += "#"
-    }
-    return id
-  }
-
   function xhr(url, callback) {
     var r = global.ActiveXObject ?
         new global.ActiveXObject("Microsoft.XMLHTTP") :
