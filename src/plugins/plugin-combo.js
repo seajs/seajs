@@ -11,16 +11,20 @@
   seajs.on("config", initCombo)
 
   function initCombo() {
+    detachEvents()
+
     if (configData.debug) {
       seajs.log("Combo is turned off in debug mode")
-      seajs.off("load", setComboHash)
-      seajs.off("fetch", setRequestUri)
+      return
     }
-    else {
-      // Add combo support via events
-      seajs.on("load", setComboHash)
-      seajs.on("fetch", setRequestUri)
-    }
+
+    seajs.on("load", setComboHash)
+    seajs.on("fetch", setRequestUri)
+  }
+
+  function detachEvents() {
+    seajs.off("load", setComboHash)
+    seajs.off("fetch", setRequestUri)
   }
 
   function setComboHash(uris) {

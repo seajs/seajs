@@ -63,7 +63,7 @@ var log = seajs.log = function(msg, type) {
   if (console) {
     // Do NOT print `log(msg)` in non-debug mode
     if (type || configData.debug) {
-      console[type || "log"](msg)
+      (console[type] || console["log"]).call(console, msg)
     }
   }
 
@@ -577,10 +577,11 @@ var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
   "INITIALIZED": 1, // The module is initialized
-  "SAVED": 2,       // The module data has been saved to cachedModules
-  "LOADED": 3,      // The module and all its dependencies are ready to compile
-  "COMPILING": 4,   // The module is being compiled
-  "COMPILED": 5     // The module is compiled and `module.exports` is available
+  "FETCHING": 2,    // The module file is being fetched now
+  "SAVED": 3,       // The module data has been saved to cachedModules
+  "LOADED": 4,      // The module and all its dependencies are ready to compile
+  "COMPILING": 5,   // The module is being compiled
+  "COMPILED": 6     // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
@@ -694,6 +695,8 @@ var callbackList = {}
 var anonymousModuleMeta = null
 
 function fetch(uri, callback) {
+  cachedModules[uri].status = STATUS.FETCHING
+
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
   var requestUri = emitData("fetch",
@@ -1011,7 +1014,7 @@ function config(data) {
       var prev = configData[key]
 
       // For alias, vars
-      if (prev && /alias|vars/.test(key)) {
+      if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
@@ -1026,7 +1029,7 @@ function config(data) {
       }
       else {
         // For map, preload
-        if (isArray(prev)) {
+        if (isArray(prev) && /^(?:map|preload)$/.test(key)) {
           curr = prev.concat(curr)
         }
 
@@ -1041,6 +1044,7 @@ function config(data) {
     }
   }
 
+  emit("config", configData)
   return seajs
 }
 
