@@ -1,7 +1,7 @@
 /**
  * Disable cache by adding a timestamp to each http request
  */
-(function() {
+(function(seajs) {
 
   var noCachePrefix = "seajs-nocache="
   var noCacheTimeStamp = noCachePrefix + new Date().getTime()
@@ -27,5 +27,5 @@
     data.uri = uriCache[requestUri] || requestUri
   })
 
-})();
+})(seajs);
 

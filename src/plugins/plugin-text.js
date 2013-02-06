@@ -1,7 +1,7 @@
 /**
  * The plugin to load text resources such as template, json
  */
-(function(global) {
+(function(seajs, global) {
 
   var plugins = {}
   var uriCache = {}
@@ -132,5 +132,5 @@
         .replace(/[\u2029]/g, "\\u2029")
   }
 
-})(this);
+})(seajs, this);
 
