@@ -124,6 +124,8 @@ var callbackList = {}
 var anonymousModuleMeta = null
 
 function fetch(uri, callback) {
+  cachedModules[uri].status = STATUS.FETCHING
+
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
   var requestUri = emitData("fetch",
@@ -140,7 +142,6 @@ function fetch(uri, callback) {
     return
   }
 
-  getModule(uri).status = STATUS.FETCHING
   fetchingList[requestUri] = true
   callbackList[requestUri] = [callback]
 
