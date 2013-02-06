@@ -115,24 +115,17 @@ seajs.off = function(event, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-var emit = seajs.emit = function(event) {
-  var list = eventsCache[event]
-  if (!list) return seajs
+var emit = seajs.emit = function(event, data) {
+  var list = eventsCache[event], fn
 
-  var args = []
+  if (list) {
+    // Copy callback lists to prevent modification
+    list = list.slice()
 
-  // Fill up `args` with the callback arguments.  Since we're only copying
-  // the tail of `arguments`, a loop is much faster than Array#slice
-  for (var i = 1, len = arguments.length; i < len; i++) {
-    args[i - 1] = arguments[i]
-  }
-
-  // Copy callback lists to prevent modification
-  list = list.slice()
-
-  // Execute event callbacks
-  for (i = 0, len = list.length; i < len; i++) {
-    list[i].apply(global, args)
+    // Execute event callbacks
+    while ((fn = list.shift())) {
+      fn(data)
+    }
   }
 
   return seajs
