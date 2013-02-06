@@ -350,8 +350,8 @@ var loaderScript = doc.getElementById("seajs-node") || (function() {
       doc.createElement("script")
 })()
 
-var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
-    pageUri // When `sea.js` is inline, loaderUri is pageUri
+// When `sea.js` is inline, set loaderDir according to pageUri
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || pageUri)
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
@@ -810,7 +810,7 @@ function save(uri, meta) {
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
 
-    // Emit `saved` event for plugins such as plugin-warning
+    // Emit event for plugin-warning etc
     emit("saved", mod)
   }
 }
@@ -972,7 +972,7 @@ global.define = define
 var configData = config.data = {
   // The root path to use for id2uri parsing
   base: (function() {
-    var ret = dirname(loaderUri)
+    var ret = loaderDir
 
     // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
     // should be `http://test.com/libs/`
@@ -1051,7 +1051,7 @@ function plugin2preload(arr) {
   isArray(arr) || (arr = [arr])
 
   while ((name = arr.shift())) {
-    ret.push("{seajs}/plugin-" + name)
+    ret.push(loaderDir + "plugin-" + name)
   }
 
   return ret
@@ -1081,15 +1081,16 @@ var dataConfig = loaderScript.getAttribute("data-config")
 var dataMain = loaderScript.getAttribute("data-main")
 
 config({
-  // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
-  vars: { seajs: dirname(loaderUri) },
-
   // Add data-config to preload modules
   preload: dataConfig ? [dataConfig] : undefined,
 
   // Load initial plugins
   plugins: getBootstrapPlugins()
 })
+
+if (dataMain) {
+  seajs.use(dataMain)
+}
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
@@ -1109,9 +1110,5 @@ function getBootstrapPlugins() {
   return ret.length ? unique(ret) : undefined
 }
 
-
-if (dataMain) {
-  seajs.use(dataMain)
-}
 
 })(this);
