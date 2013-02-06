@@ -808,7 +808,6 @@ function save(uri, meta) {
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
-
     // Let anonymous module id equal to its uri
     mod.id = meta.id || uri
 
@@ -817,6 +816,9 @@ function save(uri, meta) {
 
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
+
+    // Emit `saved` event for plugins such as plugin-warning
+    emit("saved", mod)
   }
 }
 
