@@ -5,7 +5,6 @@
 
   var plugins = {}
   var uriCache = {}
-  var ID_END_RE = /\.(?:css|js)\W|\/$/
 
   function addPlugin(o) {
     plugins[o.name] = o
@@ -43,19 +42,22 @@
       pluginName = m[1]
       id = m[2]
     }
-    // path/to/a.html
-    // path/to/c.tpl?v2
-    else if (!ID_END_RE.test(id) && (m = id.match(/[^?]+(\.\w+)/))) {
+
+    var uri = data.id2Uri(id, data.refUri)
+    var t = uri.replace(/\.(?:js|css)(\?|$)/, "$1")
+
+    // http://path/to/a.tpl
+    // http://path/to/c.json?v2
+    if (!pluginName && (m = t.match(/[^?]+(\.\w+)(?:\?|$)/))) {
       pluginName = getPluginName(m[1])
     }
 
     if (pluginName) {
-      var uri = data.id2Uri(id, data.refUri)
       uri = uri.replace(/\.js$/, "")
-
       uriCache[uri] = pluginName
-      data.id = addEndTag(uri)
     }
+
+    data.uri = uri
   })
 
   seajs.on("request", function(data) {
