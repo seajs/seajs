@@ -1,25 +1,17 @@
 /**
- * Display warning messages in console according to your rules.
+ * Display warning messages in console to discover potential errors
  */
-define('{seajs}/plugin-warning', [], function() {
-
-  var pluginSDK = seajs.pluginSDK
-  var Module = pluginSDK.Module
-
-
-  // Hack _save method
-  var _save = Module._save
-  Module._save = function(uri, meta) {
-    checkMultiVersion(uri)
-    _save(uri, meta)
-  }
-
+(function(seajs) {
 
   var uriCache = {}
   var RE_VERSION = /(?:\d+\.)+\d+/
 
+  seajs.on("saved", checkMultiVersion)
+
+
   // Only support this version style: `zz/1.2.3/xx` or `zz/xx-1.2.3.js`
-  function checkMultiVersion(uri) {
+  function checkMultiVersion(mod) {
+    var uri = mod.uri
     if (!RE_VERSION.test(uri)) return
 
     var key = uri.replace(RE_VERSION, '{{version}}')
@@ -32,8 +24,5 @@ define('{seajs}/plugin-warning', [], function() {
     }
   }
 
-})
-
-// Runs it immediately
-seajs.use('{seajs}/plugin-warning');
+})(seajs);
 
