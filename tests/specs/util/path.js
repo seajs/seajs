@@ -73,7 +73,6 @@ define(function(require) {
 
 
   var pageDir = dirname(pageUri)
-  var loaderDir = dirname(loaderUri)
 
   assert(addBase('http://a.com/b.js') === 'http://a.com/b.js', 'addBase')
   assert(addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/a.js', 'addBase')
