@@ -42,7 +42,7 @@ function config(data) {
       var prev = configData[key]
 
       // For alias, vars
-      if (prev && /alias|vars/.test(key)) {
+      if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
@@ -57,7 +57,7 @@ function config(data) {
       }
       else {
         // For map, preload
-        if (isArray(prev)) {
+        if (isArray(prev) && /^(?:map|preload)$/.test(key)) {
           curr = prev.concat(curr)
         }
 
