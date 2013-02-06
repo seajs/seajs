@@ -6,10 +6,11 @@ var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
   "INITIALIZED": 1, // The module is initialized
-  "SAVED": 2,       // The module data has been saved to cachedModules
-  "LOADED": 3,      // The module and all its dependencies are ready to compile
-  "COMPILING": 4,   // The module is being compiled
-  "COMPILED": 5     // The module is compiled and `module.exports` is available
+  "FETCHING": 2,    // The module file is being fetched now
+  "SAVED": 3,       // The module data has been saved to cachedModules
+  "LOADED": 4,      // The module and all its dependencies are ready to compile
+  "COMPILING": 5,   // The module is being compiled
+  "COMPILED": 6     // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
@@ -139,6 +140,7 @@ function fetch(uri, callback) {
     return
   }
 
+  getModule(uri).status = STATUS.FETCHING
   fetchingList[requestUri] = true
   callbackList[requestUri] = [callback]
 
