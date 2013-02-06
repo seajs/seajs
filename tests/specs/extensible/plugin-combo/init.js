@@ -1,7 +1,7 @@
 define(function(require) {
 
-  var test = require('../../test')
-  var util = seajs.pluginSDK.util
+  var test = require('../../../test')
+  var util = seajs.test
 
 
   var uris = [
@@ -14,7 +14,7 @@ define(function(require) {
   // paths = [
   //           [ 'http://example.com/p', ['a.js', 'c/d.js', 'c/e.js'] ]
   //         ]
-  var paths = util.toComboPaths(uris)
+  var paths = util.uris2paths(uris)
   //console.dir(paths)
 
   test.assert(paths.length === 1, paths.length)
@@ -31,9 +31,8 @@ define(function(require) {
   //   'http://example.com/p/c/d.js' ==>'http://example.com/p/??a.js,c/d.js,c/e.js'
   //   'http://example.com/p/c/e.js' ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
   //
-  util.toComboHash(paths)
-  var hash = util.comboHash
-  console.dir(hash)
+  var hash = util.paths2hash(paths)
+  //console.dir(hash)
 
   var comboPath = 'http://example.com/p/??a.js,c/d.js,c/e.js'
   test.assert(hash['http://example.com/p/a.js'] === comboPath, hash['http://example.com/p/a.js'])
@@ -41,13 +40,13 @@ define(function(require) {
   test.assert(hash['http://example.com/p/c/e.js'] === comboPath, hash['http://example.com/p/c/e.js'])
 
 
-  // test seajs.use
+  // Test seajs.use
   seajs.config({
     comboSyntax: ['', '+'],
     comboExcludes: /x\.js/
   })
 
-  seajs.use(['./a', './b', './x'], function(a, b, x) {
+  seajs.use(['a', 'b', 'x'], function(a, b, x) {
     test.assert(a.name === 'a', a.name)
     test.assert(b.name === 'b', b.name)
     test.assert(x.name === 'x', x.name)
@@ -66,7 +65,7 @@ define(function(require) {
       done()
     })
 
-    // remove already fetching or fetched modules
+    // Remove already fetching or fetched modules
     require.async(['./l', './m', './c', './f', './a', './a.css'], function(l, m, c, f, a) {
       test.assert(l.name === 'l', l.name)
       test.assert(m.name === 'm', m.name)
@@ -79,9 +78,10 @@ define(function(require) {
     var count = 0
 
     function done() {
-      if (++count === 2) test.done()
+      if (++count === 2) test.next()
     }
 
   })
 
-})
+});
+

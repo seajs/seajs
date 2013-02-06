@@ -6,10 +6,11 @@ var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
   "INITIALIZED": 1, // The module is initialized
-  "SAVED": 2,       // The module data has been saved to cachedModules
-  "LOADED": 3,      // The module and all its dependencies are ready to compile
-  "COMPILING": 4,   // The module is being compiled
-  "COMPILED": 5     // The module is compiled and `module.exports` is available
+  "FETCHING": 2,    // The module file is being fetched now
+  "SAVED": 3,       // The module data has been saved to cachedModules
+  "LOADED": 4,      // The module and all its dependencies are ready to compile
+  "COMPILING": 5,   // The module is being compiled
+  "COMPILED": 6     // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
@@ -47,7 +48,10 @@ function resolve(ids, refUri) {
     return ret
   }
 
-  return id2Uri(ids, refUri)
+  var data = { id: ids, refUri: refUri, id2Uri: id2Uri }
+  var id = emitData("resolve", data, "id")
+
+  return data.uri || id2Uri(id, refUri)
 }
 
 function load(uris, callback, options) {
@@ -120,11 +124,13 @@ var callbackList = {}
 var anonymousModuleMeta = null
 
 function fetch(uri, callback) {
+  cachedModules[uri].status = STATUS.FETCHING
+
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
   var requestUri = emitData("fetch",
       { uri: uri, fetchedList: fetchedList },
-      "uri")
+      "requestUri") || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -139,14 +145,18 @@ function fetch(uri, callback) {
   fetchingList[requestUri] = true
   callbackList[requestUri] = [callback]
 
-  // Send request
+  // Emit `request` event and send request
   var charset = configData.charset
-  var requested = emitData("request",
-      { uri: requestUri, callback: onRequested, charset: charset },
-      "requested")
+  var data = {
+    uri: uri,
+    requestUri: requestUri,
+    callback: onRequested,
+    charset: charset
+  }
+  var requested = emitData("request", data, "requested")
 
   if (!requested) {
-    request(requestUri, onRequested, charset)
+    request(data.requestUri, onRequested, charset)
   }
 
   function onRequested() {
@@ -227,7 +237,6 @@ function save(uri, meta) {
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
-
     // Let anonymous module id equal to its uri
     mod.id = meta.id || uri
 
@@ -236,6 +245,9 @@ function save(uri, meta) {
 
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
+
+    // Emit event for plugin-warning etc
+    emit("saved", mod)
   }
 }
 

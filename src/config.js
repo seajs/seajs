@@ -5,7 +5,7 @@
 var configData = config.data = {
   // The root path to use for id2uri parsing
   base: (function() {
-    var ret = dirname(loaderUri)
+    var ret = loaderDir
 
     // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
     // should be `http://test.com/libs/`
@@ -42,7 +42,7 @@ function config(data) {
       var prev = configData[key]
 
       // For alias, vars
-      if (prev && /alias|vars/.test(key)) {
+      if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
@@ -57,7 +57,7 @@ function config(data) {
       }
       else {
         // For map, preload
-        if (isArray(prev)) {
+        if (isArray(prev) && /^(?:map|preload)$/.test(key)) {
           curr = prev.concat(curr)
         }
 
@@ -65,13 +65,14 @@ function config(data) {
         configData[key] = curr
 
         // Make sure that `configData.base` is an absolute path
-        if (key === 'base') {
+        if (key === "base") {
           makeBaseAbsolute()
         }
       }
     }
   }
 
+  emit("config", configData)
   return seajs
 }
 
@@ -83,7 +84,7 @@ function plugin2preload(arr) {
   isArray(arr) || (arr = [arr])
 
   while ((name = arr.shift())) {
-    ret.push('{seajs}/plugin-' + name)
+    ret.push(loaderDir + "plugin-" + name)
   }
 
   return ret

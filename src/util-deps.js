@@ -9,7 +9,7 @@ var SLASH_RE = /\\\\/g
 function parseDependencies(code) {
   var ret = [], m
   REQUIRE_RE.lastIndex = 0
-  code = code.replace(SLASH_RE, '')
+  code = code.replace(SLASH_RE, "")
 
   while ((m = REQUIRE_RE.exec(code))) {
     if (m[2]) ret.push(m[2])

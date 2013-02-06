@@ -1,4 +1,4 @@
-define('./c', function(require, exports) {
+define('c', function(require, exports) {
 
   exports.d = require('./d')
   exports.e = require('./e')
@@ -9,4 +9,4 @@ define('./c', function(require, exports) {
 
 })
 
-define('./f', { name: 'f' })
+define('f', { name: 'f' })

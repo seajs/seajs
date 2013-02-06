@@ -63,7 +63,7 @@ var log = seajs.log = function(msg, type) {
   if (console) {
     // Do NOT print `log(msg)` in non-debug mode
     if (type || configData.debug) {
-      console[type || "log"](msg)
+      (console[type] || console["log"]).call(console, msg)
     }
   }
 
@@ -115,24 +115,17 @@ seajs.off = function(event, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-var emit = seajs.emit = function(event) {
-  var list = eventsCache[event]
-  if (!list) return seajs
+var emit = seajs.emit = function(event, data) {
+  var list = eventsCache[event], fn
 
-  var args = []
+  if (list) {
+    // Copy callback lists to prevent modification
+    list = list.slice()
 
-  // Fill up `args` with the callback arguments.  Since we're only copying
-  // the tail of `arguments`, a loop is much faster than Array#slice
-  for (var i = 1, len = arguments.length; i < len; i++) {
-    args[i - 1] = arguments[i]
-  }
-
-  // Copy callback lists to prevent modification
-  list = list.slice()
-
-  // Execute event callbacks
-  for (i = 0, len = list.length; i < len; i++) {
-    list[i].apply(global, args)
+    // Execute event callbacks
+    while ((fn = list.shift())) {
+      fn(data)
+    }
   }
 
   return seajs
@@ -151,7 +144,7 @@ function emitData(event, data, prop) {
 
 var DIRNAME_RE = /[^?]*(?=\/.*$)/
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
-var URI_END_RE = /\.(?:css|js)|\/$/
+var URI_END_RE = /\?|\.(?:css|js)$|\/$/
 var ROOT_RE = /^(.*?:\/\/.*?)(?:\/|$)/
 var VARS_RE = /{([^{}]+)}/g
 
@@ -213,7 +206,7 @@ function normalize(uri) {
   if (lastChar === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri) && uri.indexOf("?") === -1) {
+  else if (!URI_END_RE.test(uri)) {
     uri += ".js"
   }
 
@@ -357,8 +350,8 @@ var loaderScript = doc.getElementById("seajs-node") || (function() {
       doc.createElement("script")
 })()
 
-var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
-    pageUri // When `sea.js` is inline, loaderUri is pageUri
+// When `sea.js` is inline, set loaderDir according to pageUri
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || pageUri)
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
@@ -559,7 +552,7 @@ var SLASH_RE = /\\\\/g
 function parseDependencies(code) {
   var ret = [], m
   REQUIRE_RE.lastIndex = 0
-  code = code.replace(SLASH_RE, '')
+  code = code.replace(SLASH_RE, "")
 
   while ((m = REQUIRE_RE.exec(code))) {
     if (m[2]) ret.push(m[2])
@@ -577,10 +570,11 @@ var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
   "INITIALIZED": 1, // The module is initialized
-  "SAVED": 2,       // The module data has been saved to cachedModules
-  "LOADED": 3,      // The module and all its dependencies are ready to compile
-  "COMPILING": 4,   // The module is being compiled
-  "COMPILED": 5     // The module is compiled and `module.exports` is available
+  "FETCHING": 2,    // The module file is being fetched now
+  "SAVED": 3,       // The module data has been saved to cachedModules
+  "LOADED": 4,      // The module and all its dependencies are ready to compile
+  "COMPILING": 5,   // The module is being compiled
+  "COMPILED": 6     // The module is compiled and `module.exports` is available
 }
 
 function Module(uri, status) {
@@ -618,7 +612,10 @@ function resolve(ids, refUri) {
     return ret
   }
 
-  return id2Uri(ids, refUri)
+  var data = { id: ids, refUri: refUri, id2Uri: id2Uri }
+  var id = emitData("resolve", data, "id")
+
+  return data.uri || id2Uri(id, refUri)
 }
 
 function load(uris, callback, options) {
@@ -691,11 +688,13 @@ var callbackList = {}
 var anonymousModuleMeta = null
 
 function fetch(uri, callback) {
+  cachedModules[uri].status = STATUS.FETCHING
+
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
   var requestUri = emitData("fetch",
       { uri: uri, fetchedList: fetchedList },
-      "uri")
+      "requestUri") || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -710,14 +709,18 @@ function fetch(uri, callback) {
   fetchingList[requestUri] = true
   callbackList[requestUri] = [callback]
 
-  // Send request
+  // Emit `request` event and send request
   var charset = configData.charset
-  var requested = emitData("request",
-      { uri: requestUri, callback: onRequested, charset: charset },
-      "requested")
+  var data = {
+    uri: uri,
+    requestUri: requestUri,
+    callback: onRequested,
+    charset: charset
+  }
+  var requested = emitData("request", data, "requested")
 
   if (!requested) {
-    request(requestUri, onRequested, charset)
+    request(data.requestUri, onRequested, charset)
   }
 
   function onRequested() {
@@ -798,7 +801,6 @@ function save(uri, meta) {
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
-
     // Let anonymous module id equal to its uri
     mod.id = meta.id || uri
 
@@ -807,6 +809,9 @@ function save(uri, meta) {
 
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
+
+    // Emit event for plugin-warning etc
+    emit("saved", mod)
   }
 }
 
@@ -967,7 +972,7 @@ global.define = define
 var configData = config.data = {
   // The root path to use for id2uri parsing
   base: (function() {
-    var ret = dirname(loaderUri)
+    var ret = loaderDir
 
     // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
     // should be `http://test.com/libs/`
@@ -1004,7 +1009,7 @@ function config(data) {
       var prev = configData[key]
 
       // For alias, vars
-      if (prev && /alias|vars/.test(key)) {
+      if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
 
@@ -1019,7 +1024,7 @@ function config(data) {
       }
       else {
         // For map, preload
-        if (isArray(prev)) {
+        if (isArray(prev) && /^(?:map|preload)$/.test(key)) {
           curr = prev.concat(curr)
         }
 
@@ -1027,13 +1032,14 @@ function config(data) {
         configData[key] = curr
 
         // Make sure that `configData.base` is an absolute path
-        if (key === 'base') {
+        if (key === "base") {
           makeBaseAbsolute()
         }
       }
     }
   }
 
+  emit("config", configData)
   return seajs
 }
 
@@ -1045,7 +1051,7 @@ function plugin2preload(arr) {
   isArray(arr) || (arr = [arr])
 
   while ((name = arr.shift())) {
-    ret.push('{seajs}/plugin-' + name)
+    ret.push(loaderDir + "plugin-" + name)
   }
 
   return ret
@@ -1075,15 +1081,16 @@ var dataConfig = loaderScript.getAttribute("data-config")
 var dataMain = loaderScript.getAttribute("data-main")
 
 config({
-  // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
-  vars: { seajs: dirname(loaderUri) },
-
   // Add data-config to preload modules
   preload: dataConfig ? [dataConfig] : undefined,
 
   // Load initial plugins
   plugins: getBootstrapPlugins()
 })
+
+if (dataMain) {
+  seajs.use(dataMain)
+}
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
@@ -1103,9 +1110,5 @@ function getBootstrapPlugins() {
   return ret.length ? unique(ret) : undefined
 }
 
-
-if (dataMain) {
-  seajs.use(dataMain)
-}
 
 })(this);

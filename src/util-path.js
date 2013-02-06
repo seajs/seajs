@@ -4,7 +4,7 @@
 
 var DIRNAME_RE = /[^?]*(?=\/.*$)/
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
-var URI_END_RE = /\.(?:css|js)|\/$/
+var URI_END_RE = /\?|\.(?:css|js)$|\/$/
 var ROOT_RE = /^(.*?:\/\/.*?)(?:\/|$)/
 var VARS_RE = /{([^{}]+)}/g
 
@@ -66,7 +66,7 @@ function normalize(uri) {
   if (lastChar === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri) && uri.indexOf("?") === -1) {
+  else if (!URI_END_RE.test(uri)) {
     uri += ".js"
   }
 
@@ -210,8 +210,8 @@ var loaderScript = doc.getElementById("seajs-node") || (function() {
       doc.createElement("script")
 })()
 
-var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
-    pageUri // When `sea.js` is inline, loaderUri is pageUri
+// When `sea.js` is inline, set loaderDir according to pageUri
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || pageUri)
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
