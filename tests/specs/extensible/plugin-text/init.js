@@ -9,7 +9,7 @@ define(function(require) {
   var b = require('./b.tpl?v2013')
   var c = require('./c.tpl#')
   var html = require('./c.html')
-  var htm = require('./c.htm')
+  var htm = require('text!./c.htm')
   var d = require('text!./d.txt')
 
   var uri_a = require.resolve('./a.tpl')

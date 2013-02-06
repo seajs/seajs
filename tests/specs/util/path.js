@@ -27,6 +27,7 @@ define(function(require) {
   assert(normalize('a/b/c.css') === 'a/b/c.css', 'normalize')
   assert(normalize('a/b/c.d') === 'a/b/c.d.js', 'normalize')
   assert(normalize('a/b/c.json#') === 'a/b/c.json', 'normalize')
+  assert(normalize('a/b/c.json') === 'a/b/c.json.js', 'normalize')
   assert(normalize('c?t=20110525') === 'c?t=20110525', 'normalize')
   assert(normalize('c?t=20110525#') === 'c?t=20110525', 'normalize')
   assert(normalize('a/b/') === 'a/b/', 'normalize')
