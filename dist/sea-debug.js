@@ -698,7 +698,7 @@ function fetch(uri, callback) {
   // modify uri or do other magic things
   var requestUri = emitData("fetch",
       { uri: uri, fetchedList: fetchedList },
-      "uri")
+      "requestUri")
 
   if (fetchedList[requestUri]) {
     callback()
@@ -713,14 +713,18 @@ function fetch(uri, callback) {
   fetchingList[requestUri] = true
   callbackList[requestUri] = [callback]
 
-  // Send request
+  // Emit `request` event and send request
   var charset = configData.charset
-  var requested = emitData("request",
-      { uri: requestUri, callback: onRequested, charset: charset },
-      "requested")
+  var data = {
+    uri: uri,
+    requestUri: requestUri,
+    callback: onRequested,
+    charset: charset
+  }
+  var requested = emitData("request", data, "requested")
 
   if (!requested) {
-    request(requestUri, onRequested, charset)
+    request(data.requestUri, onRequested, charset)
   }
 
   function onRequested() {
