@@ -6,15 +6,16 @@ var dataConfig = loaderScript.getAttribute("data-config")
 var dataMain = loaderScript.getAttribute("data-main")
 
 config({
-  // Set `{seajs}` pointing to `http://path/to/sea.js` directory portion
-  vars: { seajs: dirname(loaderUri) },
-
   // Add data-config to preload modules
   preload: dataConfig ? [dataConfig] : undefined,
 
   // Load initial plugins
   plugins: getBootstrapPlugins()
 })
+
+if (dataMain) {
+  seajs.use(dataMain)
+}
 
 // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
 function getBootstrapPlugins() {
@@ -34,7 +35,3 @@ function getBootstrapPlugins() {
   return ret.length ? unique(ret) : undefined
 }
 
-
-if (dataMain) {
-  seajs.use(dataMain)
-}

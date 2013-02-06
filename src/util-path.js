@@ -210,8 +210,8 @@ var loaderScript = doc.getElementById("seajs-node") || (function() {
       doc.createElement("script")
 })()
 
-var loaderUri = getScriptAbsoluteSrc(loaderScript) ||
-    pageUri // When `sea.js` is inline, loaderUri is pageUri
+// When `sea.js` is inline, set loaderDir according to pageUri
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || pageUri)
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7

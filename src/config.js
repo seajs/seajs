@@ -5,7 +5,7 @@
 var configData = config.data = {
   // The root path to use for id2uri parsing
   base: (function() {
-    var ret = dirname(loaderUri)
+    var ret = loaderDir
 
     // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
     // should be `http://test.com/libs/`
@@ -84,7 +84,7 @@ function plugin2preload(arr) {
   isArray(arr) || (arr = [arr])
 
   while ((name = arr.shift())) {
-    ret.push("{seajs}/plugin-" + name)
+    ret.push(loaderDir + "plugin-" + name)
   }
 
   return ret

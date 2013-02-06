@@ -246,7 +246,7 @@ function save(uri, meta) {
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
 
-    // Emit `saved` event for plugins such as plugin-warning
+    // Emit event for plugin-warning etc
     emit("saved", mod)
   }
 }
