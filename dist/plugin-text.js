@@ -5,6 +5,7 @@
 
   var plugins = {}
   var uriCache = {}
+  var ID_END_RE = /\.(?:css|js)\W|\/$/
 
   function addPlugin(o) {
     plugins[o.name] = o
@@ -14,7 +15,7 @@
   addPlugin({
     name: "text",
 
-    ext: [".tpl", ".htm", ".html"],
+    ext: [".tpl", ".html"],
 
     exec: function(content) {
       globalEval('define("' + jsEscape(content) + '")')
@@ -44,7 +45,7 @@
     }
     // path/to/a.html
     // path/to/c.tpl?v2
-    else if ((m = id.match(/[^?]+(\.\w+)/))) {
+    else if (!ID_END_RE.test(id) && (m = id.match(/[^?]+(\.\w+)/))) {
       pluginName = getPluginName(m[1])
     }
 
@@ -80,14 +81,12 @@
 
   function getPluginName(ext) {
     for (var k in plugins) {
-
       if (isPlugin(k)) {
         var exts = "," + plugins[k].ext.join(",") + ","
         if (exts.indexOf("," + ext + ",") > -1) {
           return k
         }
       }
-
     }
   }
 
