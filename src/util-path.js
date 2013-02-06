@@ -4,7 +4,7 @@
 
 var DIRNAME_RE = /[^?]*(?=\/.*$)/
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
-var URI_END_RE = /\.(?:css|js)|\/$/
+var URI_END_RE = /\?|\.(?:css|js)$|\/$/
 var ROOT_RE = /^(.*?:\/\/.*?)(?:\/|$)/
 var VARS_RE = /{([^{}]+)}/g
 
@@ -66,7 +66,7 @@ function normalize(uri) {
   if (lastChar === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri) && uri.indexOf("?") === -1) {
+  else if (!URI_END_RE.test(uri)) {
     uri += ".js"
   }
 
