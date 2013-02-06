@@ -127,7 +127,7 @@ function fetch(uri, callback) {
   // modify uri or do other magic things
   var requestUri = emitData("fetch",
       { uri: uri, fetchedList: fetchedList },
-      "uri")
+      "requestUri")
 
   if (fetchedList[requestUri]) {
     callback()
