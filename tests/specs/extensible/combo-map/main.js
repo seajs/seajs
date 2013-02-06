@@ -4,7 +4,7 @@ seajs.config({
 })
 
 seajs.on('fetch', function(data) {
-  data.uri = data.uri.replace(/\/(a|b|c)\.js/, '/combo.js')
+  data.requestUri = data.uri.replace(/\/(a|b|c)\.js/, '/combo.js')
 })
 
 
