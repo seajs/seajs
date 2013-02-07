@@ -862,8 +862,6 @@ function compile(mod) {
     return resolve(id, mod.uri)
   }
 
-  require.cache = cachedModules
-
 
   var factory = mod.factory
   var exports = factory === undefined ? mod.exports : factory
