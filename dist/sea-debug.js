@@ -177,12 +177,12 @@ function realpath(path) {
   var original = path.split("/")
   var ret = [], part
 
-  for (var i = 0; i < original.length; i++) {
+  for (var i = 0, len = original.length; i < len; i++) {
     part = original[i]
 
     if (part === "..") {
       if (ret.length === 0) {
-        throw new Error("The path is invalid: " + path)
+        throw new Error("Invalid path: " + path)
       }
       ret.pop()
     }
@@ -1024,13 +1024,7 @@ function config(data) {
       if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
-
-            var val = curr[k]
-            if (k in prev) {
-              checkConfigConflict(prev[k], val, k, key)
-            }
-
-            prev[k] = val
+            prev[k] = curr[k]
           }
         }
       }
@@ -1051,7 +1045,6 @@ function config(data) {
     }
   }
 
-  emit("config", configData)
   return seajs
 }
 
@@ -1067,13 +1060,6 @@ function plugin2preload(arr) {
   }
 
   return ret
-}
-
-function checkConfigConflict(prev, curr, k, key) {
-  if (prev !== curr) {
-    log("The config of " + key + '["' + k + '"] is changed from "' +
-        prev + '" to "' + curr + '"', "warn")
-  }
 }
 
 function makeBaseAbsolute() {
