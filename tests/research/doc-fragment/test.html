@@ -5,13 +5,10 @@
 <title>DocumentFragment</title>
 </head>
 <body>
-
 <div id="out"></div>
-
 <hr>
 
 <h2>Summary</h2>
-
 <pre>
 
 1. Chrome、Safari、Firefox、Opera 下，script 添加到 fragment 中时不会下载，添加
@@ -86,56 +83,56 @@
 <script src="../../test.js"></script>
 <script>
 
-    function printResults(msg) {
-        var p = document.createElement('P')
-        p.appendChild(document.createTextNode(msg))
-        document.getElementById('out').appendChild(p)
-    }
+  function printResults(msg) {
+    var p = document.createElement('P')
+    p.appendChild(document.createTextNode(msg))
+    document.getElementById('out').appendChild(p)
+  }
 
-    function assertV(name, expected) {
-        var val = this[name]
-        test.assert(val === expected, name + ' = ' + val)
-    }
+  function assertV(name, expected) {
+    var val = this[name]
+    test.assert(val === expected, name + ' = ' + val)
+  }
 
 
-    var X = 'x'
-    var head = document.getElementsByTagName('head')[0]
+  var X = 'x'
+  var head = document.getElementsByTagName('head')[0]
 
-    var container = document.createDocumentFragment()
-    //var container = document.createElement('div')
-    //var container = document.getElementById('t')
+  var container = document.createDocumentFragment()
+  //var container = document.createElement('div')
+  //var container = document.getElementById('t')
 
-    container.X = 'container-x'
-    container.Y = 'container-y'
-    test.print('container.createElement = ' + (typeof container.createElement))
+  container.X = 'container-x'
+  container.Y = 'container-y'
+  test.print('container.createElement = ' + (typeof container.createElement))
 
-    //var script = frag.createElement('script')
-    var script = document.createElement('script')
-    script.src = 'test.js'
+  //var script = frag.createElement('script')
+  var script = document.createElement('script')
+  script.src = 'test.js'
 
-    container.appendChild(script)
-    test.print('----- After appendTo Container -----')
+  container.appendChild(script)
+  test.print('----- After appendTo Container -----')
+
+  setTimeout(function() {
+    assertV('X', 'x')
+    assertV('Y', undefined)
+    assertV('Z', undefined)
+
+    head.appendChild(container)
+    test.print('----- After appendTo Document -----')
 
     setTimeout(function() {
-        assertV('X', 'x')
-        assertV('Y', undefined)
-        assertV('Z', undefined)
+      assertV('X', 'x')
+      assertV('Y', undefined)
+      assertV('Z', 'script-z')
 
-        head.appendChild(container)
-        test.print('----- After appendTo Document -----')
-
-        setTimeout(function() {
-            assertV('X', 'x')
-            assertV('Y', undefined)
-            assertV('Z', 'script-z')
-
-            test.assert(window.Z === 'script-z', 'window.Z = ' + window.Z)
-            test.assert(container.X === 'container-x', 'container.X = ' + container.X)
-            test.assert(container.Y === 'container-y', 'container.Y = ' + container.Y)
-            test.assert(container.Z === undefined, 'container.Z = ' + container.Z)
-        }, 1000)
-
+      test.assert(window.Z === 'script-z', 'window.Z = ' + window.Z)
+      test.assert(container.X === 'container-x', 'container.X = ' + container.X)
+      test.assert(container.Y === 'container-y', 'container.Y = ' + container.Y)
+      test.assert(container.Z === undefined, 'container.Z = ' + container.Z)
     }, 1000)
+
+  }, 1000)
 
 </script>
 </body>
