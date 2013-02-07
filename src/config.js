@@ -18,13 +18,15 @@ var configData = config.data = {
   })(),
 
   // The charset for requesting files
-  charset: "utf-8"
+  charset: "utf-8",
+
+  // Modules that are needed to load before all other modules
+  preload: []
 
   // debug: false - Debug mode
   // alias - The shorthand alias for module id
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
-  // preload - Modules that are needed to load before all other modules
   // plugins - An array containing needed plugins
 }
 

@@ -381,20 +381,32 @@ function printCircularLog(stack) {
   log("Found circular dependencies: " + stack.join(" --> "))
 }
 
+function preload(callback) {
+  var preloadMods = configData.preload
+  var len = preloadMods.length
+
+  if (len) {
+    // Use splice method to copy array and empty configData.preload
+    globalModule.use(preloadMods.splice(0, len), function() {
+      // Allow preload modules to add new preload modules
+      preload(callback)
+    })
+  }
+  else {
+    callback()
+  }
+}
+
 
 // Public API
 
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 seajs.use = function(ids, callback) {
-  var preloadMods = configData.preload
-  configData.preload = []
-
   // Load preload modules before all other modules
-  globalModule.load(preloadMods, function() {
+  preload(function() {
     globalModule.load(ids, callback)
   })
-
   return seajs
 }
 
