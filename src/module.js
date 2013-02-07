@@ -213,7 +213,7 @@ function define(id, deps, factory) {
       derivedUri = emitData("derived", { uri: derivedUri }, "uri")
     }
     else {
-      log("Failed to derive script: " + factory)
+      log("Failed to derive: " + factory)
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
@@ -298,8 +298,6 @@ function compile(mod) {
     return resolve(id, mod.uri)
   }
 
-  require.cache = cachedModules
-
 
   var factory = mod.factory
   var exports = factory === undefined ? mod.exports : factory
@@ -378,7 +376,23 @@ function cutWaitings(waitings) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log("Found circular dependencies: " + stack.join(" --> "))
+  log("Circular dependencies: " + stack.join(" --> "))
+}
+
+function preload(callback) {
+  var preloadMods = configData.preload
+  var len = preloadMods.length
+
+  if (len) {
+    // Use splice method to copy array and empty configData.preload
+    globalModule.load(preloadMods.splice(0, len), function() {
+      // Allow preload modules to add new preload modules
+      preload(callback)
+    })
+  }
+  else {
+    callback()
+  }
 }
 
 
@@ -387,14 +401,10 @@ function printCircularLog(stack) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 seajs.use = function(ids, callback) {
-  var preloadMods = configData.preload
-  configData.preload = []
-
   // Load preload modules before all other modules
-  globalModule.load(preloadMods, function() {
+  preload(function() {
     globalModule.load(ids, callback)
   })
-
   return seajs
 }
 

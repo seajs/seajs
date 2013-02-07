@@ -7,25 +7,8 @@
   var cachedModules = seajs.cache
   var configData = seajs.config.data
 
-  initCombo()
-  seajs.on("config", initCombo)
-
-  function initCombo() {
-    detachEvents()
-
-    if (configData.debug) {
-      seajs.log("Combo is turned off in debug mode")
-      return
-    }
-
-    seajs.on("load", setComboHash)
-    seajs.on("fetch", setRequestUri)
-  }
-
-  function detachEvents() {
-    seajs.off("load", setComboHash)
-    seajs.off("fetch", setRequestUri)
-  }
+  seajs.on("load", setComboHash)
+  seajs.on("fetch", setRequestUri)
 
   function setComboHash(uris) {
     var needComboUris = []

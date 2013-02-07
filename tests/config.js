@@ -5,6 +5,7 @@ var testPages = [
   , 'specs/config'
   , 'specs/module'
   , 'specs/extensible'
+  , 'specs/extensible/plugin-debug'
   , 'specs/package'
 
   , 'specs/misc/data-api'

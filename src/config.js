@@ -7,9 +7,9 @@ var configData = config.data = {
   base: (function() {
     var ret = loaderDir
 
-    // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
-    // should be `http://test.com/libs/`
-    var m = ret.match(/^(.+\/)seajs\/\d[^/]+\/$/)
+    // If loaderUri is `http://test.com/libs/seajs/seajs/1.0.0/sea.js`, the
+    // baseUri should be `http://test.com/libs/`
+    var m = ret.match(/^(.+?\/)(?:seajs\/)+\d[^/]+\/$/)
     if (m) {
       ret = m[1]
     }
@@ -18,13 +18,15 @@ var configData = config.data = {
   })(),
 
   // The charset for requesting files
-  charset: "utf-8"
+  charset: "utf-8",
+
+  // Modules that are needed to load before all other modules
+  preload: []
 
   // debug: false - Debug mode
   // alias - The shorthand alias for module id
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
-  // preload - Modules that are needed to load before all other modules
   // plugins - An array containing needed plugins
 }
 
@@ -45,13 +47,7 @@ function config(data) {
       if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
-
-            var val = curr[k]
-            if (k in prev) {
-              checkConfigConflict(prev[k], val, k, key)
-            }
-
-            prev[k] = val
+            prev[k] = curr[k]
           }
         }
       }
@@ -72,7 +68,6 @@ function config(data) {
     }
   }
 
-  emit("config", configData)
   return seajs
 }
 
@@ -88,13 +83,6 @@ function plugin2preload(arr) {
   }
 
   return ret
-}
-
-function checkConfigConflict(prev, curr, k, key) {
-  if (prev !== curr) {
-    log("The config of " + key + '["' + k + '"] is changed from "' +
-        prev + '" to "' + curr + '"', "warn")
-  }
 }
 
 function makeBaseAbsolute() {

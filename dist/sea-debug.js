@@ -177,12 +177,12 @@ function realpath(path) {
   var original = path.split("/")
   var ret = [], part
 
-  for (var i = 0; i < original.length; i++) {
+  for (var i = 0, len = original.length; i < len; i++) {
     part = original[i]
 
     if (part === "..") {
       if (ret.length === 0) {
-        throw new Error("The path is invalid: " + path)
+        throw new Error("Invalid path: " + path)
       }
       ret.pop()
     }
@@ -777,7 +777,7 @@ function define(id, deps, factory) {
       derivedUri = emitData("derived", { uri: derivedUri }, "uri")
     }
     else {
-      log("Failed to derive script: " + factory)
+      log("Failed to derive: " + factory)
 
       // NOTE: If the id-deriving methods above is failed, then falls back
       // to use onload event to get the uri
@@ -862,8 +862,6 @@ function compile(mod) {
     return resolve(id, mod.uri)
   }
 
-  require.cache = cachedModules
-
 
   var factory = mod.factory
   var exports = factory === undefined ? mod.exports : factory
@@ -942,7 +940,23 @@ function cutWaitings(waitings) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log("Found circular dependencies: " + stack.join(" --> "))
+  log("Circular dependencies: " + stack.join(" --> "))
+}
+
+function preload(callback) {
+  var preloadMods = configData.preload
+  var len = preloadMods.length
+
+  if (len) {
+    // Use splice method to copy array and empty configData.preload
+    globalModule.load(preloadMods.splice(0, len), function() {
+      // Allow preload modules to add new preload modules
+      preload(callback)
+    })
+  }
+  else {
+    callback()
+  }
 }
 
 
@@ -951,14 +965,10 @@ function printCircularLog(stack) {
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 seajs.use = function(ids, callback) {
-  var preloadMods = configData.preload
-  configData.preload = []
-
   // Load preload modules before all other modules
-  globalModule.load(preloadMods, function() {
+  preload(function() {
     globalModule.load(ids, callback)
   })
-
   return seajs
 }
 
@@ -974,9 +984,9 @@ var configData = config.data = {
   base: (function() {
     var ret = loaderDir
 
-    // If loaderUri is `http://test.com/libs/seajs/1.0.0/sea.js`, the baseUri
-    // should be `http://test.com/libs/`
-    var m = ret.match(/^(.+\/)seajs\/\d[^/]+\/$/)
+    // If loaderUri is `http://test.com/libs/seajs/seajs/1.0.0/sea.js`, the
+    // baseUri should be `http://test.com/libs/`
+    var m = ret.match(/^(.+?\/)(?:seajs\/)+\d[^/]+\/$/)
     if (m) {
       ret = m[1]
     }
@@ -985,13 +995,15 @@ var configData = config.data = {
   })(),
 
   // The charset for requesting files
-  charset: "utf-8"
+  charset: "utf-8",
+
+  // Modules that are needed to load before all other modules
+  preload: []
 
   // debug: false - Debug mode
   // alias - The shorthand alias for module id
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
-  // preload - Modules that are needed to load before all other modules
   // plugins - An array containing needed plugins
 }
 
@@ -1012,13 +1024,7 @@ function config(data) {
       if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
-
-            var val = curr[k]
-            if (k in prev) {
-              checkConfigConflict(prev[k], val, k, key)
-            }
-
-            prev[k] = val
+            prev[k] = curr[k]
           }
         }
       }
@@ -1039,7 +1045,6 @@ function config(data) {
     }
   }
 
-  emit("config", configData)
   return seajs
 }
 
@@ -1057,13 +1062,6 @@ function plugin2preload(arr) {
   return ret
 }
 
-function checkConfigConflict(prev, curr, k, key) {
-  if (prev !== curr) {
-    log("The config of " + key + '["' + k + '"] is changed from "' +
-        prev + '" to "' + curr + '"', "warn")
-  }
-}
-
 function makeBaseAbsolute() {
   var base = configData.base
   if (!isAbsolute(base)) {
@@ -1077,37 +1075,37 @@ function makeBaseAbsolute() {
  * bootstrap.js - Initialize the plugins and load the entry module
  */
 
+config({
+  // Get initial plugins
+  plugins: (function() {
+    var ret = []
+
+    // Convert `seajs-xxx` to `seajs-xxx=1`
+    // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
+    var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
+
+    // Add cookie string
+    str += " " + doc.cookie
+
+    // Exclude seajs-xxx=0
+    str.replace(/seajs-(\w+)=1/g, function(m, name) {
+      ret.push(name)
+    })
+
+    return ret.length ? unique(ret) : undefined
+  })()
+})
+
 var dataConfig = loaderScript.getAttribute("data-config")
 var dataMain = loaderScript.getAttribute("data-main")
 
-config({
-  // Add data-config to preload modules
-  preload: dataConfig ? [dataConfig] : undefined,
-
-  // Load initial plugins
-  plugins: getBootstrapPlugins()
-})
+// Add data-config to preload modules
+if (dataConfig) {
+  configData.preload.push(dataConfig)
+}
 
 if (dataMain) {
   seajs.use(dataMain)
-}
-
-// NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
-function getBootstrapPlugins() {
-  var ret = []
-
-  // Convert `seajs-xxx` to `seajs-xxx=1`
-  var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
-
-  // Add cookie string
-  str += " " + doc.cookie
-
-  // Exclude seajs-xxx=0
-  str.replace(/seajs-(\w+)=1/g, function(m, name) {
-    ret.push(name)
-  })
-
-  return ret.length ? unique(ret) : undefined
 }
 
 

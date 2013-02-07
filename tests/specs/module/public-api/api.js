@@ -41,10 +41,10 @@ define(function(require, exports, mod) {
   
   // require
   assert(isFunction(require), 'require')
-  assert(require.cache === seajs.cache, 'require.cache')
+  //assert(require.cache === seajs.cache, 'require.cache')
   assert(isFunction(require.resolve), 'require.resolve')
   assert(isFunction(require.async), 'require.async')
-  assert(getOwnPropertyCount(require) === 3, getOwnPropertyCount(require))
+  assert(getOwnPropertyCount(require) === 2, getOwnPropertyCount(require))
 
   
   // exports
