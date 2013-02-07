@@ -27,7 +27,7 @@ define(function(require) {
 
 
   var msg = consoleMsgStack.pop()
-  test.assert(msg.indexOf('Found circular dependencies') === 0, 'Check circular dependencies')
+  test.assert(msg.indexOf('Circular dependencies') === 0, 'Check circular dependencies')
   test.assert(msg.indexOf('-->') > 0, 'Check circular dependencies')
 
   var m = require('./monkeys/m')
