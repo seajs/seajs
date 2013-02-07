@@ -14,13 +14,13 @@
     var uri = mod.uri
     if (!RE_VERSION.test(uri)) return
 
-    var key = uri.replace(RE_VERSION, '{{version}}')
+    var key = uri.replace(RE_VERSION, "{version}")
     var versions = uriCache[key] || (uriCache[key] = [])
     versions.push(uri)
 
     if (versions.length > 1) {
-      seajs.log('This module has multiple versions:\n' +
-          versions.join('\n'), 'warn')
+      seajs.log("This module has multiple versions:\n" +
+          versions.join("\n"), "warn")
     }
   }
 
