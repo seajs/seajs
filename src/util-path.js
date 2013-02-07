@@ -37,12 +37,12 @@ function realpath(path) {
   var original = path.split("/")
   var ret = [], part
 
-  for (var i = 0; i < original.length; i++) {
+  for (var i = 0, len = original.length; i < len; i++) {
     part = original[i]
 
     if (part === "..") {
       if (ret.length === 0) {
-        throw new Error("The path is invalid: " + path)
+        throw new Error("Invalid path: " + path)
       }
       ret.pop()
     }
