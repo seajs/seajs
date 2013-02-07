@@ -945,20 +945,32 @@ function printCircularLog(stack) {
   log("Found circular dependencies: " + stack.join(" --> "))
 }
 
+function preload(callback) {
+  var preloadMods = configData.preload
+  var len = preloadMods.length
+
+  if (len) {
+    // Use splice method to copy array and empty configData.preload
+    globalModule.use(preloadMods.splice(0, len), function() {
+      // Allow preload modules to add new preload modules
+      preload(callback)
+    })
+  }
+  else {
+    callback()
+  }
+}
+
 
 // Public API
 
 var globalModule = new Module(pageUri, STATUS.COMPILED)
 
 seajs.use = function(ids, callback) {
-  var preloadMods = configData.preload
-  configData.preload = []
-
   // Load preload modules before all other modules
-  globalModule.load(preloadMods, function() {
+  preload(function() {
     globalModule.load(ids, callback)
   })
-
   return seajs
 }
 
@@ -985,13 +997,15 @@ var configData = config.data = {
   })(),
 
   // The charset for requesting files
-  charset: "utf-8"
+  charset: "utf-8",
+
+  // Modules that are needed to load before all other modules
+  preload: []
 
   // debug: false - Debug mode
   // alias - The shorthand alias for module id
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
-  // preload - Modules that are needed to load before all other modules
   // plugins - An array containing needed plugins
 }
 
@@ -1077,37 +1091,37 @@ function makeBaseAbsolute() {
  * bootstrap.js - Initialize the plugins and load the entry module
  */
 
+config({
+  // Get initial plugins
+  plugins: (function() {
+    var ret = []
+
+    // Convert `seajs-xxx` to `seajs-xxx=1`
+    // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
+    var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
+
+    // Add cookie string
+    str += " " + doc.cookie
+
+    // Exclude seajs-xxx=0
+    str.replace(/seajs-(\w+)=1/g, function(m, name) {
+      ret.push(name)
+    })
+
+    return ret.length ? unique(ret) : undefined
+  })()
+})
+
 var dataConfig = loaderScript.getAttribute("data-config")
 var dataMain = loaderScript.getAttribute("data-main")
 
-config({
-  // Add data-config to preload modules
-  preload: dataConfig ? [dataConfig] : undefined,
-
-  // Load initial plugins
-  plugins: getBootstrapPlugins()
-})
+// Add data-config to preload modules
+if (dataConfig) {
+  configData.preload.push(dataConfig)
+}
 
 if (dataMain) {
   seajs.use(dataMain)
-}
-
-// NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
-function getBootstrapPlugins() {
-  var ret = []
-
-  // Convert `seajs-xxx` to `seajs-xxx=1`
-  var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
-
-  // Add cookie string
-  str += " " + doc.cookie
-
-  // Exclude seajs-xxx=0
-  str.replace(/seajs-(\w+)=1/g, function(m, name) {
-    ret.push(name)
-  })
-
-  return ret.length ? unique(ret) : undefined
 }
 
 
