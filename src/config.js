@@ -47,13 +47,7 @@ function config(data) {
       if (prev && /^(?:alias|vars)$/.test(key)) {
         for (var k in curr) {
           if (hasOwn(curr, k)) {
-
-            var val = curr[k]
-            if (k in prev) {
-              checkConfigConflict(prev[k], val, k, key)
-            }
-
-            prev[k] = val
+            prev[k] = curr[k]
           }
         }
       }
@@ -74,7 +68,6 @@ function config(data) {
     }
   }
 
-  emit("config", configData)
   return seajs
 }
 
@@ -90,13 +83,6 @@ function plugin2preload(arr) {
   }
 
   return ret
-}
-
-function checkConfigConflict(prev, curr, k, key) {
-  if (prev !== curr) {
-    log("The config of " + key + '["' + k + '"] is changed from "' +
-        prev + '" to "' + curr + '"', "warn")
-  }
 }
 
 function makeBaseAbsolute() {
