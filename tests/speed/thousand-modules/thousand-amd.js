@@ -1,4 +1,4 @@
-define("module-0", [ ], function () {return { value: 'zero' };});
+define("module-0", [ ], function () {return { value: 'done' };});
 define("module-1", [ "module-0" ], function (mod) {return { value: mod.value };});
 define("module-2", [ "module-1" ], function (mod) {return { value: mod.value };});
 define("module-3", [ "module-2" ], function (mod) {return { value: mod.value };});
