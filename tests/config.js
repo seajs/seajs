@@ -9,6 +9,7 @@ var testPages = [
 
   , 'specs/misc/data-api'
   , 'specs/misc/ie-cache'
+  , 'specs/misc/plugin-debug'
   , 'specs/misc/utf8-in-gbk'
   , 'specs/misc/x-ua-compatible'
 ]

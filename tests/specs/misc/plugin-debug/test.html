@@ -2,30 +2,13 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Issue Test</title>
+<title>test</title>
 </head>
 <body>
-
 <script>
-  document.cookie = 'seajs-debug=1``1';
+  document.cookie = 'seajs-debug=1`' + location.href.replace('test.html', 'seajs-map.js') + '`1; path=/'
 </script>
-
-<script src="../../../dist/sea.js" data-main="./main"></script>
-
-<p>
-  <a href="https://github.com/seajs/seajs/issues/119">#119</a> |
-  <a href="https://github.com/seajs/seajs/issues/228">#228</a>
-</p>
-
+<script src="../../../../dist/sea.js" data-main="./main"></script>
 <div id="out"></div>
-
-<script>
-  function printResults(txt, style) {
-    var d = document.createElement('div');
-    d.innerHTML = txt;
-    d.className = style;
-    document.getElementById('out').appendChild(d);
-  }
-</script>
 </body>
 </html>
