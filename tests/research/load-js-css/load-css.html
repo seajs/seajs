@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>CSS Preload</title>
+<title>load css</title>
 </head>
 <body>
 <p id="red">This paragraph should be red.</p>
@@ -110,7 +110,7 @@
   WebKit:
     - linkNode.sheet 在 css 文件下载完成并解析好后才有值，之前为 undefined
     - linkNode.sheet.cssRules 同域时返回 CSSRuleList, 跨域时返回 null
-    - WebKit &gt;= 535.23 后支持 onload/onerror
+    - WebKit &gt;= 535.23 后支持 onload / onerror
 
   Firefox:
     - linkNode.sheet 在 css 插入 DOM 中后立刻有值，插入前为 undefined
@@ -118,16 +118,14 @@
                               在文件下载并解析好后，
                                 同域时返回 cssRuleList
                                 跨域时抛出 NS_ERROR_DOM_SECURITY_ERR
-    - Firefox &gt;= 9.0 后支持 onload/onerror
+    - Firefox &gt;= 9.0 后支持 onload / onerror
 
-  IE & Opera:
+  IE / Opera:
     - linkNode.sheet 和 cssRules 在 css 插入 DOM 后都立刻可访问，cssRules 为 []
     - 当文件下载完成时，cssRules 为 cssRuleList
     - Opera 只在成功时触发 onload，失败时不会触发 onerror
     - IE 下，无论成功失败，都会触发 onload，不会触发 onerror，中间会触发 onreadystatechange
     - 期待 IE 和 Opera 的后续版本能正确支持 onerror
-
-  缺陷：Opera 遇到 404 时，需要降级到 timeout
 
 
   最后更新时间：2013-02-08

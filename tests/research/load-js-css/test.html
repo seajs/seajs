@@ -2,77 +2,71 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Loading Script and Style File</title>
+<title>Load Script and Style File</title>
 </head>
 <body>
-
 <div id="out"></div>
 
-
 <h2>Summary</h2>
-
 <pre>
+
 js:
 
-  Chrome, Firefox, Safari, Opera:
-    下载成功时触发 onload, 下载失败时触发 onerror
-    下载成功包括 200, 302, 304 等，只要下载下来了就好
-    下载失败指没下载下来，比如 404
-
-  IE9:
-    Chrome 的行为 + IE6-8 的行为
+  Chrome / Firefox / Safari / Opera:
+    - 下载成功时触发 onload, 下载失败时触发 onerror
+    - 下载成功包括 200, 302, 304 等，只要下载下来了就好
+    - 下载失败指没下载下来，比如 404
+    - Opera 老版本对 empty.js 这种空文件时不会触发 onload，新版本已无问题
 
   IE6-8:
-    下载成功和失败时都会触发 onreadystatechange, 无 onload / onerror
-    成功和失败的含义同上
+    - 下载成功和失败时都会触发 onreadystatechange, 无 onload / onerror
+    - 成功和失败的含义同上
 
-  最佳选择：
-    在 Firefox, Chrome, Safari, Opera, IE9 下，用 onload + onerror
-    在 IE6-8 下，用 onreadystatechange
+  IE9:
+    - 有 onload / onerror，同时也有 onreadystatechange
+
+  解决方案：
+    - 在 Firefox、Chrome、Safari、Opera、IE9 下，用 onload + onerror
+    - 在 IE6-8 下，用 onreadystatechange
+
+  不足：
+    - IE6-8 下区分不出 onerror
 
 
 css:
 
-  Firefox, Chrome:
-    同 js
+  Chrome / Safari:
+    - WebKit &gt;= 535.23 后支持 onload / onerror
+    - 之前的版本无任何事件触发
 
-  IE6-8:
-    下载成功和失败时都会触发 onload 和 onreadystatechange, 无 onerror
-
-  IE9:
-    同 IE6-8
-    onreadystatechange 会重复触发
+  Firefox:
+    - Firefox &gt;= 9.0 后支持 onload / onerror
+    - 之前的版本无任何事件触发
 
   Opera:
-    同 js
-    但 css 404 时，不会触发 onerror
+    - 会触发 onload
+    - 但 css 404 时，不会触发 onerror
 
-  Safari:
-    无论下载成功还是失败，都不会触发任何事件
+  IE6-8:
+    - 下载成功和失败时都会触发 onload 和 onreadystatechange，无 onerror
 
-  最佳选择：
-    非 Safari 下，用 onload + onerror
-    Safari 和 Old Firefox 下，<a href="css-preload.html">css-preload.html</a>
+  IE9:
+    - 同 IE6-8
+    - onreadystatechange 会重复触发
 
-  风险点：
-    Opera 下如果 404，没有任何事件触发，有可能导致依赖该 css 的模块一直处于等待状态
+  解决方案：
+    - Old WebKit 和 Old Firefox 下，用 poll 方法：<a href="load-css.html">load-css.html</a>
+    - 其他浏览器用 onload / onerror
 
-
-测试环境：
-
-  Chrome: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.56 Safari/536.5
-  Firefox: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:13.0) Gecko/20100101 Firefox/13.0
-  Safari: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/534.57.2 (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2
-  Opera: Opera/9.80 (Macintosh; Intel Mac OS X 10.7.4; U; en) Presto/2.10.289 Version/12.00
-
-  IE9: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C)
-  IE6-8: 原生 IE
+  不足：
+    - Opera 下如果 404，没有任何事件触发，有可能导致依赖该 css 的模块一直处于等待状态
+    - IE6-8 下区分不出 onerror
+    - poll 探测难以区分出 onerror
 
 
-注意事项：请将相关文件都下载到本地的 php 环境下再测试。
+注意事项：请将相关文件都下载到本地的 php 环境下再测试
 
-
-最后更新时间：2012-06-27
+最后更新时间：2013-02-08
 
 
 参考文档：
@@ -92,8 +86,6 @@ css:
 </pre>
 
 <script>
-
-  // test cases
   var head = document.getElementsByTagName('head')[0]
   var timestamp = new Date().getTime()
 
@@ -101,12 +93,12 @@ css:
 
   getScript('ok.js')
   getScript('empty.js')
-  getScript('not-existed.js')
+  getScript('404.js')
   getScript('syntax-error.js')
 
   getStyle('ok.css')
   getStyle('empty.css')
-  getStyle('not-existed.css')
+  getStyle('404.css')
   getStyle('syntax-error.css')
 
 
@@ -131,7 +123,6 @@ css:
     head.appendChild(s)
   }
 
-
   function getStyle(url) {
     var s = document.createElement('link')
     s.rel = 'stylesheet'
@@ -153,7 +144,6 @@ css:
     s.href = url + '?' + timestamp
     head.appendChild(s)
   }
-
 
   function print(msg) {
     var p = document.createElement('P')
