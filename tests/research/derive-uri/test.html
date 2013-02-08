@@ -3,32 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-<title>Issue Test</title>
+<title>onload order</title>
+<link rel="stylesheet" href="../../style.css">
+<script src="../../test.js"></script>
+<script> var print = test.print </script>
 </head>
 <body>
-
-<p><a href="https://github.com/seajs/seajs/issues/123">#123</a></p>
 <div id="out"></div>
 
-<script>
-
-  function print(msg) {
-    this['printResult'](msg)
-  }
-
-</script>
-
-<script src="../../test.js"></script>
+<!-- cache some scripts -->
+<script> var cacheScript = true </script>
 <script src="a.js"></script>
 <script src="b.js"></script>
 <script src="c.js"></script>
 <script src="h.js"></script>
-
+<script> cacheScript = false </script>
 
 <script>
-  var DEBUG = true
-  var global = this
-
   var outEl = document.getElementById('out')
   var out = []
   var n = 0
@@ -36,13 +27,16 @@
 
 
   fetch('a.js', printOnload('a.js'))
+
   fetch('d.js', function() {
     fetch('b.js', printOnload('b.js'))
     printOnload('d.js')()
     fetch('g.js', printOnload('g.js'))
   })
+
   fetch('e.js', printOnload('e.js'))
   fetch('f.js', printOnload('f.js'))
+
   fetch('h.js', function() {
     fetch('i.js', printOnload('i.js'))
     printOnload('h.js')()
@@ -51,29 +45,39 @@
 
   function done() {
     if (++n === N) {
-      print('-------------------')
+      print('----------------------------------------------------------------')
 
       var s = out.join('')
       var U = s.replace(/[a-z]/g, '')
       var L = s.replace(/[A-Z]/g, '')
 
       // 测试基本信息
-      test.assert(s, s + ' ' + U + ' ' + L)
+      test.assert(s.length === 2 * N, s + ' ' + U + ' ' + L)
       test.assert(U.length === N, U.length)
       test.assert(L.length === N, L.length)
-
-      // Aa 紧相邻假设（在某些低版本浏览器下不能保证，比如 iPhone 一代的 Safari 上）
-      //test.assert(U.toLowerCase() === L, 'a is immediately after A')
 
       // 测试 A < a 的可靠性
       var chars = U.split('')
       for (var i = 0; i < chars.length; i++) {
-        var c = chars[i]
-        var lc = c.toLowerCase()
-        test.assert(s.indexOf(c) < s.indexOf(lc), c + ' < ' + lc)
+        var u = chars[i]
+        var l = u.toLowerCase()
+        test.assert(s.indexOf(u) < s.indexOf(l), u + ' < ' + l)
       }
 
-      test.done()
+      // 测试顺序一致性
+      test.assert(U.toLowerCase() === L, '"' + U + '".toLowerCase() === "' + L + '"')
+
+      // Aa 紧相邻假设
+      // 1. 在某些低版本浏览器下不能保证，比如 iPhone 一代的 Safari 上
+      // 2. 在 IE6-9 下不能保证
+      for (i = 0; i < chars.length; i++) {
+        u = chars[i]
+        l = u.toLowerCase()
+        test.assert(s.indexOf(l) - s.indexOf(u) === 1, l + ' - ' + u + ' = 1')
+      }
+
+      print('EOF')
+      test.next()
     }
   }
 
@@ -111,7 +115,5 @@
   }
 
 </script>
-
-
 </body>
 </html>

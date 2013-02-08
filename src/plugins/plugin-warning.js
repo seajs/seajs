@@ -6,12 +6,12 @@
   var uriCache = {}
   var RE_VERSION = /(?:\d+\.)+\d+/
 
-  seajs.on("saved", checkMultiVersion)
+  seajs.on("save", checkMultiVersion)
 
 
   // Only support this version style: `zz/1.2.3/xx` or `zz/xx-1.2.3.js`
-  function checkMultiVersion(mod) {
-    var uri = mod.uri
+  function checkMultiVersion(data) {
+    var uri = data.uri
     if (!RE_VERSION.test(uri)) return
 
     var key = uri.replace(RE_VERSION, "{version}")

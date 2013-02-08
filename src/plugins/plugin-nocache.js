@@ -22,7 +22,7 @@
   })
 
   // Restore the original uri in automatically deriving case
-  seajs.on("derived", function(data) {
+  seajs.on("save", function(data) {
     var requestUri = data.uri
     data.uri = uriCache[requestUri] || requestUri
   })

@@ -1,1 +1,0 @@
-if (window.res) window.res.push('C')
