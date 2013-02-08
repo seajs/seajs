@@ -23,8 +23,11 @@
   var doc = document
   var head = doc.getElementsByTagName('head')[0]
 
+  var UA = navigator.userAgent
   var isOldIE = !!doc.attachEvent // IE6-9
-  print(navigator.userAgent)
+  var isOldWebKit = Number(navigator.userAgent
+      .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) < 533
+  print(UA)
 
   var outEl = doc.getElementById('out')
   var order = []
@@ -53,12 +56,11 @@
   function printOnload(file) {
     return function() {
       print(file + ' is loaded')
-
       order.push(file.split('.')[0])
-      mod.uri = file
-      cache[mod.id] = mod
 
+      mod && save(file, mod)
       mod = null
+
       done()
     }
   }
@@ -85,7 +87,8 @@
       }
 
       // 测试顺序一致性
-      test.assert(U.toLowerCase() === L, '"' + U + '".toLowerCase() === "' + L + '"')
+      test.assert(U.toLowerCase() === L,
+          '"' + U + '".toLowerCase() === "' + L + '"')
 
       // 校验 Aa 紧相邻假设
       for (i = 0; i < chars.length; i++) {
@@ -95,19 +98,15 @@
 
         // 1. 在 IE6-9 下不能保证 diff === 1
         // 2. 在某些低版本浏览器下也不能保证，比如 iPhone 一代的 Safari 上
-        if (isOldIE) {
-          test.assert(isOldIE, '[Old IE] ' + l + ' - ' + u + ' = ' + diff)
-        }
-        else {
-          test.assert(diff === 1, l + ' - ' + u + ' = ' + diff)
-        }
+        test.assert(isOldIE || isOldWebKit || diff === 1,
+            l + ' - ' + u + ' = ' + diff)
       }
 
       // 检测是否正确获取到了 uri 信息
-      for(var id in cache) {
-        if (cache.hasOwnProperty(id)) {
-          var m = cache[id]
-          test.assert(m.id + '.js' === m.uri, 'derive ' + m.uri)
+      for(var filename in cache) {
+        if (cache.hasOwnProperty(filename)) {
+          var m = cache[filename]
+          test.assert(m.name + '.js' === m.uri, 'derived ' + m.uri)
         }
       }
 
@@ -149,6 +148,8 @@
   }
 
   function getCurrentScript() {
+    print("exec getCurrentScript")
+
     if (currentlyAddingScript) {
       return currentlyAddingScript
     }
@@ -175,23 +176,26 @@
 
   function deriveCurrentScriptUri() {
     var derivedUri
-    var script = getCurrentScript()
 
-    if (script && script.src) {
-      derivedUri = getScriptAbsoluteSrc(script)
-    }
-    else {
-      print('Failed to derive uri')
+    // For IE6-9
+    if (doc.attachEvent) {
+      var script = getCurrentScript()
+
+      if (script) {
+        derivedUri = script.src.split('/').pop()
+      } else {
+        print('Failed to derive uri', 'fail')
+      }
     }
 
     return derivedUri
   }
 
-  function getScriptAbsoluteSrc(node) {
-    return node.hasAttribute ? // non-IE6/7
-        node.src :
-      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-        node.getAttribute("src", 4)
+  function save(uri, meta) {
+    if (!cache[uri]) {
+      meta.uri = uri
+      cache[uri] = meta
+    }
   }
 
 </script>

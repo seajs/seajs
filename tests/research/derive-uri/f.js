@@ -1,10 +1,22 @@
-if (this.cacheScript) {
-  print('f.js is cached')
-}
-else {
-  print('f.js is executed')
-  fetch('c.js', printOnload('c.js'))
+(function(global, name) {
 
-  order.push('F')
-  mod = { id: 'f' }
-}
+  if (global.cacheScript) {
+    print(name + '.js is cached')
+    return
+  }
+
+  print(name + '.js is executed')
+  fetch('c.js', printOnload('c.js'))
+  order.push(name.toUpperCase())
+
+  var meta = { name: name }
+  var uri = deriveCurrentScriptUri()
+
+  if (uri) {
+    save(uri, meta)
+  } else {
+    global.mod = meta
+  }
+
+})(this, 'f')
+
