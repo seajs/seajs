@@ -20,7 +20,7 @@ define(function(require, exports, mod) {
   require("./a")
   //require("b2")
 
-  require('a');
+  require('./a');
   require  ('b')
   require("b");
   var o = {
@@ -37,7 +37,7 @@ define(function(require, exports, mod) {
   var xrequire = function() {};
   xrequire('xrequire');
 
-  test.assert(require('a').name === 'a', 'a');
+  test.assert(require('./a').name === 'a', 'a');
   test.assert(require('b').name === 'b', 'b');
   test.assert(require('e').name === 'e', 'e');
   test.assert(mod.dependencies.length === 7, getFiles(mod.dependencies).join(' | '));

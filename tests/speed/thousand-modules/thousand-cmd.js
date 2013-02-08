@@ -1,4 +1,4 @@
-define("module-0", [ ], function (require, exports, module) {module.exports = { value: 'zero' };});
+define("module-0", [ ], function (require, exports, module) {module.exports = { value: 'done' };});
 define("module-1", [ "module-0" ], function (require, exports, module) {module.exports = require("module-0");});
 define("module-2", [ "module-1" ], function (require, exports, module) {module.exports = require("module-1");});
 define("module-3", [ "module-2" ], function (require, exports, module) {module.exports = require("module-2");});

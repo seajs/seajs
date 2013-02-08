@@ -37,6 +37,11 @@ function printHeader(test, url) {
   document.getElementById('out').appendChild(h)
 }
 
+if (typeof define === 'undefined') {
+  var define = function(fn) {
+    fn(null, (this.test = {}))
+  }
+}
 
 define(function(require, exports) {
   var global = this
@@ -44,7 +49,7 @@ define(function(require, exports) {
   var time
   var WARNING_TIME = isLocal() ? 50 : 5000
 
-  require.async('./style.css')
+  require && require.async('./style.css')
   handleGlobalError()
 
 
@@ -94,7 +99,7 @@ define(function(require, exports) {
 
   // Helpers
 
-  var configData = seajs.config.data
+  var configData = global.seajs && seajs.config.data || {}
   var defaultConfig = copy(configData, {})
 
   function reset() {
