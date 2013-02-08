@@ -2,15 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>omgwtf</title>
-<script src="../../test.js"></script>
+<title>error stack</title>
+<script src="../../../test.js"></script>
 <script>
-  function printResults(msg) {
-    var p = document.createElement('P')
-    p.appendChild(document.createTextNode(msg))
-    document.getElementById('out').appendChild(p)
-  }
-
   function assertV(name, expected) {
     var val = this[name]
     test.assert(val === expected, name + ' = ' + val)
@@ -19,7 +13,7 @@
 </head>
 <body>
 <div id="out"></div>
-<hr>
+
 <h2>Summary</h2>
 <pre>
 
@@ -38,11 +32,5 @@
 </pre>
 
 <script src="test.js"></script>
-<script>
-
-
-
-</script>
-
 </body>
 </html>
