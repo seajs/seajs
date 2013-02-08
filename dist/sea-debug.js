@@ -744,9 +744,8 @@ function define(id, deps, factory) {
   if (!id && doc.attachEvent) {
     var script = getCurrentScript()
 
-    if (script && script.src) {
-      derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData("derived", { uri: derivedUri }, "uri")
+    if (script) {
+      derivedUri = script.src
     }
     else {
       log("Failed to derive: " + factory)
@@ -769,6 +768,9 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
+  meta.uri = uri
+  uri = emitData("save", meta, "uri")
+
   var mod = getModule(uri)
 
   // Do NOT override already saved modules
@@ -781,9 +783,6 @@ function save(uri, meta) {
 
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
-
-    // Emit event for plugin-warning etc
-    emit("saved", mod)
   }
 }
 
