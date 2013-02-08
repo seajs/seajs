@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-<title>onload order</title>
+<title>derive uri</title>
 <link rel="stylesheet" href="../../style.css">
 <script src="../../test.js"></script>
 <script> var print = test.print </script>
@@ -20,8 +20,16 @@
 <script> cacheScript = false </script>
 
 <script>
-  var outEl = document.getElementById('out')
-  var out = []
+  var doc = document
+  var head = doc.getElementsByTagName('head')[0]
+
+  var isOldIE = !!doc.attachEvent // IE6-9
+  print(navigator.userAgent)
+
+  var outEl = doc.getElementById('out')
+  var order = []
+  var cache = {}
+  var mod = null
   var n = 0
   var N = 9
 
@@ -42,12 +50,24 @@
     printOnload('h.js')()
   })
 
+  function printOnload(file) {
+    return function() {
+      print(file + ' is loaded')
+
+      order.push(file.split('.')[0])
+      mod.uri = file
+      cache[mod.id] = mod
+
+      mod = null
+      done()
+    }
+  }
 
   function done() {
     if (++n === N) {
       print('----------------------------------------------------------------')
 
-      var s = out.join('')
+      var s = order.join('')
       var U = s.replace(/[a-z]/g, '')
       var L = s.replace(/[A-Z]/g, '')
 
@@ -67,13 +87,28 @@
       // 测试顺序一致性
       test.assert(U.toLowerCase() === L, '"' + U + '".toLowerCase() === "' + L + '"')
 
-      // Aa 紧相邻假设
-      // 1. 在某些低版本浏览器下不能保证，比如 iPhone 一代的 Safari 上
-      // 2. 在 IE6-9 下不能保证
+      // 校验 Aa 紧相邻假设
       for (i = 0; i < chars.length; i++) {
         u = chars[i]
         l = u.toLowerCase()
-        test.assert(s.indexOf(l) - s.indexOf(u) === 1, l + ' - ' + u + ' = 1')
+        var diff = s.indexOf(l) - s.indexOf(u)
+
+        // 1. 在 IE6-9 下不能保证 diff === 1
+        // 2. 在某些低版本浏览器下也不能保证，比如 iPhone 一代的 Safari 上
+        if (isOldIE) {
+          test.assert(isOldIE, '[Old IE] ' + l + ' - ' + u + ' = ' + diff)
+        }
+        else {
+          test.assert(diff === 1, l + ' - ' + u + ' = ' + diff)
+        }
+      }
+
+      // 检测是否正确获取到了 uri 信息
+      for(var id in cache) {
+        if (cache.hasOwnProperty(id)) {
+          var m = cache[id]
+          test.assert(m.id + '.js' === m.uri, 'derive ' + m.uri)
+        }
       }
 
       print('EOF')
@@ -81,11 +116,18 @@
     }
   }
 
+
+  var currentlyAddingScript
+  var interactiveScript
+
   function fetch(src, callback) {
     var node = document.createElement('script')
     addOnload(node, callback)
     node.src = src
-    outEl.appendChild(node)
+
+    currentlyAddingScript = node
+    head.appendChild(node)
+    currentlyAddingScript = null
   }
 
   function addOnload(node, callback) {
@@ -93,7 +135,7 @@
       node.addEventListener('load', callback, false)
       node.addEventListener('error', function() {
         print('error: ' + node.src)
-        out.push(0)
+        order.push(0)
       }, false)
     }
     else { // for IE6-8
@@ -106,12 +148,50 @@
     }
   }
 
-  function printOnload(file) {
-    return function() {
-      print(file + ' is loaded')
-      out.push(file.split('.')[0])
-      done()
+  function getCurrentScript() {
+    if (currentlyAddingScript) {
+      return currentlyAddingScript
     }
+
+    // For IE6-9 browsers, the script onload event may not fire right
+    // after the the script is evaluated. Kris Zyp found that it
+    // could query the script nodes and the one that is in "interactive"
+    // mode indicates the current script
+    // ref: http://goo.gl/JHfFW
+    if (interactiveScript && interactiveScript.readyState === "interactive") {
+      return interactiveScript
+    }
+
+    var scripts = head.getElementsByTagName("script")
+
+    for (var i = scripts.length - 1; i >= 0; i--) {
+      var script = scripts[i]
+      if (script.readyState === "interactive") {
+        interactiveScript = script
+        return interactiveScript
+      }
+    }
+  }
+
+  function deriveCurrentScriptUri() {
+    var derivedUri
+    var script = getCurrentScript()
+
+    if (script && script.src) {
+      derivedUri = getScriptAbsoluteSrc(script)
+    }
+    else {
+      print('Failed to derive uri')
+    }
+
+    return derivedUri
+  }
+
+  function getScriptAbsoluteSrc(node) {
+    return node.hasAttribute ? // non-IE6/7
+        node.src :
+      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+        node.getAttribute("src", 4)
   }
 
 </script>

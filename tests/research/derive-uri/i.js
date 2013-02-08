@@ -3,5 +3,6 @@ if (this.cacheScript) {
 }
 else {
   print('i.js is executed')
-  out.push('I')
+  order.push('I')
+  mod = { id: 'i' }
 }

@@ -3,7 +3,8 @@ if (this.cacheScript) {
 }
 else {
   print('f.js is executed')
-  out.push('F')
-
   fetch('c.js', printOnload('c.js'))
+
+  order.push('F')
+  mod = { id: 'f' }
 }
