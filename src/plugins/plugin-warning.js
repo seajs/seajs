@@ -4,12 +4,15 @@
 (function(seajs) {
 
   var uriCache = {}
-  var RE_VERSION = /(?:\d+\.)+\d+/
+  var RE_VERSION = /\/(?:\d+\.){1,2}\d+\/|\D(?:\d+\.){1,2}\d+[^/]*\.(?:js|css)\W?/
 
   seajs.on("save", checkMultiVersion)
 
 
-  // Only support this version style: `zz/1.2.3/xx` or `zz/xx-1.2.3.js`
+  // Only support this version style:
+  // `zz/1.2.3/xx`
+  // `zz/xx-1.2.3-beta.js`
+  // `zz/xx.1.2.3.rc2.js`
   function checkMultiVersion(data) {
     var uri = data.uri
     if (!RE_VERSION.test(uri)) return
