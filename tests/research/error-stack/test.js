@@ -1,6 +1,6 @@
 
 try {
-  omgwtf
+  o.m.g.w.t.f()
 }
 catch(ex) {
   for(var p in ex) {
