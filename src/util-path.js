@@ -19,7 +19,7 @@ function dirname(path) {
 }
 
 // Canonicalize a path
-// realpath("./a//b/../c") ==> "a/c"
+// realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
 
   // "file:///a//b/c" ==> "file:///a/b/c"
@@ -30,20 +30,17 @@ function realpath(path) {
   }
 
   // If "a/b/c", just return
-  if (path.indexOf(".") === -1) {
+  if (path.indexOf(".") < 0) {
     return path
   }
 
-  var original = path.split("/")
+  var parts = path.split("/")
   var ret = [], part
 
-  for (var i = 0, len = original.length; i < len; i++) {
-    part = original[i]
+  for (var i = 0, len = parts.length; i < len; i++) {
+    part = parts[i]
 
     if (part === "..") {
-      if (ret.length === 0) {
-        throw new Error("Invalid path: " + path)
-      }
       ret.pop()
     }
     else if (part !== ".") {
@@ -175,7 +172,7 @@ function isRoot(id) {
 
 function isTopLevel(id) {
   var c = id.charAt(0)
-  return id.indexOf("://") === -1 && c !== "." && c !== "/"
+  return id.indexOf("://") < 0 && c !== "." && c !== "/"
 }
 
 
@@ -194,7 +191,7 @@ var pageUri = (function() {
   var pageUri = loc.protocol + "//" + loc.host + pathname
 
   // local file in IE: C:\path\to\xx.js
-  if (pageUri.indexOf("\\") > -1) {
+  if (pageUri.indexOf("\\") >= 0) {
     pageUri = pageUri.replace(/\\/g, "/")
   }
 
@@ -204,10 +201,7 @@ var pageUri = (function() {
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajs-node") || (function() {
   var scripts = doc.getElementsByTagName("script")
-
-  return scripts[scripts.length - 1] ||
-      // Maybe undefined in some environment such as PhantomJS
-      doc.createElement("script")
+  return scripts[scripts.length - 1]
 })()
 
 // When `sea.js` is inline, set loaderDir according to pageUri
