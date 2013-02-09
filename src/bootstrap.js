@@ -5,7 +5,7 @@
 config({
   // Get initial plugins
   plugins: (function() {
-    var ret = []
+    var ret
 
     // Convert `seajs-xxx` to `seajs-xxx=1`
     // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
@@ -16,10 +16,10 @@ config({
 
     // Exclude seajs-xxx=0
     str.replace(/seajs-(\w+)=1/g, function(m, name) {
-      ret.push(name)
+      (ret || (ret = [])).push(name)
     })
 
-    return ret.length ? unique(ret) : undefined
+    return ret
   })()
 })
 
