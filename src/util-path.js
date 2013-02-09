@@ -34,8 +34,9 @@ function realpath(path) {
     return path
   }
 
+  var ret = []
   var parts = path.split("/")
-  var ret = [], part
+  var part
 
   for (var i = 0, len = parts.length; i < len; i++) {
     part = parts[i]
@@ -88,7 +89,7 @@ function parseAlias(id) {
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf("{") > -1) {
+  if (vars && id.indexOf("{") >= 0) {
     id = id.replace(VARS_RE, function(m, key) {
       return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
     })
