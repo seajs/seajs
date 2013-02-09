@@ -9,8 +9,11 @@ build_all:
 test:
 	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/tests/runner.html?console
 
+test_local:
+	phantomjs tools/phantom.js tests/runner.html?console
+
 test_node:
-	node tests/runner.js
+	node tests/node-runner.js
 
 size:
 	tools/size.sh
