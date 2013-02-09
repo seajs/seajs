@@ -87,7 +87,8 @@
       }
 
       // 测试顺序一致性
-      test.assert(U.toLowerCase() === L,
+      // 在某些低版本浏览器下不能保证，比如 iPhone 一代的 Safari 上
+      test.assert(isOldWebKit || U.toLowerCase() === L,
           '"' + U + '".toLowerCase() === "' + L + '"')
 
       // 校验 Aa 紧相邻假设
@@ -97,7 +98,7 @@
         var diff = s.indexOf(l) - s.indexOf(u)
 
         // 1. 在 IE6-9 下不能保证 diff === 1
-        // 2. 在某些低版本浏览器下也不能保证，比如 iPhone 一代的 Safari 上
+        // 2. 在某些低版本浏览器下不能保证，比如 iPhone 一代的 Safari 上
         test.assert(isOldIE || isOldWebKit || diff === 1,
             l + ' - ' + u + ' = ' + diff)
       }
