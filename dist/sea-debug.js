@@ -63,7 +63,9 @@ var log = seajs.log = function(msg, type) {
   if (console) {
     // Do NOT print `log(msg)` in non-debug mode
     if (type || configData.debug) {
-      console[type || "log"](msg)
+      if (console[type || (type = "log")]) {
+        console[type](msg)
+      }
     }
   }
 
