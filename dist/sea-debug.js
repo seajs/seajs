@@ -176,8 +176,9 @@ function realpath(path) {
     return path
   }
 
+  var ret = []
   var parts = path.split("/")
-  var ret = [], part
+  var part
 
   for (var i = 0, len = parts.length; i < len; i++) {
     part = parts[i]
@@ -230,7 +231,7 @@ function parseAlias(id) {
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf("{") > -1) {
+  if (vars && id.indexOf("{") >= 0) {
     id = id.replace(VARS_RE, function(m, key) {
       return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
     })
@@ -319,26 +320,8 @@ function isTopLevel(id) {
 
 
 var doc = document
-var loc = global.location
-
-var pageUri = (function() {
-  var pathname = loc.pathname
-
-  // Normalize pathname to start with "/"
-  // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-  if (pathname.charAt(0) !== "/") {
-    pathname = "/" + pathname
-  }
-
-  var pageUri = loc.protocol + "//" + loc.host + pathname
-
-  // local file in IE: C:\path\to\xx.js
-  if (pageUri.indexOf("\\") >= 0) {
-    pageUri = pageUri.replace(/\\/g, "/")
-  }
-
-  return pageUri
-})()
+var loc = location
+var pageUri = loc.href.replace(loc.search, "").replace(loc.hash, "")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajs-node") || (function() {
@@ -505,8 +488,8 @@ function getCurrentScript() {
 //  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldWebKit = Number(navigator.userAgent
-    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) < 536
+var isOldWebKit = (navigator.userAgent
+    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
 
 
 /**
@@ -1045,7 +1028,7 @@ function makeBaseAbsolute() {
 config({
   // Get initial plugins
   plugins: (function() {
-    var ret = []
+    var ret
 
     // Convert `seajs-xxx` to `seajs-xxx=1`
     // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
@@ -1056,10 +1039,10 @@ config({
 
     // Exclude seajs-xxx=0
     str.replace(/seajs-(\w+)=1/g, function(m, name) {
-      ret.push(name)
+      (ret || (ret = [])).push(name)
     })
 
-    return ret.length ? unique(ret) : undefined
+    return ret
   })()
 })
 
