@@ -178,26 +178,8 @@ function isTopLevel(id) {
 
 
 var doc = document
-var loc = global.location
-
-var pageUri = (function() {
-  var pathname = loc.pathname
-
-  // Normalize pathname to start with "/"
-  // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-  if (pathname.charAt(0) !== "/") {
-    pathname = "/" + pathname
-  }
-
-  var pageUri = loc.protocol + "//" + loc.host + pathname
-
-  // local file in IE: C:\path\to\xx.js
-  if (pageUri.indexOf("\\") >= 0) {
-    pageUri = pageUri.replace(/\\/g, "/")
-  }
-
-  return pageUri
-})()
+var loc = location
+var pageUri = loc.href.replace(loc.search, "").replace(loc.hash, "")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajs-node") || (function() {
