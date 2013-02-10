@@ -8,6 +8,7 @@ var testPages = [
   , 'specs/extensible'
   , 'specs/extensible/plugin-debug'
 
+  , 'specs/misc/bootstrap-async'
   , 'specs/misc/data-api'
   , 'specs/misc/ie-cache'
   , 'specs/misc/utf8-in-gbk'
