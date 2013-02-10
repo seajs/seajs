@@ -7,6 +7,7 @@ var testPages = [
   , 'specs/package'
   , 'specs/extensible'
   , 'specs/extensible/plugin-debug'
+  , 'specs/extensible/plugin-flush'
 
   , 'specs/misc/bootstrap-async'
   , 'specs/misc/data-api'
