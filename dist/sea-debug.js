@@ -1058,19 +1058,14 @@ if (dataMain) {
   seajs.use(dataMain)
 }
 
-
 // Enable to load `sea.js` self asynchronously
-(function(args, hash, i) {
-  while (i < args.length) {
-    seajs[hash[args[i]]].apply(seajs, args[i + 1])
-    i += 2
+if (_seajs && _seajs.args) {
+  var methods = ["define", "config", "use", "on"]
+  var args = _seajs.args
+  for (var g = 0; g < args.length; g += 2) {
+    seajs[methods[args[g]]].apply(seajs, args[g + 1])
   }
-})(_seajs.args || [], {
-  0: "define",
-  1: "config",
-  2: "use",
-  3: "on"
-}, 0)
+}
 
 /*
  ;(function(m, o, d, u, l, a, r) {
