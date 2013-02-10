@@ -19,7 +19,7 @@ function dirname(path) {
 }
 
 // Canonicalize a path
-// realpath("./a//b/../c") ==> "a/c"
+// realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
 
   // "file:///a//b/c" ==> "file:///a/b/c"
@@ -30,20 +30,18 @@ function realpath(path) {
   }
 
   // If "a/b/c", just return
-  if (path.indexOf(".") === -1) {
+  if (path.indexOf(".") < 0) {
     return path
   }
 
-  var original = path.split("/")
-  var ret = [], part
+  var ret = []
+  var parts = path.split("/")
+  var part
 
-  for (var i = 0, len = original.length; i < len; i++) {
-    part = original[i]
+  for (var i = 0, len = parts.length; i < len; i++) {
+    part = parts[i]
 
     if (part === "..") {
-      if (ret.length === 0) {
-        throw new Error("Invalid path: " + path)
-      }
       ret.pop()
     }
     else if (part !== ".") {
@@ -91,7 +89,7 @@ function parseAlias(id) {
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf("{") > -1) {
+  if (vars && id.indexOf("{") >= 0) {
     id = id.replace(VARS_RE, function(m, key) {
       return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
     })
@@ -175,39 +173,18 @@ function isRoot(id) {
 
 function isTopLevel(id) {
   var c = id.charAt(0)
-  return id.indexOf("://") === -1 && c !== "." && c !== "/"
+  return id.indexOf("://") < 0 && c !== "." && c !== "/"
 }
 
 
 var doc = document
-var loc = global.location
-
-var pageUri = (function() {
-  var pathname = loc.pathname
-
-  // Normalize pathname to start with "/"
-  // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-  if (pathname.charAt(0) !== "/") {
-    pathname = "/" + pathname
-  }
-
-  var pageUri = loc.protocol + "//" + loc.host + pathname
-
-  // local file in IE: C:\path\to\xx.js
-  if (pageUri.indexOf("\\") > -1) {
-    pageUri = pageUri.replace(/\\/g, "/")
-  }
-
-  return pageUri
-})()
+var loc = location
+var pageUri = loc.href.replace(loc.search, "").replace(loc.hash, "")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajs-node") || (function() {
   var scripts = doc.getElementsByTagName("script")
-
-  return scripts[scripts.length - 1] ||
-      // Maybe undefined in some environment such as PhantomJS
-      doc.createElement("script")
+  return scripts[scripts.length - 1]
 })()
 
 // When `sea.js` is inline, set loaderDir according to pageUri

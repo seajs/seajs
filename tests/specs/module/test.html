@@ -28,10 +28,13 @@
       'specs/module/multi-load',
       'specs/module/multi-versions',
       'specs/module/override',
-      'specs/module/path-resolve',
       'specs/module/public-api',
       'specs/module/require-async',
-      'specs/module/transitive'
+      'specs/module/transitive',
+
+      // Place `path-resolve` at last because 404 case in it, otherwise it will
+      // affect the following spec in old browsers such as Firefox 5.0
+      'specs/module/path-resolve'
     ])
   })
 </script>

@@ -38,7 +38,7 @@ function printHeader(test, url) {
 }
 
 if (typeof define === 'undefined') {
-  var define = function(fn) {
+   define = function(fn) {
     fn(null, (this.test = {}))
   }
 }

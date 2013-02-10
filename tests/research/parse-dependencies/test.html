@@ -156,6 +156,22 @@ function now() {
   return new Date().getTime()
 }
 
+function unique(arr) {
+  var obj = {}
+  var ret = []
+
+  for (var i = 0, len = arr.length; i < len; i++) {
+    var item = arr[i]
+    if (obj[item] !== 1) {
+      obj[item] = 1
+      ret.push(item)
+    }
+  }
+
+  return ret
+}
+
+
 $('run').onclick = function() {
   var result, t
   if (typeof parser === 'string') parser = window[parser]
@@ -183,7 +199,6 @@ $('run').onclick = function() {
 
 var EXPECTED = ['../test', './a', 'a', 'b', 'f', 'e', 'x', 's', 'rare_winter_2', 'rare_winter_4']
 var parser = 'parserBySeaJS'
-var util = seajs.pluginSDK.util
 
 var parserBySeaJS = (function() {
   var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
@@ -197,7 +212,7 @@ var parserBySeaJS = (function() {
         if(m[2]) ret.push(m[2])
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   return {
@@ -238,7 +253,7 @@ var parserByEthanZhang = (function() {
       ret.push(primatives[match[2]])
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   return {
@@ -268,7 +283,7 @@ var parserByLifesinger = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   return {
@@ -302,7 +317,7 @@ var parserByLifesinger2 = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   return {
@@ -339,7 +354,7 @@ var parserByLifesinger3 = (function() {
       }
     })
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   return {
@@ -375,7 +390,7 @@ var parserByXingrz = (function() {
         ret.push(_strings[index])
       }
     })
-    return util.unique(ret)
+    return unique(ret)
   }
 
   return {
@@ -399,7 +414,7 @@ var parserByJames = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   // http://james.padolsey.com/javascript/removing-comments-in-javascript/
@@ -509,7 +524,7 @@ var parserByJames2 = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   // http://james.padolsey.com/javascript/javascript-comment-removal-revisted/
@@ -581,7 +596,7 @@ var parserByArmy = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   //http://9911489.k237.opensrs.cn/test.html
@@ -720,7 +735,7 @@ var parserByHaxAndLuolonghao = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   // http://hax.iteye.com/blog/181358
@@ -752,7 +767,7 @@ var parserByLuolonghao = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   // https://github.com/seajs/seajs/issues/478#issuecomment-11524485
@@ -785,7 +800,7 @@ var parserByLuolonghao2 = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   function removeComments(code) {
@@ -815,7 +830,7 @@ var parserByLuolonghaoAndLifesinger = (function() {
       ret.push(match[2])
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   function clean(code) {
@@ -845,7 +860,7 @@ var parserByYessky = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   // https://github.com/seajs/seajs/issues/478#issuecomment-11526333
@@ -883,7 +898,7 @@ var parserByZiyunfei = (function() {
       }
     }
 
-    return util.unique(ret)
+    return unique(ret)
   }
 
   // https://github.com/seajs/seajs/issues/478#issuecomment-11491575
@@ -939,10 +954,15 @@ var parserByZiyunfei = (function() {
 </script>
 
 <h3>References</h3>
+
 <ul>
-    <li><a href="../remove-comments-safely/test.html">Comments Removal</a></li>
-    <li><a href="https://github.com/seajs/seajs/issues/478">seajs#478</a></li>
-    <li><a href="http://jsperf.com/parse-dependencies/3">http://jsperf.com/parse-dependencies/3</a></li>
+  <li><a href="https://github.com/seajs/seajs/issues/478">seajs#478</a></li>
+  <li><a href="http://jsperf.com/parse-dependencies/3">http://jsperf.com/parse-dependencies/3</a></li>
+  <li><a href="http://james.padolsey.com/javascript/removing-comments-in-javascript/">Removing comments in JavaScript</a> <a href="http://james.padolsey.com/demos/comment-removal-js.html">DEMO</a></li>
+  <li><a href="https://github.com/seajs/seajs/issues/478">https://github.com/seajs/seajs/issues/478</a></li>
+  <li><a href="http://jsperf.com/remove-comments">http://jsperf.com/remove-comments</a></li>
+  <li><a href="http://stackoverflow.com/questions/3577767/javascript-comment-stripper">http://stackoverflow.com/questions/3577767/javascript-comment-stripper</a></li>
 </ul>
+
 </body>
 </html>

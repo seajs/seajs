@@ -15,7 +15,7 @@
   <property name="debug.file" value="${dist.dir}/${module.name}-debug.js"/>
   <property name="min.file" value="${dist.dir}/${module.name}.js"/>
   <property name="map.file" value="${dist.dir}/${module.name}.js.map"/>
-  <property name="online.plugins" value="plugin-combo.js,plugin-warning.js"/>
+  <property name="online.plugins" value="plugin-*.js"/>
 
   <target name="concat">
     <mkdir dir="${dist.dir}"/>

@@ -5,7 +5,7 @@
 "use strict"
 
 // Avoid conflicting when `sea.js` is loaded multiple times
-if (global.seajs) {
+var _seajs = global.seajs
+if (_seajs && !_seajs.args) {
   return
 }
-

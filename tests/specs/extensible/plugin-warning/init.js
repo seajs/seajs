@@ -22,13 +22,7 @@ define(function(require) {
   var msg1 = this.consoleMsgStack.pop()
 
   test.assert(msg1.indexOf('This module has multiple versions:') === 0, 'console message')
-  test.assert(msg1.indexOf('plugin-warning/xx/1.0.0/xx.js') > 0, 'console message')
-  test.assert(msg1.indexOf('plugin-warning/xx/1.2.0/xx.js') > 0, 'console message')
-
   test.assert(msg2.indexOf('This module has multiple versions:') === 0, 'console message')
-  test.assert(msg2.indexOf('plugin-warning/zz/a-1.2.js') > 0, 'console message')
-  test.assert(msg2.indexOf('plugin-warning/zz/a-1.3.js') > 0, 'console message')
-
 
   test.next()
 

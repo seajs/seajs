@@ -5,10 +5,10 @@
 "use strict"
 
 // Avoid conflicting when `sea.js` is loaded multiple times
-if (global.seajs) {
+var _seajs = global.seajs
+if (_seajs && !_seajs.args) {
   return
 }
-
 
 var seajs = global.seajs = {
   // The current version of SeaJS being used
@@ -63,7 +63,9 @@ var log = seajs.log = function(msg, type) {
   if (console) {
     // Do NOT print `log(msg)` in non-debug mode
     if (type || configData.debug) {
-      (console[type] || console["log"]).call(console, msg)
+      if (console[type || (type = "log")]) {
+        console[type](msg)
+      }
     }
   }
 
@@ -159,7 +161,7 @@ function dirname(path) {
 }
 
 // Canonicalize a path
-// realpath("./a//b/../c") ==> "a/c"
+// realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
 
   // "file:///a//b/c" ==> "file:///a/b/c"
@@ -170,20 +172,18 @@ function realpath(path) {
   }
 
   // If "a/b/c", just return
-  if (path.indexOf(".") === -1) {
+  if (path.indexOf(".") < 0) {
     return path
   }
 
-  var original = path.split("/")
-  var ret = [], part
+  var ret = []
+  var parts = path.split("/")
+  var part
 
-  for (var i = 0, len = original.length; i < len; i++) {
-    part = original[i]
+  for (var i = 0, len = parts.length; i < len; i++) {
+    part = parts[i]
 
     if (part === "..") {
-      if (ret.length === 0) {
-        throw new Error("Invalid path: " + path)
-      }
       ret.pop()
     }
     else if (part !== ".") {
@@ -231,7 +231,7 @@ function parseAlias(id) {
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf("{") > -1) {
+  if (vars && id.indexOf("{") >= 0) {
     id = id.replace(VARS_RE, function(m, key) {
       return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
     })
@@ -315,39 +315,18 @@ function isRoot(id) {
 
 function isTopLevel(id) {
   var c = id.charAt(0)
-  return id.indexOf("://") === -1 && c !== "." && c !== "/"
+  return id.indexOf("://") < 0 && c !== "." && c !== "/"
 }
 
 
 var doc = document
-var loc = global.location
-
-var pageUri = (function() {
-  var pathname = loc.pathname
-
-  // Normalize pathname to start with "/"
-  // ref: https://groups.google.com/forum/#!topic/seajs/9R29Inqk1UU
-  if (pathname.charAt(0) !== "/") {
-    pathname = "/" + pathname
-  }
-
-  var pageUri = loc.protocol + "//" + loc.host + pathname
-
-  // local file in IE: C:\path\to\xx.js
-  if (pageUri.indexOf("\\") > -1) {
-    pageUri = pageUri.replace(/\\/g, "/")
-  }
-
-  return pageUri
-})()
+var loc = location
+var pageUri = loc.href.replace(loc.search, "").replace(loc.hash, "")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajs-node") || (function() {
   var scripts = doc.getElementsByTagName("script")
-
-  return scripts[scripts.length - 1] ||
-      // Maybe undefined in some environment such as PhantomJS
-      doc.createElement("script")
+  return scripts[scripts.length - 1]
 })()
 
 // When `sea.js` is inline, set loaderDir according to pageUri
@@ -366,14 +345,11 @@ function getScriptAbsoluteSrc(node) {
  * ref: tests/research/load-js-css/test.html
  */
 
-var head = doc.head ||
-    doc.getElementsByTagName("head")[0] ||
-    doc.documentElement
-
+var head = doc.getElementsByTagName("head")[0] || doc.documentElement
 var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
-var READY_STATE_RE = /loaded|complete|undefined/
+var READY_STATE_RE = /^(?:loaded|complete|undefined)$/
 
 var currentlyAddingScript
 var interactiveScript
@@ -390,7 +366,7 @@ function request(url, callback, charset) {
     }
   }
 
-  assetOnload(node, callback)
+  addOnload(node, callback, isCSS)
 
   if (isCSS) {
     node.rel = "stylesheet"
@@ -414,16 +390,17 @@ function request(url, callback, charset) {
   currentlyAddingScript = null
 }
 
-function assetOnload(node, callback) {
-  if (node.nodeName === "SCRIPT") {
-    scriptOnload(node, callback)
-  }
-  else {
-    styleOnload(node, callback)
-  }
-}
+function addOnload(node, callback, isCSS) {
+  var missingOnload = isCSS && (isOldWebKit || !("onload" in node))
 
-function scriptOnload(node, callback) {
+  // for Old WebKit and Old Firefox
+  if (missingOnload) {
+    setTimeout(function() {
+      pollCss(node, callback)
+    }, 1) // Begin after node insertion
+    return
+  }
+
   node.onload = node.onerror = node.onreadystatechange = function() {
     if (READY_STATE_RE.test(node.readyState)) {
 
@@ -431,40 +408,19 @@ function scriptOnload(node, callback) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!configData.debug) {
+      if (!isCSS && !configData.debug) {
         head.removeChild(node)
       }
 
       // Dereference the node
       node = undefined
 
-      if (callback) {
-        callback()
-      }
+      callback()
     }
   }
 }
 
-function styleOnload(node, callback) {
-  // for Old WebKit and Old Firefox
-  if (isOldWebKit || isOldFirefox) {
-    setTimeout(function() {
-      pollStyle(node, callback)
-    }, 1) // Begin after node insertion
-  }
-  else {
-    node.onload = node.onerror = function() {
-      node.onload = node.onerror = null
-      node = undefined
-
-      if (callback) {
-        callback()
-      }
-    }
-  }
-}
-
-function pollStyle(node, callback) {
+function pollCss(node, callback) {
   var sheet = node.sheet
   var isLoaded
 
@@ -492,13 +448,13 @@ function pollStyle(node, callback) {
 
   setTimeout(function() {
     if (isLoaded) {
-      // Place callback in here due to giving time for style rendering
+      // Place callback here to give time for style rendering
       callback()
     }
     else {
-      pollStyle(node, callback)
+      pollCss(node, callback)
     }
-  }, 1)
+  }, 20)
 }
 
 function getCurrentScript() {
@@ -527,18 +483,13 @@ function getCurrentScript() {
 }
 
 
-var UA = navigator.userAgent
-
-// `onload` event is supported in WebKit since 535.23
-// ref: https://bugs.webkit.org/show_activity.cgi?id=38995
-var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) < 536
-
-// `onload/onerror` event is supported since Firefox 9.0
+// `onload` event is supported in WebKit < 535.23 and Firefox < 9.0
 // ref:
+//  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldFirefox = UA.indexOf("Firefox") > 0 &&
-    !("onload" in doc.createElement("link"))
+var isOldWebKit = (navigator.userAgent
+    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
 
 
 /**
@@ -772,9 +723,8 @@ function define(id, deps, factory) {
   if (!id && doc.attachEvent) {
     var script = getCurrentScript()
 
-    if (script && script.src) {
-      derivedUri = getScriptAbsoluteSrc(script)
-      derivedUri = emitData("derived", { uri: derivedUri }, "uri")
+    if (script) {
+      derivedUri = script.src
     }
     else {
       log("Failed to derive: " + factory)
@@ -797,6 +747,9 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
+  meta.uri = uri
+  uri = emitData("save", meta, "uri")
+
   var mod = getModule(uri)
 
   // Do NOT override already saved modules
@@ -809,9 +762,6 @@ function save(uri, meta) {
 
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
-
-    // Emit event for plugin-warning etc
-    emit("saved", mod)
   }
 }
 
@@ -1078,7 +1028,7 @@ function makeBaseAbsolute() {
 config({
   // Get initial plugins
   plugins: (function() {
-    var ret = []
+    var ret
 
     // Convert `seajs-xxx` to `seajs-xxx=1`
     // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
@@ -1089,10 +1039,10 @@ config({
 
     // Exclude seajs-xxx=0
     str.replace(/seajs-(\w+)=1/g, function(m, name) {
-      ret.push(name)
+      (ret || (ret = [])).push(name)
     })
 
-    return ret.length ? unique(ret) : undefined
+    return ret
   })()
 })
 
@@ -1108,5 +1058,28 @@ if (dataMain) {
   seajs.use(dataMain)
 }
 
+// Enable to load `sea.js` self asynchronously
+if (_seajs && _seajs.args) {
+  var methods = ["define", "config", "use", "on"]
+  var args = _seajs.args
+  for (var g = 0; g < args.length; g += 2) {
+    seajs[methods[args[g]]].apply(seajs, args[g + 1])
+  }
+}
+
+/*
+ ;(function(m, o, d, u, l, a, r) {
+ if(m[o]) return
+ function f(n) { return function() { r.push(n, arguments); return a } }
+ m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
+ m.define = f(0)
+ u = d.createElement("script")
+ u.id = o + "-node"
+ u.async = true
+ u.src = "path/to/sea.js"
+ l = d.getElementsByTagName("head")[0]
+ l.appendChild(u)
+ })(window, "seajs", document);
+ */
 
 })(this);
