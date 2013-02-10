@@ -5,10 +5,10 @@
 "use strict"
 
 // Avoid conflicting when `sea.js` is loaded multiple times
-if (global.seajs) {
+var _seajs = global.seajs
+if (_seajs && !_seajs.args) {
   return
 }
-
 
 var seajs = global.seajs = {
   // The current version of SeaJS being used
@@ -1058,5 +1058,33 @@ if (dataMain) {
   seajs.use(dataMain)
 }
 
+
+// Enable to load `sea.js` self asynchronously
+(function(args, hash, i) {
+  while (i < args.length) {
+    seajs[hash[args[i]]].apply(seajs, args[i + 1])
+    i += 2
+  }
+})(_seajs.args || [], {
+  0: "define",
+  1: "config",
+  2: "use",
+  3: "on"
+}, 0)
+
+/*
+ ;(function(m, o, d, u, l, a, r) {
+ if(m[o]) return
+ function f(n) { return function() { r.push(n, arguments); return a } }
+ m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
+ m.define = f(0)
+ u = d.createElement("script")
+ u.id = o + "-node"
+ u.async = true
+ u.src = "path/to/sea.js"
+ l = d.getElementsByTagName("head")[0]
+ l.appendChild(u)
+ })(window, "seajs", document);
+ */
 
 })(this);
