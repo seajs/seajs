@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Circular Deps</title>
+        <script type="text/javascript" src="../../../dist/sea-debug.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        seajs.config({
+            debug: true
+        });
+        seajs.use(["./a"], function(a) {
+            console.log(a.name);
+        })
+        </script>
+    </body>
+</html>
