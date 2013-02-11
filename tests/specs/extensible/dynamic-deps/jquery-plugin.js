@@ -1,0 +1,2 @@
+
+jQuery.pluginXX = { name: 'xx' }
