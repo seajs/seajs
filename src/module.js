@@ -50,7 +50,7 @@ function resolve(ids, refUri) {
     return ret
   }
 
-  var data = { id: ids, refUri: refUri, id2Uri: id2Uri }
+  var data = { id: ids, refUri: refUri }
   var id = emitData("resolve", data, "id")
 
   return data.uri || id2Uri(id, refUri)
@@ -419,5 +419,6 @@ seajs.use = function(ids, callback) {
 }
 
 global.define = define
+seajs.resolve = id2Uri
 
 
