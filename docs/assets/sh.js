@@ -1,4 +1,4 @@
-define('highlight', [], function(require, exports) {
+define('sh', [], function(require, exports) {
 
   /* Copyright (C) 2007, 2008 gnombat@users.sourceforge.net */
   /* License: http://shjs.sourceforge.net/doc/gplv3.html */

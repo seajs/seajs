@@ -43,7 +43,7 @@
       id = m[2]
     }
 
-    var uri = data.id2Uri(id, data.refUri)
+    var uri = seajs.resolve(id, data.refUri)
     var t = uri.replace(/\.(?:js|css)(\?|$)/, "$1")
 
     // http://path/to/a.tpl

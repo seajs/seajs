@@ -18,6 +18,8 @@ function Module(uri, status) {
   this.status = status || STATUS.INITIALIZED
   this.dependencies = []
   this.waitings = []
+
+  emit("initialized", this)
 }
 
 Module.prototype.load = function(ids, callback) {
@@ -48,7 +50,7 @@ function resolve(ids, refUri) {
     return ret
   }
 
-  var data = { id: ids, refUri: refUri, id2Uri: id2Uri }
+  var data = { id: ids, refUri: refUri }
   var id = emitData("resolve", data, "id")
 
   return data.uri || id2Uri(id, refUri)
@@ -71,9 +73,18 @@ function load(uris, callback, options) {
 
   for (var i = 0; i < len; i++) {
     (function(uri) {
-
       var mod = cachedModules[uri]
-      mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
+      var deps = mod.dependencies
+
+      mod.status < STATUS.SAVED ?
+          (deps.length ?
+              // Load dependencies that added during module initialization
+              mod.load(deps, function() {
+                deps.length = 0
+                fetch(uri, onFetched)
+              }) :
+              fetch(uri, onFetched) ) :
+          onFetched()
 
       function onFetched() {
         // Maybe failed to fetch successfully, such as 404 error
@@ -408,5 +419,6 @@ seajs.use = function(ids, callback) {
 }
 
 global.define = define
+seajs.resolve = id2Uri
 
 

@@ -31,6 +31,8 @@ var configData = config.data = {
 }
 
 function config(data) {
+  emit("config", data)
+
   for (var key in data) {
     var curr = data[key]
 

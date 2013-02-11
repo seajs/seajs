@@ -321,10 +321,10 @@ function isTopLevel(id) {
 
 var doc = document
 var loc = location
-var pageUri = loc.href.replace(loc.search, "").replace(loc.hash, "")
+var pageUri = loc.href.replace(/[?#].*$/, "")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
-var loaderScript = doc.getElementById("seajs-node") || (function() {
+var loaderScript = doc.getElementById("seajsnode") || (function() {
   var scripts = doc.getElementsByTagName("script")
   return scripts[scripts.length - 1]
 })()
@@ -533,6 +533,8 @@ function Module(uri, status) {
   this.status = status || STATUS.INITIALIZED
   this.dependencies = []
   this.waitings = []
+
+  emit("initialized", this)
 }
 
 Module.prototype.load = function(ids, callback) {
@@ -563,7 +565,7 @@ function resolve(ids, refUri) {
     return ret
   }
 
-  var data = { id: ids, refUri: refUri, id2Uri: id2Uri }
+  var data = { id: ids, refUri: refUri }
   var id = emitData("resolve", data, "id")
 
   return data.uri || id2Uri(id, refUri)
@@ -586,9 +588,18 @@ function load(uris, callback, options) {
 
   for (var i = 0; i < len; i++) {
     (function(uri) {
-
       var mod = cachedModules[uri]
-      mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
+      var deps = mod.dependencies
+
+      mod.status < STATUS.SAVED ?
+          (deps.length ?
+              // Load dependencies that added during module initialization
+              mod.load(deps, function() {
+                deps.length = 0
+                fetch(uri, onFetched)
+              }) :
+              fetch(uri, onFetched) ) :
+          onFetched()
 
       function onFetched() {
         // Maybe failed to fetch successfully, such as 404 error
@@ -923,6 +934,7 @@ seajs.use = function(ids, callback) {
 }
 
 global.define = define
+seajs.resolve = id2Uri
 
 
 /**
@@ -958,6 +970,8 @@ var configData = config.data = {
 }
 
 function config(data) {
+  emit("config", data)
+
   for (var key in data) {
     var curr = data[key]
 
@@ -1074,7 +1088,7 @@ if (_seajs && _seajs.args) {
  m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
  m.define = f(0)
  u = d.createElement("script")
- u.id = o + "-node"
+ u.id = o + "node"
  u.async = true
  u.src = "path/to/sea.js"
  l = d.getElementsByTagName("head")[0]
