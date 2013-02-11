@@ -18,14 +18,19 @@
   // }
   var shimConfig = {}
 
-  seajs.on("config", function(data) {
+  function parseConfig(data) {
     each(data.shim, function(item, key) {
       shimConfig[key] = item
       if (!item.match) {
         item.match = seajs.resolve(key)
       }
     })
-  })
+  }
+
+  seajs.on("config", parseConfig)
+
+  // Parse config here to make previous shim config available
+  parseConfig(seajs.config.data)
 
   seajs.on("initialized", function(mod) {
     var uri = mod.uri
