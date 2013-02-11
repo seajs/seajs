@@ -77,11 +77,13 @@ function load(uris, callback, options) {
       var deps = mod.dependencies
 
       mod.status < STATUS.SAVED ?
-          // Load dependencies that added during module initialization phase
-          mod.load(deps, function() {
-            deps.length = 0
-            fetch(uri, onFetched)
-          }) :
+          (deps.length ?
+              // Load dependencies that added during module initialization
+              mod.load(deps, function() {
+                deps.length = 0
+                fetch(uri, onFetched)
+              }) :
+              fetch(uri, onFetched) ) :
           onFetched()
 
       function onFetched() {
