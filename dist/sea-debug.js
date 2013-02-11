@@ -321,10 +321,10 @@ function isTopLevel(id) {
 
 var doc = document
 var loc = location
-var pageUri = loc.href.replace(loc.search, "").replace(loc.hash, "")
+var pageUri = loc.href.replace(/[?#].*$/, "")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
-var loaderScript = doc.getElementById("seajs-node") || (function() {
+var loaderScript = doc.getElementById("seajsnode") || (function() {
   var scripts = doc.getElementsByTagName("script")
   return scripts[scripts.length - 1]
 })()
@@ -1074,7 +1074,7 @@ if (_seajs && _seajs.args) {
  m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
  m.define = f(0)
  u = d.createElement("script")
- u.id = o + "-node"
+ u.id = o + "node"
  u.async = true
  u.src = "path/to/sea.js"
  l = d.getElementsByTagName("head")[0]
