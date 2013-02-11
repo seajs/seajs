@@ -3,7 +3,7 @@
  * older, traditional "browser globals" scripts that do not use define()
  * to declare the dependencies and set a module value.
  */
-(function(seajs) {
+(function(seajs, global) {
 
   // shimConfig = {
   //   "jquery": {
@@ -79,5 +79,5 @@
     return typeof obj === "function"
   }
 
-})(seajs);
+})(seajs, this);
 

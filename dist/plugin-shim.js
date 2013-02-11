@@ -1,0 +1,2 @@
+'use strict';(function(e,j){function f(b,c){for(var a in b)if(b.hasOwnProperty(a)&&!1===c(b[a],a,b))break}function h(b,c){var a=b.match;return a.test?a.test(c):c===a}var g={};e.on("config",function(b){f(b.shim,function(b,a){g[a]=b;b.match||(b.match=e.resolve(a))})});e.on("initialized",function(b){var c=b.uri;f(g,function(a){var d=a.deps;if(d&&h(a,c)){for(a=0;a<d.length;a++)b.dependencies.push(d[a]);return!1}})});e.on("compile",function(b){var c=b.uri;f(g,function(a){var d=a.exports;if(d&&h(a,c))return b.exports=
+"function"===typeof d?d():j[d],!1})})})(seajs,this);
