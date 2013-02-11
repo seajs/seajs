@@ -18,6 +18,8 @@ function Module(uri, status) {
   this.status = status || STATUS.INITIALIZED
   this.dependencies = []
   this.waitings = []
+
+  emit("initialized", this)
 }
 
 Module.prototype.load = function(ids, callback) {
@@ -71,9 +73,16 @@ function load(uris, callback, options) {
 
   for (var i = 0; i < len; i++) {
     (function(uri) {
-
       var mod = cachedModules[uri]
-      mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
+      var deps = mod.dependencies
+
+      mod.status < STATUS.SAVED ?
+          // Load dependencies that added during module initialization phase
+          mod.load(deps, function() {
+            deps.length = 0
+            fetch(uri, onFetched)
+          }) :
+          onFetched()
 
       function onFetched() {
         // Maybe failed to fetch successfully, such as 404 error
