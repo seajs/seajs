@@ -51,7 +51,7 @@ if (_seajs && _seajs.args) {
  m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
  m.define = f(0)
  u = d.createElement("script")
- u.id = o + "-node"
+ u.id = o + "node"
  u.async = true
  u.src = "path/to/sea.js"
  l = d.getElementsByTagName("head")[0]
