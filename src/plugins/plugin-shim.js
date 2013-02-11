@@ -5,17 +5,17 @@
  */
 (function(seajs, global) {
 
-  // shimConfig = {
+  // seajs.config( {
+  // shim: {
   //   "jquery": {
   //     exports: "jQuery" or function
   //   },
   //   "jquery.plugins": {
-  //     // URI matches, such as jquery.easing.js, jquery.keystop.js
-  //     match: /jquery[.][a-z]/,
-  //     exports: "jQuery",
+  //     // URI matches such as jquery.easing.js, jquery.keystop.js
+  //     match: /jquery\.[a-z].*\.js/,
   //     deps: ["jquery"]
   //   }
-  // }
+  // })
   var shimConfig = {}
 
   function parseConfig(data) {
