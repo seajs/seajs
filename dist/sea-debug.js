@@ -1081,18 +1081,18 @@ if (_seajs && _seajs.args) {
 }
 
 /*
- ;(function(m, o, d, u, l, a, r) {
- if(m[o]) return
- function f(n) { return function() { r.push(n, arguments); return a } }
- m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
- m.define = f(0)
- u = d.createElement("script")
- u.id = o + "node"
- u.async = true
- u.src = "path/to/sea.js"
- l = d.getElementsByTagName("head")[0]
- l.appendChild(u)
- })(window, "seajs", document);
+;(function(m, o, d, u, l, a, r) {
+  if(m[o]) return
+  function f(n) { return function() { r.push(n, arguments); return a } }
+  m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
+  m.define = f(0)
+  u = d.createElement("script")
+  u.id = o + "node"
+  u.async = true
+  u.src = "path/to/sea.js"
+  l = d.getElementsByTagName("head")[0]
+  l.appendChild(u)
+})(window, "seajs", document);
  */
 
 })(this);
