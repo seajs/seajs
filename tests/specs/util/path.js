@@ -77,7 +77,7 @@ define(function(require) {
   assert(addBase('http://a.com/b.js') === 'http://a.com/b.js', 'addBase')
   assert(addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/a.js', 'addBase')
   assert(addBase('/b.js', 'http://test.com/path/to/c.js') === 'http://test.com/b.js', 'addBase')
-  assert(addBase('c', 'http://test.com/path/to/c.js') === loaderDir + 'c', 'addBase')
+  assert(addBase('c', 'http://test.com/path/to/c.js') === pageDir + 'c', 'addBase')
 
 
   seajs.config({
@@ -104,11 +104,11 @@ define(function(require) {
   assert(parseMap('cc.js') === './cc.js', 'parseMap')
 
 
-  assert(id2Uri('path/to/a') === loaderDir + 'path/to/a.js', 'id2Uri')
-  assert(id2Uri('path/to/a.js') === loaderDir + 'path/to/a.js', 'id2Uri')
-  assert(id2Uri('path/to/a.js#') === loaderDir + 'path/to/a.js', 'id2Uri')
-  assert(id2Uri('path/to/z.js?t=1234') === loaderDir + 'path/to/z.js?t=1234', 'id2Uri')
-  assert(id2Uri('path/to/z?t=1234') === loaderDir + 'path/to/z?t=1234', 'id2Uri')
+  assert(id2Uri('path/to/a') === pageDir + 'path/to/a.js', 'id2Uri')
+  assert(id2Uri('path/to/a.js') === pageDir + 'path/to/a.js', 'id2Uri')
+  assert(id2Uri('path/to/a.js#') === pageDir + 'path/to/a.js', 'id2Uri')
+  assert(id2Uri('path/to/z.js?t=1234') === pageDir + 'path/to/z.js?t=1234', 'id2Uri')
+  assert(id2Uri('path/to/z?t=1234') === pageDir + 'path/to/z?t=1234', 'id2Uri')
   assert(id2Uri('./b', 'http://test.com/path//to/x.js') === 'http://test.com/path/to/b.js', 'id2Uri')
   assert(id2Uri('/c', 'http://test.com/path/x.js') === 'http://test.com/c.js', 'id2Uri')
   assert(id2Uri('/root/', 'file:///Users/lifesinger/tests/specs/util/test.html') === 'file:///root/', 'id2Uri')

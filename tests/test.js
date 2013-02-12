@@ -104,8 +104,13 @@ define(function(require, exports) {
 
   function reset() {
     seajs.off()
+
     copy(defaultConfig, configData)
     global.consoleMsgStack.length = 0
+
+    seajs.config({
+      base: './'
+    })
   }
 
   function copy(from, to) {
@@ -174,8 +179,7 @@ define(function(require, exports) {
   }
 
   function id2File(id) {
-    var file = id = id.indexOf('.js') > 0 ? id : id + '/main.js'
-    return configData.base + '../tests/' + file
+    return id.indexOf('.js') > 0 ? id : id + '/main.js'
   }
 
   function printElapsedTime() {
