@@ -594,8 +594,7 @@ function load(uris, callback, options) {
       mod.status < STATUS.SAVED ?
           (deps.length ?
               // Load dependencies that added during module initialization
-              mod.load(deps, function() {
-                deps.length = 0
+              mod.load(deps.splice(0, deps.length), function() {
                 fetch(uri, onFetched)
               }) :
               fetch(uri, onFetched) ) :
@@ -946,9 +945,9 @@ var configData = config.data = {
   base: (function() {
     var ret = loaderDir
 
-    // If loaderUri is `http://test.com/libs/seajs/seajs/1.0.0/sea.js`, the
+    // If loaderUri is `http://test.com/libs/seajs/path/to/sea.js`, the
     // baseUri should be `http://test.com/libs/`
-    var m = ret.match(/^(.+?\/)(?:seajs\/)+\d[^/]+\/$/)
+    var m = ret.match(/^(.+?\/)seajs\//)
     if (m) {
       ret = m[1]
     }
