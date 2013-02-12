@@ -10,7 +10,7 @@ seajs.config({
 })
 
 
-define('home', [], function(require) {
+define(function(require) {
 
   var navs = document.getElementById('nav').getElementsByTagName('a')
   var pages = getElementsByClassName('content', 'page')
@@ -24,9 +24,9 @@ define('home', [], function(require) {
 
     'quick-start': function() {
       var iframe = document.getElementById('quick-start-iframe')
-      iframe.src = 'examples/hello-seajs/index.html?v20121126'
+      iframe.src = 'http://seajs.github.com/examples/hello.html'
 
-      require.async('highlight', function(highlight) {
+      require.async('./sh', function(highlight) {
         highlight.init()
       })
     }
@@ -138,3 +138,4 @@ define('home', [], function(require) {
   }
 
 })
+

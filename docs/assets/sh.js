@@ -1,4 +1,4 @@
-define('sh', [], function(require, exports) {
+define(function(require, exports) {
 
   /* Copyright (C) 2007, 2008 gnombat@users.sourceforge.net */
   /* License: http://shjs.sourceforge.net/doc/gplv3.html */
@@ -30,3 +30,4 @@ define('sh', [], function(require, exports) {
   require.async('./sh.css')
 
 })
+
