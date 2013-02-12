@@ -1,2 +1,0 @@
-
-jQuery.pluginXX = { name: 'xx' }

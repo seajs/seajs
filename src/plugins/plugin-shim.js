@@ -17,20 +17,27 @@
   //   }
   // })
   var shimConfig = {}
+  var configData = seajs.config.data
 
   function parseConfig(data) {
-    each(data.shim, function(item, key) {
-      shimConfig[key] = item
-      if (!item.match) {
-        item.match = seajs.resolve(key)
-      }
-    })
+    var shim = data.shim
+    if (shim) {
+
+      each(shim, function(item, key) {
+        shimConfig[key] = item
+        if (!item.match) {
+          item.match = seajs.resolve(key)
+        }
+      })
+
+      configData.shim = shimConfig
+    }
   }
 
-  seajs.on("config", parseConfig)
-
   // Parse config here to make previous shim config available
-  parseConfig(seajs.config.data)
+  parseConfig(configData)
+
+  seajs.on("config", parseConfig)
 
   seajs.on("initialized", function(mod) {
     var uri = mod.uri
