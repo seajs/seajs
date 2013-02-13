@@ -1,14 +1,15 @@
 /**
- * init module for seajs.org
+ * Main module for seajs.org
  */
 
 seajs.config({
-  base: 'assets/',
+
+  // Redirect jquery.js to alipay CDN
   map: [
       [/^.*\/jquery\.js.*$/, 'https://a.alipayobjects.com/gallery/jquery/1.8.2/jquery.js']
   ]
-})
 
+})
 
 define(function(require) {
 
