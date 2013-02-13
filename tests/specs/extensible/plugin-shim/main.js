@@ -3,7 +3,7 @@ seajs.config({
 
   base: './plugin-shim/',
 
-  plugins: 'shim',
+  plugins: ['shim'],
 
   shim: {
     'jquery': {

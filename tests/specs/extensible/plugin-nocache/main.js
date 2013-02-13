@@ -1,7 +1,7 @@
 
 seajs.config({
   debug: true,
-  plugins: "nocache"
+  plugins: ["nocache"]
 })
 
 seajs.use("./plugin-nocache/init")
