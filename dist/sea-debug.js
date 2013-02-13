@@ -1016,12 +1016,10 @@ seajs.config = config
 
 function plugin2preload(arr) {
   var ret = [], name
-  isArray(arr) || (arr = [arr])
 
   while ((name = arr.shift())) {
     ret.push(loaderDir + "plugin-" + name)
   }
-
   return ret
 }
 
