@@ -1,55 +1,69 @@
 
-// Hack console for testing
-(function(global) {
+// Set `global` to `this` in non-node environment
+if (typeof global === 'undefined') {
+  global = this
+}
+
+// Hack `console` for testing
+(function() {
   var console = global.console || ( global.console = {})
   var stack = global.consoleMsgStack = []
 
   console._log = console.log || noop
   console._warn = console.warn || noop
 
-  console.log = function(arg1, arg2) {
-    var msg = arg2 ? arg1 + ' ' + arg2 : arg1
+  console.log = function(msg) {
     stack.push(msg)
     console._log(msg)
   }
 
-  console.warn = function(arg1, arg2) {
-    var msg = arg2 ? arg1 + ' ' + arg2 : arg1
+  console.warn = function(msg) {
     stack.push(msg)
     console._warn(msg)
   }
 
   function noop() {}
 
-})(this)
+})()
 
-function printResult(txt, style) {
-  var d = document.createElement('div')
-  d.innerHTML = txt
-  d.className = style
-  document.getElementById('out').appendChild(d)
+// Add `printResult` and `printHeader` for browser environment
+if (typeof document !== 'undefined') {
+
+  global.printResult = function(txt, style) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    d.className = style
+    document.getElementById('out').appendChild(d)
+  }
+
+  global.printHeader = function(test, url) {
+    var h = document.createElement('h3')
+    h.innerHTML = test +
+        (url ? ' <a class="hash" href="' + url + '">#</a>' : '')
+    document.getElementById('out').appendChild(h)
+  }
+
 }
 
-function printHeader(test, url) {
-  var h = document.createElement('h3')
-  h.innerHTML = test +
-      (url ? ' <a class="hash" href="' + url + '">#</a>' : '')
-  document.getElementById('out').appendChild(h)
-}
-
+// Set `define` for non-seajs environment
 if (typeof define === 'undefined') {
    define = function(fn) {
-    fn(null, (this.test = {}))
+    fn(null, (global.test = {}))
   }
 }
 
+
+// Define test module
 define(function(require, exports) {
-  var global = this
   var queue = []
   var time
   var WARNING_TIME = isLocal() ? 50 : 5000
 
-  require && require.async('./style.css')
+  // Load css in browser environment
+  if (require && require.async) {
+    require.async('./style.css')
+  }
+
   handleGlobalError()
 
 
@@ -195,9 +209,15 @@ define(function(require, exports) {
   }
 
   function isLocal() {
+    // For Node.js
+    if (typeof process !== 'undefined') {
+      return true
+    }
+
     var host = location.host
     return location.href.indexOf('file://') === 0 ||
         host === 'localhost' || host === '127.0.0.1'
   }
-});
+
+})
 
