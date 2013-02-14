@@ -45,25 +45,26 @@ if (typeof document !== 'undefined') {
 
 }
 
-// Set `define` for non-seajs environment
-if (typeof define === 'undefined') {
-   define = function(fn) {
-    fn(null, (global.test = {}))
-  }
-}
-
 
 // Define test module
-define(function(require, exports) {
+(function(factory) {
+
+  if (typeof require === 'function') {
+    factory(require, exports)
+  }
+  else if (typeof define === 'function') {
+    define(factory)
+  }
+  else {
+    factory({}, (global.test = {}))
+  }
+
+})(function(require, exports) {
   var queue = []
   var time
   var WARNING_TIME = isLocal() ? 50 : 5000
 
-  // Load css in browser environment
-  if (require && require.async) {
-    require.async('./style.css')
-  }
-
+  require.async && require.async('./style.css')
   handleGlobalError()
 
 
@@ -184,10 +185,20 @@ define(function(require, exports) {
   }
 
   function getSingleSpecUri(id) {
+    // For Node.js
+    if (typeof location === 'undefined') {
+      return ''
+    }
+
     return location.href.replace(/\?.*$/, '') + '?' + encodeURIComponent(id)
   }
 
   function parseIdFromUri() {
+    // For Node.js
+    if (typeof location === 'undefined') {
+      return ''
+    }
+
     return decodeURIComponent(location.search)
         .replace(/&?t=\d+/, '').substring(1)
   }
@@ -210,7 +221,7 @@ define(function(require, exports) {
 
   function isLocal() {
     // For Node.js
-    if (typeof process !== 'undefined') {
+    if (typeof location === 'undefined') {
       return true
     }
 

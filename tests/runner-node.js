@@ -5,8 +5,8 @@
  *   $ node tests/runner-node.js
  */
 
-require("../lib/sea-node")
-var test = require("./test")
+require("../lib/sea.js")
+var test = require("./test.js")
 
 var specs = [
   "module/anonymous",
