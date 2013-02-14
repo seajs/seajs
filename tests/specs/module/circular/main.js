@@ -58,13 +58,13 @@ define(function(require) {
     test.assert(a.b.c.name == 'c', a.b.c.name)
     test.assert(a.b.c.d.name == 'd', a.b.c.d.name)
     test.assert(a.b.c.d.e.name == 'e', a.b.c.d.e.name)
-    test.assert(a.b.c.d.e.a = a, a.b.c.d.e.a.name)
+    test.assert(a.b.c.d.e.a === a, a.b.c.d.e.a.name)
 
     // c -> a
-    test.assert(a.b.c.a = a, a.b.c.a.name)
+    test.assert(a.b.c.a === a, a.b.c.a.name)
 
     // e -> c
-    test.assert(a.b.c.d.e.c = a.b.c, a.b.c.d.e.c.name)
+    test.assert(a.b.c.d.e.c === a.b.c, a.b.c.d.e.c.name)
 
     // console log messages
     var last = getFiles(consoleMsgStack.pop())
