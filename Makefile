@@ -13,7 +13,7 @@ test_local:
 	phantomjs tools/phantom.js tests/runner.html?console
 
 test_node:
-	node tests/node-runner.js
+	node tests/runner-node.js
 
 size:
 	tools/size.sh
