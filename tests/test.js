@@ -125,9 +125,9 @@ if (typeof document !== 'undefined') {
     // Restore initial events
     for (var eventType in eventsCache) {
       if (eventsCache.hasOwnProperty(eventType)) {
-        for (var fn in eventsCache[eventType]) {
+        eventsCache[eventType].forEach(function(fn) {
           seajs.on(eventType, fn)
-        }
+        })
       }
     }
 
