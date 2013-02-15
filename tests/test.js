@@ -116,13 +116,25 @@ if (typeof document !== 'undefined') {
 
   var configData = global.seajs && seajs.config.data || {}
   var defaultConfig = copy(configData, {})
+  var eventsCache = global.seajs && seajs.events
 
   function reset() {
+    global.consoleMsgStack.length = 0
     seajs.off()
 
-    copy(defaultConfig, configData)
-    global.consoleMsgStack.length = 0
+    // Restore initial events
+    for (var eventType in eventsCache) {
+      if (eventsCache.hasOwnProperty(eventType)) {
+        for (var fn in eventsCache[eventType]) {
+          seajs.on(eventType, fn)
+        }
+      }
+    }
 
+    // Restore default configurations
+    copy(defaultConfig, configData)
+
+    // Set base to current working directory
     seajs.config({
       base: './'
     })
