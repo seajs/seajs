@@ -167,7 +167,7 @@ if (typeof document !== 'undefined') {
   }
 
   function color(str, type) {
-    return '\033[' + ANSI_CODES[type] + 'm  ' + str + '\033[0m'
+    return '\033[' + ANSI_CODES[type || 'info'] + 'm  ' + str + '\033[0m'
   }
 
   function handleGlobalError() {
