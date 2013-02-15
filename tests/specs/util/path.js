@@ -12,6 +12,8 @@ define(function(require) {
   assert(dirname('xxx') === './', 'dirname')
   assert(dirname('http://cdn.com/js/file.js') === 'http://cdn.com/js/', 'dirname')
   assert(dirname('http://cdn.com/js/file.js?t=xxx') === 'http://cdn.com/js/', 'dirname')
+  assert(dirname('http://cdn.com/js/file.js?t=xxx#zzz') === 'http://cdn.com/js/', 'dirname')
+  assert(dirname('http://example.com/page/index.html#zzz?t=xxx') === 'http://example.com/page/', 'dirname')
   assert(dirname('http://example.com/arale/seajs/1.2.0/??sea.js,plugin-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname')
   assert(dirname('http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js') === 'http://cdn.com/', 'dirname')
 
@@ -119,6 +121,7 @@ define(function(require) {
   assert(id2Uri() === '', 'id2Uri')
   assert(id2Uri('http://XXX.com.cn/min/index.php?g=commonCss.css') === 'http://XXX.com.cn/min/index.php?g=commonCss.css', 'id2Uri')
   assert(id2Uri('./front/jquery.x.queue.js#') === pageDir + 'front/jquery.x.queue.js', 'id2Uri')
+  assert(id2Uri('/User/lifesinger/path/to/a') === '/User/lifesinger/path/to/a', 'id2Uri')
 
 
   assert(isAbsolute('http://test.com/') === true, 'isAbsolute')
