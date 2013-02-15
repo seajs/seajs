@@ -24,12 +24,13 @@ define(function(require, exports, mod) {
   assert(isFunction(seajs.use), 'seajs.use')
   assert(isFunction(seajs.log), 'seajs.log')
   assert(typeof seajs.cache === 'object', 'seajs.cache')
+  assert(typeof seajs.events === 'object', 'seajs.events')
   assert(typeof seajs.version === 'string', seajs.version)
   assert(isFunction(seajs.on), 'seajs.on')
   assert(isFunction(seajs.emit), 'seajs.emit')
   assert(isFunction(seajs.off), 'seajs.off')
   assert(isFunction(seajs.resolve), 'seajs.resolve')
-  assert(getOwnPropertyCount(seajs) === 9, getOwnPropertyCount(seajs))
+  assert(getOwnPropertyCount(seajs) === 10, getOwnPropertyCount(seajs))
 
 
   // Module
