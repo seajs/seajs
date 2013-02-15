@@ -36,8 +36,6 @@ Module.prototype.load = function(ids, callback) {
       callback.apply(global, exports)
     }
   })
-
-  return this
 }
 
 function resolve(ids, refUri) {
