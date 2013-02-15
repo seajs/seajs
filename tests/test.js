@@ -63,6 +63,7 @@ if (typeof document !== 'undefined') {
   var queue = []
   var time
   var WARNING_TIME = isLocal() ? 50 : 5000
+  var isNode = typeof process !== 'undefined'
 
   require.async && require.async('./style.css')
   handleGlobalError()
@@ -93,7 +94,25 @@ if (typeof document !== 'undefined') {
       var id = queue.shift()
       sendMessage('printHeader', id, getSingleSpecUri(id))
       time = now()
+
+      // Change cwd and base to tests/specs/xxx
+      if (isNode) {
+        var parts = id.split('/')
+        process.chdir('tests/specs/' + parts[0])
+        var cwd = process.cwd()
+        seajs.cwd(process.cwd())
+        console.log('cwd = ' + seajs.cwd())
+        id = parts[1]
+      }
+
       seajs.use(id2File(id))
+
+      // Restore cwd and base
+      if (isNode) {
+        process.chdir('../../../')
+        seajs.cwd(process.cwd())
+        console.log('cwd = ' + seajs.cwd())
+      }
     }
     else {
       printElapsedTime()

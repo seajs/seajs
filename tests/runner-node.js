@@ -8,38 +8,29 @@
 require("../lib/sea.js")
 var test = require("./test.js")
 
-var cases = {
-  "tests/specs/module": [
-    "anonymous",
-    "anywhere",
-    "cache",
-    "chain",
-    "circular",
-    "define",
-    "dependencies",
-    "duplicate-load",
-    "singleton",
-    "exports",
-    "jsonp",
-    "load-css",
-    "math",
-    "method",
-    "multi-load",
-    "multi-versions",
-    "override",
-    "public-api",
-    "require-async",
-    "transitive"
-  ]
-}
+var specs = [
+  "module/anonymous",
+  "module/anywhere",
+  "module/cache",
+  "module/chain",
+  "module/circular",
+  "module/define",
+  "module/dependencies",
+  "module/duplicate-load",
+  "module/singleton",
+  "module/exports",
+  "module/jsonp",
+  "module/load-css",
+  "module/math",
+  "module/method",
+  "module/multi-load",
+  "module/multi-versions",
+  "module/override",
+  "module/public-api",
+  "module/require-async",
+  "module/transitive"
+]
 
-var specs = []
-
-Object.keys(cases).forEach(function(path) {
-  specs = specs.concat(cases[path].map(function(spec) {
-    return path + "/" + spec
-  }))
-})
-
+// go
 test.run(specs)
 
