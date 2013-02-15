@@ -3,11 +3,6 @@
  */
 
 var DIRNAME_RE = /[^?]*(?=\/.*$)/
-var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
-var URI_END_RE = /\?|\.(?:css|js)$|\/$/
-var ROOT_RE = /^(.*?:\/\/.*?)(?:\/|$)/
-var VARS_RE = /{([^{}]+)}/g
-
 
 // Extract the directory portion of a path
 // dirname("a/b/c.js") ==> "a/b/"
@@ -18,39 +13,34 @@ function dirname(path) {
   return (s ? s[0] : ".") + "/"
 }
 
+
+var DOT_RE = /\/\.\//g
+var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
+var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
+
 // Canonicalize a path
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
 
-  // "file:///a//b/c" ==> "file:///a/b/c"
-  // "http://a//b/c" ==> "http://a/b/c"
-  // "https://a//b/c" ==> "https://a/b/c"
-  if (path.lastIndexOf("//") > 7) {
-    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+  // /a/b/./c/./d ==> /a/b/c/d
+  path = path.replace(DOT_RE, "/")
+
+  // "file:///a//b/c"  ==> "file:///a/b/c"
+  // "http://a//b/c"   ==> "http://a/b/c"
+  // "https://a//b/c"  ==> "https://a/b/c"
+  // "/a/b//"          ==> "/a/b/"
+  path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+
+  // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
+  while (path.match(DOUBLE_DOT_RE)) {
+    path = path.replace(DOUBLE_DOT_RE, "/")
   }
 
-  // If "a/b/c", just return
-  if (path.indexOf(".") < 0) {
-    return path
-  }
-
-  var ret = []
-  var parts = path.split("/")
-  var part
-
-  for (var i = 0, len = parts.length; i < len; i++) {
-    part = parts[i]
-
-    if (part === "..") {
-      ret.pop()
-    }
-    else if (part !== ".") {
-      ret.push(part)
-    }
-  }
-
-  return ret.join("/")
+  return path
 }
+
+
+var URI_END_RE = /\?|\.(?:css|js)$|\/$/
 
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
@@ -75,6 +65,8 @@ function normalize(uri) {
 }
 
 
+var VARS_RE = /{([^{}]+)}/g
+
 function parseAlias(id) {
   var alias = configData.alias
 
@@ -98,34 +90,6 @@ function parseVars(id) {
   return id
 }
 
-function addBase(id, refUri) {
-  var ret
-
-  // absolute id
-  if (isAbsolute(id)) {
-    ret = id
-  }
-  // relative id
-  else if (isRelative(id)) {
-    // Convert "./a" to "a", to avoid unnecessary loop in realpath() call
-    if (id.indexOf("./") === 0) {
-      id = id.substring(2)
-    }
-    ret = (refUri ? dirname(refUri) : cwd) + id
-  }
-  // root id
-  else if (isRoot(id)) {
-    var m = (refUri || cwd).match(ROOT_RE)
-    ret = (m ? m[1] : "") + id
-  }
-  // top-level id
-  else {
-    ret = configData.base + id
-  }
-
-  return ret
-}
-
 function parseMap(uri) {
   var map = configData.map || []
   var ret = uri
@@ -147,6 +111,33 @@ function parseMap(uri) {
   return ret
 }
 
+
+var ROOT_DIR_RE = /^(.*?:\/\/.*?)(?:\/|$)/
+
+function addBase(id, refUri) {
+  var ret
+
+  // absolute id
+  if (isAbsolute(id)) {
+    ret = id
+  }
+  // relative id
+  else if (isRelative(id)) {
+    ret = (refUri ? dirname(refUri) : cwd) + id
+  }
+  // root id
+  else if (isRoot(id)) {
+    var m = (refUri || cwd).match(ROOT_DIR_RE)
+    ret = (m ? m[1] : "") + id
+  }
+  // top-level id
+  else {
+    ret = configData.base + id
+  }
+
+  return ret
+}
+
 function id2Uri(id, refUri) {
   if (!id) return ""
 
@@ -160,21 +151,25 @@ function id2Uri(id, refUri) {
 }
 
 
+var ABSOLUTE_RE = /(?:^|:)\/\/./
+var RELATIVE_RE = /^\.{1,2}\//
+var ROOT_RE = /^\//
+var TOPLEVEL_RE = /^\w[^:]*$/
+
 function isAbsolute(id) {
-  return id.indexOf("://") > 0 || id.indexOf("//") === 0
+  return ABSOLUTE_RE.test(id)
 }
 
 function isRelative(id) {
-  return id.indexOf("./") === 0 || id.indexOf("../") === 0
+  return RELATIVE_RE.test(id)
 }
 
 function isRoot(id) {
-  return id.charAt(0) === "/" && id.charAt(1) !== "/"
+  return ROOT_RE.test(id)
 }
 
 function isTopLevel(id) {
-  var c = id.charAt(0)
-  return id.indexOf("://") < 0 && c !== "." && c !== "/"
+  return TOPLEVEL_RE.test(id)
 }
 
 
@@ -200,7 +195,7 @@ function getScriptAbsoluteSrc(node) {
 
 // Get/set current working directory
 seajs.cwd = function(val) {
-  return val ? (cwd = val) : cwd
+  return val ? (cwd = realpath(val + "/")) : cwd
 }
 
 

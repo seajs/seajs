@@ -58,14 +58,13 @@ function config(data) {
         if (isArray(prev) && /^(?:map|preload)$/.test(key)) {
           curr = prev.concat(curr)
         }
+        // Make sure that `configData.base` is an absolute path
+        else if (key === "base") {
+          curr = id2Uri(curr + "/")
+        }
 
         // Set config
         configData[key] = curr
-
-        // Make sure that `configData.base` is an absolute path
-        if (key === "base") {
-          makeBaseAbsolute()
-        }
       }
     }
   }
@@ -75,7 +74,6 @@ function config(data) {
 
 seajs.config = config
 
-
 function plugin2preload(arr) {
   var ret = [], name
 
@@ -83,14 +81,6 @@ function plugin2preload(arr) {
     ret.push(loaderDir + "plugin-" + name)
   }
   return ret
-}
-
-function makeBaseAbsolute() {
-  var base = configData.base
-  if (!isAbsolute(base)) {
-    configData.base = id2Uri((isRoot(base) ? "" : "./") + base
-        + (base.charAt(base.length - 1) === "/" ? "" : "/"))
-  }
 }
 
 
