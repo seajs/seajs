@@ -33,6 +33,7 @@ define(function(require) {
   assert(normalize('c?t=20110525') === 'c?t=20110525', 'normalize')
   assert(normalize('c?t=20110525#') === 'c?t=20110525', 'normalize')
   assert(normalize('a/b/') === 'a/b/', 'normalize')
+  assert(normalize('/a/b//') === '/a/b/', 'normalize')
 
 
   seajs.config({
@@ -75,7 +76,7 @@ define(function(require) {
 
 
   assert(addBase('http://a.com/b.js') === 'http://a.com/b.js', 'addBase')
-  assert(addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/a.js', 'addBase')
+  assert(addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/./a.js', 'addBase')
   assert(addBase('/b.js', 'http://test.com/path/to/c.js') === 'http://test.com/b.js', 'addBase')
   assert(addBase('c', 'http://test.com/path/to/c.js') === cwd + 'c', 'addBase')
 
@@ -132,7 +133,13 @@ define(function(require) {
   assert(isRelative('./') === true, 'isRelative')
   assert(isRelative('../') === true, 'isRelative')
   assert(isRoot('/') === true, 'isRoot')
+  assert(isRoot('//') === true, 'isRoot')
+  assert(isRoot('/a') === true, 'isRoot')
   assert(isTopLevel('xxx') === true, 'isTopLevel')
+  assert(isTopLevel('./xxx') === false, 'isTopLevel')
+  assert(isTopLevel('../xxx') === false, 'isTopLevel')
+  assert(isTopLevel('/xxx') === false, 'isTopLevel')
+  assert(isTopLevel('xxx:/zzz') === false, 'isTopLevel')
 
 
   test.next()
