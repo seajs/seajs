@@ -253,11 +253,12 @@ function addBase(id, refUri) {
     if (id.indexOf("./") === 0) {
       id = id.substring(2)
     }
-    ret = dirname(refUri) + id
+    ret = (refUri ? dirname(refUri) : cwd) + id
   }
   // root id
   else if (isRoot(id)) {
-    ret = refUri.match(ROOT_RE)[1] + id
+    var m = (refUri || cwd).match(ROOT_RE)
+    ret = (m ? m[1] : "") + id
   }
   // top-level id
   else {
@@ -293,7 +294,7 @@ function id2Uri(id, refUri) {
 
   id = parseAlias(id)
   id = parseVars(id)
-  id = addBase(id, refUri || pageUri)
+  id = addBase(id, refUri)
   id = normalize(id)
   id = parseMap(id)
 
@@ -321,7 +322,7 @@ function isTopLevel(id) {
 
 var doc = document
 var loc = location
-var pageUri = loc.href.replace(/[?#].*$/, "")
+var cwd = dirname(loc.href)
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajsnode") || (function() {
@@ -329,14 +330,19 @@ var loaderScript = doc.getElementById("seajsnode") || (function() {
   return scripts[scripts.length - 1]
 })()
 
-// When `sea.js` is inline, set loaderDir according to pageUri
-var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || pageUri)
+// When `sea.js` is inline, set loaderDir to current working directory
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript)) || cwd
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
       node.src :
     // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
       node.getAttribute("src", 4)
+}
+
+// Get/set current working directory
+seajs.cwd = function(val) {
+  return val ? (cwd = val) : cwd
 }
 
 
@@ -551,8 +557,6 @@ Module.prototype.load = function(ids, callback) {
       callback.apply(global, exports)
     }
   })
-
-  return this
 }
 
 function resolve(ids, refUri) {
@@ -922,7 +926,7 @@ function preload(callback) {
 
 // Public API
 
-var globalModule = new Module(pageUri, STATUS.COMPILED)
+var globalModule = new Module(cwd, STATUS.COMPILED)
 
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
