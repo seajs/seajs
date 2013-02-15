@@ -16,33 +16,13 @@
   //     deps: ["jquery"]
   //   }
   // })
-  var shimConfig = {}
   var configData = seajs.config.data
 
-  function parseConfig(data) {
-    var shim = data.shim
-    if (shim) {
-
-      each(shim, function(item, key) {
-        shimConfig[key] = item
-        if (!item.match) {
-          item.match = seajs.resolve(key)
-        }
-      })
-
-      configData.shim = shimConfig
-    }
-  }
-
-  // Parse config here to make previous shim config available
-  parseConfig(configData)
-
-  seajs.on("config", parseConfig)
 
   seajs.on("initialized", function(mod) {
     var uri = mod.uri
 
-    each(shimConfig, function(item) {
+    each(configData.shim, function(item) {
       var deps = item.deps
 
       if (deps && match(item, uri)) {
@@ -58,10 +38,10 @@
   seajs.on("compile", function(mod) {
     var uri = mod.uri
 
-    each(shimConfig, function(item) {
+    each(configData.shim, function(item, key) {
       var exports = item.exports
 
-      if (exports && match(item, uri)) {
+      if (exports && match(item, uri, key)) {
         mod.exports = isFunction(exports) ? exports() : global[exports]
         return false
       }
@@ -82,8 +62,8 @@
     }
   }
 
-  function match(item, uri) {
-    var match = item.match
+  function match(item, uri, key) {
+    var match = item.match || (item.match = seajs.resolve(key))
     return match.test ? match.test(uri) : uri === match
   }
 
