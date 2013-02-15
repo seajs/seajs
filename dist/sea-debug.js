@@ -76,7 +76,7 @@ var log = seajs.log = function(msg, type) {
  * util-events.js - The minimal events support
  */
 
-var eventsCache = {}
+var eventsCache = seajs.events = {}
 
 // Bind event
 seajs.on = function(event, callback) {
