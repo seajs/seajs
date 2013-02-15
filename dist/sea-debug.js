@@ -973,36 +973,32 @@ function config(data) {
   for (var key in data) {
     var curr = data[key]
 
-    if (hasOwn(data, key) && curr !== undefined) {
-      // Convert plugins to preload config
-      if (key === "plugins") {
-        key = "preload"
-        curr = plugin2preload(curr)
+    // Convert plugins to preload config
+    if (curr && key === "plugins") {
+      key = "preload"
+      curr = plugin2preload(curr)
+    }
+
+    var prev = configData[key]
+
+    // Merge object config such as alias, vars
+    if (prev && prev.constructor === Object) {
+      for (var k in curr) {
+        prev[k] = curr[k]
+      }
+    }
+    else {
+      // Concat array config such as map, preload
+      if (isArray(prev)) {
+        curr = prev.concat(curr)
+      }
+      // Make sure that `configData.base` is an absolute directory
+      else if (key === "base") {
+        curr = normalize(addBase(curr + "/"))
       }
 
-      var prev = configData[key]
-
-      // For alias, vars
-      if (prev && /^(?:alias|vars)$/.test(key)) {
-        for (var k in curr) {
-          if (hasOwn(curr, k)) {
-            prev[k] = curr[k]
-          }
-        }
-      }
-      else {
-        // For map, preload
-        if (isArray(prev) && /^(?:map|preload)$/.test(key)) {
-          curr = prev.concat(curr)
-        }
-        // Make sure that `configData.base` is an absolute path
-        else if (key === "base") {
-          curr = id2Uri(curr + "/")
-        }
-
-        // Set config
-        configData[key] = curr
-      }
+      // Set config
+      configData[key] = curr
     }
   }
 
