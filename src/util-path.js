@@ -71,7 +71,7 @@ function parseAlias(id) {
   var alias = configData.alias
 
   // Only parse top-level id
-  if (alias && hasOwn(alias, id) && isTopLevel(id)) {
+  if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
     id = alias[id]
   }
 
@@ -83,7 +83,7 @@ function parseVars(id) {
 
   if (vars && id.indexOf("{") >= 0) {
     id = id.replace(VARS_RE, function(m, key) {
-      return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
+      return vars.hasOwnProperty(key) ? vars[key] : m
     })
   }
 
