@@ -172,7 +172,8 @@ if (typeof document !== 'undefined') {
       p[fn](msg, type)
     }
     else if (msg && typeof console !== 'undefined') {
-      console.log(color(msg, type))
+      // Call original log function
+      console._log(color(msg, type))
 
       // Stop on failure
       if (type === 'fail') {
