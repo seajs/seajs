@@ -121,20 +121,10 @@ if (typeof document !== 'undefined') {
 
   var configData = global.seajs && seajs.config.data || {}
   var defaultConfig = copy(configData, {})
-  var eventsCache = global.seajs && seajs.events
 
   function reset(id) {
     global.consoleMsgStack.length = 0
     seajs.off()
-
-    // Restore initial events
-    for (var eventType in eventsCache) {
-      if (eventsCache.hasOwnProperty(eventType)) {
-        eventsCache[eventType].forEach(function(fn) {
-          seajs.on(eventType, fn)
-        })
-      }
-    }
 
     // Restore default configurations
     copy(defaultConfig, configData)
