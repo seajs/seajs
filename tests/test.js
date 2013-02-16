@@ -89,30 +89,14 @@ if (typeof document !== 'undefined') {
   exports.next = function() {
     if (queue.length) {
       printElapsedTime()
-      reset()
 
       var id = queue.shift()
       sendMessage('printHeader', id, getSingleSpecUri(id))
       time = now()
 
-      // Change cwd and base to tests/specs/xxx
-      if (isNode) {
-        var parts = id.split('/')
-        process.chdir('tests/specs/' + parts[0])
-        var cwd = process.cwd()
-        seajs.cwd(process.cwd())
-        console.log('cwd = ' + seajs.cwd())
-        id = parts[1]
-      }
-
+      id = setup(id)
       seajs.use(id2File(id))
-
-      // Restore cwd and base
-      if (isNode) {
-        process.chdir('../../../')
-        seajs.cwd(process.cwd())
-        console.log('cwd = ' + seajs.cwd())
-      }
+      teardown()
     }
     else {
       printElapsedTime()
@@ -137,7 +121,7 @@ if (typeof document !== 'undefined') {
   var defaultConfig = copy(configData, {})
   var eventsCache = global.seajs && seajs.events
 
-  function reset() {
+  function setup(id) {
     global.consoleMsgStack.length = 0
     seajs.off()
 
@@ -153,10 +137,29 @@ if (typeof document !== 'undefined') {
     // Restore default configurations
     copy(defaultConfig, configData)
 
+    // Change cwd and base to tests/specs/xxx
+    if (isNode) {
+      var parts = id.split('/')
+      process.chdir('tests/specs/' + parts[0])
+      seajs.cwd(process.cwd())
+      console.log('  cwd = ' + seajs.cwd())
+      id = parts[1]
+    }
+
     // Set base to current working directory
     seajs.config({
       base: './'
     })
+
+    return id
+  }
+
+  function teardown() {
+    // Restore cwd and base
+    if (isNode) {
+      process.chdir('../../../')
+      seajs.cwd(process.cwd())
+    }
   }
 
   function copy(from, to) {
