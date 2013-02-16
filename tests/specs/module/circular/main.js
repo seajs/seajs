@@ -70,6 +70,13 @@ define(function(require) {
     var second = getFiles(consoleMsgStack.pop())
     var first = getFiles(consoleMsgStack.pop())
 
+    // For Node.js
+    if (last.length > second.length) {
+      var t = second
+      second = last
+      last = t
+    }
+
     test.assert(first.join(' --> ') === 'a.js --> b.js --> c.js --> a.js', first.join(' --> '))
     test.assert(second.join(' --> ') === 'a.js --> b.js --> c.js --> d.js --> e.js --> a.js', second.join(' --> '))
     test.assert(last.join(' --> ') === 'c.js --> d.js --> e.js --> c.js', last.join(' --> '))
