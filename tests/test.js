@@ -61,10 +61,12 @@ if (typeof document !== 'undefined') {
 
 })(function(require, exports) {
 
-  var queue = []
-  var time
   var WARNING_TIME = isLocal() ? 50 : 5000
   var isNode = typeof process !== 'undefined'
+  var INITIAL_CWD = isNode && process.cwd()
+
+  var queue = []
+  var time
 
   isNode || require.async && require.async('./style.css')
   handleGlobalError()
@@ -93,11 +95,10 @@ if (typeof document !== 'undefined') {
 
       var id = queue.shift()
       sendMessage('printHeader', id, getSingleSpecUri(id))
-      time = now()
+      id = reset(id)
 
-      id = setup(id)
+      time = now()
       seajs.use(id2File(id))
-      teardown()
     }
     else {
       printElapsedTime()
@@ -122,7 +123,7 @@ if (typeof document !== 'undefined') {
   var defaultConfig = copy(configData, {})
   var eventsCache = global.seajs && seajs.events
 
-  function setup(id) {
+  function reset(id) {
     global.consoleMsgStack.length = 0
     seajs.off()
 
@@ -141,7 +142,7 @@ if (typeof document !== 'undefined') {
     // Change cwd and base to tests/specs/xxx
     if (isNode) {
       var parts = id.split('/')
-      process.chdir('tests/specs/' + parts[0])
+      process.chdir(INITIAL_CWD + 'tests/specs/' + parts[0])
       seajs.cwd(process.cwd())
       //console.log('  cwd = ' + seajs.cwd())
       id = parts[1]
@@ -153,14 +154,6 @@ if (typeof document !== 'undefined') {
     })
 
     return id
-  }
-
-  function teardown() {
-    // Restore cwd and base
-    if (isNode) {
-      process.chdir('../../../')
-      seajs.cwd(process.cwd())
-    }
   }
 
   function copy(from, to) {
