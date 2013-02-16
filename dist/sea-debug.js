@@ -39,16 +39,12 @@ var isFunction = isType("Function")
 // log("message") ==> console.log("message")
 // log("message", "warn") ==> console.warn("message")
 var log = seajs.log = function(msg, type) {
-  var console = global.console
 
-  if (console) {
-    // Do NOT print `log(msg)` in non-debug mode
-    if (type || configData.debug) {
-      if (console[type || (type = "log")]) {
-        console[type](msg)
-      }
-    }
-  }
+  global.console &&
+      // Do NOT print `log(msg)` in non-debug mode
+      (type || configData.debug) &&
+      // Set the default value of type
+      (console[type || (type = "log")]) && console[type](msg)
 
 }
 
