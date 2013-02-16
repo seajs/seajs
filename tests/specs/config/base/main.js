@@ -41,7 +41,8 @@ define(function(require) {
   })
 
   base = seajs.config.data.base
-  test.assert(location.href.indexOf(base) === 0, base)
+  var href = location.href
+  test.assert(href.indexOf('file://') === 0 || href.indexOf(base) === 0, base)
 
 
   test.next()
