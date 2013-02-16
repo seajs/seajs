@@ -130,16 +130,23 @@ define(function(require) {
   assert(isAbsolute('http://test.com/') === true, 'isAbsolute')
   assert(isAbsolute('//test.com/') === true, 'isAbsolute')
   assert(isAbsolute('file:///c/') === true, 'isAbsolute')
+
   assert(isRelative('./') === true, 'isRelative')
   assert(isRelative('../') === true, 'isRelative')
+
   assert(isRoot('/') === true, 'isRoot')
   assert(isRoot('//') === true, 'isRoot')
   assert(isRoot('/a') === true, 'isRoot')
+
   assert(isTopLevel('xxx') === true, 'isTopLevel')
   assert(isTopLevel('./xxx') === false, 'isTopLevel')
   assert(isTopLevel('../xxx') === false, 'isTopLevel')
   assert(isTopLevel('/xxx') === false, 'isTopLevel')
   assert(isTopLevel('xxx:/zzz') === false, 'isTopLevel')
+  assert(isTopLevel('$') === true, 'isTopLevel')
+  assert(isTopLevel('_') === true, 'isTopLevel')
+  assert(isTopLevel('$abc') === true, 'isTopLevel')
+  assert(isTopLevel('_abc') === true, 'isTopLevel')
 
 
   test.next()
