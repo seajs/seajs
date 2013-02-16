@@ -1,7 +1,7 @@
 
 seajs.on('compiled', function(mod) {
   if (mod.uri.indexOf('jquery.js') > -1) {
-    window.jQuery = window.$ = mod.exports
+    global.jQuery = global.$ = mod.exports
   }
 })
 
