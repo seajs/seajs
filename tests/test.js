@@ -49,11 +49,11 @@ if (typeof document !== 'undefined') {
 // Define test module
 (function(factory) {
 
-  if (typeof require === 'function') {
-    factory(require, exports)
-  }
-  else if (typeof define === 'function') {
+  if (typeof define === 'function') {
     define(factory)
+  }
+  else if (typeof require === 'function') {
+    factory(require, exports)
   }
   else {
     factory({}, (global.test = {}))
