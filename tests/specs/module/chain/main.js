@@ -12,7 +12,7 @@ define(function(require, exports, mod) {
   test.assert(seajs.use() === seajs, 'sea.use is chainable')
   test.assert(seajs.cwd(seajs.cwd()) === seajs.cwd(), 'sea.cwd is NOT chainable')
 
-  seajs.log(require.resolve('./a'))
+  //seajs.log(require.resolve('./a'))
 
   test.assert(require.async('./a') === require, 'require.async is chainable')
   test.assert(mod.load('./a') === undefined, 'module.load is NOT chainable')
