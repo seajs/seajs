@@ -63,7 +63,7 @@ if (typeof document !== 'undefined') {
 
   var WARNING_TIME = isLocal() ? 50 : 5000
   var isNode = typeof process !== 'undefined'
-  var INITIAL_CWD = isNode && process.cwd()
+  var INITIAL_CWD = isNode && seajs.cwd()
 
   var queue = []
   var time
