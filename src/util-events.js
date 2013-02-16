@@ -20,7 +20,7 @@ seajs.on = function(event, callback) {
 seajs.off = function(event, callback) {
   // Remove *all* events
   if (!(event || callback)) {
-    eventsCache = {}
+    seajs.events = eventsCache = {}
     return seajs
   }
 
