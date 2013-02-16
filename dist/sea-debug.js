@@ -20,34 +20,15 @@ var seajs = global.seajs = {
  * util-lang.js - The minimal language enhancement
  */
 
-var hasOwnProperty = {}.hasOwnProperty
-
-function hasOwn(obj, prop) {
-  return hasOwnProperty.call(obj, prop)
-}
-
-function isFunction(obj) {
-  return typeof obj === "function"
-}
-
-var isArray = Array.isArray || function(obj) {
-  return obj instanceof Array
-}
-
-function unique(arr) {
-  var obj = {}
-  var ret = []
-
-  for (var i = 0, len = arr.length; i < len; i++) {
-    var item = arr[i]
-    if (obj[item] !== 1) {
-      obj[item] = 1
-      ret.push(item)
-    }
+function isType(type) {
+  return function(obj) {
+    return Object.prototype.toString.call(obj) === "[object " + type + "]"
   }
-
-  return ret
 }
+
+var isObject = isType("Object")
+var isArray = Array.isArray || isType("Array")
+var isFunction = isType("Function")
 
 
 /**
@@ -183,6 +164,7 @@ function realpath(path) {
 
 
 var URI_END_RE = /\?|\.(?:css|js)$|\/$/
+var HASH_END_RE = /#$/
 
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
@@ -192,8 +174,7 @@ function normalize(uri) {
   uri = realpath(uri)
 
   // Add the default `.js` extension except that the uri ends with `#`
-  var lastChar = uri.charAt(uri.length - 1)
-  if (lastChar === "#") {
+  if (HASH_END_RE.test(uri)) {
     uri = uri.slice(0, -1)
   }
   else if (!URI_END_RE.test(uri)) {
@@ -213,7 +194,7 @@ function parseAlias(id) {
   var alias = configData.alias
 
   // Only parse top-level id
-  if (alias && hasOwn(alias, id) && isTopLevel(id)) {
+  if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
     id = alias[id]
   }
 
@@ -225,7 +206,7 @@ function parseVars(id) {
 
   if (vars && id.indexOf("{") >= 0) {
     id = id.replace(VARS_RE, function(m, key) {
-      return hasOwn(vars, key) ? vars[key] : "{" + key + "}"
+      return vars.hasOwnProperty(key) ? vars[key] : m
     })
   }
 
@@ -233,12 +214,11 @@ function parseVars(id) {
 }
 
 function parseMap(uri) {
-  var map = configData.map || []
+  var map = configData.map
   var ret = uri
-  var len = map.length
 
-  if (len) {
-    for (var i = 0; i < len; i++) {
+  if (map) {
+    for (var i = 0; i < map.length; i++) {
       var rule = map[i]
 
       ret = isFunction(rule) ?
@@ -502,15 +482,16 @@ var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/
 var SLASH_RE = /\\\\/g
 
 function parseDependencies(code) {
-  var ret = [], m
-  REQUIRE_RE.lastIndex = 0
-  code = code.replace(SLASH_RE, "")
+  var ret = []
 
-  while ((m = REQUIRE_RE.exec(code))) {
-    if (m[2]) ret.push(m[2])
-  }
+  code.replace(SLASH_RE, "")
+      .replace(REQUIRE_RE, function(m, m1, m2) {
+        if (m2) {
+          ret.push(m2)
+        }
+      })
 
-  return unique(ret)
+  return ret
 }
 
 
@@ -544,7 +525,7 @@ Module.prototype.load = function(ids, callback) {
   load(uris, function() {
     var exports = []
 
-    for (var i = 0, len = uris.length; i < len; i++) {
+    for (var i = 0; i < uris.length; i++) {
       exports[i] = compile(cachedModules[uris[i]])
     }
 
@@ -558,7 +539,7 @@ function resolve(ids, refUri) {
   if (isArray(ids)) {
     // Use `for` loop instead of `forEach` or `map` function for performance
     var ret = []
-    for (var i = 0, len = ids.length; i < len; i++) {
+    for (var i = 0; i < ids.length; i++) {
       ret[i] = resolve(ids[i], refUri)
     }
     return ret
@@ -847,7 +828,7 @@ function getModule(uri, status) {
 function getUnloadedUris(uris) {
   var ret = []
 
-  for (var i = 0, len = uris.length; i < len; i++) {
+  for (var i = 0; i < uris.length; i++) {
     var uri = uris[i]
     if (uri && getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
@@ -882,8 +863,14 @@ function isCircularWaiting(mod) {
 }
 
 function isOverlap(arrA, arrB) {
-  var arrC = arrA.concat(arrB)
-  return  unique(arrC).length < arrC.length
+  for (var i = 0; i < arrA.length; i++) {
+    for (var j = 0; j < arrB.length; j++) {
+      if (arrB[j] === arrA[i]) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 function cutWaitings(waitings) {
@@ -968,8 +955,6 @@ var configData = config.data = {
 }
 
 function config(data) {
-  emit("config", data)
-
   for (var key in data) {
     var curr = data[key]
 
@@ -982,7 +967,7 @@ function config(data) {
     var prev = configData[key]
 
     // Merge object config such as alias, vars
-    if (prev && prev.constructor === Object) {
+    if (isObject(prev)) {
       for (var k in curr) {
         prev[k] = curr[k]
       }
