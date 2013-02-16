@@ -1,3 +1,3 @@
 define(function() {
-  module_singleton_stack.push('init a')
+  global.module_singleton_stack.push('init a')
 });

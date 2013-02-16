@@ -3,7 +3,7 @@ seajs.config({
   base: './singleton'
 })
 
-var module_singleton_stack = []
+global.module_singleton_stack = []
 
 
 define(function(require) {
