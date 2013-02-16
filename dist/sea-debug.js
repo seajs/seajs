@@ -963,7 +963,7 @@ function config(data) {
     var prev = configData[key]
 
     // Merge object config such as alias, vars
-    if (isObject(prev)) {
+    if (prev && isObject(prev)) {
       for (var k in curr) {
         prev[k] = curr[k]
       }
