@@ -60,6 +60,7 @@ if (typeof document !== 'undefined') {
   }
 
 })(function(require, exports) {
+
   var queue = []
   var time
   var WARNING_TIME = isLocal() ? 50 : 5000
@@ -142,7 +143,7 @@ if (typeof document !== 'undefined') {
       var parts = id.split('/')
       process.chdir('tests/specs/' + parts[0])
       seajs.cwd(process.cwd())
-      console.log('  cwd = ' + seajs.cwd())
+      //console.log('  cwd = ' + seajs.cwd())
       id = parts[1]
     }
 
