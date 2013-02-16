@@ -41,6 +41,7 @@ function realpath(path) {
 
 
 var URI_END_RE = /\?|\.(?:css|js)$|\/$/
+var HASH_END_RE = /#$/
 
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
@@ -50,8 +51,7 @@ function normalize(uri) {
   uri = realpath(uri)
 
   // Add the default `.js` extension except that the uri ends with `#`
-  var lastChar = uri.charAt(uri.length - 1)
-  if (lastChar === "#") {
+  if (HASH_END_RE.test(uri)) {
     uri = uri.slice(0, -1)
   }
   else if (!URI_END_RE.test(uri)) {
@@ -91,12 +91,11 @@ function parseVars(id) {
 }
 
 function parseMap(uri) {
-  var map = configData.map || []
+  var map = configData.map
   var ret = uri
-  var len = map.length
 
-  if (len) {
-    for (var i = 0; i < len; i++) {
+  if (map) {
+    for (var i = 0; i < map.length; i++) {
       var rule = map[i]
 
       ret = isFunction(rule) ?
