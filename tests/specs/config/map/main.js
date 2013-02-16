@@ -53,19 +53,19 @@ define(function(require) {
 
   var TS = '?t=20130202'
 
-  var ta = require('./timestamp/ta')
-  var tb = require('./timestamp/tb')
-  var tc = require('./timestamp/tc')
-  var td = require('./timestamp/td')
+  var t1 = require('./timestamp/t1')
+  var t2 = require('./timestamp/t2')
+  var t3 = require('./timestamp/t3')
+  var t4 = require('./timestamp/t4')
 
-  test.assert(ta.name === 'a', 'ta.js')
-  test.assert(tb.name === 'b', 'tb.js')
-  test.assert(tc.name === 'c', 'tc.js')
-  test.assert(td.name === 'd', 'td.js')
-  test.assert(find('ta.js').indexOf(TS) > 0, find('ta.js'))
-  test.assert(find('tb.js').indexOf(TS) > 0, find('tb.js'))
-  test.assert(find('tc.js').indexOf(TS) > 0, find('tc.js'))
-  test.assert(find('td.js').indexOf(TS) > 0, find('td.js'))
+  test.assert(t1.name === 'a', 't1.js')
+  test.assert(t2.name === 'b', 't2.js')
+  test.assert(t3.name === 'c', 't3.js')
+  test.assert(t4.name === 'd', 't4.js')
+  test.assert(find('t1.js').indexOf(TS) > 0, find('t1.js'))
+  test.assert(find('t2.js').indexOf(TS) > 0, find('t2.js'))
+  test.assert(find('t3.js').indexOf(TS) > 0, find('t3.js'))
+  test.assert(find('t4.js').indexOf(TS) > 0, find('t4.js'))
 
 
   seajs.config({
