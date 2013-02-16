@@ -7,25 +7,29 @@
 
 require('../lib/sea')
 
-define('node-runner')
-seajs.use('./tests/test', function(test) {
+define('./tests/node-runner', function(require) {
+  var test = require('./test')
 
-  // Do NOT run the following suites in Node.js
-  var excludes = [
-    'specs/util'
-  ]
-
-  var testSuites = require('./meta').filter(function(item) {
-    return excludes.indexOf('item') === -1
+  var suites = require('./meta').map(function(suite) {
+    return './' + suite + '/meta'
   })
 
-  testSuites.forEach(function(suite) {
-    var meta = require()
+  require.async(suites, function() {
+    var args = [].slice.call(arguments)
+    var specs = []
+
+    args.forEach(function(meta, i) {
+      specs = specs.concat(meta.map(function(spec) {
+        return suites[i].split('/')[2] + '/' + spec
+      }))
+    })
+    //console.log(specs)
+
+    // go
+    test.run(specs)
   })
-
-
-  // go
-  test.run(specs)
 
 })
+
+seajs.use('./tests/node-runner')
 

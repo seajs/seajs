@@ -9,13 +9,8 @@
 <body>
 <div id="out"></div>
 <script>
-  seajs.use('../../test', function(test) {
-    test.run([
-      'circular',
-      'embedded',
-      'math',
-      'order-no-matter'
-    ])
+  seajs.use(['../../test', './meta'], function(test, data) {
+    test.run(data)
   })
 </script>
 </body>

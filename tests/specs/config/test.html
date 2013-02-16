@@ -9,17 +9,8 @@
 <body>
 <div id="out"></div>
 <script>
-  seajs.use('../../test', function(test) {
-    test.run([
-      'alias',
-      'base',
-      'charset',
-      'debug',
-      'hasOwnProperty',
-      'map',
-      'preload',
-      'vars'
-    ])
+  seajs.use(['../../test', './meta'], function(test, data) {
+    test.run(data)
   })
 </script>
 </body>
