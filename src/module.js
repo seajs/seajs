@@ -366,8 +366,14 @@ function isCircularWaiting(mod) {
 }
 
 function isOverlap(arrA, arrB) {
-  var arrC = arrA.concat(arrB)
-  return  unique(arrC).length < arrC.length
+  for (var i = 0; i < arrA.length; i++) {
+    for (var j = 0; j < arrB.length; j++) {
+      if (arrB[j] === arrA[i]) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 function cutWaitings(waitings) {
