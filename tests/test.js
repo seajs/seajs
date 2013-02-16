@@ -173,6 +173,11 @@ if (typeof document !== 'undefined') {
     }
     else if (msg && typeof console !== 'undefined') {
       console.log(color(msg, type))
+
+      // Stop on failure
+      if (type === 'fail') {
+        throw new Error('Error: ' + msg)
+      }
     }
   }
 
