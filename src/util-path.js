@@ -153,7 +153,7 @@ function id2Uri(id, refUri) {
 var ABSOLUTE_RE = /(?:^|:)\/\/./
 var RELATIVE_RE = /^\.{1,2}\//
 var ROOT_RE = /^\//
-var TOPLEVEL_RE = /^\w[^:]*$/
+var TOPLEVEL_RE = /^[^./][^:]*$/
 
 function isAbsolute(id) {
   return ABSOLUTE_RE.test(id)
