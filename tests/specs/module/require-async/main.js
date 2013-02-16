@@ -1,7 +1,7 @@
 define(function(require) {
 
   var test = require('../../../test')
-  var global = this
+  var count = 0
 
 
   require.async('./a', function(a) {
@@ -22,12 +22,11 @@ define(function(require) {
   })
 
 
-  var count = 0
-
   function done() {
     if (++count === 3) {
       test.next()
     }
   }
+
 });
 

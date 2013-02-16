@@ -10,7 +10,6 @@ define([
   'define',
   'dependencies',
   'duplicate-load',
-  'singleton',
   'exports',
   'jsonp',
   'load-css',
@@ -20,6 +19,7 @@ define([
   'override',
   'public-api',
   'require-async',
+  'singleton',
   'transitive',
 
   // Place `path-resolve` at last because 404 case in it, otherwise it will

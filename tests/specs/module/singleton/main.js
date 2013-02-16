@@ -1,26 +1,19 @@
 
-seajs.config({
-  base: './singleton'
-})
-
 global.module_singleton_stack = []
 
-
 define(function(require) {
+  var test = require('../../../test')
+  var count = 0
 
-  seajs.use('a', function() {
+  seajs.use('./singleton/a', function() {
     module_singleton_stack.push('use a')
     done()
   })
 
-  seajs.use('b', function() {
+  seajs.use('./singleton/b', function() {
     module_singleton_stack.push('use b')
     done()
   })
-
-
-  var test = require('../../../test')
-  var count = 0
 
   function done() {
     if (++count === 2) {
@@ -31,11 +24,11 @@ define(function(require) {
 
       test.assert(module_singleton_stack.length === 4, module_singleton_stack.length)
 
-      this.module_singleton_stack = undefined
+      global.module_singleton_stack = undefined
       test.next()
 
     }
   }
 
-});
+})
 

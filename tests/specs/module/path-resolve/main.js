@@ -2,7 +2,6 @@ define(function(require) {
 
   var test = require('../../../test')
 
-  test.assert(require('./missing/missing').bogus === null, 'return null when module file is 404')
   test.assert(require('./nested/b/c/d').name === 'd', 'nested module identifier is allowed')
   test.assert(require('./relative/a').foo == require('./relative/b').foo, 'a and b share foo through a relative require')
 
@@ -14,6 +13,15 @@ define(function(require) {
   test.assert(a2.foo() === 'foo', a2.foo())
   test.assert(a1.foo !== a2.foo, 'a1.foo !== a2.foo')
 
-  test.next()
+
+  if (typeof process !== 'undefined') {
+    test.next()
+    return
+  }
+
+  require.async('./missing/missing', function(missing) {
+    test.assert(missing.bogus === null, 'return null when module file is 404')
+    test.next()
+  })
 
 });

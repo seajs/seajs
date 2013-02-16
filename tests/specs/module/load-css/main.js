@@ -1,3 +1,13 @@
+
+// For Node.js
+if (typeof process !== 'undefined') {
+define(function(require) {
+
+  var test = require('../../../test')
+  test.next()
+
+})}
+else {
 define(function(require) {
 
   var test = require('../../../test')
@@ -75,4 +85,5 @@ define(function(require) {
     return found
   }
 
-})
+})}
+
