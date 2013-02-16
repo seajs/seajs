@@ -1,5 +1,5 @@
 
-var testPages = [
+var testSuites = [
   'specs/util'
 
   , 'specs/config'
@@ -17,4 +17,8 @@ var testPages = [
 
   , 'research/derive-uri'
 ]
+
+if (typeof module !== 'undefined') {
+  module.exports = testSuites
+}
 

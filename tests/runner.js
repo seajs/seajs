@@ -62,7 +62,7 @@
 
 
   global.testNextPage = function() {
-    var page = testPages[currentPage++]
+    var page = testSuites[currentPage++]
     clearTimeout(timeoutTimer)
     clear()
 
@@ -125,10 +125,10 @@
   // Helpers
 
   function printStepInfo() {
-    var page = testPages[currentPage - 1]
+    var page = testSuites[currentPage - 1]
 
     var html = summary.innerHTML =
-        (currentPage - 1) + ' / ' + testPages.length + ' { &nbsp;' +
+        (currentPage - 1) + ' / ' + testSuites.length + ' { &nbsp;' +
             'Passed: <span class="pass">' + result.pass.count + '</span> ' +
             'Failed: <span class="fail">' + result.fail.count + '</span> ' +
             'Errors: <span class="error">' + result.error.count + '</span>}' +
