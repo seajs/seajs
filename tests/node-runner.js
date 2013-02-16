@@ -23,10 +23,14 @@ define('./tests/node-runner', function(require) {
         return suites[i].split('/')[2] + '/' + spec
       }))
     })
-    //console.log(specs)
 
-    // go
+    var total = specs.length
+    var time = Date.now()
     test.run(specs)
+
+    test.print('Summary')
+    test.print(total + ' specs in ' + (Date.now() - time) / 1000 + 's')
+    test.print('END')
   })
 
 })
