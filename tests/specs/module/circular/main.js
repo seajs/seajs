@@ -7,7 +7,6 @@ seajs.config({
 define(function(require) {
 
   var test = require('../../../test')
-  var global = this
   var consoleMsgStack = global.consoleMsgStack
 
 
