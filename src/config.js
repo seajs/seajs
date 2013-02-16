@@ -45,7 +45,7 @@ function config(data) {
     var prev = configData[key]
 
     // Merge object config such as alias, vars
-    if (prev && prev.constructor === Object) {
+    if (isObject(prev)) {
       for (var k in curr) {
         prev[k] = curr[k]
       }
