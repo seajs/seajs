@@ -66,7 +66,7 @@ if (typeof document !== 'undefined') {
   var WARNING_TIME = isLocal() ? 50 : 5000
   var isNode = typeof process !== 'undefined'
 
-  require.async && require.async('./style.css')
+  isNode || require.async && require.async('./style.css')
   handleGlobalError()
 
 
@@ -202,7 +202,8 @@ if (typeof document !== 'undefined') {
   }
 
   function color(str, type) {
-    return '\033[' + ANSI_CODES[type || 'info'] + 'm  ' + str + '\033[0m'
+    return '\033[' + (ANSI_CODES[type] || ANSI_CODES['info'])
+        + 'm  ' + str + '\033[0m'
   }
 
   function handleGlobalError() {
