@@ -10,8 +10,10 @@ define(function(require) {
 
   var test = require('../../../test')
 
-  // Only run this test specs in http environment
-  if (location.protocol.indexOf('http') === 0) {
+  var isHTTP = global.location && location.protocol.indexOf('http') === 0
+  var isNode = typeof process !== 'undefined'
+
+  if (isHTTP || isNode) {
     seajs.use('./plugin-text/init')
   }
   else {

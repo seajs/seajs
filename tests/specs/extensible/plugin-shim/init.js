@@ -6,11 +6,11 @@ define(function(require) {
   test.assert($.easing.name === 'easing', $.easing.name)
   test.assert($.jquery === '1.9.1', $.jquery)
 
-  test.assert(this.$ === $, 'this.$ === $')
-  test.assert(this.jQuery === $, 'this.jQuery === $')
+  test.assert(global.$ === $, 'this.$ === $')
+  test.assert(global.jQuery === $, 'this.jQuery === $')
 
-  this.$ = undefined
-  this.jQuery = undefined
+  global.$ = undefined
+  global.jQuery = undefined
 
   test.next()
 

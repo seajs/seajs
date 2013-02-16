@@ -1,2 +1,2 @@
 
-this.jQuery = this.$ = { jquery: '1.9.1' }
+global.jQuery = global.$ = { jquery: '1.9.1' }

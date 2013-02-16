@@ -18,8 +18,8 @@ define(function(require) {
   test.assert(a13.version === '1.3', a13.name)
 
 
-  var msg2 = this.consoleMsgStack.pop()
-  var msg1 = this.consoleMsgStack.pop()
+  var msg2 = global.consoleMsgStack.pop()
+  var msg1 = global.consoleMsgStack.pop()
 
   test.assert(msg1.indexOf('This module has multiple versions:') === 0, 'console message')
   test.assert(msg2.indexOf('This module has multiple versions:') === 0, 'console message')

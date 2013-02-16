@@ -2,7 +2,7 @@ define(function(require) {
 
   var test = require('../../../test')
   var util = seajs.test
-
+  var count = 0
 
   var uris = [
     'http://example.com/p/a.js',
@@ -66,7 +66,10 @@ define(function(require) {
     })
 
     // Remove already fetching or fetched modules
-    require.async(['./l', './m', './c', './f', './a', './a.css'], function(l, m, c, f, a) {
+    var arr = ['./l', './m', './c', './f', './a']
+    if (typeof process === 'undefined') arr.push('./a.css')
+
+    require.async(arr, function(l, m, c, f, a) {
       test.assert(l.name === 'l', l.name)
       test.assert(m.name === 'm', m.name)
       test.assert(f.name === 'f', f.name)
@@ -75,7 +78,6 @@ define(function(require) {
       done()
     })
 
-    var count = 0
 
     function done() {
       if (++count === 2) test.next()
