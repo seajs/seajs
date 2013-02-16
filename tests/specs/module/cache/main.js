@@ -1,5 +1,8 @@
 
-var cache_g = 0
+global.cache_g = 0
+
+// For Node.js
+var nodeRequireCache = typeof require !== 'undefined' ? require.cache : {}
 
 
 define(function(require) {
@@ -24,6 +27,7 @@ define(function(require) {
 
   // Delete './a' from cache and fetchedList
   delete seajs.cache[url]
+  delete nodeRequireCache[url]
   seajs.on('fetch', deleteUrlFromFetchedList)
 
   function deleteUrlFromFetchedList(data) {
