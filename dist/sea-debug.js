@@ -908,7 +908,7 @@ function preload(callback) {
 
 // Public API
 
-var globalModule = new Module(cwd, STATUS.COMPILED)
+var globalModule = new Module(undefined, STATUS.COMPILED)
 
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
