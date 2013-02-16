@@ -1,12 +1,12 @@
 define(function(require) {
 
   var test = require('../../../test')
-  var global = this
   var consoleMsgStack = global.consoleMsgStack
   var configData = seajs.config.data
+  var isNode = typeof process !== 'undefined'
 
   test.assert(configData.debug === undefined, 'debug = ' + configData.debug)
-  test.assert(hasScript('test.js') === false, 'The inserted script was removed automatically, when debug is off')
+  test.assert(isNode || hasScript('test.js') === false, 'The inserted script was removed automatically, when debug is off')
 
 
   seajs.log('1')
@@ -30,7 +30,7 @@ define(function(require) {
 
   require.async('./a', function(a) {
     test.assert(a.name === 'a', 'a.name = ' + a.name)
-    test.assert(hasScript('a.js') === true, 'The inserted script is remained in DOM, when debug is true')
+    test.assert(isNode || hasScript('a.js') === true, 'The inserted script is remained in DOM, when debug is true')
 
     test.next()
   })

@@ -1,1 +1,1 @@
-this.B = 'b'
+global.B = 'b'

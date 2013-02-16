@@ -27,6 +27,10 @@ define(function(require) {
   })
 
   function expectedPath(str) {
+    if (typeof process !== 'undefined') {
+      return '/root-path/' + str + '.js'
+    }
+
     return location.protocol + '//' + location.host + '/root-path/' + str + '.js'
   }
 
@@ -41,8 +45,11 @@ define(function(require) {
   })
 
   base = seajs.config.data.base
-  var href = location.href
-  test.assert(href.indexOf('file://') === 0 || href.indexOf(base) === 0, base)
+  var href = (global.location || {}).href
+
+  test.assert(!href || // For Node.js
+      href.indexOf('file://') === 0 ||
+      href.indexOf(base) === 0, base)
 
 
   test.next()

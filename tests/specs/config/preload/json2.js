@@ -1,2 +1,2 @@
 
-this.JSON = this.JSON || {};
+global.JSON = global.JSON || {};
