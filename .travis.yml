@@ -7,4 +7,5 @@ before_script:
   - phantomjs --version
 
 script:
-  - phantomjs tools/phantom.js tests/runner.html?console
+  - make local
+  - make node
