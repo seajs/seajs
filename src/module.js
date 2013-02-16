@@ -28,7 +28,7 @@ Module.prototype.load = function(ids, callback) {
   load(uris, function() {
     var exports = []
 
-    for (var i = 0, len = uris.length; i < len; i++) {
+    for (var i = 0; i < uris.length; i++) {
       exports[i] = compile(cachedModules[uris[i]])
     }
 
@@ -42,7 +42,7 @@ function resolve(ids, refUri) {
   if (isArray(ids)) {
     // Use `for` loop instead of `forEach` or `map` function for performance
     var ret = []
-    for (var i = 0, len = ids.length; i < len; i++) {
+    for (var i = 0; i < ids.length; i++) {
       ret[i] = resolve(ids[i], refUri)
     }
     return ret
@@ -331,7 +331,7 @@ function getModule(uri, status) {
 function getUnloadedUris(uris) {
   var ret = []
 
-  for (var i = 0, len = uris.length; i < len; i++) {
+  for (var i = 0; i < uris.length; i++) {
     var uri = uris[i]
     if (uri && getModule(uri).status < STATUS.LOADED) {
       ret.push(uri)
