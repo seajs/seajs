@@ -61,11 +61,10 @@
   })
 
   seajs.on("request", function(data) {
-    var uri = data.uri
-    var name = uriCache[uri]
+    var name = uriCache[data.uri]
 
     if (name) {
-      xhr(uri, function(content) {
+      xhr(data.requestUri, function(content) {
         plugins[name].exec(content)
         data.callback()
       })
@@ -113,11 +112,11 @@
     return r.send(null)
   }
 
-  function globalEval(data) {
-    if (data && /\S/.test(data)) {
-      (global.execScript || function(data) {
-        global["eval"].call(global, data)
-      })(data)
+  function globalEval(content) {
+    if (content && /\S/.test(content)) {
+      (global.execScript || function(content) {
+        (global.eval || eval).call(global, content)
+      })(content)
     }
   }
 
@@ -130,6 +129,18 @@
         .replace(/[\r]/g, "\\r")
         .replace(/[\u2028]/g, "\\u2028")
         .replace(/[\u2029]/g, "\\u2029")
+  }
+
+  // For node environment
+  if (typeof module !== "undefined") {
+    xhr = function(filename, callback) {
+      callback(require("fs").readFileSync(pure(filename), "utf8"))
+    }
+  }
+
+  function pure(uri) {
+    // Remove timestamp etc
+    return uri.replace(/\?.*$/, "")
   }
 
 })(seajs, this);
