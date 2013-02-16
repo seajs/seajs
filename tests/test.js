@@ -177,7 +177,7 @@ if (typeof document !== 'undefined') {
 
       // Stop on failure
       if (type === 'fail') {
-        throw new Error('Error: ' + msg)
+        throw new Error(msg)
       }
     }
   }
