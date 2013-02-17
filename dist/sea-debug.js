@@ -1,5 +1,5 @@
 /**
- * @preserve SeaJS v2.0.0b1 | seajs.org/LICENSE.md
+ * @preserve SeaJS v2.0.0b2 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 "use strict"
@@ -12,7 +12,7 @@ if (_seajs && !_seajs.args) {
 
 var seajs = global.seajs = {
   // The current version of SeaJS being used
-  version: "2.0.0b1"
+  version: "2.0.0b2"
 }
 
 
