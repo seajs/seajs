@@ -1,11 +1,11 @@
 {
   "name": "seajs",
-  "version": "2.0.0b1",
+  "version": "2.0.0b2",
   "description": "A Module Loader for the Web",
   "homepage": "http://seajs.org/",
   "keywords": [
-    "loader",
     "module",
+    "loader",
     "CMD",
     "browser"
   ],
@@ -18,5 +18,5 @@
     "type": "git",
     "url" : "git://github.com/seajs/seajs.git"
   },
-  "main": "./lib/sea-node.js"
+  "main": "./lib/sea.js"
 }
