@@ -3,9 +3,10 @@ src/
 tests/
 tools/
 CNAME
+Makefile
 *.ico
 *.html
-*.md
+*.txt
 *.xml
 *.yml
 *.iml
