@@ -3,7 +3,5 @@
   Contact: lifesinger [at] gmail.com
 
 /* SITE */
-  Last update: 2013/01/29
-  Language: Chinese
+  Last update: 2013/02/17
   Doctype: HTML5
-  Standards: XHTML5, CSS3
