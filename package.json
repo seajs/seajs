@@ -1,14 +1,10 @@
 {
   "name": "seajs",
-  "version": "2.0.0b2",
+  "title": "SeaJS",
   "description": "A Module Loader for the Web",
+  "version": "2.0.0pre",
   "homepage": "http://seajs.org/",
-  "keywords": [
-    "module",
-    "loader",
-    "CMD",
-    "browser"
-  ],
+  "keywords": ["module", "loader"],
   "author": "Frank Wang <lifesinger@gmail.com>",
   "engines": {
     "node": ">= 0.6.0"
