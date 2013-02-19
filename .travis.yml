@@ -3,9 +3,18 @@ language: node_js
 node_js:
   - 0.8
 
+env:
+  - NODE_ENV="development"
+
 before_script:
   - phantomjs --version
+  - npm install -g grunt-cli
+  - rm -rf dist/
 
 script:
+  - grunt all && make size
+  - make local
+  - make node
+  - rm -rf dist/ && make all && make size
   - make local
   - make node
