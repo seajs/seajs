@@ -14,4 +14,5 @@ Thumbs.db
 .nojekyll
 .project
 .settings/
-./node_modules
+node_modules/
+dist/
