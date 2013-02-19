@@ -8,7 +8,7 @@ env:
 
 before_script:
   - phantomjs --version
-  - sudo npm install -g grunt-cli
+  - npm install -g grunt-cli
   - rm -rf dist/
 
 script:
