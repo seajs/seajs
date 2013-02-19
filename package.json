@@ -1,6 +1,5 @@
 {
   "name": "seajs",
-  "title": "SeaJS",
   "version": "2.0.0b2",
   "description": "A Module Loader for the Web",
   "homepage": "http://seajs.org/",
@@ -18,8 +17,7 @@
   "devDependencies": {
     "grunt": "~0.4.0",
     "grunt-contrib-uglify": "~0.1.1",
-    "grunt-contrib-concat": "~0.1.2",
-    "grunt-contrib-qunit": "~0.1.1"
+    "grunt-contrib-concat": "~0.1.2"
   },
   "repository": {
     "type": "git",
@@ -29,7 +27,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
+      "url": "http://seajs.org/LICENSE.md"
     }
   ]
 }
