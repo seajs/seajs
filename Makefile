@@ -1,10 +1,10 @@
 
 build:
-	ant -buildfile tools/build.xml
+	grunt
+	make size
 
 all:
-	ant -buildfile tools/build.xml build_seajs
-	ant -buildfile tools/build.xml build_plugins
+	grunt all
 
 test:
 	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/tests/runner.html?console
