@@ -1,4 +1,7 @@
 
+// Forked from https://github.com/Darsain/grunt-gcc that is buggy.
+// Wait time to push back.
+
 module.exports = function(grunt) {
 
   var compiler = require("gcc")
