@@ -94,7 +94,7 @@ module.exports = function(grunt) {
   })
 
 
-  grunt.loadTasks("tools") // gcc
+  grunt.loadTasks("tools/grunt-tasks")
   grunt.loadNpmTasks("grunt-contrib-concat")
 
   grunt.registerTask("default", ["concat", "embed", "gcc:seajs", "fix"])
