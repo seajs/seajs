@@ -12,4 +12,3 @@ var isObject = isType("Object")
 var isArray = Array.isArray || isType("Array")
 var isFunction = isType("Function")
 
-

@@ -1,5 +1,5 @@
 /**
- * @preserve SeaJS v@VERSION | seajs.org/LICENSE.md
+ * SeaJS v@VERSION | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 

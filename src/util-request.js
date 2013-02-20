@@ -149,4 +149,3 @@ function getCurrentScript() {
 var isOldWebKit = (navigator.userAgent
     .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
 
-

@@ -4,4 +4,3 @@ var seajs = global.seajs = {
   version: "@VERSION"
 }
 
-

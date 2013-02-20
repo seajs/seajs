@@ -15,4 +15,3 @@ var log = seajs.log = function(msg, type) {
 
 }
 
-

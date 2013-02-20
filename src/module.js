@@ -424,4 +424,3 @@ seajs.use = function(ids, callback) {
 global.define = define
 seajs.resolve = id2Uri
 
-

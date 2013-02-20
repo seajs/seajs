@@ -65,4 +65,3 @@ function emitData(event, data, prop) {
   return data[prop]
 }
 
-
