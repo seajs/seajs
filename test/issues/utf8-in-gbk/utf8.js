@@ -1,1 +1,0 @@
-printResults('中文')

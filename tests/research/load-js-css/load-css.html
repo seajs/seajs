@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>load css</title>
+</head>
+<body>
+<p id="red">This paragraph should be red.</p>
+<p id="blue">This paragraph should be blue.</p>
+<div id="out"></div>
+
+<script src="../../test.js"></script>
+<script>
+  var print = test.print
+
+  var head = document.getElementsByTagName('head')[0]
+  var timestamp = new Date().getTime()
+
+  var UA = navigator.userAgent;
+  print(UA)
+  print('<br/>')
+
+  var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) < 536
+
+
+  // 同域
+  getStyle('red.php')
+
+  // 404
+  getStyle('404.css')
+
+  // 跨域
+  getStyle('http://127.0.0.1/~lifesinger/seajs/seajs/tests/research/load-js-css/blue.php')
+
+
+  function getStyle(url) {
+    var node = document.createElement('link')
+    node.rel = 'stylesheet'
+
+    // for Old Safari < 536 and Old Firefox < 9.0
+    if(isOldWebKit || !('onload' in node)) {
+      setTimeout(function() {
+        poll(node, url)
+      }, 1) // Begin after node insertion
+    }
+    // for Firefox, Chrome, IE, Opera
+    else {
+      node.onload = function() {
+        print('style is loaded. [onload] ' + url)
+      }
+
+      node.onerror = function() {
+        print('style is loaded. [onerror] ' + url)
+      }
+
+      node.onreadystatechange = function() {
+        print('style is loaded. [onreadystatechange] ' + url)
+      }
+    }
+
+    node.href = url + '?' + timestamp
+    head.appendChild(node)
+  }
+
+  function poll(node, url) {
+    var isLoaded = false
+    print('poll css: ' + url)
+
+    var sheet = node.sheet
+
+    if (isOldWebKit) {
+      console.log('node.sheet = ' + node.sheet + ' ' + url)
+      if (sheet) {
+        isLoaded = true
+        console.log('node.sheet.cssRules = ' + node.sheet.cssRules + ' ' + url)
+      }
+    }
+    // for Firefox
+    else if(sheet) {
+      try {
+        if (sheet.cssRules) {
+          console.log(node.sheet.cssRules + ' ' + url)
+          isLoaded = true
+        }
+      } catch(ex) {
+        console.log(ex.code + ' ' + url)
+        if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
+          isLoaded = true
+        }
+      }
+    }
+
+    setTimeout(function() {
+      if (isLoaded) {
+        print('style is loaded. [poll] ' + url)
+      }
+      else {
+        poll(node, url)
+      }
+    }, 1000)
+
+  }
+
+</script>
+
+
+<h2>Summary</h2>
+<pre>
+
+  WebKit:
+    - linkNode.sheet 在 css 文件下载完成并解析好后才有值，之前为 undefined
+    - linkNode.sheet.cssRules 同域时返回 CSSRuleList, 跨域时返回 null
+    - WebKit &gt;= 535.23 后支持 onload / onerror
+
+  Firefox:
+    - linkNode.sheet 在 css 插入 DOM 中后立刻有值，插入前为 undefined
+    - linkNode.sheet.cssRules 在文件还未下好时，抛出 NS_ERROR_DOM_INVALID_ACCESS_ERR
+                              在文件下载并解析好后，
+                                同域时返回 cssRuleList
+                                跨域时抛出 NS_ERROR_DOM_SECURITY_ERR
+    - Firefox &gt;= 9.0 后支持 onload / onerror
+
+  IE / Opera:
+    - linkNode.sheet 和 cssRules 在 css 插入 DOM 后都立刻可访问，cssRules 为 []
+    - 当文件下载完成时，cssRules 为 cssRuleList
+    - Opera 只在成功时触发 onload，失败时不会触发 onerror
+    - IE 下，无论成功失败，都会触发 onload，不会触发 onerror，中间会触发 onreadystatechange
+    - 期待 IE 和 Opera 的后续版本能正确支持 onerror
+
+
+  最后更新时间：2013-02-08
+
+</pre>
+</body>
+</html>

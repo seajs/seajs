@@ -1,97 +1,91 @@
 /**
  * The combo plugin for http concat module
  */
-define('seajs/plugin-combo', [], function() {
+(function(seajs) {
 
-  var pluginSDK = seajs.pluginSDK
-  var util = pluginSDK.util
-  var config = pluginSDK.config
-
-
-  // Hacks load function to inject combo support
-  // -----------------------------------------------
-
-  var Module = pluginSDK.Module
+  var comboHash = {}
   var cachedModules = seajs.cache
+  var configData = seajs.config.data
 
+  seajs.on("load", setComboHash)
+  seajs.on("fetch", setRequestUri)
 
-  function hackLoad() {
-    var MP = Module.prototype
-    var _load = MP._load
+  function setComboHash(uris) {
+    var needComboUris = []
+    var comboExcludes = configData.comboExcludes
 
-    MP._load = function(uris, callback) {
-      setComboMap(uris)
-      _load.call(this, uris, callback)
-    }
-  }
+    forEach(uris, function(uri) {
+      var mod = cachedModules[uri]
 
-
-  function setComboMap(uris) {
-    var comboExcludes = config.comboExcludes
-
-    // Removes fetched or fetching uri
-    var unFetchingUris = util.filter(uris, function(uri) {
-      var module = cachedModules[uri]
-
-      return (!module || module.status < Module.STATUS.FETCHING) &&
-          (!comboExcludes || !comboExcludes.test(uri))
+      // Remove fetching and fetched uris, excluded uris, combo uris
+      if (mod.status < mod.constructor.STATUS.FETCHING &&
+          (!comboExcludes || !comboExcludes.test(uri)) &&
+          !isComboUri(uri)) {
+        needComboUris.push(uri)
+      }
     })
 
-    if (unFetchingUris.length > 1) {
-      seajs.config({ map: paths2map(uris2paths(unFetchingUris)) })
+    if (needComboUris.length > 1) {
+      paths2hash(uris2paths(needComboUris))
     }
   }
 
-
-  // No combo in debug mode
-  if (seajs.debug) {
-    seajs.log('Combo is turned off in debug mode')
-  } else {
-    hackLoad()
+  function setRequestUri(data) {
+    var uri = data.uri
+    data.requestUri = comboHash[uri] || uri
   }
 
 
-  // Uses map to implement combo support
-  // -----------------------------------------------
+  // Helpers
+
+  var forEach = [].forEach ?
+      function(arr, fn) {
+        arr.forEach(fn)
+      } :
+      function(arr, fn) {
+        for (var i = 0; i < arr.length; i++) {
+          fn(arr[i], i, arr)
+        }
+      }
 
   function uris2paths(uris) {
     return meta2paths(uris2meta(uris))
   }
 
   // [
-  //   'http://example.com/p/a.js',
-  //   'https://example2.com/b.js',
-  //   'http://example.com/p/c/d.js',
-  //   'http://example.com/p/c/e.js'
+  //   "http://example.com/p/a.js",
+  //   "https://example2.com/b.js",
+  //   "http://example.com/p/c/d.js",
+  //   "http://example.com/p/c/e.js"
   // ]
   // ==>
   // {
-  //   'http__example.com': {
-  //                          'p': {
-  //                                 'a.js': { __KEYS: [] },
-  //                                 'c': {
-  //                                        'd.js': { __KEYS: [] },
-  //                                        'e.js': { __KEYS: [] },
-  //                                        __KEYS: ['d.js', 'e.js']
+  //   "http__example.com": {
+  //                          "p": {
+  //                                 "a.js": { __KEYS: [] },
+  //                                 "c": {
+  //                                        "d.js": { __KEYS: [] },
+  //                                        "e.js": { __KEYS: [] },
+  //                                        __KEYS: ["d.js", "e.js"]
   //                                 },
-  //                                 __KEYS: ['a.js', 'c']
+  //                                 __KEYS: ["a.js", "c"]
   //                               },
-  //                          __KEYS: ['p']
+  //                          __KEYS: ["p"]
   //                        },
-  //   'https__example2.com': {
-  //                            'b.js': { __KEYS: [] },
-  //                            _KEYS: ['b.js']
+  //   "https__example2.com": {
+  //                            "b.js": { __KEYS: [] },
+  //                            _KEYS: ["b.js"]
   //                          },
-  //   __KEYS: ['http__example.com', 'https__example2.com']
+  //   __KEYS: ["http__example.com", "https__example2.com"]
   // }
   function uris2meta(uris) {
     var meta = { __KEYS: [] }
 
-    util.forEach(uris, function(uri) {
-      var parts = uri.replace('://', '__').split('/')
+    forEach(uris, function(uri) {
+      var parts = uri.replace("://", "__").split("/")
       var m = meta
 
-      util.forEach(parts, function(part) {
+      forEach(parts, function(part) {
         if (!m[part]) {
           m[part] = { __KEYS: [] }
           m.__KEYS.push(part)
@@ -104,77 +98,75 @@ define('seajs/plugin-combo', [], function() {
     return meta
   }
 
-
   // {
-  //   'http__example.com': {
-  //                          'p': {
-  //                                 'a.js': { __KEYS: [] },
-  //                                 'c': {
-  //                                        'd.js': { __KEYS: [] },
-  //                                        'e.js': { __KEYS: [] },
-  //                                        __KEYS: ['d.js', 'e.js']
+  //   "http__example.com": {
+  //                          "p": {
+  //                                 "a.js": { __KEYS: [] },
+  //                                 "c": {
+  //                                        "d.js": { __KEYS: [] },
+  //                                        "e.js": { __KEYS: [] },
+  //                                        __KEYS: ["d.js", "e.js"]
   //                                 },
-  //                                 __KEYS: ['a.js', 'c']
+  //                                 __KEYS: ["a.js", "c"]
   //                               },
-  //                          __KEYS: ['p']
+  //                          __KEYS: ["p"]
   //                        },
-  //   'https__example2.com': {
-  //                            'b.js': { __KEYS: [] },
-  //                            _KEYS: ['b.js']
+  //   "https__example2.com": {
+  //                            "b.js": { __KEYS: [] },
+  //                            _KEYS: ["b.js"]
   //                          },
-  //   __KEYS: ['http__example.com', 'https__example2.com']
+  //   __KEYS: ["http__example.com", "https__example2.com"]
   // }
   // ==>
   // [
-  //   ['http://example.com/p', ['a.js', 'c/d.js', 'c/e.js']]
+  //   ["http://example.com/p", ["a.js", "c/d.js", "c/e.js"]]
   // ]
   function meta2paths(meta) {
     var paths = []
 
-    util.forEach(meta.__KEYS, function(part) {
+    forEach(meta.__KEYS, function(part) {
       var root = part
       var m = meta[part]
       var KEYS = m.__KEYS
 
       while(KEYS.length === 1) {
-        root += '/' + KEYS[0]
+        root += "/" + KEYS[0]
         m = m[KEYS[0]]
         KEYS = m.__KEYS
       }
 
       if (KEYS.length) {
-        paths.push([root.replace('__', '://'), meta2arr(m)])
+        paths.push([root.replace("__", "://"), meta2arr(m)])
       }
     })
 
     return paths
   }
 
-
   // {
-  //   'a.js': { __KEYS: [] },
-  //   'c': {
-  //          'd.js': { __KEYS: [] },
-  //          'e.js': { __KEYS: [] },
-  //          __KEYS: ['d.js', 'e.js']
+  //   "a.js": { __KEYS: [] },
+  //   "c": {
+  //          "d.js": { __KEYS: [] },
+  //          "e.js": { __KEYS: [] },
+  //          __KEYS: ["d.js", "e.js"]
   //        },
-  //   __KEYS: ['a.js', 'c']
+  //   __KEYS: ["a.js", "c"]
   // }
   // ==>
   // [
-  //   'a.js', 'c/d.js', 'c/e.js'
+  //   "a.js", "c/d.js", "c/e.js"
   // ]
   function meta2arr(meta) {
     var arr = []
 
-    util.forEach(meta.__KEYS, function(key) {
+    forEach(meta.__KEYS, function(key) {
       var r = meta2arr(meta[key])
 
-      // key = 'c'
-      // r = ['d.js', 'e.js']
+      // key = "c"
+      // r = ["d.js", "e.js"]
       if (r.length) {
-        util.forEach(r, function(part) {
-          arr.push(key + '/' + part)
+        forEach(r, function(part) {
+          arr.push(key + "/" + part)
         })
       }
       else {
@@ -185,64 +177,54 @@ define('seajs/plugin-combo', [], function() {
     return arr
   }
 
-
   // [
-  //   [ 'http://example.com/p', ['a.js', 'c/d.js', 'c/e.js', 'a.css', 'b.css'] ]
+  //   [ "http://example.com/p", ["a.js", "c/d.js", "c/e.js", "a.css", "b.css"] ]
   // ]
   // ==>
   //
-  // a map function to map
+  // a hash cache
   //
-  // 'http://example.com/p/a.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
-  // 'http://example.com/p/c/d.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
-  // 'http://example.com/p/c/e.js'  ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
-  // 'http://example.com/p/a.css'  ==> 'http://example.com/p/??a.css,b.css'
-  // 'http://example.com/p/b.css'  ==> 'http://example.com/p/??a.css,b.css'
+  // "http://example.com/p/a.js"  ==> "http://example.com/p/??a.js,c/d.js,c/e.js"
+  // "http://example.com/p/c/d.js"  ==> "http://example.com/p/??a.js,c/d.js,c/e.js"
+  // "http://example.com/p/c/e.js"  ==> "http://example.com/p/??a.js,c/d.js,c/e.js"
+  // "http://example.com/p/a.css"  ==> "http://example.com/p/??a.css,b.css"
+  // "http://example.com/p/b.css"  ==> "http://example.com/p/??a.css,b.css"
   //
-  function paths2map(paths) {
-    var comboSyntax = config.comboSyntax || ['??', ',']
-    var map = []
+  function paths2hash(paths) {
+    var comboSyntax = configData.comboSyntax || ["??", ","]
 
-    util.forEach(paths, function(path) {
-      var root = path[0] + '/'
+    forEach(paths, function(path) {
+      var root = path[0] + "/"
       var group = files2group(path[1])
 
-      util.forEach(group, function(files) {
-
-        var hash = {}
+      forEach(group, function(files) {
         var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
 
         // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
         if (comboPath.length > 2000) {
-          throw new Error('The combo url is too long: ' + comboPath)
+          throw new Error("The combo url is too long: " + comboPath)
         }
 
-        util.forEach(files, function(part) {
-          hash[root + part] = comboPath
+        forEach(files, function(part) {
+          comboHash[root + part] = comboPath
         })
-
-        map.push(function(url) {
-          return hash[url] || url
-        })
-
       })
 
     })
 
-    return map
+    return comboHash
   }
 
-
   //
-  //  ['a.js', 'c/d.js', 'c/e.js', 'a.css', 'b.css', 'z']
+  //  ["a.js", "c/d.js", "c/e.js", "a.css", "b.css", "z"]
   // ==>
-  //  [ ['a.js', 'c/d.js', 'c/e.js'], ['a.css', 'b.css'] ]
+  //  [ ["a.js", "c/d.js", "c/e.js"], ["a.css", "b.css"] ]
   //
   function files2group(files) {
     var group = []
     var hash = {}
 
-    util.forEach(files, function(file) {
+    forEach(files, function(file) {
       var ext = getExt(file)
       if (ext) {
         (hash[ext] || (hash[ext] = [])).push(file)
@@ -258,19 +240,26 @@ define('seajs/plugin-combo', [], function() {
     return group
   }
 
-
   function getExt(file) {
-    var p = file.lastIndexOf('.')
-    return p >= 0 ? file.substring(p) : ''
+    var p = file.lastIndexOf(".")
+    return p >= 0 ? file.substring(p) : ""
+  }
+
+  function isComboUri(uri) {
+    var comboSyntax = configData.comboSyntax || ["??", ","]
+    var s1 = comboSyntax[0]
+    var s2 = comboSyntax[1]
+
+    return s1 && uri.indexOf(s1) > 0 || s2 && uri.indexOf(s2) > 0
   }
 
 
   // For test
-  util.toComboPaths = uris2paths
-  util.toComboMap = paths2map
+  if (configData.test) {
+    var test = seajs.test || (seajs.test = {})
+    test.uris2paths = uris2paths
+    test.paths2hash = paths2hash
+  }
 
-})
-
-// Runs it immediately
-seajs.use('seajs/plugin-combo');
+})(seajs);
 

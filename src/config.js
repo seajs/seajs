@@ -1,160 +1,79 @@
 /**
- * The configuration
+ * config.js - The configuration for the loader
  */
-;(function(seajs, util, config) {
 
-  var noCachePrefix = 'seajs-ts='
-  var noCacheTimeStamp = noCachePrefix + util.now()
+var configData = config.data = {
+  // The root path to use for id2uri parsing
+  base: (function() {
+    var ret = loaderDir
 
+    // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
+    // baseUri should be `http://test.com/libs/`
+    var m = ret.match(/^(.+?\/)(?:seajs\/)+(?:\d[^/]+\/)?$/)
+    if (m) {
+      ret = m[1]
+    }
 
-  // Async inserted script
-  var loaderScript = document.getElementById('seajsnode')
+    return ret
+  })(),
 
-  // Static script
-  if (!loaderScript) {
-    var scripts = document.getElementsByTagName('script')
-    loaderScript = scripts[scripts.length - 1]
-  }
+  // The charset for requesting files
+  charset: "utf-8",
 
-  var loaderSrc = (loaderScript && util.getScriptAbsoluteSrc(loaderScript)) ||
-      util.pageUri // When sea.js is inline, set base to pageUri.
+  // Modules that are needed to load before all other modules
+  preload: []
 
-  var base = util.dirname(getLoaderActualSrc(loaderSrc))
-  util.loaderDir = base
+  // debug: false - Debug mode
+  // alias - The shorthand alias for module id
+  // vars - The {xxx} variables in module id
+  // map - An array containing rules to map module uri
+  // plugins - An array containing needed plugins
+}
 
-  // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
-  // to "http://test.com/libs/"
-  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/)
-  if (match) base = match[1]
+function config(data) {
+  for (var key in data) {
+    var curr = data[key]
 
-  config.base = base
-  config.main = loaderScript && loaderScript.getAttribute('data-main')
-  config.charset = 'utf-8'
+    // Convert plugins to preload config
+    if (curr && key === "plugins") {
+      key = "preload"
+      curr = plugin2preload(curr)
+    }
 
+    var prev = configData[key]
 
-  /**
-   * The function to configure the framework
-   * config({
-   *   'base': 'path/to/base',
-   *   'alias': {
-   *     'app': 'biz/xx',
-   *     'jquery': 'jquery-1.5.2',
-   *     'cart': 'cart?t=20110419'
-   *   },
-   *   'map': [
-   *     ['test.cdn.cn', 'localhost']
-   *   ],
-   *   preload: [],
-   *   charset: 'utf-8',
-   *   debug: false
-   * })
-   *
-   */
-  seajs.config = function(o) {
-    for (var k in o) {
-      if (!o.hasOwnProperty(k)) continue
-
-      var previous = config[k]
-      var current = o[k]
-
-      if (previous && k === 'alias') {
-        for (var p in current) {
-          if (current.hasOwnProperty(p)) {
-
-            var prevValue = previous[p]
-            var currValue = current[p]
-
-            // Converts {jquery: '1.7.2'} to {jquery: 'jquery/1.7.2/jquery'}
-            if (/^\d+\.\d+\.\d+$/.test(currValue)) {
-              currValue = p + '/' + currValue + '/' + p
-            }
-
-            checkAliasConflict(prevValue, currValue, p)
-            previous[p] = currValue
-
-          }
-        }
-      }
-      else if (previous && (k === 'map' || k === 'preload')) {
-        // for config({ preload: 'some-module' })
-        if (util.isString(current)) {
-          current = [current]
-        }
-
-        util.forEach(current, function(item) {
-          if (item) {
-            previous.push(item)
-          }
-        })
-      }
-      else {
-        config[k] = current
+    // Merge object config such as alias, vars
+    if (prev && isObject(prev)) {
+      for (var k in curr) {
+        prev[k] = curr[k]
       }
     }
+    else {
+      // Concat array config such as map, preload
+      if (isArray(prev)) {
+        curr = prev.concat(curr)
+      }
+      // Make sure that `configData.base` is an absolute directory
+      else if (key === "base") {
+        curr = normalize(addBase(curr + "/"))
+      }
 
-    // Makes sure config.base is an absolute path.
-    var base = config.base
-    if (base && !util.isAbsolute(base)) {
-      config.base = util.id2Uri((util.isRoot(base) ? '' : './') + base + '/')
-    }
-
-    // Uses map to implement nocache.
-    if (config.debug === 2) {
-      config.debug = 1
-      seajs.config({
-        map: [
-          [/^.*$/, function(url) {
-            if (url.indexOf(noCachePrefix) === -1) {
-              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
-            }
-            return url
-          }]
-        ]
-      })
-    }
-
-    debugSync()
-
-    return this
-  }
-
-
-  function debugSync() {
-    if (config.debug) {
-      // For convenient reference
-      seajs.debug = !!config.debug
+      // Set config
+      configData[key] = curr
     }
   }
 
-  debugSync()
+  return seajs
+}
 
+seajs.config = config
 
-  function getLoaderActualSrc(src) {
-    if (src.indexOf('??') === -1) {
-      return src
-    }
+function plugin2preload(arr) {
+  var ret = [], name
 
-    // Such as: http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js
-    // Only support nginx combo style rule. If you use other combo rule, please
-    // explicitly config the base path and the alias for plugins.
-    var parts = src.split('??')
-    var root = parts[0]
-    var paths = util.filter(parts[1].split(','), function(str) {
-      return str.indexOf('sea.js') !== -1
-    })
-
-    return root + paths[0]
+  while ((name = arr.shift())) {
+    ret.push(loaderDir + "plugin-" + name)
   }
-
-  function checkAliasConflict(previous, current, key) {
-    if (previous && previous !== current) {
-      util.log('The alias config is conflicted:',
-          'key =', '"' + key + '"',
-          'previous =', '"' + previous + '"',
-          'current =', '"' + current + '"',
-          'warn')
-    }
-  }
-
-})(seajs, seajs._util, seajs._config)
+  return ret
+}
 

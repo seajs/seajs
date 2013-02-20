@@ -1,1 +1,0 @@
-define('e', { name: 'e' });

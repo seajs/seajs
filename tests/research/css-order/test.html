@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>css order</title>
+<style> p { color: black } </style>
+</head>
+<body>
+<p id="t">red --&gt; green --&gt; blue --&gt; green --&gt; black</p>
+<div id="out"></div>
+
+<script>
+  print(navigator.userAgent)
+
+  var head = document.getElementsByTagName('head')[0]
+  var timestamp = new Date().getTime()
+
+
+  var red = insertStyle('red.css')
+
+  setTimeout(function() {
+    var green = insertStyle('green.css', true)
+    head.removeChild(red)
+
+    setTimeout(function() {
+      var blue = insertStyle('blue.css')
+
+      setTimeout(function() {
+        head.removeChild(blue)
+
+        setTimeout(function() {
+          head.removeChild(green)
+        }, 1500)
+
+      }, 1500)
+    }, 1500)
+  }, 1500)
+
+
+  function insertStyle(url, first) {
+    var linkNode = document.createElement('link')
+    linkNode.rel = 'stylesheet'
+    linkNode.href = url + '?' + timestamp
+
+    if (first) {
+      head.insertBefore(linkNode, head.firstChild)
+    }
+    else {
+      head.appendChild(linkNode)
+    }
+
+    return linkNode
+  }
+
+  function print(msg) {
+    var p = document.createElement('P')
+    p.appendChild(document.createTextNode(msg))
+    document.getElementById('out').appendChild(p)
+  }
+
+</script>
+</body>
+</html>
