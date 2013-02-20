@@ -1,80 +1,105 @@
-/*global module:false*/
+
 module.exports = function(grunt) {
-  grunt.template.addDelimiters('d', '{%', '%}')
+
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    dirs: {
-      src: 'src',
-      dest: 'dist',
-      plugins: 'src/plugins'
-    },
+
+    pkg: grunt.file.readJSON("package.json"),
+
     concat: {
-      options: {
-        separator: '',
-        process: {
-          'delimiters': 'd',
-          'data': {
-            'VERSION': '<%= pkg.version %>'
-          }
-        }
-      },
       seajs: {
-        src: ['<%= dirs.src %>/intro.js',
-              '<%= dirs.src %>/sea.js',
-              '<%= dirs.src %>/util-lang.js', '<%= dirs.src %>/util-log.js', '<%= dirs.src %>/util-events.js',
-              '<%= dirs.src %>/util-path.js', '<%= dirs.src %>/util-request.js', '<%= dirs.src %>/util-deps.js',
-              '<%= dirs.src %>/module.js', '<%= dirs.src %>/config.js', '<%= dirs.src %>/bootstrap.js',
-              '<%= dirs.src %>/outro.js'],
-        dest: '<%= dirs.dest %>/sea-debug.js'
+        src: [
+          "src/intro.js",
+          "src/sea.js",
+
+          "src/util-lang.js",
+          "src/util-log.js",
+          "src/util-events.js",
+          "src/util-path.js",
+          "src/util-request.js",
+          "src/util-deps.js",
+
+          "src/module.js",
+          "src/config.js",
+          "src/bootstrap.js",
+
+          "src/outro.js"
+        ],
+        dest: "dist/sea-debug.js"
       }
     },
-    uglify: {
+
+    gcc: {
       seajs: {
+        src: "dist/sea-debug.js",
+        dest: "dist/sea.js",
         options: {
-          banner: '<%= banner %>',
-          sourceMap: '<%= dirs.dest %>/sea.js.map',
-          sourceMappingURL: 'sea.js.map',
-          sourceMapPrefix: 1,
-          preserveComments: 'some',
-          mangle: {
-         //   except: ['console', 'seajs', 'define', 'module', 'require']
-          }
-        },
-        files: {
-          '<%= dirs.dest %>/sea.js': '<%= concat.seajs.dest %>'
+          banner: "/*! SeaJS <%= pkg.version %> | seajs.org/LICENSE.md */",
+
+          compilation_level: "SIMPLE_OPTIMIZATIONS",
+          externs: "tools/extern.js",
+
+          warning_level: "VERBOSE",
+          jscomp_off: "checkTypes",
+          jscomp_error: "checkDebuggerStatement",
+
+          source_map_format: "V3",
+          create_source_map: "dist/sea.js.map"
         }
       },
+
       plugins: {
+        src: "src/plugins/*.js",
+        dest: "",
         options: {
-          preserveComments: 'some',
-          mangle: {
-         //   except: ['console', 'seajs', 'define', 'module', 'require']
-          }
-        },
-        files: {} // add later
+          compilation_level: "SIMPLE_OPTIMIZATIONS",
+          externs: "tools/extern.js",
+
+          warning_level: "VERBOSE",
+          jscomp_off: "checkTypes",
+          jscomp_error: "checkDebuggerStatement"
+        }
       }
     }
-  });
-  // Add plugins to uglify:plugins task
-  ~ function(grunt, undefined) {
-    var plugin_list = grunt.file.expand(grunt.config.get('dirs.plugins') + '/*.js')
-      , plugin_files = {}
-    while(plugin_list.length) {
-      var plugin = plugin_list.shift()
-        , plugin_name = plugin.match(/[\/\/]([^\.\/\\]+)\.js$/)[1]
-      
-      plugin_files['<%= dirs.dest %>/' + plugin_name + '.js'] = plugin
-    }
-    grunt.config.set('uglify.plugins.files', plugin_files)
-  }(grunt)
 
-  grunt.loadNpmTasks('grunt-contrib-concat')
-  grunt.loadNpmTasks('grunt-contrib-uglify')
+  })
 
-  grunt.registerTask('build_seajs', ['concat', 'uglify:seajs'])
-  grunt.registerTask('build_plugins', ['uglify:plugins'])
-  grunt.registerTask('default', ['build_seajs'])
-  grunt.registerTask('all', ['build_seajs', 'build_plugins'])
 
-};
+  grunt.registerTask("embed", "Embed version etc.", function() {
+    var filepath = "dist/sea-debug.js"
+    var version = grunt.config("pkg.version")
+
+    var code = grunt.file.read(filepath)
+    code = code.replace(/@VERSION/g, version)
+    grunt.file.write(filepath, code)
+
+    grunt.log.writeln("@VERSION is replaced to \"" + version + "\".")
+  })
+
+
+  grunt.registerTask("fix", "Fix sourceMap etc.", function() {
+    var mapfile = "dist/sea.js.map"
+    var minfile = "dist/sea.js"
+
+    var code = grunt.file.read(mapfile)
+    code = code.replace('"file":""', '"file":"sea.js"')
+    code = code.replace("dist/sea-debug.js", "sea-debug.js")
+    grunt.file.write(mapfile, code)
+    grunt.log.writeln('"' + mapfile + '" is fixed.')
+
+    code = grunt.file.read(minfile)
+    code += "//@ sourceMappingURL=sea.js.map\n"
+    grunt.file.write(minfile, code)
+    grunt.log.writeln('"' + minfile + '" is fixed.')
+  })
+
+
+  grunt.loadNpmTasks("grunt-contrib-concat")
+  grunt.loadNpmTasks("grunt-gcc")
+
+  grunt.registerTask("default", ["concat", "embed", "gcc:seajs", "fix"])
+  grunt.registerTask("plugins", ["gcc:plugins"])
+  grunt.registerTask("all", ["default", "gcc:plugins"])
+
+}
+
