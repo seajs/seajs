@@ -1,9 +1,19 @@
 
 module.exports = function(grunt) {
 
+  var path = require("path")
+
+  const GCC_OPTIONS = {
+    compilation_level: "SIMPLE_OPTIMIZATIONS",
+    externs: "tools/extern.js",
+
+    warning_level: "VERBOSE",
+    jscomp_off: "checkTypes",
+    jscomp_error: "checkDebuggerStatement"
+  }
+
 
   grunt.initConfig({
-
     pkg: grunt.file.readJSON("package.json"),
 
     concat: {
@@ -33,32 +43,23 @@ module.exports = function(grunt) {
       seajs: {
         src: "dist/sea-debug.js",
         dest: "dist/sea.js",
-        options: {
+        options: grunt.util._.merge({
           banner: "/*! SeaJS <%= pkg.version %> | seajs.org/LICENSE.md */",
-
-          compilation_level: "SIMPLE_OPTIMIZATIONS",
-          externs: "tools/extern.js",
-
-          warning_level: "VERBOSE",
-          jscomp_off: "checkTypes",
-          jscomp_error: "checkDebuggerStatement",
-
           source_map_format: "V3",
           create_source_map: "dist/sea.js.map"
-        }
+        }, GCC_OPTIONS)
       },
 
       plugins: {
-        src: "src/plugins/*.js",
-        dest: "",
-        options: {
-          compilation_level: "SIMPLE_OPTIMIZATIONS",
-          externs: "tools/extern.js",
-
-          warning_level: "VERBOSE",
-          jscomp_off: "checkTypes",
-          jscomp_error: "checkDebuggerStatement"
-        }
+        files: grunt.file.expandMapping(
+            "src/plugins/*.js", "dist/",
+            {
+              "rename": function(dest, matchedSrcPath) {
+                return path.join(dest, matchedSrcPath.split("/").pop())
+              }
+            }
+        ),
+        options: GCC_OPTIONS
       }
     }
 
@@ -75,7 +76,6 @@ module.exports = function(grunt) {
 
     grunt.log.writeln("@VERSION is replaced to \"" + version + "\".")
   })
-
 
   grunt.registerTask("fix", "Fix sourceMap etc.", function() {
     var mapfile = "dist/sea.js.map"
@@ -94,12 +94,12 @@ module.exports = function(grunt) {
   })
 
 
+  grunt.loadTasks("tools") // gcc
   grunt.loadNpmTasks("grunt-contrib-concat")
-  grunt.loadNpmTasks("grunt-gcc")
 
   grunt.registerTask("default", ["concat", "embed", "gcc:seajs", "fix"])
   grunt.registerTask("plugins", ["gcc:plugins"])
-  grunt.registerTask("all", ["default", "gcc:plugins"])
+  grunt.registerTask("all", ["default", "plugins"])
 
 }
 
