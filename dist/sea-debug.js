@@ -896,8 +896,10 @@ function preload(callback) {
   var len = preloadMods.length
 
   if (len) {
-    // Use splice method to copy array and empty configData.preload
-    globalModule.load(preloadMods.splice(0, len), function() {
+    globalModule.load(preloadMods, function() {
+      // Remove the loaded preload modules
+      preloadMods.splice(0, len)
+
       // Allow preload modules to add new preload modules
       preload(callback)
     })
