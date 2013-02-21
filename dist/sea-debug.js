@@ -635,9 +635,7 @@ function fetch(uri, callback) {
 
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
-  var requestUri = emitData("fetch",
-      { uri: uri, fetchedList: fetchedList },
-      "requestUri") || uri
+  var requestUri = emitData("fetch", { uri: uri }, "requestUri") || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -817,6 +815,12 @@ function compile(mod) {
 
   emit("compiled", mod)
   return mod.exports
+}
+
+Module.prototype.destroy = function() {
+  var uri = this.uri
+  delete cachedModules[uri]
+  delete fetchedList[uri]
 }
 
 
