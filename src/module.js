@@ -320,6 +320,12 @@ function compile(mod) {
   return mod.exports
 }
 
+Module.prototype.destroy = function() {
+  var uri = this.uri
+  delete cachedModules[uri]
+  delete fetchedList[uri]
+}
+
 
 // Helpers
 

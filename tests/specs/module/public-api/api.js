@@ -38,8 +38,9 @@ define(function(require, exports, mod) {
   var Module = mod.constructor
   assert(Module.STATUS, 'Module.STATUS')
   assert(isFunction(Module.prototype.load), 'Module.prototype.load')
+  assert(isFunction(Module.prototype.destroy), 'Module.prototype.destroy')
   assert(getOwnPropertyCount(Module) === 1, getOwnPropertyCount(Module))
-  assert(getOwnPropertyCount(Module.prototype) === 1, getOwnPropertyCount(Module.prototype))
+  assert(getOwnPropertyCount(Module.prototype) === 2, getOwnPropertyCount(Module.prototype))
 
   
   // require
