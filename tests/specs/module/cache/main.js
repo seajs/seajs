@@ -1,6 +1,9 @@
 
 global.cache_g = 0
 
+// For Node.js
+var _require = typeof require === 'function' ? require : { cache: {} }
+
 
 define(function(require) {
 
@@ -24,6 +27,8 @@ define(function(require) {
 
   // Delete './a' from cache
   delete seajs.cache[url].destroy()
+  delete _require.cache[url]
+
 
   // Load './a' again
   require.async('./a', function(a) {
