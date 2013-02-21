@@ -136,9 +136,7 @@ function fetch(uri, callback) {
 
   // Emit `fetch` event. Plugins could use this event to
   // modify uri or do other magic things
-  var requestUri = emitData("fetch",
-      { uri: uri, fetchedList: fetchedList },
-      "requestUri") || uri
+  var requestUri = emitData("fetch", { uri: uri }, "requestUri") || uri
 
   if (fetchedList[requestUri]) {
     callback()
