@@ -8,9 +8,9 @@ build_all:
 	make size
 
 test:
-	make local
-	make node
-	make http
+	make test_local
+	make test_node
+	make test_http
 
 test_http:
 	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/tests/runner.html?console
