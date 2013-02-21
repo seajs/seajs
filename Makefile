@@ -3,16 +3,22 @@ build:
 	grunt
 	make size
 
-all:
+build_all:
 	grunt all
+	make size
 
 test:
+	make local
+	make node
+	make http
+
+test_http:
 	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/tests/runner.html?console
 
-local:
+test_local:
 	phantomjs tools/phantom.js tests/runner.html?console
 
-node:
+test_node:
 	node tests/node-runner.js
 
 size:
