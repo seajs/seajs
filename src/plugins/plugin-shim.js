@@ -35,7 +35,7 @@
     })
   })
 
-  seajs.on("compile", function(mod) {
+  seajs.on("execute", function(mod) {
     var uri = mod.uri
 
     each(configData.shim, function(item, key) {

@@ -8,9 +8,9 @@ var STATUS = Module.STATUS = {
   "INITIALIZED": 1, // The module is initialized
   "FETCHING": 2,    // The module file is being fetched now
   "SAVED": 3,       // The module data has been saved to cachedModules
-  "LOADED": 4,      // The module and all its dependencies are ready to compile
-  "COMPILING": 5,   // The module is being compiled
-  "COMPILED": 6     // The module is compiled and `module.exports` is available
+  "LOADED": 4,      // The module and all its dependencies are ready to execute
+  "EXECUTING": 5,   // The module is being executed
+  "EXECUTED": 6     // The module is executed and `module.exports` is available
 }
 
 function Module(uri, status) {
@@ -29,7 +29,7 @@ Module.prototype.load = function(ids, callback) {
     var exports = []
 
     for (var i = 0; i < uris.length; i++) {
-      exports[i] = compile(cachedModules[uris[i]])
+      exports[i] = execute(cachedModules[uris[i]])
     }
 
     if (callback) {
@@ -256,20 +256,20 @@ function save(uri, meta) {
   }
 }
 
-function compile(mod) {
+function execute(mod) {
   // Return null when mod is invalid
   if (!mod) {
     return null
   }
 
-  // When module is compiled, DO NOT compile it again. When module
-  // is being compiled, just return `module.exports` too, for avoiding
+  // When module is executed, DO NOT execute it again. When module
+  // is being executed, just return `module.exports` too, for avoiding
   // circularly calling
-  if (mod.status >= STATUS.COMPILING) {
+  if (mod.status >= STATUS.EXECUTING) {
     return mod.exports
   }
 
-  emit("compile", mod)
+  emit("execute", mod)
 
   // Just return `null` when:
   //  1. the module file is 404
@@ -279,7 +279,7 @@ function compile(mod) {
     return null
   }
 
-  mod.status = STATUS.COMPILING
+  mod.status = STATUS.EXECUTING
 
 
   function require(id) {
@@ -291,7 +291,7 @@ function compile(mod) {
     }
 
     child.parent = mod
-    return compile(child)
+    return execute(child)
   }
 
   require.async = function(ids, callback) {
@@ -312,9 +312,9 @@ function compile(mod) {
   }
 
   mod.exports = exports === undefined ? mod.exports : exports
-  mod.status = STATUS.COMPILED
+  mod.status = STATUS.EXECUTED
 
-  emit("compiled", mod)
+  emit("executed", mod)
   return mod.exports
 }
 
@@ -417,7 +417,7 @@ function preload(callback) {
 
 // Public API
 
-var globalModule = new Module(undefined, STATUS.COMPILED)
+var globalModule = new Module(undefined, STATUS.EXECUTED)
 
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
