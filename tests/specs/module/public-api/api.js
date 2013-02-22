@@ -64,7 +64,7 @@ define(function(require, exports, mod) {
   assert(typeof mod.exports === 'object', 'module.exports')
   assert(mod.parent instanceof Module, 'module.parent')
   assert(mod.parent.parent === undefined, 'module.parent.parent')
-  assert(mod.status === Module.STATUS.COMPILING, 'module.status')
+  assert(mod.status === Module.STATUS.EXECUTING, 'module.status')
   assert(isFunction(mod.load), 'module.require')
   assert(getOwnPropertyCount(mod) === 8, getOwnPropertyCount(mod))
 

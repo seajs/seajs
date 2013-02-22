@@ -1,5 +1,5 @@
 
-seajs.on('compiled', function(mod) {
+seajs.on('executed', function(mod) {
   if (mod.uri.indexOf('/modify/a.js') > 0) {
     mod.exports.name = 'a'
   }

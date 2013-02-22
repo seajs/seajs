@@ -1,7 +1,7 @@
 define([
   'auto-transport',
   'combo-map',
-  'compiling-module',
+  'executing-module',
   'modify',
   'module-constructor',
   'plugin-combo',

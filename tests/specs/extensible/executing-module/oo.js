@@ -2,11 +2,11 @@
 
 var compilingStack = []
 
-seajs.on('compile', function(mod) {
+seajs.on('execute', function(mod) {
   compilingStack.push(mod)
 })
 
-seajs.on('compiled', function() {
+seajs.on('executed', function() {
   compilingStack.pop()
 })
 

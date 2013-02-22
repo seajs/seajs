@@ -1,11 +1,11 @@
 
-seajs.on('compiled', function(mod) {
+seajs.on('executed', function(mod) {
   if (mod.uri.indexOf('jquery.js') > -1) {
     global.jQuery = global.$ = mod.exports
   }
 })
 
-seajs.on('compile', function(mod) {
+seajs.on('execute', function(mod) {
   if (mod.uri.indexOf('cookie.js') > -1) {
     mod.exports = $.cookie
   }
