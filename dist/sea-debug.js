@@ -127,10 +127,10 @@ function emitData(event, data, prop) {
  * util-path.js - The utilities for operating path such as id, uri
  */
 
-var DIRNAME_RE = /[^?]*(?=\/.*$)/
+var DIRNAME_RE = /[^?#]*(?=\/.*$)/
 
 // Extract the directory portion of a path
-// dirname("a/b/c.js") ==> "a/b/"
+// dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
 // dirname("d.js") ==> "./"
 // ref: http://jsperf.com/regex-vs-split/2
 function dirname(path) {
