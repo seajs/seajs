@@ -43,14 +43,12 @@ define(function(require) {
   // -------
 
   function updateView(pageId) {
-    pageId || (pageId = location.hash.substring(1) || 'intro')
+    pageId || (pageId = location.hash.substring(1))
+    document.getElementById('page-' + pageId) || (pageId = 'intro')
 
-    if (document.getElementById('page-' + pageId)) {
-      setActiveNav(pageId)
-      setActivePage(pageId)
-      window.scrollTo(0, 0)
-    }
-
+    setActiveNav(pageId)
+    setActivePage(pageId)
+    window.scrollTo(0, 0)
   }
 
   function setActiveNav(pageId) {
