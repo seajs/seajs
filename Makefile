@@ -8,8 +8,8 @@ build_all:
 	make size
 
 test:
-	make test_local
 	make test_node
+	make test_local
 	make test_http
 
 test_http:
