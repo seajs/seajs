@@ -100,7 +100,7 @@
 
     r.onreadystatechange = function() {
       if (r.readyState === 4) {
-        if (r.status === 200) {
+        if (!(r.status > 399 && r.status < 600)) {
           callback(r.responseText)
         }
         else {
