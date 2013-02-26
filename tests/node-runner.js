@@ -29,7 +29,7 @@ define('./tests/node-runner', function(require) {
     test.run(specs)
 
     test.print('Summary')
-    test.print(total + ' specs in ' + (Date.now() - time) / 1000 + 's')
+    test.print(total + ' suites in ' + (Date.now() - time) / 1000 + 's')
     test.print('END')
   })
 
