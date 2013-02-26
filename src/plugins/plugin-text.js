@@ -100,11 +100,12 @@
 
     r.onreadystatechange = function() {
       if (r.readyState === 4) {
-        if (!(r.status > 399 && r.status < 600)) {
-          callback(r.responseText)
+        // Support local file
+        if (r.status > 399 && r.status < 600) {
+          throw new Error("Could not load: " + url + ", status = " + r.status)
         }
         else {
-          throw new Error("Could not load: " + url + ", status = " + r.status)
+          callback(r.responseText)
         }
       }
     }
