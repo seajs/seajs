@@ -6,4 +6,4 @@ define(function(require, exports) {
     return add(val, 1)
   }
 
-});
+})
