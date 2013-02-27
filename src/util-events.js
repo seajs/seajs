@@ -2,7 +2,7 @@
  * util-events.js - The minimal events support
  */
 
-var eventsCache = seajs.events = {}
+var eventsCache = {}
 
 // Bind event
 seajs.on = function(event, callback) {
