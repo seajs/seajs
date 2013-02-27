@@ -25,7 +25,9 @@ if (typeof define === 'function') {
     'specs/config',
     'specs/module',
     'specs/package',
-    'specs/extensible'
+    'specs/extensible',
+
+    'specs/node'
   ])
 }
 
