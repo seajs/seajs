@@ -53,7 +53,7 @@
     }
 
     if (pluginName) {
-      uri = uri.replace(/\.js$/, "")
+      uri = uri.replace(/\.js/, "")
       uriCache[uri] = pluginName
     }
 
