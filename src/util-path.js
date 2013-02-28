@@ -18,7 +18,6 @@ var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
 // Canonicalize a path
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
-
   // /a/b/./c/./d ==> /a/b/c/d
   path = path.replace(DOT_RE, "/")
 
@@ -55,31 +54,28 @@ function normalize(uri) {
   }
 
   // issue #256: fix `:80` bug in IE
-  uri = uri.replace(":80/", "/")
-
-  return uri
+  return uri.replace(":80/", "/")
 }
 
-
-var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
   var alias = configData.alias
 
-  // Only parse top-level id
-  if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
+  if (hasOwn(alias, id) && isTopLevel(id)) {
     id = alias[id]
   }
 
   return id
 }
 
+var VARS_RE = /{([^{]+)}/g
+
 function parseVars(id) {
   var vars = configData.vars
 
   if (vars && id.indexOf("{") >= 0) {
     id = id.replace(VARS_RE, function(m, key) {
-      return vars.hasOwnProperty(key) ? vars[key] : m
+      return hasOwn(vars, key) ? vars[key] : m
     })
   }
 
