@@ -5,7 +5,7 @@
  *   $ node tests/runner-node.js
  */
 
-require('../lib/sea')
+require('../lib/sea.js')
 
 define('./tests/node-runner', function(require) {
   var test = require('./test')
