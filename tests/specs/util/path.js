@@ -57,6 +57,22 @@ define(function(require) {
 
 
   seajs.config({
+    paths: {
+      'xx-path': 'http://xx.com/path/to/',
+      'xx/path': 'http://xx.com/path/to/',
+      'http:': 'WRONG'
+    }
+  })
+
+  assert(parsePaths('xx-path/a') === 'http://xx.com/path/to//a', 'parsePaths')
+  assert(parsePaths('/xx-path/a') === '/xx-path/a', 'parsePaths')
+  assert(parsePaths('xx/path/a') === 'xx/path/a', 'parsePaths')
+  assert(parsePaths('http://xx/path/xx-path/') === 'http://xx/path/xx-path/', 'parsePaths')
+  assert(parsePaths('/') === '/', 'parsePaths')
+  assert(parsePaths('.') === '.', 'parsePaths')
+
+
+  seajs.config({
     vars: {
       'locale': 'zh-cn',
       'biz': 'path/to/biz',
