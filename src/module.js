@@ -5,31 +5,31 @@
 var cachedModules = seajs.cache = {}
 
 var STATUS = Module.STATUS = {
-  "INITIALIZED": 1, // The module is initialized
-  "FETCHING": 2,    // The module file is being fetched now
-  "SAVED": 3,       // The module data has been saved to cachedModules
-  "LOADED": 4,      // The module and all its dependencies are ready to execute
-  "EXECUTING": 5,   // The module is being executed
-  "EXECUTED": 6     // The module is executed and `module.exports` is available
+  "FETCHING": 1,    // The module file is being fetched now
+  "SAVED": 2,       // The module data has been saved to cachedModules
+  "LOADED": 3,      // The module and all its dependencies are ready to execute
+  "EXECUTING": 4,   // The module is being executed
+  "EXECUTED": 5     // The module is executed and `module.exports` is available
 }
 
-function Module(uri, status) {
+function Module(uri) {
   this.uri = uri
-  this.status = status || STATUS.INITIALIZED
+  this.status = 0
   this.dependencies = []
   this.waitings = []
 
   emit("initialized", this)
 }
 
-Module.prototype.load = function(ids, callback) {
-  var uris = resolve(isArray(ids) ? ids : [ids], this.uri)
+Module.load = function(uris, callback) {
+  isArray(uris) || (uris = [uris])
 
   load(uris, function() {
     var exports = []
 
     for (var i = 0; i < uris.length; i++) {
-      exports[i] = execute(cachedModules[uris[i]])
+      var mod = cachedModules[uris[i]]
+      exports[i] = mod ? execute(mod) : null
     }
 
     if (callback) {
@@ -54,9 +54,8 @@ function resolve(ids, refUri) {
   return data.uri || id2Uri(id, refUri)
 }
 
-function load(uris, callback, options) {
-  options = options || {}
-  var unloadedUris = options.filtered ? uris : getUnloadedUris(uris)
+function load(uris, callback) {
+  var unloadedUris = getUnloadedUris(uris)
 
   if (unloadedUris.length === 0) {
     callback()
@@ -74,14 +73,21 @@ function load(uris, callback, options) {
       var mod = cachedModules[uri]
       var deps = mod.dependencies
 
-      mod.status < STATUS.SAVED ?
-          (deps.length ?
-              // Load dependencies that added during module initialization
-              mod.load(deps.splice(0, deps.length), function() {
-                fetch(uri, onFetched)
-              }) :
-              fetch(uri, onFetched) ) :
-          onFetched()
+      if (mod.status < STATUS.SAVED) {
+        if (deps.length) {
+          // Load dependencies that added during module initialization
+          Module.load(resolve(deps, mod.uri), function() {
+            fetch(uri, onFetched)
+          })
+        }
+        else {
+          fetch(uri, onFetched)
+        }
+      }
+      else {
+        onFetched()
+      }
+
 
       function onFetched() {
         // Maybe failed to fetch successfully, such as 404 error
@@ -109,7 +115,7 @@ function load(uris, callback, options) {
         // Copy waitings to prevent modification
         load(waitings.slice(), function() {
           done(mod)
-        }, { filtered: true })
+        })
       }
 
     })(unloadedUris[i])
@@ -182,7 +188,7 @@ function fetch(uri, callback) {
   }
 }
 
-function define(id, deps, factory) {
+Module.define = function(id, deps, factory) {
   var argsLen = arguments.length
 
   // HANDLE: define(factory)
@@ -257,11 +263,6 @@ function save(uri, meta) {
 }
 
 function execute(mod) {
-  // Return null when mod is invalid
-  if (!mod) {
-    return null
-  }
-
   // When module is executed, DO NOT execute it again. When module
   // is being executed, just return `module.exports` too, for avoiding
   // circularly calling
@@ -295,7 +296,7 @@ function execute(mod) {
   }
 
   require.async = function(ids, callback) {
-    mod.load(ids, callback)
+    Module.load(resolve(ids, mod.uri), callback)
     return require
   }
 
@@ -327,9 +328,9 @@ Module.prototype.destroy = function() {
 
 // Helpers
 
-function getModule(uri, status) {
+function getModule(uri) {
   return cachedModules[uri] ||
-      (cachedModules[uri] = new Module(uri, status))
+      (cachedModules[uri] = new Module(uri))
 }
 
 function getUnloadedUris(uris) {
@@ -401,7 +402,7 @@ function preload(callback) {
   var len = preloadMods.length
 
   if (len) {
-    globalModule.load(preloadMods, function() {
+    Module.load(resolve(preloadMods), function() {
       // Remove the loaded preload modules
       preloadMods.splice(0, len)
 
@@ -417,16 +418,14 @@ function preload(callback) {
 
 // Public API
 
-var globalModule = new Module(undefined, STATUS.EXECUTED)
-
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
-    globalModule.load(ids, callback)
+    Module.load(resolve(ids), callback)
   })
   return seajs
 }
 
-global.define = define
+global.define = Module.define
 seajs.resolve = id2Uri
 
