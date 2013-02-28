@@ -92,9 +92,11 @@ define(function(require) {
   assert(parseVars('{c}') === '{path}/to/c.js', 'parseVars')
 
 
+  var CWR = cwd.match(/^.*?\/\/.*?\//)[0]
+
   assert(addBase('http://a.com/b.js') === 'http://a.com/b.js', 'addBase')
   assert(addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/./a.js', 'addBase')
-  assert(addBase('/b.js', 'http://test.com/path/to/c.js') === 'http://test.com/b.js', 'addBase')
+  assert(addBase('/b.js', 'http://test.com/path/to/c.js') === CWR + 'b.js', 'addBase')
   assert(addBase('c', 'http://test.com/path/to/c.js') === cwd + 'c', 'addBase')
 
 
@@ -128,8 +130,8 @@ define(function(require) {
   assert(id2Uri('path/to/z.js?t=1234') === cwd + 'path/to/z.js?t=1234', 'id2Uri')
   assert(id2Uri('path/to/z?t=1234') === cwd + 'path/to/z?t=1234', 'id2Uri')
   assert(id2Uri('./b', 'http://test.com/path//to/x.js') === 'http://test.com/path/to/b.js', 'id2Uri')
-  assert(id2Uri('/c', 'http://test.com/path/x.js') === 'http://test.com/c.js', 'id2Uri')
-  assert(id2Uri('/root/', 'file:///Users/lifesinger/tests/specs/util/test.html') === 'file:///root/', 'id2Uri')
+  assert(id2Uri('/c', 'http://test.com/path/x.js') === CWR + 'c.js', 'id2Uri')
+  assert(id2Uri('/root/', 'file:///Users/lifesinger/tests/specs/util/test.html') === CWR + 'root/', 'id2Uri')
   assert(id2Uri('http://test.com/x.js') === 'http://test.com/x.js', 'id2Uri')
   assert(id2Uri('http://test.com/x.js#') === 'http://test.com/x.js', 'id2Uri')
   assert(id2Uri('./z.js', 'http://test.com/x.js') === 'http://test.com/z.js', 'id2Uri')
@@ -140,7 +142,7 @@ define(function(require) {
 
   var _cwd = cwd
   seajs.cwd('/User/lifesinger/path/to/root/')
-  assert(id2Uri('/C/path/to/a') === '/C/path/to/a.js', 'id2Uri')
+  assert(id2Uri('/C/path/to/a') === '/C/path/to/a.js', 'id2Uri ' + id2Uri('/C/path/to/a'))
   seajs.cwd(_cwd)
 
 
@@ -155,6 +157,7 @@ define(function(require) {
   assert(isRoot('//') === true, 'isRoot')
   assert(isRoot('/a') === true, 'isRoot')
 
+  /*
   assert(isTopLevel('xxx') === true, 'isTopLevel')
   assert(isTopLevel('./xxx') === false, 'isTopLevel')
   assert(isTopLevel('../xxx') === false, 'isTopLevel')
@@ -164,7 +167,7 @@ define(function(require) {
   assert(isTopLevel('_') === true, 'isTopLevel')
   assert(isTopLevel('$abc') === true, 'isTopLevel')
   assert(isTopLevel('_abc') === true, 'isTopLevel')
-
+  */
 
   test.next()
 
