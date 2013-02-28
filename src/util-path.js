@@ -60,12 +60,7 @@ function normalize(uri) {
 
 function parseAlias(id) {
   var alias = configData.alias
-
-  if (hasOwn(alias, id) && isTopLevel(id)) {
-    id = alias[id]
-  }
-
-  return id
+  return hasOwn(alias, id) ? alias[id] : id
 }
 
 var VARS_RE = /{([^{]+)}/g

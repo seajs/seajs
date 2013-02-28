@@ -41,19 +41,19 @@ define(function(require) {
         alias: {
           'jquery-debug': 'jquery/1.8.0/jquery-debug',
           'app': 'app/1.2/app',
-          'biz/a': 'path/to/biz/a.js',
-          './b': 'path/to/b.js',
-          '/c': 'c.js',
+          'alias/a': 'path/to/biz/a.js',
+          './alias/b': 'path/to/b.js',
+          '/alias/c': 'c.js',
           'http://test.com/router': 'router.js?t=20110525'
         }
       })
 
   assert(parseAlias('jquery-debug') === 'jquery/1.8.0/jquery-debug', 'parseAlias')
   assert(parseAlias('app') === 'app/1.2/app', 'parseAlias')
-  assert(parseAlias('biz/a') === 'path/to/biz/a.js', 'parseAlias')
-  assert(parseAlias('./b') === './b', 'parseAlias')
-  assert(parseAlias('/c') === '/c', 'parseAlias')
-  assert(parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias')
+  assert(parseAlias('alias/a') === 'path/to/biz/a.js', 'parseAlias')
+  assert(parseAlias('./alias/b') === 'path/to/b.js', 'parseAlias')
+  assert(parseAlias('/alias/c') === 'c.js', 'parseAlias')
+  assert(parseAlias('http://test.com/router') === 'router.js?t=20110525', 'parseAlias')
 
 
   seajs.config({
