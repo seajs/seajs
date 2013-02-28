@@ -81,7 +81,7 @@ var VARS_RE = /{([^{]+)}/g
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf("{") >= 0) {
+  if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
       return hasOwn(vars, key) ? vars[key] : m
     })
@@ -116,15 +116,12 @@ var ROOT_DIR_RE = /^(.*?:\/\/.*?)(?:\/|$)/
 function addBase(id, refUri) {
   var ret
 
-  // absolute id
   if (isAbsolute(id)) {
     ret = id
   }
-  // relative id
   else if (isRelative(id)) {
     ret = (refUri ? dirname(refUri) : cwd) + id
   }
-  // root id
   else if (isRoot(id)) {
     var m = (refUri || cwd).match(ROOT_DIR_RE)
     ret = (m ? m[1] : "") + id
