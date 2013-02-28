@@ -4,16 +4,19 @@
 
 var DIRNAME_RE = /[^?#]*\//
 
+var DOT_RE = /\/\.\//g
+var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
+var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
+
+var URI_END_RE = /\?|\.(?:css|js)$|\/$/
+var HASH_END_RE = /#$/
+
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
 // ref: http://jsperf.com/regex-vs-split/2
 function dirname(path) {
   return path.match(DIRNAME_RE)[0]
 }
-
-var DOT_RE = /\/\.\//g
-var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
-var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
 
 // Canonicalize a path
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
@@ -35,9 +38,6 @@ function realpath(path) {
   return path
 }
 
-var URI_END_RE = /\?|\.(?:css|js)$|\/$/
-var HASH_END_RE = /#$/
-
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
@@ -58,12 +58,13 @@ function normalize(uri) {
 }
 
 
+var PATHS_RE = /^([^/:]+)(\/.+)$/
+var VARS_RE = /{([^{]+)}/g
+
 function parseAlias(id) {
   var alias = configData.alias
   return hasOwn(alias, id) ? alias[id] : id
 }
-
-var PATHS_RE = /^([^/:]+)(\/.+)$/
 
 function parsePaths(id) {
   var paths = configData.paths
@@ -75,8 +76,6 @@ function parsePaths(id) {
 
   return id
 }
-
-var VARS_RE = /{([^{]+)}/g
 
 function parseVars(id) {
   var vars = configData.vars
@@ -111,7 +110,24 @@ function parseMap(uri) {
 }
 
 
-var ROOT_DIR_RE = /^(.*?:\/\/.*?)(?:\/|$)/
+var ABSOLUTE_RE = /(?:^|:)\/\//
+var RELATIVE_RE = /^\./
+var ROOT_RE = /^\//
+
+function isAbsolute(id) {
+  return ABSOLUTE_RE.test(id)
+}
+
+function isRelative(id) {
+  return RELATIVE_RE.test(id)
+}
+
+function isRoot(id) {
+  return ROOT_RE.test(id)
+}
+
+
+var ROOT_DIR_RE = /^.*?\/\/.*?\//
 
 function addBase(id, refUri) {
   var ret
@@ -120,11 +136,10 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = (refUri ? dirname(refUri) : cwd) + id
+    ret = dirname(refUri || cwd) + id
   }
   else if (isRoot(id)) {
-    var m = (refUri || cwd).match(ROOT_DIR_RE)
-    ret = (m ? m[1] : "") + id
+    ret = (cwd.match(ROOT_DIR_RE) || ["/"])[0] + id.substring(1)
   }
   // top-level id
   else {
@@ -145,28 +160,6 @@ function id2Uri(id, refUri) {
   id = parseMap(id)
 
   return id
-}
-
-
-var ABSOLUTE_RE = /(?:^|:)\/\/./
-var RELATIVE_RE = /^\.{1,2}\//
-var ROOT_RE = /^\//
-var TOPLEVEL_RE = /^[^./][^:]*$/
-
-function isAbsolute(id) {
-  return ABSOLUTE_RE.test(id)
-}
-
-function isRelative(id) {
-  return RELATIVE_RE.test(id)
-}
-
-function isRoot(id) {
-  return ROOT_RE.test(id)
-}
-
-function isTopLevel(id) {
-  return TOPLEVEL_RE.test(id)
 }
 
 
