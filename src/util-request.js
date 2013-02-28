@@ -53,7 +53,7 @@ function request(url, callback, charset) {
       head.insertBefore(node, baseElement) :
       head.appendChild(node)
 
-  currentlyAddingScript = null
+  currentlyAddingScript = undefined
 }
 
 function addOnload(node, callback, isCSS) {

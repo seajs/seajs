@@ -4,6 +4,11 @@
 
 var cachedModules = seajs.cache = {}
 
+var fetchingList = {}
+var fetchedList = {}
+var callbackList = {}
+var anonymousModuleMeta
+
 var STATUS = Module.STATUS = {
   "FETCHING": 1,    // The module file is being fetched now
   "SAVED": 2,       // The module data has been saved to cachedModules
@@ -14,33 +19,13 @@ var STATUS = Module.STATUS = {
 
 function Module(uri) {
   this.uri = uri
-  this.status = 0
   this.dependencies = []
   this.waitings = []
-
-  emit("initialized", this)
-}
-
-Module.load = function(uris, callback) {
-  isArray(uris) || (uris = [uris])
-
-  load(uris, function() {
-    var exports = []
-
-    for (var i = 0; i < uris.length; i++) {
-      var mod = cachedModules[uris[i]]
-      exports[i] = mod ? execute(mod) : null
-    }
-
-    if (callback) {
-      callback.apply(global, exports)
-    }
-  })
+  this.status = 0
 }
 
 function resolve(ids, refUri) {
   if (isArray(ids)) {
-    // Use `for` loop instead of `forEach` or `map` function for performance
     var ret = []
     for (var i = 0; i < ids.length; i++) {
       ret[i] = resolve(ids[i], refUri)
@@ -49,9 +34,24 @@ function resolve(ids, refUri) {
   }
 
   var data = { id: ids, refUri: refUri }
-  var id = emitData("resolve", data, "id")
+  emit("resolve", data)
 
-  return data.uri || id2Uri(id, refUri)
+  return data.uri || id2Uri(data.id, refUri)
+}
+
+function use(uris, callback) {
+  load(uris, function() {
+    var exports = []
+
+    for (var i = 0; i < uris.length; i++) {
+      var mod = cachedModules[uris[i]]
+      exports[i] = mod ? exec(mod) : null
+    }
+
+    if (callback) {
+      callback.apply(global, exports)
+    }
+  })
 }
 
 function load(uris, callback) {
@@ -71,23 +71,8 @@ function load(uris, callback) {
   for (var i = 0; i < len; i++) {
     (function(uri) {
       var mod = cachedModules[uri]
-      var deps = mod.dependencies
 
-      if (mod.status < STATUS.SAVED) {
-        if (deps.length) {
-          // Load dependencies that added during module initialization
-          Module.load(resolve(deps, mod.uri), function() {
-            fetch(uri, onFetched)
-          })
-        }
-        else {
-          fetch(uri, onFetched)
-        }
-      }
-      else {
-        onFetched()
-      }
-
+      mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
 
       function onFetched() {
         // Maybe failed to fetch successfully, such as 404 error
@@ -132,11 +117,6 @@ function load(uris, callback) {
   }
 }
 
-var fetchingList = {}
-var fetchedList = {}
-var callbackList = {}
-var anonymousModuleMeta = null
-
 function fetch(uri, callback) {
   cachedModules[uri].status = STATUS.FETCHING
 
@@ -178,7 +158,7 @@ function fetch(uri, callback) {
     // Save meta data of anonymous module
     if (anonymousModuleMeta) {
       save(uri, anonymousModuleMeta)
-      anonymousModuleMeta = null
+      anonymousModuleMeta = undefined
     }
 
     // Call callbacks
@@ -188,7 +168,7 @@ function fetch(uri, callback) {
   }
 }
 
-Module.define = function(id, deps, factory) {
+function define(id, deps, factory) {
   var argsLen = arguments.length
 
   // HANDLE: define(factory)
@@ -262,7 +242,7 @@ function save(uri, meta) {
   }
 }
 
-function execute(mod) {
+function exec(mod) {
   // When module is executed, DO NOT execute it again. When module
   // is being executed, just return `module.exports` too, for avoiding
   // circularly calling
@@ -292,7 +272,7 @@ function execute(mod) {
     }
 
     child.parent = mod
-    return execute(child)
+    return exec(child)
   }
 
   require.async = function(ids, callback) {
