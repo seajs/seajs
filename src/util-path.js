@@ -166,12 +166,11 @@ function id2Uri(id, refUri) {
 var doc = document
 var loc = location
 var cwd = dirname(loc.href)
+var scripts = doc.getElementsByTagName("script")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
-var loaderScript = doc.getElementById("seajsnode") || (function() {
-  var scripts = doc.getElementsByTagName("script")
-  return scripts[scripts.length - 1]
-})()
+var loaderScript = doc.getElementById("seajsnode") ||
+    scripts[scripts.length - 1]
 
 // When `sea.js` is inline, set loaderDir to current working directory
 var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript)) || cwd
