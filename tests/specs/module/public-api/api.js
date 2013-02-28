@@ -37,10 +37,13 @@ define(function(require, exports, mod) {
   // Module
   var Module = mod.constructor
   assert(Module.STATUS, 'Module.STATUS')
-  assert(isFunction(Module.prototype.load), 'Module.prototype.load')
+  assert(Module.load, 'Module.load')
+  assert(Module.define, 'Module.define')
+  //assert(isFunction(Module.prototype.load), 'Module.prototype.load')
+  //assert(isFunction(Module.prototype.execute), 'Module.prototype.execute')
   assert(isFunction(Module.prototype.destroy), 'Module.prototype.destroy')
-  assert(getOwnPropertyCount(Module) === 1, getOwnPropertyCount(Module))
-  assert(getOwnPropertyCount(Module.prototype) === 2, getOwnPropertyCount(Module.prototype))
+  assert(getOwnPropertyCount(Module) === 3, getOwnPropertyCount(Module))
+  assert(getOwnPropertyCount(Module.prototype) === 1, getOwnPropertyCount(Module.prototype))
 
   
   // require
@@ -65,7 +68,7 @@ define(function(require, exports, mod) {
   assert(mod.parent instanceof Module, 'module.parent')
   assert(mod.parent.parent === undefined, 'module.parent.parent')
   assert(mod.status === Module.STATUS.EXECUTING, 'module.status')
-  assert(isFunction(mod.load), 'module.require')
+  //assert(isFunction(mod.load), 'module.load')
   assert(getOwnPropertyCount(mod) === 8, getOwnPropertyCount(mod))
 
 
