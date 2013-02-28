@@ -62,7 +62,7 @@ function load(uris, callback) {
     return
   }
 
-  // Emit load event for plugins such as combo plugin
+  // Emit `load` event for plugins such as plugin-combo
   emit("load", unloadedUris)
 
   var len = unloadedUris.length
@@ -120,9 +120,12 @@ function load(uris, callback) {
 function fetch(uri, callback) {
   cachedModules[uri].status = STATUS.FETCHING
 
-  // Emit `fetch` event. Plugins could use this event to
-  // modify uri or do other magic things
-  var requestUri = emitData("fetch", { uri: uri }, "requestUri") || uri
+  var charset = configData.charset
+  var data
+
+  // Emit `fetch` event for plugins such as plugin-combo
+  emit("fetch", data = { uri: uri })
+  var requestUri = data.requestUri || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -137,17 +140,15 @@ function fetch(uri, callback) {
   fetchingList[requestUri] = true
   callbackList[requestUri] = [callback]
 
-  // Emit `request` event and send request
-  var charset = configData.charset
-  var data = {
+  // Emit `request` event for plugins such as plugin-text
+  emit("request", data = {
     uri: uri,
     requestUri: requestUri,
     callback: onRequested,
     charset: charset
-  }
-  var requested = emitData("request", data, "requested")
+  })
 
-  if (!requested) {
+  if (!data.requested) {
     request(data.requestUri, onRequested, charset)
   }
 
@@ -225,7 +226,8 @@ function define(id, deps, factory) {
 
 function save(uri, meta) {
   meta.uri = uri
-  uri = emitData("save", meta, "uri")
+  emit("save", meta)
+  uri = meta.uri
 
   var mod = getModule(uri)
 

@@ -59,9 +59,3 @@ var emit = seajs.emit = function(event, data) {
   return seajs
 }
 
-// Emit event and return the specified property of the data
-function emitData(event, data, prop) {
-  emit(event, data)
-  return data[prop]
-}
-
