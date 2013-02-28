@@ -7,7 +7,7 @@ page.onConsoleMessage = function(arg) {
 
   console.log(color(msg, type))
 
-  // Throw error on fail
+  // Exit on fail
   if (type === 'fail') {
     phantom.exit(1)
   }
