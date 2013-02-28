@@ -69,10 +69,8 @@ function parsePaths(id) {
   var paths = configData.paths
   var m
 
-  if (paths && (m = id.match(PATHS_RE))) {
-    id = id.replace(PATHS_RE, function(m, m1, m2) {
-      return hasOwn(paths, m1) ? paths[m1] + m2 : m
-    })
+  if (paths && (m = id.match(PATHS_RE)) && hasOwn(paths, m[1])) {
+    id = paths[m[1]] + m[2]
   }
 
   return id
