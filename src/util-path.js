@@ -61,7 +61,7 @@ function normalize(uri) {
 }
 
 
-var VARS_RE = /{([^{}]+)}/g
+var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
   var alias = configData.alias
