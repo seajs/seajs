@@ -11,10 +11,9 @@ function dirname(path) {
   return path.match(DIRNAME_RE)[0]
 }
 
-
 var DOT_RE = /\/\.\//g
-var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
+var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
 
 // Canonicalize a path
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
@@ -36,7 +35,6 @@ function realpath(path) {
 
   return path
 }
-
 
 var URI_END_RE = /\?|\.(?:css|js)$|\/$/
 var HASH_END_RE = /#$/
