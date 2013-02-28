@@ -63,6 +63,21 @@ function parseAlias(id) {
   return hasOwn(alias, id) ? alias[id] : id
 }
 
+var PATHS_RE = /^([^/:]+)(\/.+)$/
+
+function parsePaths(id) {
+  var paths = configData.paths
+  var m
+
+  if (paths && (m = id.match(PATHS_RE))) {
+    id = id.replace(PATHS_RE, function(m, m1, m2) {
+      return hasOwn(paths, m1) ? paths[m1] + m2 : m
+    })
+  }
+
+  return id
+}
+
 var VARS_RE = /{([^{]+)}/g
 
 function parseVars(id) {
@@ -128,6 +143,7 @@ function id2Uri(id, refUri) {
   if (!id) return ""
 
   id = parseAlias(id)
+  id = parsePaths(id)
   id = parseVars(id)
   id = addBase(id, refUri)
   id = normalize(id)
