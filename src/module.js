@@ -89,7 +89,7 @@ function load(uris, callback) {
         if (isCircularWaiting(mod)) {
           printCircularLog(circularStack)
           circularStack.length = 0
-          done()
+          done(true)
           return
         }
 
@@ -98,8 +98,9 @@ function load(uris, callback) {
         waitings.length ? load(waitings, done) : done()
       }
 
-      function done() {
-        mod.status = STATUS.LOADED
+      function done(isCircular) {
+        isCircular || (mod.status = STATUS.LOADED)
+
         if (--remain === 0) {
           callback()
         }
