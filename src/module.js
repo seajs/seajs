@@ -3,11 +3,12 @@
  */
 
 var cachedModules = seajs.cache = {}
+var anonymousModuleMeta
 
 var fetchingList = {}
 var fetchedList = {}
 var callbackList = {}
-var anonymousModuleMeta
+var waitingsList = {}
 
 var STATUS = Module.STATUS = {
   "FETCHING": 1,    // The module file is being fetched now
@@ -19,8 +20,7 @@ var STATUS = Module.STATUS = {
 
 function Module(uri) {
   this.uri = uri
-  this.dependencies = []
-  this.waitings = []
+  this.exports = null
   this.status = 0
 }
 
@@ -33,19 +33,22 @@ function resolve(ids, refUri) {
     return ret
   }
 
+  // Emit `resolve` event for plugins such as plugin-text
   var data = { id: ids, refUri: refUri }
   emit("resolve", data)
 
   return data.uri || id2Uri(data.id, refUri)
 }
 
-function use(uris, callback) {
+function use(ids, callback) {
+  var uris = resolve(ids)
+  isArray(uris) || (uris = [uris])
+
   load(uris, function() {
     var exports = []
 
     for (var i = 0; i < uris.length; i++) {
-      var mod = cachedModules[uris[i]]
-      exports[i] = mod ? exec(mod) : null
+      exports[i] = exec(cachedModules[uris[i]])
     }
 
     if (callback) {
@@ -91,40 +94,28 @@ function load(uris, callback) {
         }
 
         // Load all unloaded dependencies
-        var waitings = mod.waitings = getUnloadedUris(mod.dependencies)
-        if (waitings.length === 0) {
-          done(mod)
-          return
-        }
+        var waitings = waitingsList[uri] = getUnloadedUris(mod.dependencies)
+        waitings.length ? load(waitings, done) : done()
+      }
 
-        // Copy waitings to prevent modification
-        load(waitings.slice(), function() {
-          done(mod)
-        })
+      function done() {
+        mod.status = STATUS.LOADED
+        if (--remain === 0) {
+          callback()
+        }
       }
 
     })(unloadedUris[i])
   }
-
-  function done(mod) {
-    if (mod && mod.status < STATUS.LOADED) {
-      mod.status = STATUS.LOADED
-    }
-
-    if (--remain === 0) {
-      callback()
-    }
-  }
 }
 
 function fetch(uri, callback) {
+  uri = parseMap(uri)
   cachedModules[uri].status = STATUS.FETCHING
 
-  var charset = configData.charset
-  var data
-
   // Emit `fetch` event for plugins such as plugin-combo
-  emit("fetch", data = { uri: uri })
+  var data = { uri: uri }
+  emit("fetch", data)
   var requestUri = data.requestUri || uri
 
   if (fetchedList[requestUri]) {
@@ -141,6 +132,7 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Emit `request` event for plugins such as plugin-text
+  var charset = configData.charset
   emit("request", data = {
     uri: uri,
     requestUri: requestUri,
@@ -189,20 +181,12 @@ function define(id, deps, factory) {
     }
   }
 
-  // Parse dependencies according to the module factory code
-  if (!isArray(deps) && isFunction(factory)) {
-    deps = parseDependencies(factory.toString())
-  }
-
-  var meta = { id: id, dependencies: deps, factory: factory }
-  var derivedUri
-
   // Try to derive uri in IE6-9 for anonymous modules
   if (!id && doc.attachEvent) {
     var script = getCurrentScript()
 
     if (script) {
-      derivedUri = script.src
+      id = script.src
     }
     else {
       log("Failed to derive: " + factory)
@@ -212,39 +196,38 @@ function define(id, deps, factory) {
     }
   }
 
-  var resolvedUri = id ? resolve(id) : derivedUri
-
-  if (resolvedUri) {
-    save(resolvedUri, meta)
-  }
-  else {
-    // Save information for "memoizing" work in the script onload event
-    anonymousModuleMeta = meta
+  // Parse dependencies according to the module factory code
+  if (!isArray(deps) && isFunction(factory)) {
+    deps = parseDependencies(factory.toString())
   }
 
+  var meta = { id: id, deps: deps, factory: factory }
+
+  id ? save(resolve(id), meta) :
+      // Save information for "saving" work in the script onload event
+      anonymousModuleMeta = meta
 }
 
 function save(uri, meta) {
-  meta.uri = uri
-  emit("save", meta)
-  uri = meta.uri
-
   var mod = getModule(uri)
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
-    // Let anonymous module id equal to its uri
+    // Let the id of anonymous module equal to its uri
     mod.id = meta.id || uri
 
-    // Remove duplicated dependencies
-    mod.dependencies = resolve(meta.dependencies || [], uri)
-
+    mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
 }
 
 function exec(mod) {
+  // Return `null` when `mod` is invalid
+  if (!mod) {
+    return null
+  }
+
   // When module is executed, DO NOT execute it again. When module
   // is being executed, just return `module.exports` too, for avoiding
   // circularly calling
@@ -252,52 +235,34 @@ function exec(mod) {
     return mod.exports
   }
 
-  emit("execute", mod)
-
-  // Just return `null` when:
-  //  1. the module file is 404
-  //  2. the module file is not written with valid module format
-  //  3. other error cases
-  if (mod.status < STATUS.LOADED && mod.exports === undefined) {
-    return null
-  }
-
   mod.status = STATUS.EXECUTING
 
 
-  function require(id) {
-    var child = cachedModules[require.resolve(id)]
-
-    // Return `null` when `uri` is invalid
-    if (child === undefined) {
-      return null
-    }
-
-    child.parent = mod
-    return exec(child)
+  function resolveInThisContext(id) {
+    return resolve(id, mod.uri)
   }
+
+  function require(id) {
+    return exec(cachedModules[resolveInThisContext(id)])
+  }
+
+  require.resolve = resolveInThisContext
 
   require.async = function(ids, callback) {
-    Module.load(resolve(ids, mod.uri), callback)
+    use(resolveInThisContext(ids), callback)
     return require
-  }
-
-  require.resolve = function(id) {
-    return resolve(id, mod.uri)
   }
 
 
   var factory = mod.factory
-  var exports = factory === undefined ? mod.exports : factory
 
-  if (isFunction(factory)) {
-    exports = factory(require, mod.exports = {}, mod)
-  }
+  var exports = isFunction(factory) ?
+      factory(require, mod.exports = {}, mod) :
+      factory
 
   mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.EXECUTED
 
-  emit("executed", mod)
   return mod.exports
 }
 
@@ -331,7 +296,7 @@ function getUnloadedUris(uris) {
 var circularStack = []
 
 function isCircularWaiting(mod) {
-  var waitings = mod.waitings
+  var waitings = waitingsList[mod.uri] || []
   if (waitings.length === 0) {
     return false
   }
@@ -384,7 +349,7 @@ function preload(callback) {
   var len = preloadMods.length
 
   if (len) {
-    Module.load(resolve(preloadMods), function() {
+    use(preloadMods, function() {
       // Remove the loaded preload modules
       preloadMods.splice(0, len)
 
@@ -403,11 +368,10 @@ function preload(callback) {
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
-    Module.load(resolve(ids), callback)
+    use(ids, callback)
   })
   return seajs
 }
 
-global.define = Module.define
-seajs.resolve = id2Uri
+global.define = define
 
