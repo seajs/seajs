@@ -110,7 +110,6 @@ function load(uris, callback) {
 }
 
 function fetch(uri, callback) {
-  uri = parseMap(uri)
   cachedModules[uri].status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo

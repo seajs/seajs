@@ -157,6 +157,7 @@ function id2Uri(id, refUri) {
   id = parseVars(id)
   id = addBase(id, refUri)
   id = normalize(id)
+  id = parseMap(id)
 
   return id
 }
