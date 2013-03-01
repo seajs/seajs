@@ -11,7 +11,7 @@
   ;(function(m, o, d, u, l, a, r) {
     if(m[o]) return
     function f(n) { return function() { r.push(n, arguments); return a } }
-    m[o] = a = { args: (r = []), config: f(1), use: f(2), on: f(3) }
+    m[o] = a = { args: (r = []), config: f(1), use: f(2) }
     m.define = f(0)
     u = d.createElement("script")
     u.id = o + "node"
@@ -27,12 +27,7 @@
     alias: {
       'a': 'sub/a'
     }
-  }).on('resolve', function(data) {
-        var id = data.id
-        if (id.indexOf('c.js') > 0) {
-          data.id = id.replace('c.js', 'sub/c.js')
-        }
-      })
+  })
 
   seajs.use('./main')
 
