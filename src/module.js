@@ -98,8 +98,8 @@ function load(uris, callback) {
         waitings.length ? load(waitings, done) : done()
       }
 
-      function done(isCircular) {
-        isCircular || (mod.status = STATUS.LOADED)
+      function done(isCircularWaiting) {
+        isCircularWaiting || (mod.status = STATUS.LOADED)
 
         if (--remain === 0) {
           callback()
