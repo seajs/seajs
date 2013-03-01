@@ -20,6 +20,7 @@ var STATUS = Module.STATUS = {
 
 function Module(uri) {
   this.uri = uri
+  this.dependencies = []
   this.exports = null
   this.status = 0
 }
