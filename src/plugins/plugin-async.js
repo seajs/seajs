@@ -1,5 +1,5 @@
 /**
- * Enable to load `sea.js` self asynchronously
+ *
  */
 (function(seajs) {
 
