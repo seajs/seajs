@@ -41,8 +41,7 @@ function resolve(ids, refUri) {
   return data.uri || id2Uri(data.id, refUri)
 }
 
-function use(ids, callback) {
-  var uris = resolve(ids)
+function use(uris, callback) {
   isArray(uris) || (uris = [uris])
 
   load(uris, function() {
@@ -349,7 +348,7 @@ function preload(callback) {
   var len = preloadMods.length
 
   if (len) {
-    use(preloadMods, function() {
+    use(resolve(preloadMods), function() {
       // Remove the loaded preload modules
       preloadMods.splice(0, len)
 
@@ -368,7 +367,7 @@ function preload(callback) {
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
-    use(ids, callback)
+    use(resolve(ids), callback)
   })
   return seajs
 }
