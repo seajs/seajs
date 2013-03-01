@@ -11,6 +11,6 @@
 
 // Avoid conflicting when `sea.js` is loaded multiple times
 var _seajs = global.seajs
-if (_seajs && !_seajs.args) {
+if (_seajs && _seajs.version) {
   return
 }
