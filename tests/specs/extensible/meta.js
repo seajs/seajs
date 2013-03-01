@@ -6,8 +6,8 @@ define([
   'module-constructor',
   'plugin-combo',
   'plugin-nocache',
-  'plugin-shim',
   'plugin-text',
-  'plugin-warning'
+  'plugin-warning',
+  'shim'
 ])
 
