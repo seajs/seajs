@@ -19,8 +19,8 @@ define(function(require, exports) {
   test.assert(require('./h') === false, 'define(false)')
 
   test.assert(require('./i') === null, 'define(null)')
-  test.assert(require('./j') === undefined, 'define(undefined)')
-  test.assert(require('./k') === undefined, 'define()')
+  test.assert(require('./j') === null, 'define(undefined)')
+  test.assert(require('./k') === null, 'define()')
 
   test.assert(require('./exact').mainExports() === exports, 'exact exports')
 
