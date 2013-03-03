@@ -1,3 +1,148 @@
-(function(h,e){function j(a,c){var b=e.ActiveXObject?new e.ActiveXObject("Microsoft.XMLHTTP"):new e.XMLHttpRequest;b.open("GET",a,!0);b.onreadystatechange=function(){if(4===b.readyState){if(399<b.status&&600>b.status)throw Error("Could not load: "+a+", status = "+b.status);c(b.responseText)}};return b.send(null)}function k(a){a&&/\S/.test(a)&&(e.execScript||function(a){(e.eval||eval).call(e,a)})(a)}var f={},l={},d={name:"text",ext:[".tpl",".html"],exec:function(a){k('define("'+a.replace(/(["\\])/g,
-"\\$1").replace(/[\f]/g,"\\f").replace(/[\b]/g,"\\b").replace(/[\n]/g,"\\n").replace(/[\t]/g,"\\t").replace(/[\r]/g,"\\r").replace(/[\u2028]/g,"\\u2028").replace(/[\u2029]/g,"\\u2029")+'")')}};f[d.name]=d;d={name:"json",ext:[".json"],exec:function(a){k("define("+a+")")}};f[d.name]=d;h.on("resolve",function(a){var c=a.id,b,g;if((g=c.match(/^(\w+)!(.+)$/))&&g[1]&&f.hasOwnProperty(g[1]))b=g[1],c=g[2];var c=h.resolve(c,a.refUri),e=c.replace(/\.(?:js|css)(\?|$)/,"$1");if(!b&&(g=e.match(/[^?]+(\.\w+)(?:\?|$)/)))a:{b=
-g[1];for(var d in f)if(d&&f.hasOwnProperty(d)&&-1<(","+f[d].ext.join(",")+",").indexOf(","+b+",")){b=d;break a}b=void 0}b&&(c=c.replace(/\.js$/,""),l[c]=b);a.uri=c});h.on("request",function(a){var c=l[a.uri];c&&(j(a.requestUri,function(b){f[c].exec(b);a.callback()}),a.requested=!0)});"undefined"!==typeof module&&(j=function(a,c){c(require("fs").readFileSync(a.replace(/\?.*$/,""),"utf8"))})})(seajs,this);
+/**
+ * The plugin to load text resources such as template, json
+ */
+(function(seajs, global) {
+
+  var plugins = {}
+  var uriCache = {}
+
+  function addPlugin(o) {
+    plugins[o.name] = o
+  }
+
+  // normal text
+  addPlugin({
+    name: "text",
+
+    ext: [".tpl", ".html"],
+
+    exec: function(content) {
+      globalEval('define("' + jsEscape(content) + '")')
+    }
+  })
+
+  // json
+  addPlugin({
+    name: "json",
+
+    ext: [".json"],
+
+    exec: function(content) {
+      globalEval("define(" + content + ")")
+    }
+  })
+
+  seajs.on("resolve", function(data) {
+    var id = data.id
+    var pluginName
+    var m
+
+    // text!path/to/some.xx
+    if ((m = id.match(/^(\w+)!(.+)$/)) && isPlugin(m[1])) {
+      pluginName = m[1]
+      id = m[2]
+    }
+
+    var uri = seajs.resolve(id, data.refUri)
+    var t = uri.replace(/\.(?:js|css)(\?|$)/, "$1")
+
+    // http://path/to/a.tpl
+    // http://path/to/c.json?v2
+    if (!pluginName && (m = t.match(/[^?]+(\.\w+)(?:\?|$)/))) {
+      pluginName = getPluginName(m[1])
+    }
+
+    if (pluginName) {
+      uri = uri.replace(/\.js$/, "")
+      uriCache[uri] = pluginName
+    }
+
+    data.uri = uri
+  })
+
+  seajs.on("request", function(data) {
+    var name = uriCache[data.uri]
+
+    if (name) {
+      xhr(data.requestUri, function(content) {
+        plugins[name].exec(content)
+        data.callback()
+      })
+
+      data.requested = true
+    }
+  })
+
+
+  // Helpers
+
+  function isPlugin(name) {
+    return name && plugins.hasOwnProperty(name)
+  }
+
+  function getPluginName(ext) {
+    for (var k in plugins) {
+      if (isPlugin(k)) {
+        var exts = "," + plugins[k].ext.join(",") + ","
+        if (exts.indexOf("," + ext + ",") > -1) {
+          return k
+        }
+      }
+    }
+  }
+
+  function xhr(url, callback) {
+    var r = global.ActiveXObject ?
+        new global.ActiveXObject("Microsoft.XMLHTTP") :
+        new global.XMLHttpRequest()
+
+    r.open("GET", url, true)
+
+    r.onreadystatechange = function() {
+      if (r.readyState === 4) {
+        // Support local file
+        if (r.status > 399 && r.status < 600) {
+          throw new Error("Could not load: " + url + ", status = " + r.status)
+        }
+        else {
+          callback(r.responseText)
+        }
+      }
+    }
+
+    return r.send(null)
+  }
+
+  function globalEval(content) {
+    if (content && /\S/.test(content)) {
+      (global.execScript || function(content) {
+        (global.eval || eval).call(global, content)
+      })(content)
+    }
+  }
+
+  function jsEscape(content) {
+    return content.replace(/(["\\])/g, "\\$1")
+        .replace(/[\f]/g, "\\f")
+        .replace(/[\b]/g, "\\b")
+        .replace(/[\n]/g, "\\n")
+        .replace(/[\t]/g, "\\t")
+        .replace(/[\r]/g, "\\r")
+        .replace(/[\u2028]/g, "\\u2028")
+        .replace(/[\u2029]/g, "\\u2029")
+  }
+
+  // For node environment
+  if (typeof module !== "undefined") {
+    xhr = function(filename, callback) {
+      callback(require("fs").readFileSync(pure(filename), "utf8"))
+    }
+  }
+
+  function pure(uri) {
+    // Remove timestamp etc
+    return uri.replace(/\?.*$/, "")
+  }
+
+})(seajs, this);
+

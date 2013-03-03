@@ -642,23 +642,10 @@ function fetch(uri, callback) {
 }
 
 function define(id, deps, factory) {
-  var argsLen = arguments.length
-
-  // HANDLE: define(factory)
-  if (argsLen === 1) {
+  // define(factory)
+  if (arguments.length === 1) {
     factory = id
     id = undefined
-  }
-  // HANDLE: define(id || deps, factory)
-  else if (argsLen === 2) {
-    factory = deps
-    deps = undefined
-
-    // HANDLE: define(deps, factory)
-    if (isArray(id)) {
-      deps = id
-      id = undefined
-    }
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
@@ -853,6 +840,7 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
+seajs.resolve = id2Uri
 global.define = define
 
 

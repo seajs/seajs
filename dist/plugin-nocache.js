@@ -1,1 +1,1 @@
-(function(c){var d="seajs-nocache="+(new Date).getTime();c.on("fetch",function(a){var b=a.requestUri||a.uri;-1===b.indexOf("seajs-nocache=")&&(a.requestUri+=(-1===b.indexOf("?")?"?":"&")+d)})})(seajs);
+(function(c){var d="seajs-nocache="+(new Date).getTime();c.on("fetch",function(a){var b=a.requestUri||a.uri;-1===b.indexOf("seajs-nocache=")&&(a.requestUri=b+(-1===b.indexOf("?")?"?":"&")+d)});c.on("resolve",function(a){var b=a.id;-1<b.indexOf("seajs-nocache=")&&(a.uri=b.replace("seajs-nocache=","").replace(/[?&]$/,""))})})(seajs);
