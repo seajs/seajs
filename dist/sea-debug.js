@@ -685,7 +685,10 @@ function save(uri, meta) {
 
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-    mod.status = STATUS.SAVED
+
+    if (mod.factory !== undefined) {
+      mod.status = STATUS.SAVED
+    }
   }
 }
 
