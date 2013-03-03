@@ -1,3 +1,3 @@
-define(['', null, undefined], function(require, exports, mod) {
+define('', ['', null, undefined], function(require, exports, mod) {
   exports.dependencies = mod.dependencies
 });

@@ -1,25 +1,10 @@
 
 seajs.config({
-
-  base: './plugin-shim/',
-
-  plugins: ['shim'],
-
-  shim: {
-    'jquery': {
-      exports: 'jQuery'
-    },
-
-    'jquery-plugins': {
-      match: /jquery\.[a-z].*\.js/,
-      deps: ['jquery'],
-      exports: function() {
-        return jQuery
-      }
-    }
-  }
-
+  base: './shim/'
 })
+
+define('jquery', ['jquery-1.9.1.min.js'], function() { return $ })
+//define('jquery-easing', ['jquery'], function() { return $ })
 
 seajs.use('init')
 

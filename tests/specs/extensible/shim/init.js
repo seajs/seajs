@@ -1,10 +1,10 @@
 define(function(require) {
 
   var test = require('../../../test')
-  var $ = require('jquery.easing')
+  var $ = require('jquery')
 
-  test.assert($.easing.name === 'easing', $.easing.name)
-  test.assert($.jquery === '1.9.1', $.jquery)
+  //test.assert($.easing.name === 'easing', $.easing.name)
+  //test.assert($.jquery === '1.9.1', $.jquery)
 
   test.assert(global.$ === $, 'this.$ === $')
   test.assert(global.jQuery === $, 'this.jQuery === $')

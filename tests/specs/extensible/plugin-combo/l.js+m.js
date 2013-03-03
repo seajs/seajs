@@ -1,2 +1,2 @@
-define('l', { name: 'l' })
-define('m', { name: 'm' })
+define('l', [], { name: 'l' })
+define('m', [], { name: 'm' })

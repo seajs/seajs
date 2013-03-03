@@ -1,1 +1,1 @@
-define('./anonymous/b.js', { name: 'b' });
+define('./anonymous/b.js', [], { name: 'b' });
