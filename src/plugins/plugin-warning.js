@@ -6,7 +6,7 @@
   var uriCache = {}
   var RE_VERSION = /\/(?:\d+\.){1,2}\d+\/|\D(?:\d+\.){1,2}\d+[^/]*\.(?:js|css)\W?/
 
-  seajs.on("save", checkMultiVersion)
+  seajs.on("fetch", checkMultiVersion)
 
 
   // Only support this version style:
