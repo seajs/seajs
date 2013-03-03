@@ -360,6 +360,6 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
-seajs.resolve = resolve
+seajs.resolve = id2Uri
 global.define = define
 
