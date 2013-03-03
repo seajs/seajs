@@ -521,8 +521,7 @@ function resolve(ids, refUri) {
   return data.uri || id2Uri(data.id, refUri)
 }
 
-function use(ids, callback) {
-  var uris = resolve(ids)
+function use(uris, callback) {
   isArray(uris) || (uris = [uris])
 
   load(uris, function() {
@@ -570,7 +569,7 @@ function load(uris, callback) {
         if (isCircularWaiting(mod)) {
           printCircularLog(circularStack)
           circularStack.length = 0
-          done()
+          done(true)
           return
         }
 
@@ -579,8 +578,9 @@ function load(uris, callback) {
         waitings.length ? load(waitings, done) : done()
       }
 
-      function done() {
-        mod.status = STATUS.LOADED
+      function done(isCircularWaiting) {
+        isCircularWaiting || (mod.status = STATUS.LOADED)
+
         if (--remain === 0) {
           callback()
         }
@@ -829,7 +829,7 @@ function preload(callback) {
   var len = preloadMods.length
 
   if (len) {
-    use(preloadMods, function() {
+    use(resolve(preloadMods), function() {
       // Remove the loaded preload modules
       preloadMods.splice(0, len)
 
@@ -848,7 +848,7 @@ function preload(callback) {
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
-    use(ids, callback)
+    use(resolve(ids), callback)
   })
   return seajs
 }
