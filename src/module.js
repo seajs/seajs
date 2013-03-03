@@ -360,5 +360,6 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
+seajs.resolve = resolve
 global.define = define
 

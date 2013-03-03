@@ -29,9 +29,9 @@ define(function(require, exports, mod) {
   assert(isFunction(seajs.on), 'seajs.on')
   assert(isFunction(seajs.emit), 'seajs.emit')
   assert(isFunction(seajs.off), 'seajs.off')
-  //assert(isFunction(seajs.resolve), 'seajs.resolve')
+  assert(isFunction(seajs.resolve), 'seajs.resolve')
   assert(isFunction(seajs.cwd), 'seajs.cwd')
-  assert(getOwnPropertyCount(seajs) === 10, getOwnPropertyCount(seajs))
+  assert(getOwnPropertyCount(seajs) === 11, getOwnPropertyCount(seajs))
 
 
   // Module
