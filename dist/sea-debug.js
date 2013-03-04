@@ -557,9 +557,7 @@ function load(uris, callback) {
 
       if (mod.dependencies.length) {
         loadWaitings(function(circular) {
-          mod.status < STATUS.SAVED ?
-              fetch(uri, cb) : cb()
-
+          mod.status < STATUS.SAVED ? fetch(uri, cb) : cb()
           function cb() {
             done(circular)
           }
@@ -591,7 +589,10 @@ function load(uris, callback) {
       }
 
       function done(circular) {
-        circular || (mod.status = STATUS.LOADED)
+        if (!circular && mod.status < STATUS.LOADED) {
+          mod.status = STATUS.LOADED
+        }
+
         if (--remain === 0) {
           callback()
         }
