@@ -12,59 +12,32 @@
   //     exports: "jQuery" or function
   //   },
   //   "jquery.easing": {
-  //     // URI matches such as jquery.easing.js, jquery.keystop.js
   //     src: "lib/jquery.easing.js",
   //     deps: ["jquery"],
   //     exports: "jQuery"
   //   }
   // })
 
-  each(configData.shim, function(item) {
-    var deps = item.deps
+  seajs.on("config", onConfig)
+  onConfig(seajs.config.data)
 
-    if (deps && match(item, uri)) {
-      for (var i = 0; i < deps.length; i++) {
-        mod.dependencies.push(deps[i])
-      }
-      return false
-    }
-
-  })
-
-  seajs.on("config", function(data) {
+  function onConfig(data) {
+    if (!data) return
     var shim = data.shim
 
-    each(shim, function(obj, key) {
-      var exports = obj.exports
+    for (var id in shim) {
+      var item = shim[id]
 
-      if (exports && match(obj, uri, key)) {
-        mod.exports = isFunction(exports) ? exports() : global[exports]
-        return false
-      }
+      // Set dependencies
+      item.deps && define(item.src, item.deps)
 
-    })
-  })
-
-
-  // Helpers
-
-  function each(obj, fn) {
-    for (var p in obj) {
-      if (obj.hasOwnProperty(p)) {
-        if (fn(obj[p], p, obj) === false) {
-          break
-        }
-      }
+      // Define the proxy cmd module
+      define(id, [item.src], function() {
+        var exports = item.exports
+        return typeof exports === "function" ? exports() : global[exports]
+      })
     }
-  }
-
-  function match(item, uri, key) {
-    var match = item.match || (item.match = seajs.resolve(key))
-    return match.test ? match.test(uri) : uri === match
-  }
-
-  function isFunction(obj) {
-    return typeof obj === "function"
   }
 
 })(seajs, this);
+

@@ -77,19 +77,23 @@ function load(uris, callback) {
 
       if (mod.dependencies.length) {
         loadWaitings(function(circular) {
-          fetch(uri, function() {
+          mod.status < STATUS.SAVED ?
+              fetch(uri, cb) : cb()
+
+          function cb() {
             done(circular)
-          })
+          }
         })
       }
       else {
-        fetch(uri, loadWaitings)
+        mod.status < STATUS.SAVED ?
+            fetch(uri, loadWaitings) : done()
       }
 
       function loadWaitings(cb) {
         cb || (cb = done)
-        var waitings = getUnloadedUris(mod.dependencies)
 
+        var waitings = getUnloadedUris(mod.dependencies)
         if (waitings.length === 0) {
           cb()
         }
@@ -212,7 +216,10 @@ function save(uri, meta) {
 
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-    mod.status = STATUS.SAVED
+
+    if (mod.factory !== undefined) {
+      mod.status = STATUS.SAVED
+    }
   }
 }
 
