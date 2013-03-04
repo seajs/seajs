@@ -3,7 +3,7 @@
  */
 
 var cachedModules = seajs.cache = {}
-var anonymousModuleMeta
+var anonymousModuleData
 
 var fetchingList = {}
 var fetchedList = {}
@@ -165,9 +165,9 @@ function fetch(uri, callback) {
     fetchedList[requestUri] = true
 
     // Save meta data of anonymous module
-    if (anonymousModuleMeta) {
-      save(uri, anonymousModuleMeta)
-      anonymousModuleMeta = undefined
+    if (anonymousModuleData) {
+      save(uri, anonymousModuleData)
+      anonymousModuleData = undefined
     }
 
     // Call callbacks
@@ -184,12 +184,22 @@ function define(id, deps, factory) {
     id = undefined
   }
 
+  // Parse dependencies according to the module factory code
+  if (!isArray(deps) && isFunction(factory)) {
+    deps = parseDependencies(factory.toString())
+  }
+
+  var data = { id: id, uri: resolve(id), deps: deps, factory: factory }
+  emit("define", data)
+
+  var uri = data.uri
+
   // Try to derive uri in IE6-9 for anonymous modules
-  if (!id && doc.attachEvent) {
+  if (!uri && doc.attachEvent) {
     var script = getCurrentScript()
 
     if (script) {
-      id = script.src
+      uri = script.src
     }
     else {
       log("Failed to derive: " + factory)
@@ -199,16 +209,9 @@ function define(id, deps, factory) {
     }
   }
 
-  // Parse dependencies according to the module factory code
-  if (!isArray(deps) && isFunction(factory)) {
-    deps = parseDependencies(factory.toString())
-  }
-
-  var meta = { id: id, deps: deps, factory: factory }
-
-  id ? save(resolve(id), meta) :
+  uri ? save(uri, data) :
       // Save information for "saving" work in the script onload event
-      anonymousModuleMeta = meta
+      anonymousModuleData = data
 }
 
 function save(uri, meta) {
