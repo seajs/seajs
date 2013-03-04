@@ -1,2 +1,1 @@
-(function(c,j){function f(a,d){for(var b in a)if(a.hasOwnProperty(b)&&!1===d(a[b],b,a))break}function g(a,d,b){a=a.match||(a.match=c.resolve(b));return a.test?a.test(d):d===a}var h=c.config.data;c.on("initialized",function(a){var d=a.uri;f(h.shim,function(b){var e=b.deps;if(e&&g(b,d)){for(b=0;b<e.length;b++)a.dependencies.push(e[b]);return!1}})});c.on("execute",function(a){var d=a.uri;f(h.shim,function(b,e){var c=b.exports;if(c&&g(b,d,e))return a.exports="function"===typeof c?c():j[c],!1})})})(seajs,
-this);
+(function(a,e){function d(b){if(b){b=b.shim;for(var a in b){var c=b[a];c.deps&&define(c.src,c.deps);define(a,[c.src],function(){var a=c.exports;return"function"===typeof a?a():e[a]})}}}a.on("config",d);d(a.config.data)})(seajs,this);
