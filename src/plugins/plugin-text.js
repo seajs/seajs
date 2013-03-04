@@ -34,6 +34,8 @@
 
   seajs.on("resolve", function(data) {
     var id = data.id
+    if (!id) return ""
+
     var pluginName
     var m
 

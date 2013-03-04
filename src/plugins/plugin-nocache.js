@@ -5,26 +5,25 @@
 
   var noCachePrefix = "seajs-nocache="
   var noCacheTimeStamp = noCachePrefix + new Date().getTime()
+  var uriCache = {}
 
   // Add a timestamp to requestUri on fetching
   seajs.on("fetch", function(data) {
     var requestUri = data.requestUri || data.uri
 
     if (requestUri.indexOf(noCachePrefix) === -1) {
-      data.requestUri = requestUri +
-          (requestUri.indexOf("?") === -1 ? "?" : "&")
+      requestUri += (requestUri.indexOf("?") === -1 ? "?" : "&")
           + noCacheTimeStamp
+
+      uriCache[requestUri] = data.uri
+      data.requestUri = requestUri
     }
   })
 
   // Restore the original uri in deriving case for IE6-9
-  seajs.on("resolve", function(data) {
-    var derivedUri = data.id
-
-    if (derivedUri.indexOf(noCachePrefix) > -1) {
-      data.uri = derivedUri
-          .replace(noCachePrefix, "")
-          .replace(/[?&]$/, "")
+  seajs.on("define", function(data) {
+    if (uriCache[data.uri]) {
+      data.uri = uriCache[data.uri]
     }
   })
 

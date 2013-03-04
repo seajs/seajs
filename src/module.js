@@ -190,16 +190,13 @@ function define(id, deps, factory) {
   }
 
   var data = { id: id, uri: resolve(id), deps: deps, factory: factory }
-  emit("define", data)
-
-  var uri = data.uri
 
   // Try to derive uri in IE6-9 for anonymous modules
-  if (!uri && doc.attachEvent) {
+  if (!data.uri && doc.attachEvent) {
     var script = getCurrentScript()
 
     if (script) {
-      uri = script.src
+      data.uri = script.src
     }
     else {
       log("Failed to derive: " + factory)
@@ -209,7 +206,10 @@ function define(id, deps, factory) {
     }
   }
 
-  uri ? save(uri, data) :
+  // Emit `define` event, used in plugin-nocache, seajs node version etc
+  emit("define", data)
+
+  data.uri ? save(data.uri, data) :
       // Save information for "saving" work in the script onload event
       anonymousModuleData = data
 }
