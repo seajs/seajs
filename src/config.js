@@ -63,7 +63,7 @@ function config(data) {
     }
   }
 
-  emit("config", configData)
+  emit("config", data)
   return seajs
 }
 
