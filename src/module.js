@@ -75,32 +75,39 @@ function load(uris, callback) {
     (function(uri) {
       var mod = cachedModules[uri]
 
-      mod.status < STATUS.SAVED ? fetch(uri, onFetched) : onFetched()
-
-      function onFetched() {
-        // Maybe failed to fetch successfully, such as 404 error
-        // In these cases, just call `cb` function directly
-        if (mod.status < STATUS.SAVED) {
-          done()
-          return
-        }
-
-        // Break circular waiting callbacks
-        if (isCircularWaiting(mod)) {
-          printCircularLog(circularStack)
-          circularStack.length = 0
-          done(true)
-          return
-        }
-
-        // Load all unloaded dependencies
-        var waitings = waitingsList[uri] = getUnloadedUris(mod.dependencies)
-        waitings.length ? load(waitings, done) : done()
+      if (mod.dependencies.length) {
+        loadWaitings(function(circular) {
+          fetch(uri, function() {
+            done(circular)
+          })
+        })
+      }
+      else {
+        fetch(uri, loadWaitings)
       }
 
-      function done(isCircularWaiting) {
-        isCircularWaiting || (mod.status = STATUS.LOADED)
+      function loadWaitings(cb) {
+        cb || (cb = done)
+        var waitings = getUnloadedUris(mod.dependencies)
 
+        if (waitings.length === 0) {
+          cb()
+        }
+        // Break circular waiting callbacks
+        else if (isCircularWaiting(mod)) {
+          printCircularLog(circularStack)
+          circularStack.length = 0
+          cb(true)
+        }
+        // Load all unloaded dependencies
+        else {
+          waitingsList[uri] = waitings
+          load(waitings, cb)
+        }
+      }
+
+      function done(circular) {
+        circular || (mod.status = STATUS.LOADED)
         if (--remain === 0) {
           callback()
         }
@@ -205,10 +212,7 @@ function save(uri, meta) {
 
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-
-    if (mod.factory !== undefined) {
-      mod.status = STATUS.SAVED
-    }
+    mod.status = STATUS.SAVED
   }
 }
 
