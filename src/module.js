@@ -10,13 +10,17 @@ var fetchedList = {}
 var callbackList = {}
 var waitingsList = {}
 
-var STATUS = Module.STATUS = {
-  "FETCHING": 1,    // The module file is being fetched now
-  "SAVED": 2,       // The module data has been saved to cachedModules
-  "LOADED": 3,      // The module and all its dependencies are ready to execute
-  "EXECUTING": 4,   // The module is being executed
-  "EXECUTED": 5     // The module is executed and `module.exports` is available
-}
+// 1 - The module file is being fetched now
+// 2 - The module data has been saved to cachedModules
+// 3 - The module and all its dependencies are ready to execute
+// 4 - The module is being executed
+// 5 - The module is executed and `module.exports` is available
+var STATUS_FETCHING = 1
+var STATUS_SAVED = 2
+var STATUS_LOADED = 3
+var STATUS_EXECUTING = 4
+var STATUS_EXECUTED = 5
+
 
 function Module(uri) {
   this.uri = uri
@@ -77,14 +81,14 @@ function load(uris, callback) {
 
       if (mod.dependencies.length) {
         loadWaitings(function(circular) {
-          mod.status < STATUS.SAVED ? fetch(uri, cb) : cb()
+          mod.status < STATUS_SAVED ? fetch(uri, cb) : cb()
           function cb() {
             done(circular)
           }
         })
       }
       else {
-        mod.status < STATUS.SAVED ?
+        mod.status < STATUS_SAVED ?
             fetch(uri, loadWaitings) : done()
       }
 
@@ -109,8 +113,8 @@ function load(uris, callback) {
       }
 
       function done(circular) {
-        if (!circular && mod.status < STATUS.LOADED) {
-          mod.status = STATUS.LOADED
+        if (!circular && mod.status < STATUS_LOADED) {
+          mod.status = STATUS_LOADED
         }
 
         if (--remain === 0) {
@@ -123,7 +127,7 @@ function load(uris, callback) {
 }
 
 function fetch(uri, callback) {
-  cachedModules[uri].status = STATUS.FETCHING
+  cachedModules[uri].status = STATUS_FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
   var data = { uri: uri }
@@ -211,7 +215,7 @@ function save(uri, meta) {
   var mod = getModule(uri)
 
   // Do NOT override already saved modules
-  if (mod.status < STATUS.SAVED) {
+  if (mod.status < STATUS_SAVED) {
     // Let the id of anonymous module equal to its uri
     mod.id = meta.id || uri
 
@@ -219,7 +223,7 @@ function save(uri, meta) {
     mod.factory = meta.factory
 
     if (mod.factory !== undefined) {
-      mod.status = STATUS.SAVED
+      mod.status = STATUS_SAVED
     }
   }
 }
@@ -233,11 +237,11 @@ function exec(mod) {
   // When module is executed, DO NOT execute it again. When module
   // is being executed, just return `module.exports` too, for avoiding
   // circularly calling
-  if (mod.status >= STATUS.EXECUTING) {
+  if (mod.status >= STATUS_EXECUTING) {
     return mod.exports
   }
 
-  mod.status = STATUS.EXECUTING
+  mod.status = STATUS_EXECUTING
 
 
   function resolveInThisContext(id) {
@@ -263,7 +267,7 @@ function exec(mod) {
       factory
 
   mod.exports = exports === undefined ? mod.exports : exports
-  mod.status = STATUS.EXECUTED
+  mod.status = STATUS_EXECUTED
 
   return mod.exports
 }
@@ -287,7 +291,7 @@ function getUnloadedUris(uris) {
 
   for (var i = 0; i < uris.length; i++) {
     var uri = uris[i]
-    if (uri && getModule(uri).status < STATUS.LOADED) {
+    if (uri && getModule(uri).status < STATUS_LOADED) {
       ret.push(uri)
     }
   }
@@ -343,7 +347,7 @@ function cutWaitings(waitings) {
 
 function printCircularLog(stack) {
   stack.push(stack[0])
-  log("Circular dependencies: " + stack.join(" --> "))
+  log("Circular dependencies: " + stack.join(" -> "))
 }
 
 function preload(callback) {
