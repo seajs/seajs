@@ -27,7 +27,7 @@ define(function(require) {
 
   var msg = consoleMsgStack.pop()
   test.assert(msg.indexOf('Circular dependencies') === 0, 'Check circular dependencies')
-  test.assert(msg.indexOf('-->') > 0, 'Check circular dependencies')
+  test.assert(msg.indexOf('->') > 0, 'Check circular dependencies')
 
   var m = require('./monkeys/m')
   test.assert(m.name === 'monkeys', m.name)
@@ -43,7 +43,7 @@ define(function(require) {
 
   require('./exec-order/a').init()
   var stack = global.execOrder.stack
-  test.assert(stack.join('') === 'abc', stack.join(' --> '))
+  test.assert(stack.join('') === 'abc', stack.join(' -> '))
 
   global.execOrder = undefined
 
@@ -59,8 +59,8 @@ define(function(require) {
     test.assert(a.b.c.d.e.name == 'e', a.b.c.d.e.name)
     test.assert(a.b.c.d.e.a === a, a.b.c.d.e.a.name)
 
-    // c -> a
-    test.assert(a.b.c.a === a, a.b.c.a.name)
+    // c -> b
+    test.assert(a.b.c.b === a.b, a.b.c.b.name)
 
     // e -> c
     test.assert(a.b.c.d.e.c === a.b.c, a.b.c.d.e.c.name)
@@ -77,16 +77,16 @@ define(function(require) {
       last = t
     }
 
-    test.assert(first.join(' --> ') === 'a.js --> b.js --> c.js --> a.js', first.join(' --> '))
-    test.assert(second.join(' --> ') === 'a.js --> b.js --> c.js --> d.js --> e.js --> a.js', second.join(' --> '))
-    test.assert(last.join(' --> ') === 'c.js --> d.js --> e.js --> c.js', last.join(' --> '))
+    test.assert(first.join(' -> ') === 'b.js -> c.js -> b.js', first.join(' -> '))
+    test.assert(second.join(' -> ') === 'a.js -> b.js -> c.js -> d.js -> e.js -> a.js', second.join(' -> '))
+    test.assert(last.join(' -> ') === 'c.js -> d.js -> e.js -> c.js', last.join(' -> '))
 
     test.next()
   })
 
 
   function getFiles(msg) {
-    var uris = msg.replace('Found circular dependencies: ', '').split(' --> ')
+    var uris = msg.replace('Found circular dependencies: ', '').split(' -> ')
     return uris2files(uris)
   }
 
