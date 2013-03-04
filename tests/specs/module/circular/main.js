@@ -59,8 +59,8 @@ define(function(require) {
     test.assert(a.b.c.d.e.name == 'e', a.b.c.d.e.name)
     test.assert(a.b.c.d.e.a === a, a.b.c.d.e.a.name)
 
-    // c -> b
-    test.assert(a.b.c.b === a.b, a.b.c.b.name)
+    // c -> a
+    test.assert(a.b.c.a === a, a.b.c.a.name)
 
     // e -> c
     test.assert(a.b.c.d.e.c === a.b.c, a.b.c.d.e.c.name)
@@ -77,7 +77,7 @@ define(function(require) {
       last = t
     }
 
-    test.assert(first.join(' -> ') === 'b.js -> c.js -> b.js', first.join(' -> '))
+    test.assert(first.join(' -> ') === 'a.js -> b.js -> c.js -> a.js', first.join(' -> '))
     test.assert(second.join(' -> ') === 'a.js -> b.js -> c.js -> d.js -> e.js -> a.js', second.join(' -> '))
     test.assert(last.join(' -> ') === 'c.js -> d.js -> e.js -> c.js', last.join(' -> '))
 
