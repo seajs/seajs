@@ -150,7 +150,7 @@ IE 5.5+           ✔
 <pre class="text">
 examples/
   |-- assets
-  |     |-- common    存放 jquery.js 等通用类库
+  |     |-- lib       存放 jquery.js 等通用类库
   |     |-- hello     存放项目的 js、css 等文件
   |     `-- seajs     存放 sea.js 及其插件
   `-- hello.html      项目的 html 文件
@@ -183,11 +183,6 @@ examples/
 
 <pre>
 seajs.config({
-  // 配置别名
-  alias: {
-    'jquery': 'common/jquery-1.9.1.min.js'
-  },
-
   // 加载 shim 插件
   plugins: ['shim'],
 
