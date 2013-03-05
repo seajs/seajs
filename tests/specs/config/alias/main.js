@@ -10,7 +10,6 @@ seajs.config({
 define(function(require) {
 
   var test = require('../../../test')
-  var global = this
 
   var a = require('a')
   var b = require('biz/b')
