@@ -1,1 +1,1 @@
-(function(a,e){function d(b){if(b){b=b.shim;for(var a in b){var c=b[a];c.deps&&define(c.src,c.deps);define(a,[c.src],function(){var a=c.exports;return"function"===typeof a?a():e[a]})}}}a.on("config",d);d(a.config.data)})(seajs,this);
+(function(a,d){function c(b){if(b){b=b.shim;for(var a in b)(function(b){b.deps&&define(b.src,b.deps);define(a,[b.src],function(){var a=b.exports;return"function"===typeof a?a():"string"===typeof a?d[a]:a})})(b[a])}}a.on("config",c);c(a.config.data)})(seajs,this);
