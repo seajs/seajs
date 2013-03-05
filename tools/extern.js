@@ -4,3 +4,4 @@ var seajs
 var define
 var module
 var require
+var global
