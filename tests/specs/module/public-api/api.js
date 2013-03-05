@@ -37,12 +37,12 @@ define(function(require, exports, mod) {
   // Module
   var Module = mod.constructor
   //assert(Module.STATUS, 'Module.STATUS')
-  //assert(Module.load, 'Module.load')
+  assert(Module.load, 'Module.load')
   //assert(Module.define, 'Module.define')
   //assert(isFunction(Module.prototype.load), 'Module.prototype.load')
   //assert(isFunction(Module.prototype.execute), 'Module.prototype.execute')
   assert(isFunction(Module.prototype.destroy), 'Module.prototype.destroy')
-  assert(getOwnPropertyCount(Module) === 0, getOwnPropertyCount(Module))
+  assert(getOwnPropertyCount(Module) === 1, getOwnPropertyCount(Module))
   assert(getOwnPropertyCount(Module.prototype) === 1, getOwnPropertyCount(Module.prototype))
 
   
