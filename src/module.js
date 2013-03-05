@@ -384,5 +384,5 @@ seajs.use = function(ids, callback) {
 
 seajs.resolve = id2Uri
 global.define = define
-Module.load = load
+Module.load = use
 
