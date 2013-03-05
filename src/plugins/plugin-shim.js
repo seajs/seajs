@@ -13,8 +13,7 @@
   //   },
   //   "jquery.easing": {
   //     src: "lib/jquery.easing.js",
-  //     deps: ["jquery"],
-  //     exports: "jQuery"
+  //     deps: ["jquery"]
   //   }
   // })
 
@@ -26,16 +25,20 @@
     var shim = data.shim
 
     for (var id in shim) {
-      var item = shim[id]
+      (function(item) {
 
-      // Set dependencies
-      item.deps && define(item.src, item.deps)
+        // Set dependencies
+        item.deps && define(item.src, item.deps)
 
-      // Define the proxy cmd module
-      define(id, [item.src], function() {
-        var exports = item.exports
-        return typeof exports === "function" ? exports() : global[exports]
-      })
+        // Define the proxy cmd module
+        define(id, [item.src], function() {
+          var exports = item.exports
+          return typeof exports === "function" ? exports() :
+              typeof exports === "string" ? global[exports] :
+                  exports
+        })
+
+      })(shim[id])
     }
   }
 
