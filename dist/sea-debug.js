@@ -892,8 +892,9 @@ var configData = config.data = {
   // Modules that are needed to load before all other modules
   preload: []
 
-  // debug: false - Debug mode
-  // alias - The shorthand alias for module id
+  // debug - Debug mode. The default value is false
+  // alias - An object containing shorthands of module id
+  // paths - An object containing path shorthands in module id
   // vars - The {xxx} variables in module id
   // map - An array containing rules to map module uri
   // plugins - An array containing needed plugins
