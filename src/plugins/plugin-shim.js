@@ -42,5 +42,5 @@
     }
   }
 
-})(seajs, this);
+})(seajs, typeof global === "undefined" ? this : global);
 
