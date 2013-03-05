@@ -12,11 +12,7 @@ seajs.config({
 
     'jquery.easing': {
       src: 'lib/jquery.easing.js',
-      deps: ['jquery'],
-      exports: function() {
-        jQuery.hacked = true
-        return jQuery
-      }
+      deps: ['jquery']
     }
   }
 })
