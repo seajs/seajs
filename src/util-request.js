@@ -71,7 +71,7 @@ function addOnload(node, callback, isCSS) {
     if (READY_STATE_RE.test(node.readyState)) {
 
       // Ensure only run once and handle memory leak in IE
-      node.onload = node.onerror = node.onreadystatechange = undefined
+      node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
       if (!isCSS && !configData.debug) {
