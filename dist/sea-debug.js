@@ -756,9 +756,8 @@ function exec(mod) {
 }
 
 Module.prototype.destroy = function() {
-  var uri = this.uri
-  delete cachedModules[uri]
-  delete fetchedList[uri]
+  delete cachedModules[this.uri]
+  delete fetchedList[this.uri]
 }
 
 
