@@ -26,7 +26,7 @@ define(function(require) {
 
 
   // Delete './a' from cache
-  delete seajs.cache[url].destroy()
+  seajs.cache[url].destroy()
   delete _require.cache[url]
 
 
