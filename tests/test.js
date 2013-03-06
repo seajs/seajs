@@ -1,7 +1,10 @@
 
-// Set `global` to `this` in non-node environment
 if (typeof global === 'undefined') {
   global = this
+}
+
+if (typeof require === 'function') {
+  var __require = require
 }
 
 // Hack `console` for testing
@@ -133,6 +136,7 @@ if (typeof document !== 'undefined') {
     for (var uri in seajs.cache) {
       if (uri.indexOf('/dist/plugin-') > 0) {
         seajs.cache[uri].destroy()
+        __require && delete __require.cache[uri]
       }
     }
 
