@@ -129,6 +129,13 @@ if (typeof document !== 'undefined') {
     // Restore default configurations
     copy(defaultConfig, configData)
 
+    // Reset plugins
+    for (var uri in seajs.cache) {
+      if (uri.indexOf('/dist/plugin-') > 0) {
+        seajs.cache[uri].destroy()
+      }
+    }
+
     // Change cwd and base to tests/specs/xxx
     if (isNode) {
       var parts = id.split('/')
