@@ -1,6 +1,7 @@
 define([
   'combo-map',
   'module-constructor',
+  'mutable-shim',
   'non-cmd',
   'plugin-combo',
   'plugin-nocache',
