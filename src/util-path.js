@@ -63,14 +63,14 @@ var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
   var alias = configData.alias
-  return hasOwn(alias, id) ? alias[id] : id
+  return alias && isString(alias[id]) ? alias[id] : id
 }
 
 function parsePaths(id) {
   var paths = configData.paths
   var m
 
-  if (paths && (m = id.match(PATHS_RE)) && hasOwn(paths, m[1])) {
+  if (paths && (m = id.match(PATHS_RE)) && isString(paths[m[1]])) {
     id = paths[m[1]] + m[2]
   }
 
@@ -82,7 +82,7 @@ function parseVars(id) {
 
   if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
-      return hasOwn(vars, key) ? vars[key] : m
+      return isString(vars[key]) ? vars[key] : m
     })
   }
 
