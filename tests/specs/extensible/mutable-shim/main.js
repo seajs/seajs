@@ -4,7 +4,7 @@ seajs.config({
 
   plugins: ['shim'],
 
-  shim: {
+  alias: {
     'jquery': {
       src: 'lib/jquery.js',
       exports: 'jQuery'
@@ -15,8 +15,8 @@ seajs.config({
 seajs.on("resolve", function(data) {
   var id = data.id || ""
   var m = id.match(/^angular_(\w+)$/)
-
-  if (m && !seajs.config.data.shim[m[0]]) {
+return;
+  if (m && !seajs.config.data.alias[m[0]]) {
     var shim = {}
 
     shim[m[0]] = {
@@ -24,7 +24,7 @@ seajs.on("resolve", function(data) {
       deps: ['jquery']
     }
 
-    seajs.config({ shim: shim })
+    seajs.config({ alias: shim })
   }
 })
 

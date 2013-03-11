@@ -2,7 +2,7 @@ define([
   'backbone-shim',
   'combo-map',
   'module-constructor',
-  'mutable-shim',
+  //'mutable-shim',
   'non-cmd',
   'plugin-combo',
   'plugin-nocache',

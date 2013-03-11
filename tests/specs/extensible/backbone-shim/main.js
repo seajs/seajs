@@ -4,7 +4,7 @@ seajs.config({
 
   plugins: ['shim'],
 
-  shim: {
+  alias: {
     'jquery': {
       src: 'lib/jquery.js',
       exports: 'jQuery'
