@@ -1,5 +1,5 @@
 /**
- * SeaJS v2.0.0b3 | seajs.org/LICENSE.md
+ * SeaJS v2.0.0pre | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -11,7 +11,7 @@ if (_seajs && _seajs.version) {
 
 var seajs = global.seajs = {
   // The current version of SeaJS being used
-  version: "2.0.0b3"
+  version: "2.0.0pre"
 }
 
 
@@ -26,12 +26,9 @@ function isType(type) {
 }
 
 var isObject = isType("Object")
+var isString = isType("String")
 var isArray = Array.isArray || isType("Array")
 var isFunction = isType("Function")
-
-function hasOwn(obj, key) {
-  return obj && obj.hasOwnProperty(key)
-}
 
 
 /**
@@ -180,14 +177,14 @@ var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
   var alias = configData.alias
-  return hasOwn(alias, id) ? alias[id] : id
+  return alias && isString(alias[id]) ? alias[id] : id
 }
 
 function parsePaths(id) {
   var paths = configData.paths
   var m
 
-  if (paths && (m = id.match(PATHS_RE)) && hasOwn(paths, m[1])) {
+  if (paths && (m = id.match(PATHS_RE)) && isString(paths[m[1]])) {
     id = paths[m[1]] + m[2]
   }
 
@@ -199,7 +196,7 @@ function parseVars(id) {
 
   if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
-      return hasOwn(vars, key) ? vars[key] : m
+      return isString(vars[key]) ? vars[key] : m
     })
   }
 
@@ -900,6 +897,8 @@ var configData = config.data = {
 }
 
 function config(data) {
+  emit("config", data)
+
   for (var key in data) {
     var curr = data[key]
 
@@ -932,7 +931,6 @@ function config(data) {
     }
   }
 
-  emit("config", data)
   return seajs
 }
 
