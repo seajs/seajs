@@ -38,6 +38,7 @@
                 typeof exports === "string" ? global[exports] :
                     exports
           })
+
         }
       })(alias[id])
     }
