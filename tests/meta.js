@@ -9,6 +9,7 @@ var testSuites = [
   'specs/extensible',
   'specs/extensible/plugin-debug',
   'specs/extensible/plugin-flush',
+  'specs/extensible/plugin-style',
 
   'specs/misc/bootstrap-async',
   'specs/misc/data-api',
