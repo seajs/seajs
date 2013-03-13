@@ -10,6 +10,15 @@ define(function(require) {
   test.assert(global.jQuery === $, 'global.jQuery === $')
   global.jQuery = undefined
 
+
+  var Backbone = require('backbone')
+
+  test.assert(Backbone.name === 'backbone', Backbone.name)
+  test.assert(Backbone._.name === 'underscore', Backbone._.name)
+  global.Backbone = undefined
+  global._ = undefined
+
+
   test.next()
 
 })

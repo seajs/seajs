@@ -32,7 +32,7 @@
           item.deps && define(item.src, item.deps)
 
           // Define the proxy cmd module
-          define(id, [item.src], function() {
+          define(id, [seajs.resolve(item.src)], function() {
             var exports = item.exports
             return typeof exports === "function" ? exports() :
                 typeof exports === "string" ? global[exports] :
