@@ -19,13 +19,32 @@
 
     var key = uri.replace(RE_VERSION, "{version}")
     var versions = uriCache[key] || (uriCache[key] = [])
-    versions.push(uri)
+
+    if (indexOf(versions, uri) === -1) {
+      versions.push(uri)
+    }
 
     if (versions.length > 1) {
       seajs.log("This module has multiple versions:\n" +
           versions.join("\n"), "warn")
     }
   }
+
+
+  // Helpers
+
+  var indexOf = [].indexOf ?
+      function(arr, item) {
+        return arr.indexOf(item)
+      } :
+      function(arr, item) {
+        for (var i = 0; i < arr.length; i++) {
+          if (arr[i] === item) {
+            return i
+          }
+        }
+        return -1
+      }
 
 })(seajs);
 
