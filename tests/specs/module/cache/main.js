@@ -27,6 +27,10 @@ define(function(require) {
 
   // Delete './a' from cache
   seajs.cache[url].destroy()
+
+  if (_require && process.execPath.indexOf('node.exe') > 0) {
+    url = url.replace(/\\/g, '/')
+  }
   delete _require.cache[url]
 
 
