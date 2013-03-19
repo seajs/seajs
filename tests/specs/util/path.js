@@ -147,7 +147,7 @@ define(function(require) {
 
 
   assert(isAbsolute('http://test.com/') === true, 'isAbsolute')
-  assert(isAbsolute('//test.com/') === true, 'isAbsolute')
+  assert(isAbsolute('https://test.com/') === true, 'isAbsolute')
   assert(isAbsolute('file:///c/') === true, 'isAbsolute')
 
   assert(isRelative('./') === true, 'isRelative')
