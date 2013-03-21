@@ -136,6 +136,12 @@ if (typeof document !== 'undefined') {
     for (var uri in seajs.cache) {
       if (uri.indexOf('/dist/plugin-') > 0) {
         seajs.cache[uri].destroy()
+
+        if (typeof process !== 'undefined' &&
+            process.execPath.indexOf('node.exe') > 0) {
+          uri = uri.replace(/\//g, '\\')
+        }
+
         __require && delete __require.cache[uri]
       }
     }
