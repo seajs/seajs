@@ -29,7 +29,7 @@ define(function(require) {
   seajs.cache[url].destroy()
 
   if (_require && typeof process !== 'undefined' &&
-      process.cwd().indexOf('node.exe') > 0) {
+      process.execPath.indexOf('node.exe') > 0) {
     url = url.replace(/\//g, '\\')
   }
   delete _require.cache[url]
