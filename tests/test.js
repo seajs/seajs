@@ -150,7 +150,7 @@ if (typeof document !== 'undefined') {
     if (isNode) {
       var parts = id.split('/')
       process.chdir(INITIAL_CWD + 'tests/specs/' + parts[0])
-      seajs.cwd(process.cwd())
+      seajs.cwd(normalize(process.cwd()))
       //console.log('  cwd = ' + seajs.cwd())
       id = parts[1]
     }
@@ -270,6 +270,10 @@ if (typeof document !== 'undefined') {
     var host = location.host
     return location.href.indexOf('file://') === 0 ||
         host === 'localhost' || host === '127.0.0.1'
+  }
+
+  function normalize(path) {
+    return path.replace(/\\/g, "/")
   }
 
 })
