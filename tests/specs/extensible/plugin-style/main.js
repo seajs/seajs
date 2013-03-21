@@ -11,7 +11,10 @@ define(function(require) {
 
   var styleCount = document.getElementsByTagName('style').length
   test.assert(styleCount === 3, styleCount)
-  test.assert(document.getElementById('b-css').innerText.indexOf('.b') >= 0, 'b.css')
+
+  var styleEl = document.getElementById('b-css')
+  var cssText = styleEl.innerHTML || styleEl.styleSheet.cssText
+  test.assert(cssText.indexOf('.b') >= 0, 'b.css')
 
   test.next()
 
