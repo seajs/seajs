@@ -63,8 +63,10 @@
     return ret
   }
 
+  var toString = {}.toString
+
   var isArray = Array.isArray || function(obj) {
-    return obj instanceof Array
+    return toString.call(obj) === "[object Array]"
   }
 
 })(seajs);
