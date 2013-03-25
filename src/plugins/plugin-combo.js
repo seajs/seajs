@@ -193,43 +193,41 @@
   // "http://example.com/p/b.css"  ==> "http://example.com/p/??a.css,b.css"
   //
   function paths2hash(paths) {
-    var comboSyntax = configData.comboSyntax || ["??", ","]
-    
+
     forEach(paths, function(path) {
       var root = path[0] + "/"
       var group = files2group(path[1])
 
       forEach(group, function(files) {
-        parseComboHash(root, files, comboSyntax)
+        setHash(root, files)
       })
-
     })
 
     return comboHash
   }
-  
-  function parseComboHash(root, files, comboSyntax){
+
+  function setHash(root, files) {
+    var comboSyntax = configData.comboSyntax || ["??", ","]
+    var comboMaxLength = configData.comboMaxLength || 2000
+
     var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
-    
+    var exceedMax = comboPath.length > comboMaxLength
+
     // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
-    if (comboPath.length > 2000) {
-      var halfFiles = halfArray(files)
-      
-      parseComboHash(root, halfFiles[0], comboSyntax)
-      parseComboHash(root, halfFiles[1], comboSyntax)
-      //throw new Error("The combo url is too long: " + comboPath)
-    } else {
+    if (files.length > 1 && exceedMax) {
+      setHash(root, files.splice(0, Math.ceil(files.length / 2)))
+      setHash(root, files)
+    }
+    else {
+      if (exceedMax) {
+        throw new Error("The combo url is too long: " + comboPath)
+      }
+
       forEach(files, function(part) {
         comboHash[root + part] = comboPath
       })
     }
   }
-  
-  var halfArray = function(arr){
-    var cloneArr = arr.concat();
-		
-		return [cloneArr.splice(0, Math.ceil(arr.length/2)), cloneArr];
-	}
 
   //
   //  ["a.js", "c/d.js", "c/e.js", "a.css", "b.css", "z"]

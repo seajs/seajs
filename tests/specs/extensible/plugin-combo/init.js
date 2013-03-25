@@ -78,9 +78,28 @@ define(function(require) {
       done()
     })
 
+    // Max length limit
+    seajs.config({
+      comboMaxLength: (seajs.config.data.base + 'long/1.js+2.js+3.js').length
+    })
+
+    // long/1.js+2.js+3.js
+    // long/4.js+5.js+6.js
+    require.async(['long/1', 'long/2', 'long/3', 'long/4', 'long/5', 'long/6'],
+        function(l1, l2, l3, l4, l5, l6) {
+
+          test.assert(l1.name === '1', l1.name)
+          test.assert(l2.name === '2', l1.name)
+          test.assert(l3.name === '3', l1.name)
+          test.assert(l4.name === '4', l1.name)
+          test.assert(l5.name === '5', l1.name)
+          test.assert(l6.name === '6', l1.name)
+
+          done()
+        })
 
     function done() {
-      if (++count === 2) test.next()
+      if (++count === 3) test.next()
     }
 
   })
