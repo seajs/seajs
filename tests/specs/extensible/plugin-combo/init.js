@@ -89,11 +89,11 @@ define(function(require) {
         function(l1, l2, l3, l4, l5, l6) {
 
           test.assert(l1.name === '1', l1.name)
-          test.assert(l2.name === '2', l1.name)
-          test.assert(l3.name === '3', l1.name)
-          test.assert(l4.name === '4', l1.name)
-          test.assert(l5.name === '5', l1.name)
-          test.assert(l6.name === '6', l1.name)
+          test.assert(l2.name === '2', l2.name)
+          test.assert(l3.name === '3', l3.name)
+          test.assert(l4.name === '4', l4.name)
+          test.assert(l5.name === '5', l5.name)
+          test.assert(l6.name === '6', l6.name)
 
           done()
         })
