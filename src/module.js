@@ -173,7 +173,13 @@ function fetch(uri, callback) {
     // Call callbacks
     var fn, fns = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((fn = fns.shift())) fn()
+    ;(function next(){
+      fn = fns.shift()
+      if(fn){
+        setTimeout(next, 0)
+        fn()
+      }
+    })()
   }
 }
 
