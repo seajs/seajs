@@ -34,6 +34,7 @@
     reporter.innerHTML = ''
     reset()
     startTime = now()
+    global.emit && global.emit('START')
     next()
   }
 
@@ -89,6 +90,7 @@
       printStepInfo()
       printErrors()
       printHeader('END', '', 'h2')
+      global.emit && global.emit('END')
       reset()
     }
   }
