@@ -185,6 +185,8 @@ if (typeof document !== 'undefined') {
       p = this.parent
     }
 
+    global.emit && global.emit(fn, msg, type)
+
     if (p && p[fn]) {
       p[fn](msg, type)
     }
