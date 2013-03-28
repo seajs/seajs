@@ -5,7 +5,7 @@
   var isRunning, timeoutTimer
   var startTime, endTime
 
-  var publish = window.publish || function() {};
+  var publish = window.publish || function() {}
 
   var consoleMode = location.search.indexOf('console') > 0
 
@@ -65,15 +65,16 @@
   }
 
 
-  var __testSuite = null;
+  var __testSuite = null
+
   global.testNextPage = function() {
 
     if (__testSuite) {
-        publish('testEnd', __testSuite, {
-            pass: result.pass.count,
-            fail: result.fail.count,
-            error: result.error.count
-        })
+      publish('testEnd', __testSuite, {
+        pass: result.pass.count,
+        fail: result.fail.count,
+        error: result.error.count
+      })
     }
 
     var page = __testSuite = testSuites[currentPage++]
