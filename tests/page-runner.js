@@ -4,9 +4,9 @@
   var currentPage, currentSuite
   var isRunning, timeoutTimer
   var startTime, endTime
+  var page
 
-  var publish = window.publish || function() {}
-
+  var publish = global.publish || function() {}
   var consoleMode = location.search.indexOf('console') > 0
 
   var container = document.getElementById('container')
@@ -29,15 +29,15 @@
     }
   }
 
-
   global.onload = start
 
 
   function start() {
     reporter.innerHTML = ''
     reset()
-    startTime = now()
+
     publish('start')
+    startTime = now()
     next()
   }
 
@@ -65,19 +65,16 @@
   }
 
 
-  var __testSuite = null
-
   global.testNextPage = function() {
-
-    if (__testSuite) {
-      publish('testEnd', __testSuite, {
+    if (page) {
+      publish('testEnd', page, {
         pass: result.pass.count,
         fail: result.fail.count,
         error: result.error.count
       })
     }
 
-    var page = __testSuite = testSuites[currentPage++]
+    page = testSuites[currentPage++]
     clearTimeout(timeoutTimer)
     clear()
 
@@ -94,7 +91,7 @@
       var url = getUrl(page)
       printHeader(page, url, 'h2')
       
-      publish('test', page);
+      publish('test', page)
       load(url)
       makeSureGoOn(page)
 

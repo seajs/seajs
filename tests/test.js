@@ -180,12 +180,13 @@ if (typeof document !== 'undefined') {
   }
 
   function sendMessage(fn, msg, type) {
+    // Emit global message for test adapter
+    global.publish && global.publish(fn, msg, type)
+
     var p = this
     if (this != this.parent) {
       p = this.parent
     }
-
-    global.emit && global.emit(fn, msg, type)
 
     if (p && p[fn]) {
       p[fn](msg, type)
