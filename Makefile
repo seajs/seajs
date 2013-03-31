@@ -21,5 +21,8 @@ test_local:
 test_node:
 	node tests/node-runner.js
 
+totoro:
+	totoro test --mapping=tests/runner.html,seajs
+
 size:
 	tools/size.sh
