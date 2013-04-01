@@ -34,7 +34,7 @@ define(function(require) {
 
   function done() {
     if (++n === 3) {
-      test.assert(w_errors.length === 2, w_errors.length)
+      test.assert(w_errors.length > 0, w_errors.length)
       test.assert(s_errors.length === 4, s_errors.length)
       test.next()
     }
