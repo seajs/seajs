@@ -1,5 +1,5 @@
 /**
- * SeaJS v2.0.0b4 | seajs.org/LICENSE.md
+ * SeaJS v2.0.0 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -11,7 +11,7 @@ if (_seajs && _seajs.version) {
 
 var seajs = global.seajs = {
   // The current version of SeaJS being used
-  version: "2.0.0b4"
+  version: "2.0.0"
 }
 
 
@@ -529,7 +529,7 @@ function use(uris, callback) {
     var exports = []
 
     for (var i = 0; i < uris.length; i++) {
-      exports[i] = exec(cachedModules[uris[i]])
+      exports[i] = getExports(cachedModules[uris[i]])
     }
 
     if (callback) {
@@ -729,7 +729,7 @@ function exec(mod) {
   }
 
   function require(id) {
-    return exec(cachedModules[resolveInThisContext(id)])
+    return getExports(cachedModules[resolveInThisContext(id)])
   }
 
   require.resolve = resolveInThisContext
@@ -776,6 +776,14 @@ function getUnloadedUris(uris) {
   }
 
   return ret
+}
+
+function getExports(mod) {
+  var exports = exec(mod)
+  if (exports === null && (!mod || !IS_CSS_RE.test(mod.uri))) {
+    emit("error", mod)
+  }
+  return exports
 }
 
 var circularStack = []
