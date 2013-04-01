@@ -1,3 +1,3 @@
-g_destroy++
+global.g_destroy++
 
-define({ name: 'a' + g_destroy })
+define({ name: 'a' + global.g_destroy })

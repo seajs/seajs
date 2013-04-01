@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
+<title>test</title>
+</head>
+<body>
+<div id="out"></div>
+
+<script src="../../../../dist/sea.js"></script>
+<script>
+  var s_errors = []
+  var w_errors = []
+
+  seajs.on('error', function(err) {
+    s_errors.push(err)
+  })
+
+
+  window.onerror = function(err) {
+    w_errors.push(err)
+    return false
+  }
+
+  seajs.use('./main')
+</script>
+
+</body>
+</html>

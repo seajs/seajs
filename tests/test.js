@@ -216,7 +216,7 @@ if (typeof document !== 'undefined') {
   }
 
   function handleGlobalError() {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || window.onerror) return
 
     window.onerror = function(err) {
       // Old Safari and Firefox will throw an error when script is 404
