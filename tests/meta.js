@@ -15,6 +15,7 @@ var testSuites = [
   'specs/misc/callback-order',
   'specs/misc/data-api',
   'specs/misc/ie-cache',
+  'specs/misc/on-error',
   'specs/misc/utf8-in-gbk',
   'specs/misc/x-ua-compatible',
 
