@@ -9,6 +9,7 @@ define([
   'circular',
   'define',
   'dependencies',
+  'destroy',
   'duplicate-load',
   'exports',
   'jsonp',
