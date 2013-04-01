@@ -52,7 +52,7 @@ function use(uris, callback) {
     var exports = []
 
     for (var i = 0; i < uris.length; i++) {
-      exports[i] = exec(cachedModules[uris[i]])
+      exports[i] = getExports(cachedModules[uris[i]])
     }
 
     if (callback) {
@@ -252,7 +252,7 @@ function exec(mod) {
   }
 
   function require(id) {
-    return exec(cachedModules[resolveInThisContext(id)])
+    return getExports(cachedModules[resolveInThisContext(id)])
   }
 
   require.resolve = resolveInThisContext
@@ -299,6 +299,14 @@ function getUnloadedUris(uris) {
   }
 
   return ret
+}
+
+function getExports(mod) {
+  var exports = exec(mod)
+  if (exports === null && (!mod || !IS_CSS_RE.test(mod.uri))) {
+    emit("error", mod)
+  }
+  return exports
 }
 
 var circularStack = []
