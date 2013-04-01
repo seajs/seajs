@@ -379,7 +379,7 @@ function addOnload(node, callback, isCSS) {
 
       // Remove the script to reduce memory leak
       if (!isCSS && !configData.debug) {
-        removeNode(node)
+        head.removeChild(node)
       }
 
       // Dereference the node
@@ -388,10 +388,6 @@ function addOnload(node, callback, isCSS) {
       callback()
     }
   }
-}
-
-function removeNode(id) {
-  head.removeChild(isString(id) ? doc.getElementById(id) : id)
 }
 
 function pollCss(node, callback) {
