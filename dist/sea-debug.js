@@ -858,9 +858,13 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
+Module.load = use
 seajs.resolve = id2Uri
 global.define = define
-Module.load = use
+
+seajs.require = function(id) {
+  return (cachedModules[id2Uri(id)] || {}).exports
+}
 
 
 /**
