@@ -22,7 +22,7 @@ test_node:
 	node tests/node-runner.js
 
 totoro:
-	totoro test --mapping=tests/runner.html,seajs
+	totoro test --adaptor=seajs
 
 size:
 	tools/size.sh
