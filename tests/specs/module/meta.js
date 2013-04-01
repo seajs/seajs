@@ -21,6 +21,7 @@ define([
   'override',
   'public-api',
   'require-async',
+  'require-global',
   'singleton',
   'transitive',
 
