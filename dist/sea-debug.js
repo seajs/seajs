@@ -1,5 +1,5 @@
 /**
- * SeaJS v2.0.0 | seajs.org/LICENSE.md
+ * Sea.js 2.0.0 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -10,7 +10,7 @@ if (_seajs && _seajs.version) {
 }
 
 var seajs = global.seajs = {
-  // The current version of SeaJS being used
+  // The current version of Sea.js being used
   version: "2.0.0"
 }
 

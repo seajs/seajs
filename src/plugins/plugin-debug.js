@@ -1,5 +1,5 @@
 /**
- * The debug plugin for SeaJS
+ * The debug plugin for Sea.js
  */
 (function(seajs, global, doc, loc) {
 
@@ -90,7 +90,7 @@
 
     var html =
         "<div id=\"seajs-debug-console\">" +
-        "  <h3>SeaJS Debug Console</h3>" +
+        "  <h3>Sea.js Debug Console</h3>" +
         "  <label>Map file: <input value=\"" + mapfile + "\"/></label><br/>" +
         "  <button>Exit</button>" +
         "  <button>Hide</button>" +
