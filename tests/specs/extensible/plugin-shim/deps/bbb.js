@@ -1,4 +1,1 @@
-function bbb() {
-  return 'bbb ' + aaa()
-}
-
+global.bbb = 'bbb ' + global.aaa

@@ -20,7 +20,7 @@ define(function(require) {
 
 
   var bbb = require('bbb')
-  test.assert(bbb() === 'bbb aaa', bbb())
+  test.assert(bbb === 'bbb aaa', bbb)
   global.aaa = undefined
   global.bbb = undefined
 
