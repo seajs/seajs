@@ -14,7 +14,7 @@ module.exports = function(grunt) {
     var gccOptions = {}
 
     var banner = options.banner
-    banner = grunt.template.process(banner ? banner + "\n" : "")
+    banner = grunt.template.process(banner ? banner : "")
 
     // Parse options
     Object.keys(options).forEach(function(key) {
