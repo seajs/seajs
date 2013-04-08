@@ -1,3 +1,4 @@
+console.log(seajs.config.data.base)
 
 seajs.config({
   base: './plugin-shim/',
@@ -27,7 +28,7 @@ seajs.config({
     },
 
     'aaa': {
-      src: 'deps/aaa.js',
+      src: (seajs.config.data.base + 'plugin-shim/deps/aaa.js').replace('http:', ''),
       exports: 'aaa'
     },
 
