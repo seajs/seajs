@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>SeaJS - A Module Loader for the Web</title>
+<title>Sea.js - A Module Loader for the Web</title>
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
   <div id="header-inner">
 
   <h1 id="logo">
-    <a href="#intro"><img src="assets/images/logo.png" width="144" height="50" title="SeaJS"></a>
+    <a href="#intro"><img src="assets/images/logo.png" width="144" height="50" title="Sea.js"></a>
   </h1>
 
   <ul id="nav">
@@ -40,21 +40,21 @@
     </div>
 
     <div class="quick-start">
-      <a href="#quick-start" class="button">5 分钟上手 SeaJS
+      <a href="#quick-start" class="button">5 分钟上手 Sea.js
         <span class="extra">享受编码的乐趣</span>
       </a>
     </div>
 
     <div class="words">
 
-      <h3 id="why">为什么使用 SeaJS ？</h3>
+      <h3 id="why">为什么使用 Sea.js ？</h3>
 
       <p>
-        SeaJS 追求简单、自然的代码书写和组织方式，具有以下核心特性：
+        Sea.js 追求简单、自然的代码书写和组织方式，具有以下核心特性：
       </p>
 
       <ul>
-        <li><strong>简单友好的模块定义规范</strong>：SeaJS
+        <li><strong>简单友好的模块定义规范</strong>：Sea.js
           遵循 <a href="https://github.com/spmjs/specification/blob/master/draft/module.md" target="_blank">CMD</a>
           规范，可以像 <a href="http://nodejs.org/" target="_blank">Node.js</a> 一般书写模块代码。
         </li>
@@ -62,13 +62,13 @@
       </ul>
 
       <p>
-        SeaJS 还提供常用插件，非常有助于开发调试和性能优化，并具有丰富的可扩展接口。
+        Sea.js 还提供常用插件，非常有助于开发调试和性能优化，并具有丰富的可扩展接口。
       </p>
 
       <h3 id="compatible">兼容性</h3>
 
       <p>
-        SeaJS 具备完善的<a href="../tests/runner.html">测试用例</a>，兼容所有主流浏览器：
+        Sea.js 具备完善的<a href="../tests/runner.html">测试用例</a>，兼容所有主流浏览器：
       </p>
 
 <pre class="text">
@@ -80,13 +80,13 @@ IE 5.5+           ✔
 </pre>
 
       <p>
-        SeaJS 可运行在 Mobile 端，包括 Hybrid 模式的 App 上。理论上，SeaJS 可以运行在任何浏览器引擎上。
+        Sea.js 可运行在 Mobile 端，包括 Hybrid 模式的 App 上。理论上，Sea.js 可以运行在任何浏览器引擎上。
       </p>
 
-      <h3 id="companies">使用 SeaJS 的产品</h3>
+      <h3 id="companies">使用 Sea.js 的产品</h3>
 
       <p>
-        感谢以下公司、产品对 SeaJS 的信赖与支持：
+        感谢以下公司、产品对 Sea.js 的信赖与支持：
       </p>
 
       <ol id="company-logos">
@@ -121,7 +121,7 @@ IE 5.5+           ✔
       <div class="clear"></div>
 
       <p>
-        SeaJS 遵循 <a href="../LICENSE.md">MIT 协议</a>，无论个人还是公司，都可以免费自由使用。
+        Sea.js 遵循 <a href="../LICENSE.md">MIT 协议</a>，无论个人还是公司，都可以免费自由使用。
       </p>
 
     </div>
@@ -130,7 +130,7 @@ IE 5.5+           ✔
 
   <div class="page" id="page-quick-start">
 
-    <h2>5 分钟上手 SeaJS</h2>
+    <h2>5 分钟上手 Sea.js</h2>
 
     <p>
       这是个小游戏，调皮的字母来自神秘的大海深处。当鼠标轻轻滑过时，字母会旋转到正确位置。
@@ -159,7 +159,7 @@ examples/
   `-- hello.html      项目的 html 文件
 </pre>
 
-    <p>我们从 <code>hello.html</code> 入手，来瞧瞧使用 SeaJS 如何组织代码。</p>
+    <p>我们从 <code>hello.html</code> 入手，来瞧瞧使用 Sea.js 如何组织代码。</p>
 
 
     <h3>在页面中引入模块</h3>
@@ -170,7 +170,7 @@ examples/
 <pre class="sh_html">
 &lt;script
     src="static/seajs/sea.js"   -- sea.js 路径
-    data-config="hello/config"  -- 给 SeaJS 用的项目配置文件
+    data-config="hello/config"  -- 给 Sea.js 用的项目配置文件
     data-main="hello/main"&gt;     -- 项目的起始模块
 &lt;/script&gt;
 </pre>
@@ -226,7 +226,7 @@ define(function(require, exports, module) {
 });
 </pre>
 
-    <p>上面就是 SeaJS 推荐的模块书写格式，是不是很简单？</p>
+    <p>上面就是 Sea.js 推荐的模块书写格式，是不是很简单？</p>
 
 
     <h3>打包部署</h3>
@@ -241,11 +241,11 @@ define(function(require, exports, module) {
     <h3>结束语</h3>
 
     <p>
-      怎么样，SeaJS 入门真的只需 5 分钟吧：）
+      怎么样，Sea.js 入门真的只需 5 分钟吧：）
     </p>
 
     <p>
-      使用 SeaJS，可以规范模块的书写格式、能自动处理模块的依赖，还非常有助于代码组织、开发调试和性能优化。SeaJS
+      使用 Sea.js，可以规范模块的书写格式、能自动处理模块的依赖，还非常有助于代码组织、开发调试和性能优化。Sea.js
       期待能给你提供简单、极致的模块化开发体验。我相信，你会爱上她的。
     </p>
 
@@ -268,7 +268,7 @@ define(function(require, exports, module) {
     <div class="words">
 
       <p>
-        这是 SeaJS 的官方文档。<br/>
+        这是 Sea.js 的官方文档。<br/>
         基础文档推荐按顺序阅读，后续文档可根据兴趣选读。<br/>
         阅读过程中有任何疑问，欢迎到 <a href="https://github.com/seajs/seajs/issues/271" target="_blank">社区</a> 交流。
       </p>
@@ -276,7 +276,7 @@ define(function(require, exports, module) {
       <h3>入门</h3>
       <ul>
         <li><a href="https://github.com/seajs/seajs/issues/547" target="_blank">前端模块化开发的价值</a></li>
-        <li><a href="#quick-start">5 分钟上手 SeaJS</a></li>
+        <li><a href="#quick-start">5 分钟上手 Sea.js</a></li>
         <li><a href="https://github.com/seajs/examples" target="_blank">官方示例</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/266" target="_blank">API 快速参考</a></li>
       </ul>
@@ -299,7 +299,7 @@ define(function(require, exports, module) {
       <h3>进阶</h3>
 
       <ul>
-        <li><a href="https://github.com/seajs/seajs/issues/263" target="_blank">SeaJS 的调试接口</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/263" target="_blank">Sea.js 的调试接口</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/270" target="_blank">调试插件</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/226" target="_blank">性能优化插件</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/595" target="_blank">style 插件</a></li>
@@ -312,7 +312,7 @@ define(function(require, exports, module) {
 
       <ul>
         <li><a href="https://github.com/seajs/seajs/issues/588" target="_blank">前端模块化开发那点历史</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/269" target="_blank">从 CommonJS 到 SeaJS</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/269" target="_blank">从 CommonJS 到 Sea.js</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/275" target="_blank">与 Node.js 兼容</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/277" target="_blank">与 RequireJS 的异同</a></li>
         <li><a href="https://github.com/dexteryy/OzJS/issues/10" target="_blank">与 OzJS 的探讨</a></li>
@@ -329,7 +329,7 @@ define(function(require, exports, module) {
     <div class="words">
 
       <p>
-        SeaJS 崇尚开放、自由，非常欢迎大家的参与。<br>
+        Sea.js 崇尚开放、自由，非常欢迎大家的参与。<br>
         你的加入，会让世界更美好。
       </p>
 
@@ -351,13 +351,13 @@ define(function(require, exports, module) {
       <img src="https://i.alipayobjects.com/e/201211/1dbVbRY0yK.jpg" width="300" height="300" style="float: right">
 
       <p>
-        SeaJS 是一个开源项目，由腾讯、阿里等公司的程序员维护。
+        Sea.js 是一个开源项目，由腾讯、阿里等公司的程序员维护。
       <br>
-        理念是：<strong>海纳百川、有容乃大</strong>。SeaJS 期望能成为海，开放而自由。
+        理念是：<strong>海纳百川、有容乃大</strong>。Sea.js 期望能成为海，开放而自由。
       </p>
 
       <p>
-        特别感谢家人、朋友们的支持。一路有伴，SeaJS 才越做越好。
+        特别感谢家人、朋友们的支持。一路有伴，Sea.js 才越做越好。
       </p>
 
       <p>
@@ -400,7 +400,7 @@ Makefile  -- 可执行构建、测试等命令</pre>
 
       <p class="current">
         <span class="date">2013-04-01</span>
-        <a href="https://github.com/seajs/seajs/issues/451" target="_blank">发布 SeaJS 2.0.0</a>
+        <a href="https://github.com/seajs/seajs/issues/451" target="_blank">发布 Sea.js 2.0.0</a>
         <a href="https://github.com/seajs/seajs/archive/2.0.0.zip">直接下载</a>
       </p>
 

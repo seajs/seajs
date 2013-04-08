@@ -19,6 +19,12 @@ define(function(require) {
   global._ = undefined
 
 
+  var bbb = require('bbb')
+  test.assert(bbb() === 'bbb aaa', bbb())
+  global.aaa = undefined
+  global.bbb = undefined
+
+
   test.next()
 
 })

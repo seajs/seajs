@@ -24,6 +24,17 @@ seajs.config({
       src: 'js/backbone.js',
       deps: ['jquery', 'underscore'],
       exports: 'Backbone'
+    },
+
+    'aaa': {
+      src: 'deps/aaa.js',
+      exports: 'aaa'
+    },
+
+    'bbb': {
+      src: 'deps/bbb.js',
+      deps: ['aaa'],
+      exports: 'bbb'
     }
   }
 })
