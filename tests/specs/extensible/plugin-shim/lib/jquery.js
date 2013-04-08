@@ -1,2 +1,4 @@
 
-global.jQuery = { jquery: '1.9.1' }
+global.jQuery = { fn: {} }
+global.jQuery.fn.jquery = '1.9.1'
+

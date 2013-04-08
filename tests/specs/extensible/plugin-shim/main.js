@@ -1,4 +1,3 @@
-console.log(seajs.config.data.base)
 
 seajs.config({
   base: './plugin-shim/',
@@ -36,8 +35,15 @@ seajs.config({
       src: 'deps/bbb.js',
       deps: ['aaa'],
       exports: 'bbb'
+    },
+
+    'ccc': {
+      src: 'deps/ccc.js',
+      exports: 'ccc'
     }
-  }
+  },
+
+  preload: ['deps/ccc']
 })
 
 seajs.use('init')
