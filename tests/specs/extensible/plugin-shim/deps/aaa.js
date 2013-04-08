@@ -1,4 +1,2 @@
-function aaa() {
-  return 'aaa'
-}
+global.aaa = 'aaa'
 

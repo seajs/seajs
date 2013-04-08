@@ -224,7 +224,7 @@ function parseMap(uri) {
 }
 
 
-var ABSOLUTE_RE = /:\//
+var ABSOLUTE_RE = /^\/\/.|:\//
 var RELATIVE_RE = /^\./
 var ROOT_RE = /^\//
 
