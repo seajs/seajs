@@ -4,7 +4,7 @@ define(function(require) {
   var $ = require('jquery')
   require('jquery.easing')
 
-  test.assert($.jquery === '1.9.1', $.jquery)
+  test.assert($.fn.jquery === '1.9.1', $.fn.jquery)
   test.assert($.easing.name === 'easing', $.easing.name)
 
   test.assert(global.jQuery === $, 'global.jQuery === $')
@@ -23,6 +23,11 @@ define(function(require) {
   test.assert(bbb === 'bbb aaa', bbb)
   global.aaa = undefined
   global.bbb = undefined
+
+
+  var ccc = require('ccc')
+  test.assert(ccc === 'ccc', ccc)
+  global.ccc = undefined
 
 
   test.next()
