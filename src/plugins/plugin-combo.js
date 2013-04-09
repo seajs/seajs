@@ -3,6 +3,8 @@
  */
 (function(seajs) {
 
+  var STATUS_FETCHING = 1
+
   var comboHash = {}
   var cachedModules = seajs.cache
   var configData = seajs.config.data
@@ -18,7 +20,7 @@
       var mod = cachedModules[uri]
 
       // Remove fetching and fetched uris, excluded uris, combo uris
-      if (mod.status < mod.constructor.STATUS.FETCHING &&
+      if (mod.status < STATUS_FETCHING &&
           (!comboExcludes || !comboExcludes.test(uri)) &&
           !isComboUri(uri)) {
         needComboUris.push(uri)
@@ -191,28 +193,40 @@
   // "http://example.com/p/b.css"  ==> "http://example.com/p/??a.css,b.css"
   //
   function paths2hash(paths) {
-    var comboSyntax = configData.comboSyntax || ["??", ","]
 
     forEach(paths, function(path) {
       var root = path[0] + "/"
       var group = files2group(path[1])
 
       forEach(group, function(files) {
-        var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
-
-        // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
-        if (comboPath.length > 2000) {
-          throw new Error("The combo url is too long: " + comboPath)
-        }
-
-        forEach(files, function(part) {
-          comboHash[root + part] = comboPath
-        })
+        setHash(root, files)
       })
-
     })
 
     return comboHash
+  }
+
+  function setHash(root, files) {
+    var comboSyntax = configData.comboSyntax || ["??", ","]
+    var comboMaxLength = configData.comboMaxLength || 2000
+
+    var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
+    var exceedMax = comboPath.length > comboMaxLength
+
+    // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
+    if (files.length > 1 && exceedMax) {
+      setHash(root, files.splice(0, Math.ceil(files.length / 2)))
+      setHash(root, files)
+    }
+    else {
+      if (exceedMax) {
+        throw new Error("The combo url is too long: " + comboPath)
+      }
+
+      forEach(files, function(part) {
+        comboHash[root + part] = comboPath
+      })
+    }
   }
 
   //

@@ -5,9 +5,9 @@
  *   $ node tests/runner-node.js
  */
 
-require('../lib/sea')
+require('../lib/sea.js')
 
-define('./tests/node-runner', function(require) {
+define('./tests/node-runner', null, function(require) {
   var test = require('./test')
 
   var suites = require('./meta').map(function(suite) {
@@ -29,7 +29,7 @@ define('./tests/node-runner', function(require) {
     test.run(specs)
 
     test.print('Summary')
-    test.print(total + ' specs in ' + (Date.now() - time) / 1000 + 's')
+    test.print(total + ' suites in ' + (Date.now() - time) / 1000 + 's')
     test.print('END')
   })
 

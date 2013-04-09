@@ -1,8 +1,8 @@
 {
+  "family": "seajs",
   "name": "seajs",
-  "title": "SeaJS",
+  "version": "2.0.0",
   "description": "A Module Loader for the Web",
-  "version": "2.0.0pre",
   "homepage": "http://seajs.org/",
   "keywords": ["module", "loader"],
   "author": "Frank Wang <lifesinger@gmail.com>",

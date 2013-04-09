@@ -1,0 +1,1 @@
+global.bbb = 'bbb ' + global.aaa

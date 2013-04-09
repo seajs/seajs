@@ -1,6 +1,6 @@
 define([
   'circular',
-  'embedded',
+  'inline',
   'math',
   'order-no-matter'
 ])

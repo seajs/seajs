@@ -1,5 +1,4 @@
 
-
 define(function(require, exports, mod) {
 
   var test = require('../../../test')
@@ -15,7 +14,7 @@ define(function(require, exports, mod) {
   //seajs.log(require.resolve('./a'))
 
   test.assert(require.async('./a') === require, 'require.async is chainable')
-  test.assert(mod.load('./a') === undefined, 'module.load is NOT chainable')
+  //test.assert(mod.load('./a') === undefined, 'module.load is NOT chainable')
 
   test.next()
 

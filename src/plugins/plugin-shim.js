@@ -5,71 +5,44 @@
  */
 (function(seajs, global) {
 
-  // seajs.config( {
-  // shim: {
+  // seajs.config({
+  // alias: {
   //   "jquery": {
+  //     src: "lib/jquery.js",
   //     exports: "jQuery" or function
   //   },
-  //   "jquery.plugins": {
-  //     // URI matches such as jquery.easing.js, jquery.keystop.js
-  //     match: /jquery\.[a-z].*\.js/,
+  //   "jquery.easing": {
+  //     src: "lib/jquery.easing.js",
   //     deps: ["jquery"]
   //   }
   // })
-  var configData = seajs.config.data
 
+  seajs.on("config", onConfig)
+  onConfig(seajs.config.data)
 
-  seajs.on("initialized", function(mod) {
-    var uri = mod.uri
+  function onConfig(data) {
+    if (!data) return
+    var alias = data.alias
 
-    each(configData.shim, function(item) {
-      var deps = item.deps
+    for (var id in alias) {
+      (function(item) {
+        if (item.src) {
 
-      if (deps && match(item, uri)) {
-        for (var i = 0; i < deps.length; i++) {
-          mod.dependencies.push(deps[i])
+          // Set dependencies
+          item.deps && define(item.src, item.deps)
+
+          // Define the proxy cmd module
+          define(id, [seajs.resolve(item.src)], function() {
+            var exports = item.exports
+            return typeof exports === "function" ? exports() :
+                typeof exports === "string" ? global[exports] :
+                    exports
+          })
+
         }
-        return false
-      }
-
-    })
-  })
-
-  seajs.on("compile", function(mod) {
-    var uri = mod.uri
-
-    each(configData.shim, function(item, key) {
-      var exports = item.exports
-
-      if (exports && match(item, uri, key)) {
-        mod.exports = isFunction(exports) ? exports() : global[exports]
-        return false
-      }
-
-    })
-  })
-
-
-  // Helpers
-
-  function each(obj, fn) {
-    for (var p in obj) {
-      if (obj.hasOwnProperty(p)) {
-        if (fn(obj[p], p, obj) === false) {
-          break
-        }
-      }
+      })(alias[id])
     }
   }
 
-  function match(item, uri, key) {
-    var match = item.match || (item.match = seajs.resolve(key))
-    return match.test ? match.test(uri) : uri === match
-  }
-
-  function isFunction(obj) {
-    return typeof obj === "function"
-  }
-
-})(seajs, this);
+})(seajs, typeof global === "undefined" ? this : global);
 

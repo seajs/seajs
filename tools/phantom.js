@@ -2,9 +2,15 @@ var page = require('webpage').create()
 
 page.onConsoleMessage = function(arg) {
   var parts = arg.split('`')
+  var type = parts[0]
   var msg = parts[1] || '[LOG] ' + arg
 
-  console.log(color(msg, parts[0]))
+  console.log(color(msg, type))
+
+  // Exit on fail
+  if (type === 'fail' || type === 'error') {
+    phantom.exit(1)
+  }
 
   if (msg === 'END') {
     var result = page.evaluate(function() {

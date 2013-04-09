@@ -84,6 +84,6 @@ define(function(require, exports, mod) {
 
 });
 
-define('a', { name: 'a' });
-define('b', { name: 'b' });
-define('e', { name: 'e' });
+define('a', [], { name: 'a' });
+define('b', [], { name: 'b' });
+define('e', [], { name: 'e' });

@@ -12,6 +12,14 @@ var READY_STATE_RE = /^(?:loaded|complete|undefined)$/
 var currentlyAddingScript
 var interactiveScript
 
+// `onload` event is supported in WebKit < 535.23 and Firefox < 9.0
+// ref:
+//  - https://bugs.webkit.org/show_activity.cgi?id=38995
+//  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
+//  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
+var isOldWebKit = (navigator.userAgent
+    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
+
 
 function request(url, callback, charset) {
   var isCSS = IS_CSS_RE.test(url)
@@ -45,7 +53,7 @@ function request(url, callback, charset) {
       head.insertBefore(node, baseElement) :
       head.appendChild(node)
 
-  currentlyAddingScript = null
+  currentlyAddingScript = undefined
 }
 
 function addOnload(node, callback, isCSS) {
@@ -139,13 +147,4 @@ function getCurrentScript() {
     }
   }
 }
-
-
-// `onload` event is supported in WebKit < 535.23 and Firefox < 9.0
-// ref:
-//  - https://bugs.webkit.org/show_activity.cgi?id=38995
-//  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
-//  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldWebKit = (navigator.userAgent
-    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
 

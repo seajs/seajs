@@ -1,3 +1,3 @@
-define([], function(require, exports) {
+define('', [], function(require, exports) {
   exports.name = 'b'
 });

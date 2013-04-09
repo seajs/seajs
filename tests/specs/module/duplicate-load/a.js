@@ -1,1 +1,1 @@
-define('a', { name: 'WRONG' });
+define('a', [], { name: 'WRONG' });

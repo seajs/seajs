@@ -7,18 +7,20 @@ define(function(require) {
   assert(dirname('./a/b/c.js') === './a/b/', 'dirname')
   assert(dirname('a/b/c.js') === 'a/b/', 'dirname')
   assert(dirname('/a/b/c.js') === '/a/b/', 'dirname')
-  assert(dirname('d.js') === './', 'dirname')
-  assert(dirname('') === './', 'dirname')
-  assert(dirname('xxx') === './', 'dirname')
+  assert(dirname('/d.js') === '/', 'dirname')
+  assert(dirname('/') === '/', 'dirname')
+  assert(dirname('/xxx') === '/', 'dirname')
   assert(dirname('http://cdn.com/js/file.js') === 'http://cdn.com/js/', 'dirname')
   assert(dirname('http://cdn.com/js/file.js?t=xxx') === 'http://cdn.com/js/', 'dirname')
   assert(dirname('http://cdn.com/js/file.js?t=xxx#zzz') === 'http://cdn.com/js/', 'dirname')
   assert(dirname('http://example.com/page/index.html#zzz?t=xxx') === 'http://example.com/page/', 'dirname')
   assert(dirname('http://example.com/arale/seajs/1.2.0/??sea.js,plugin-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname')
   assert(dirname('http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js') === 'http://cdn.com/', 'dirname')
+  assert(dirname('http://seajs.com/docs/#/abc') === 'http://seajs.com/docs/', 'dirname')
 
 
   assert(realpath('http://test.com/./a//b/../c') === 'http://test.com/a/c', 'realpath')
+  assert(realpath('http://test.com/a/b/c/d/e/f/g/h/../../../../../../i') === 'http://test.com/a/b/i', 'realpath')
   assert(realpath('https://test.com/a/b/../../c') === 'https://test.com/c', 'realpath')
   assert(realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
   assert(realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
@@ -40,19 +42,35 @@ define(function(require) {
         alias: {
           'jquery-debug': 'jquery/1.8.0/jquery-debug',
           'app': 'app/1.2/app',
-          'biz/a': 'path/to/biz/a.js',
-          './b': 'path/to/b.js',
-          '/c': 'c.js',
+          'alias/a': 'path/to/biz/a.js',
+          './alias/b': 'path/to/b.js',
+          '/alias/c': 'c.js',
           'http://test.com/router': 'router.js?t=20110525'
         }
       })
 
   assert(parseAlias('jquery-debug') === 'jquery/1.8.0/jquery-debug', 'parseAlias')
   assert(parseAlias('app') === 'app/1.2/app', 'parseAlias')
-  assert(parseAlias('biz/a') === 'path/to/biz/a.js', 'parseAlias')
-  assert(parseAlias('./b') === './b', 'parseAlias')
-  assert(parseAlias('/c') === '/c', 'parseAlias')
-  assert(parseAlias('http://test.com/router') === 'http://test.com/router', 'parseAlias')
+  assert(parseAlias('alias/a') === 'path/to/biz/a.js', 'parseAlias')
+  assert(parseAlias('./alias/b') === 'path/to/b.js', 'parseAlias')
+  assert(parseAlias('/alias/c') === 'c.js', 'parseAlias')
+  assert(parseAlias('http://test.com/router') === 'router.js?t=20110525', 'parseAlias')
+
+
+  seajs.config({
+    paths: {
+      'xx-path': 'http://xx.com/path/to/',
+      'xx/path': 'http://xx.com/path/to/',
+      'http:': 'WRONG'
+    }
+  })
+
+  assert(parsePaths('xx-path/a') === 'http://xx.com/path/to//a', 'parsePaths')
+  assert(parsePaths('/xx-path/a') === '/xx-path/a', 'parsePaths')
+  assert(parsePaths('xx/path/a') === 'xx/path/a', 'parsePaths')
+  assert(parsePaths('http://xx/path/xx-path/') === 'http://xx/path/xx-path/', 'parsePaths')
+  assert(parsePaths('/') === '/', 'parsePaths')
+  assert(parsePaths('.') === '.', 'parsePaths')
 
 
   seajs.config({
@@ -75,9 +93,11 @@ define(function(require) {
   assert(parseVars('{c}') === '{path}/to/c.js', 'parseVars')
 
 
+  var CWR = cwd.match(/^.*?\/\/.*?\//)[0]
+
   assert(addBase('http://a.com/b.js') === 'http://a.com/b.js', 'addBase')
   assert(addBase('./a.js', 'http://test.com/path/b.js') === 'http://test.com/path/./a.js', 'addBase')
-  assert(addBase('/b.js', 'http://test.com/path/to/c.js') === 'http://test.com/b.js', 'addBase')
+  assert(addBase('/b.js', 'http://test.com/path/to/c.js') === CWR + 'b.js', 'addBase')
   assert(addBase('c', 'http://test.com/path/to/c.js') === cwd + 'c', 'addBase')
 
 
@@ -111,8 +131,8 @@ define(function(require) {
   assert(id2Uri('path/to/z.js?t=1234') === cwd + 'path/to/z.js?t=1234', 'id2Uri')
   assert(id2Uri('path/to/z?t=1234') === cwd + 'path/to/z?t=1234', 'id2Uri')
   assert(id2Uri('./b', 'http://test.com/path//to/x.js') === 'http://test.com/path/to/b.js', 'id2Uri')
-  assert(id2Uri('/c', 'http://test.com/path/x.js') === 'http://test.com/c.js', 'id2Uri')
-  assert(id2Uri('/root/', 'file:///Users/lifesinger/tests/specs/util/test.html') === 'file:///root/', 'id2Uri')
+  assert(id2Uri('/c', 'http://test.com/path/x.js') === CWR + 'c.js', 'id2Uri')
+  assert(id2Uri('/root/', 'file:///Users/lifesinger/tests/specs/util/test.html') === CWR + 'root/', 'id2Uri')
   assert(id2Uri('http://test.com/x.js') === 'http://test.com/x.js', 'id2Uri')
   assert(id2Uri('http://test.com/x.js#') === 'http://test.com/x.js', 'id2Uri')
   assert(id2Uri('./z.js', 'http://test.com/x.js') === 'http://test.com/z.js', 'id2Uri')
@@ -120,15 +140,16 @@ define(function(require) {
   assert(id2Uri() === '', 'id2Uri')
   assert(id2Uri('http://XXX.com.cn/min/index.php?g=commonCss.css') === 'http://XXX.com.cn/min/index.php?g=commonCss.css', 'id2Uri')
   assert(id2Uri('./front/jquery.x.queue.js#') === cwd + 'front/jquery.x.queue.js', 'id2Uri')
+  assert(id2Uri('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js') === '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', 'id2Uri')
 
   var _cwd = cwd
   seajs.cwd('/User/lifesinger/path/to/root/')
-  assert(id2Uri('/C/path/to/a') === '/C/path/to/a.js', 'id2Uri')
+  assert(id2Uri('/C/path/to/a') === '/C/path/to/a.js', 'id2Uri ' + id2Uri('/C/path/to/a'))
   seajs.cwd(_cwd)
 
 
   assert(isAbsolute('http://test.com/') === true, 'isAbsolute')
-  assert(isAbsolute('//test.com/') === true, 'isAbsolute')
+  assert(isAbsolute('https://test.com/') === true, 'isAbsolute')
   assert(isAbsolute('file:///c/') === true, 'isAbsolute')
 
   assert(isRelative('./') === true, 'isRelative')
@@ -138,6 +159,7 @@ define(function(require) {
   assert(isRoot('//') === true, 'isRoot')
   assert(isRoot('/a') === true, 'isRoot')
 
+  /*
   assert(isTopLevel('xxx') === true, 'isTopLevel')
   assert(isTopLevel('./xxx') === false, 'isTopLevel')
   assert(isTopLevel('../xxx') === false, 'isTopLevel')
@@ -147,7 +169,7 @@ define(function(require) {
   assert(isTopLevel('_') === true, 'isTopLevel')
   assert(isTopLevel('$abc') === true, 'isTopLevel')
   assert(isTopLevel('_abc') === true, 'isTopLevel')
-
+  */
 
   test.next()
 

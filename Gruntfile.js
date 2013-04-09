@@ -44,7 +44,8 @@ module.exports = function(grunt) {
         src: "dist/sea-debug.js",
         dest: "dist/sea.js",
         options: grunt.util._.merge({
-          banner: "/*! SeaJS <%= pkg.version %> | seajs.org/LICENSE.md */",
+          banner: "/*! Sea.js <%= pkg.version %> | seajs.org/LICENSE.md\n" +
+              "//@ sourceMappingURL=sea.js.map\n*/",
           source_map_format: "V3",
           create_source_map: "dist/sea.js.map"
         }, GCC_OPTIONS)
@@ -79,18 +80,12 @@ module.exports = function(grunt) {
 
   grunt.registerTask("fix", "Fix sourceMap etc.", function() {
     var mapfile = "dist/sea.js.map"
-    var minfile = "dist/sea.js"
 
     var code = grunt.file.read(mapfile)
     code = code.replace('"file":""', '"file":"sea.js"')
     code = code.replace("dist/sea-debug.js", "sea-debug.js")
     grunt.file.write(mapfile, code)
     grunt.log.writeln('"' + mapfile + '" is fixed.')
-
-    code = grunt.file.read(minfile)
-    code += "//@ sourceMappingURL=sea.js.map\n"
-    grunt.file.write(minfile, code)
-    grunt.log.writeln('"' + minfile + '" is fixed.')
   })
 
 

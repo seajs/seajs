@@ -24,7 +24,9 @@ seajs.use('../../test', function(test) {
           // define anonymous before a module which uri is un-matched with script src
           define({ name: 'd-from-page' })
           seajs.use('./anonymous/d', function(d) {
-            test.assert(d.name === 'd-from-page', 'It is wrong, and I know')
+            test.assert(d === null || // in Node.js
+                d.name === 'd-from-page', // in Browsers
+                'It is wrong, and I know')
 
             seajs.use('anonymous-d', function(d) {
               test.assert(d.name === 'anonymous-d', 'It is here')

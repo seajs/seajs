@@ -2,26 +2,25 @@
  * util-path.js - The utilities for operating path such as id, uri
  */
 
-var DIRNAME_RE = /[^?]*(?=\/.*$)/
-
-// Extract the directory portion of a path
-// dirname("a/b/c.js") ==> "a/b/"
-// dirname("d.js") ==> "./"
-// ref: http://jsperf.com/regex-vs-split/2
-function dirname(path) {
-  var s = path.match(DIRNAME_RE)
-  return (s ? s[0] : ".") + "/"
-}
-
+var DIRNAME_RE = /[^?#]*\//
 
 var DOT_RE = /\/\.\//g
-var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
+var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
+
+var URI_END_RE = /\?|\.(?:css|js)$|\/$/
+var HASH_END_RE = /#$/
+
+// Extract the directory portion of a path
+// dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
+// ref: http://jsperf.com/regex-vs-split/2
+function dirname(path) {
+  return path.match(DIRNAME_RE)[0]
+}
 
 // Canonicalize a path
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
-
   // /a/b/./c/./d ==> /a/b/c/d
   path = path.replace(DOT_RE, "/")
 
@@ -39,10 +38,6 @@ function realpath(path) {
   return path
 }
 
-
-var URI_END_RE = /\?|\.(?:css|js)$|\/$/
-var HASH_END_RE = /#$/
-
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
@@ -59,20 +54,24 @@ function normalize(uri) {
   }
 
   // issue #256: fix `:80` bug in IE
-  uri = uri.replace(":80/", "/")
-
-  return uri
+  return uri.replace(":80/", "/")
 }
 
 
-var VARS_RE = /{([^{}]+)}/g
+var PATHS_RE = /^([^/:]+)(\/.+)$/
+var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
   var alias = configData.alias
+  return alias && isString(alias[id]) ? alias[id] : id
+}
 
-  // Only parse top-level id
-  if (alias && alias.hasOwnProperty(id) && isTopLevel(id)) {
-    id = alias[id]
+function parsePaths(id) {
+  var paths = configData.paths
+  var m
+
+  if (paths && (m = id.match(PATHS_RE)) && isString(paths[m[1]])) {
+    id = paths[m[1]] + m[2]
   }
 
   return id
@@ -81,9 +80,9 @@ function parseAlias(id) {
 function parseVars(id) {
   var vars = configData.vars
 
-  if (vars && id.indexOf("{") >= 0) {
+  if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
-      return vars.hasOwnProperty(key) ? vars[key] : m
+      return isString(vars[key]) ? vars[key] : m
     })
   }
 
@@ -111,49 +110,9 @@ function parseMap(uri) {
 }
 
 
-var ROOT_DIR_RE = /^(.*?:\/\/.*?)(?:\/|$)/
-
-function addBase(id, refUri) {
-  var ret
-
-  // absolute id
-  if (isAbsolute(id)) {
-    ret = id
-  }
-  // relative id
-  else if (isRelative(id)) {
-    ret = (refUri ? dirname(refUri) : cwd) + id
-  }
-  // root id
-  else if (isRoot(id)) {
-    var m = (refUri || cwd).match(ROOT_DIR_RE)
-    ret = (m ? m[1] : "") + id
-  }
-  // top-level id
-  else {
-    ret = configData.base + id
-  }
-
-  return ret
-}
-
-function id2Uri(id, refUri) {
-  if (!id) return ""
-
-  id = parseAlias(id)
-  id = parseVars(id)
-  id = addBase(id, refUri)
-  id = normalize(id)
-  id = parseMap(id)
-
-  return id
-}
-
-
-var ABSOLUTE_RE = /(?:^|:)\/\/./
-var RELATIVE_RE = /^\.{1,2}\//
+var ABSOLUTE_RE = /^\/\/.|:\//
+var RELATIVE_RE = /^\./
 var ROOT_RE = /^\//
-var TOPLEVEL_RE = /^[^./][^:]*$/
 
 function isAbsolute(id) {
   return ABSOLUTE_RE.test(id)
@@ -167,20 +126,51 @@ function isRoot(id) {
   return ROOT_RE.test(id)
 }
 
-function isTopLevel(id) {
-  return TOPLEVEL_RE.test(id)
+
+var ROOT_DIR_RE = /^.*?\/\/.*?\//
+
+function addBase(id, refUri) {
+  var ret
+
+  if (isAbsolute(id)) {
+    ret = id
+  }
+  else if (isRelative(id)) {
+    ret = dirname(refUri || cwd) + id
+  }
+  else if (isRoot(id)) {
+    ret = (cwd.match(ROOT_DIR_RE) || ["/"])[0] + id.substring(1)
+  }
+  // top-level id
+  else {
+    ret = configData.base + id
+  }
+
+  return ret
+}
+
+function id2Uri(id, refUri) {
+  if (!id) return ""
+
+  id = parseAlias(id)
+  id = parsePaths(id)
+  id = parseVars(id)
+  id = addBase(id, refUri)
+  id = normalize(id)
+  id = parseMap(id)
+
+  return id
 }
 
 
 var doc = document
 var loc = location
 var cwd = dirname(loc.href)
+var scripts = doc.getElementsByTagName("script")
 
 // Recommend to add `seajs-node` id for the `sea.js` script element
-var loaderScript = doc.getElementById("seajsnode") || (function() {
-  var scripts = doc.getElementsByTagName("script")
-  return scripts[scripts.length - 1]
-})()
+var loaderScript = doc.getElementById("seajsnode") ||
+    scripts[scripts.length - 1]
 
 // When `sea.js` is inline, set loaderDir to current working directory
 var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript)) || cwd

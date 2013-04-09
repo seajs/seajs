@@ -1,16 +1,6 @@
 /**
- * Main module for seajs.org
+ * module for seajs.org
  */
-
-seajs.config({
-
-  // Redirect jquery.js to alipay CDN
-  map: [
-      [/^.*\/jquery\.js.*$/, 'https://a.alipayobjects.com/gallery/jquery/1.8.2/jquery.js']
-  ]
-
-})
-
 define(function(require) {
 
   var navs = document.getElementById('nav').getElementsByTagName('a')
@@ -33,24 +23,20 @@ define(function(require) {
     }
   }
 
-
   bindEvents()
   updateView()
   misc()
 
 
   // Helpers
-  // -------
 
   function updateView(pageId) {
-    pageId || (pageId = location.hash.substring(1) || 'intro')
+    pageId || (pageId = location.hash.substring(1))
+    document.getElementById('page-' + pageId) || (pageId = 'intro')
 
-    if (document.getElementById('page-' + pageId)) {
-      setActiveNav(pageId)
-      setActivePage(pageId)
-      window.scrollTo(0, 0)
-    }
-
+    setActiveNav(pageId)
+    setActivePage(pageId)
+    window.scrollTo(0, 0)
   }
 
   function setActiveNav(pageId) {

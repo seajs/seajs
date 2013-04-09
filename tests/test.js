@@ -1,7 +1,10 @@
 
-// Set `global` to `this` in non-node environment
 if (typeof global === 'undefined') {
   global = this
+}
+
+if (typeof require === 'function') {
+  var __require = require
 }
 
 // Hack `console` for testing
@@ -129,11 +132,25 @@ if (typeof document !== 'undefined') {
     // Restore default configurations
     copy(defaultConfig, configData)
 
+    // Reset plugins
+    for (var uri in seajs.cache) {
+      if (uri.indexOf('/dist/plugin-') > 0) {
+        seajs.cache[uri].destroy()
+
+        if (typeof process !== 'undefined' &&
+            process.execPath.indexOf('node.exe') > 0) {
+          uri = uri.replace(/\//g, '\\')
+        }
+
+        __require && delete __require.cache[uri]
+      }
+    }
+
     // Change cwd and base to tests/specs/xxx
     if (isNode) {
       var parts = id.split('/')
       process.chdir(INITIAL_CWD + 'tests/specs/' + parts[0])
-      seajs.cwd(process.cwd())
+      seajs.cwd(normalize(process.cwd()))
       //console.log('  cwd = ' + seajs.cwd())
       id = parts[1]
     }
@@ -163,6 +180,9 @@ if (typeof document !== 'undefined') {
   }
 
   function sendMessage(fn, msg, type) {
+    // Emit global message for test adapter
+    global.publish && global.publish(fn, msg, type)
+
     var p = this
     if (this != this.parent) {
       p = this.parent
@@ -196,7 +216,7 @@ if (typeof document !== 'undefined') {
   }
 
   function handleGlobalError() {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || window.onerror) return
 
     window.onerror = function(err) {
       // Old Safari and Firefox will throw an error when script is 404
@@ -253,6 +273,10 @@ if (typeof document !== 'undefined') {
     var host = location.host
     return location.href.indexOf('file://') === 0 ||
         host === 'localhost' || host === '127.0.0.1'
+  }
+
+  function normalize(path) {
+    return path.replace(/\\/g, "/")
   }
 
 })
