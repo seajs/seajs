@@ -39,6 +39,16 @@
                     exports
           })
 
+        } else {
+
+          // Define the proxy cmd module use an exist object when src file have been loaded before
+          define(id, item.deps, function() {
+            var exports = item.exports
+            return typeof exports === "function" ? exports() :
+                typeof exports === "string" ? global[exports] :
+                    exports
+          })
+
         }
       })(alias[id])
     }
