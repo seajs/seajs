@@ -6,7 +6,7 @@ var DIRNAME_RE = /[^?#]*\//
 
 var DOT_RE = /\/\.\//g
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
-var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//g
+var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
 
 var URI_END_RE = /\?|\.(?:css|js)$|\/$/
 var HASH_END_RE = /#$/
