@@ -8,6 +8,7 @@
 
   var publish = global.publish || function() {}
   var consoleMode = location.search.indexOf('console') > 0
+  var isIE67 = !document.documentElement.hasAttribute
 
   var container = document.getElementById('container')
   var summary = document.getElementById('summary')
@@ -44,7 +45,8 @@
   function next() {
     isRunning = true
     go.innerHTML = 'Pause'
-    testNextPage()
+
+    setTimeout(testNextPage, isIE67 ? 200 : 0)
   }
 
   function pause() {
