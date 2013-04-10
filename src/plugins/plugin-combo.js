@@ -275,5 +275,8 @@
     test.paths2hash = paths2hash
   }
 
+
+  define(seajs.dir + "plugin-combo", [], {})
+
 })(seajs);
 

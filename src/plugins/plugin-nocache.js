@@ -27,5 +27,8 @@
     }
   })
 
+
+  define(seajs.dir + "plugin-nocache", [], {})
+
 })(seajs);
 

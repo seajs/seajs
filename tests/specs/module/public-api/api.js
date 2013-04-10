@@ -32,7 +32,8 @@ define(function(require, exports, mod) {
   assert(isFunction(seajs.resolve), 'seajs.resolve')
   assert(isFunction(seajs.require), 'seajs.require')
   assert(isFunction(seajs.cwd), 'seajs.cwd')
-  assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
+  assert(typeof(seajs.dir) === 'string', 'seajs.dir')
+  assert(getOwnPropertyCount(seajs) === 13, getOwnPropertyCount(seajs))
 
 
   // Module

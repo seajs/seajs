@@ -146,5 +146,8 @@
     return uri.replace(/\?.*$/, "")
   }
 
+
+  define(seajs.dir + "plugin-text", [], {})
+
 })(seajs, this);
 

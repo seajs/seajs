@@ -184,5 +184,8 @@
     }
   }
 
+
+  define(seajs.dir + "plugin-debug", [], {})
+
 })(seajs, this, document, location);
 
