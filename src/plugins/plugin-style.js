@@ -39,5 +39,8 @@
     }
   }
 
+
+  define(seajs.dir + "plugin-style", [], {})
+
 })(seajs);
 

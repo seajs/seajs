@@ -46,5 +46,8 @@
         return -1
       }
 
+
+  define(seajs.dir + "plugin-warning", [], {})
+
 })(seajs);
 

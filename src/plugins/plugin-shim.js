@@ -41,5 +41,8 @@
     }
   }
 
+
+  define(seajs.dir + "plugin-shim", [], {})
+
 })(seajs, typeof global === "undefined" ? this : global);
 

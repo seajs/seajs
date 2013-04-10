@@ -69,5 +69,8 @@
     return toString.call(obj) === "[object Array]"
   }
 
+
+  define(seajs.dir + "plugin-flush", [], {})
+
 })(seajs);
 
