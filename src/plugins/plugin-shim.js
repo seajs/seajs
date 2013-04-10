@@ -26,20 +26,17 @@
 
     for (var id in alias) {
       (function(item) {
-        if (item.src) {
+        // Set dependencies
+        item.src && item.deps && define(item.src, item.deps)
 
-          // Set dependencies
-          item.deps && define(item.src, item.deps)
-
-          // Define the proxy cmd module
-          define(id, [seajs.resolve(item.src)], function() {
-            var exports = item.exports
-            return typeof exports === "function" ? exports() :
-                typeof exports === "string" ? global[exports] :
-                    exports
-          })
-
-        }
+        // Define the proxy cmd module
+        define(id, item.src ? [seajs.resolve(item.src)] : item.deps || [],
+            function() {
+              var exports = item.exports
+              return typeof exports === "function" ? exports() :
+                  typeof exports === "string" ? global[exports] :
+                      exports
+            })
       })(alias[id])
     }
   }
