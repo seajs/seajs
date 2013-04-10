@@ -187,3 +187,5 @@ seajs.cwd = function(val) {
   return val ? (cwd = realpath(val + "/")) : cwd
 }
 
+seajs.dir = loaderDir
+
