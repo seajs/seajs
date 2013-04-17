@@ -70,9 +70,9 @@
   global.testNextPage = function() {
     if (page) {
       publish('testEnd', page, {
-        pass: result.pass.count,
-        fail: result.fail.count,
-        error: result.error.count
+        pass: result.pass,
+        fail: result.fail,
+        error: result.error
       })
     }
 
@@ -92,7 +92,7 @@
       // Load page
       var url = getUrl(page)
       printHeader(page, url, 'h2')
-      
+
       publish('test', page)
       load(url)
       makeSureGoOn(page)
