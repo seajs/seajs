@@ -13,7 +13,7 @@ test:
 	make test_http
 
 test_http:
-	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/tests/runner.html?console
+	@node tools/server.js . phantomjs tools/phantom.js http://127.0.0.1:9012/tests/runner.html?console
 
 test_local:
 	phantomjs tools/phantom.js tests/runner.html?console
