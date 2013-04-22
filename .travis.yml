@@ -7,5 +7,4 @@ before_script:
   - phantomjs --version
 
 script:
-  - make test_local
-  - make test_node
+  - make test
