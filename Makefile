@@ -1,28 +1,25 @@
 
 build:
-	grunt
-	make size
+	@grunt
+	@$(MAKE) size
 
 build_all:
-	grunt all
-	make size
+	@grunt all
+	@$(MAKE) size
 
-test:
-	make test_node
-	make test_local
-	make test_http
-
-test_http:
-	phantomjs tools/phantom.js http://localhost/~lifesinger/seajs/seajs/tests/runner.html?console
-
-test_local:
-	phantomjs tools/phantom.js tests/runner.html?console
+test: test_node test_local test_http
 
 test_node:
-	node tests/node-runner.js
+	@node tests/node-runner.js
+
+test_local:
+	@phantomjs tools/phantom.js tests/runner.html?console
+
+test_http:
+	@node tools/server.js . phantomjs tools/phantom.js http://127.0.0.1:9012/tests/runner.html?console
 
 totoro:
-	totoro test --adapter=seajs
+	@totoro-test --adapter=tests/totoro-adapter.js
 
 size:
-	tools/size.sh
+	@tools/size.sh

@@ -32,7 +32,7 @@ define(function(require) {
 
   // json
 
-  var jsonA = require('json!./a.json')
+  var jsonA = require('json!./a.jsx')
   var jsonB = require('./b.json?t=30222')
 
   test.assert(jsonA.name === 'a', jsonA.name)
