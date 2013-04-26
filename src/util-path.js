@@ -15,7 +15,8 @@ var HASH_END_RE = /#$/
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
 // ref: http://jsperf.com/regex-vs-split/2
 function dirname(path) {
-  return path.match(DIRNAME_RE)[0]
+  path = path.match(DIRNAME_RE)
+  return path ? path[0] : null
 }
 
 // Canonicalize a path
