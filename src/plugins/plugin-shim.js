@@ -26,6 +26,8 @@
 
     for (var id in alias) {
       (function(item) {
+        if (typeof item === "string") return
+
         // Set dependencies
         item.src && item.deps && define(item.src, item.deps)
 
