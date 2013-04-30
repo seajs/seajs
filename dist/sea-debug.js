@@ -1,5 +1,5 @@
 /**
- * Sea.js 2.0.0 | seajs.org/LICENSE.md
+ * Sea.js 2.0.1 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -11,7 +11,7 @@ if (_seajs && _seajs.version) {
 
 var seajs = global.seajs = {
   // The current version of Sea.js being used
-  version: "2.0.0"
+  version: "2.0.1"
 }
 
 
@@ -287,7 +287,7 @@ var loaderScript = doc.getElementById("seajsnode") ||
     scripts[scripts.length - 1]
 
 // When `sea.js` is inline, set loaderDir to current working directory
-var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript)) || cwd
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
