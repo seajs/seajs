@@ -149,18 +149,28 @@ function addBase(id, refUri) {
   return ret
 }
 
-function id2Uri(id, refUri) {
-  if (!id) return ""
+var id2Uri = (function() {
+  var cache = {};
 
-  id = parseAlias(id)
-  id = parsePaths(id)
-  id = parseVars(id)
-  id = addBase(id, refUri)
-  id = normalize(id)
-  id = parseMap(id)
+  return function(id, refUri){
+    if (!id) return ""
 
-  return id
-}
+    var key = refUri ? id + "__" + refUri : id
+
+    if (!(key in cache)) {
+      id = parseAlias(id)
+      id = parsePaths(id)
+      id = parseVars(id)
+      id = addBase(id, refUri)
+      id = normalize(id)
+      id = parseMap(id)
+  
+      cache[key] = id
+    }
+
+    return cache[key]
+  }
+})();
 
 
 var doc = document
