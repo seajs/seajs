@@ -15,8 +15,7 @@ var HASH_END_RE = /#$/
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
 // ref: http://jsperf.com/regex-vs-split/2
 function dirname(path) {
-  path = path.match(DIRNAME_RE)
-  return path ? path[0] : null
+  return path.match(DIRNAME_RE)[0]
 }
 
 // Canonicalize a path
@@ -174,7 +173,7 @@ var loaderScript = doc.getElementById("seajsnode") ||
     scripts[scripts.length - 1]
 
 // When `sea.js` is inline, set loaderDir to current working directory
-var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript)) || cwd
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
