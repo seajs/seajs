@@ -19,9 +19,11 @@ function createServer(filepath, port) {
   server.listen(port, function() {
     var page = 'http://127.0.0.1:' + port + '/' + filepath
     var runner = spawn('phantomjs', ['tools/phantom.js', page])
+
     runner.stdout.on('data', function(data) {
       print(data.valueOf())
     })
+
     runner.on('exit', function(code) {
       if (code === 127) {
         print('phantomjs not available')
@@ -31,4 +33,5 @@ function createServer(filepath, port) {
     })
   })
 }
+
 createServer(process.argv[2], process.argv[3])
