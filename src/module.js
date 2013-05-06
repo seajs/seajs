@@ -95,7 +95,9 @@ function load(uris, callback) {
       function loadWaitings(cb) {
         cb || (cb = done)
 
-        var waitings = getUnloadedUris(mod.dependencies)
+        var waitings = mod.dependencies.length ?
+            getUnloadedUris(mod.dependencies) : []
+
         if (waitings.length === 0) {
           cb()
         }
