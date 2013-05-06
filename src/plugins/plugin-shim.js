@@ -31,8 +31,14 @@
         // Set dependencies
         item.src && item.deps && define(item.src, item.deps)
 
+        var src = item.src ? seajs.resolve(item.src) : ""
+        // Avoid circular dependencies
+        if (src === seajs.resolve(id)) {
+          src += "?type=seajs-shim-src"
+        }
+
         // Define the proxy cmd module
-        define(id, item.src ? [seajs.resolve(item.src)] : item.deps || [],
+        define(id, src ? [src] : item.deps || [],
             function() {
               var exports = item.exports
               return typeof exports === "function" ? exports() :
