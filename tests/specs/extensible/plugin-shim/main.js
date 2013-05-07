@@ -6,7 +6,7 @@ seajs.config({
 
   alias: {
     'jquery': {
-      src: 'jquery.js',
+      src: 'lib/jquery.js',
       exports: 'jQuery'
     },
 
