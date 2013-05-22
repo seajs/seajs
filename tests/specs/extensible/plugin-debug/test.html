@@ -8,7 +8,12 @@
 <script>
   document.cookie = 'seajs-debug=1`' + location.href.replace('test.html', 'seajs-map.js') + '`1; path=/'
 </script>
-<script src="../../../../dist/sea.js" data-main="./main"></script>
+
+<script src="../../../../dist/sea.js"></script>
+<script>
+  seajs.use('./main')
+</script>
+
 <div id="out"></div>
 </body>
 </html>

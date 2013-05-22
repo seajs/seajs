@@ -12,7 +12,6 @@ var testSuites = [
   'specs/extensible/plugin-style',
 
   'specs/misc/callback-order',
-  'specs/misc/data-api',
   'specs/misc/ie-cache',
   'specs/misc/on-error',
   'specs/misc/utf8-in-gbk',
