@@ -925,16 +925,4 @@ config({
   })()
 })
 
-var dataConfig = loaderScript.getAttribute("data-config")
-var dataMain = loaderScript.getAttribute("data-main")
-
-// Add data-config to preload modules
-if (dataConfig) {
-  configData.preload.push(dataConfig)
-}
-
-if (dataMain) {
-  seajs.use(dataMain)
-}
-
 })(this);
