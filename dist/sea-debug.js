@@ -1,5 +1,5 @@
 /**
- * Sea.js 2.0.1 | seajs.org/LICENSE.md
+ * Sea.js 2.1.0 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -11,7 +11,7 @@ if (_seajs && _seajs.version) {
 
 var seajs = global.seajs = {
   // The current version of Sea.js being used
-  version: "2.0.1"
+  version: "2.1.0"
 }
 
 
@@ -559,11 +559,8 @@ function load(uris, callback) {
       var mod = cachedModules[uri]
 
       if (mod.dependencies.length) {
-        loadWaitings(function(circular) {
-          mod.status < STATUS_SAVED ? fetch(uri, cb) : cb()
-          function cb() {
-            done(circular)
-          }
+        loadWaitings(function() {
+          mod.status < STATUS_SAVED ? fetch(uri, done) : done()
         })
       }
       else {
@@ -580,12 +577,6 @@ function load(uris, callback) {
         if (waitings.length === 0) {
           cb()
         }
-        // Break circular waiting callbacks
-        else if (isCircularWaiting(mod)) {
-          printCircularLog(circularStack)
-          circularStack.length = 0
-          cb(true)
-        }
         // Load all unloaded dependencies
         else {
           waitingsList[uri] = waitings
@@ -593,8 +584,8 @@ function load(uris, callback) {
         }
       }
 
-      function done(circular) {
-        if (!circular && mod.status < STATUS_LOADED) {
+      function done() {
+        if (mod.status < STATUS_LOADED) {
           mod.status = STATUS_LOADED
         }
 
@@ -788,57 +779,6 @@ function getExports(mod) {
     emit("error", mod)
   }
   return exports
-}
-
-var circularStack = []
-
-function isCircularWaiting(mod) {
-  var waitings = waitingsList[mod.uri] || []
-  if (waitings.length === 0) {
-    return false
-  }
-
-  circularStack.push(mod.uri)
-  if (isOverlap(waitings, circularStack)) {
-    cutWaitings(waitings)
-    return true
-  }
-
-  for (var i = 0; i < waitings.length; i++) {
-    if (isCircularWaiting(cachedModules[waitings[i]])) {
-      return true
-    }
-  }
-
-  circularStack.pop()
-  return false
-}
-
-function isOverlap(arrA, arrB) {
-  for (var i = 0; i < arrA.length; i++) {
-    for (var j = 0; j < arrB.length; j++) {
-      if (arrB[j] === arrA[i]) {
-        return true
-      }
-    }
-  }
-  return false
-}
-
-function cutWaitings(waitings) {
-  var uri = circularStack[0]
-
-  for (var i = waitings.length - 1; i >= 0; i--) {
-    if (waitings[i] === uri) {
-      waitings.splice(i, 1)
-      break
-    }
-  }
-}
-
-function printCircularLog(stack) {
-  stack.push(stack[0])
-  log("Circular dependencies: " + stack.join(" -> "))
 }
 
 function preload(callback) {
