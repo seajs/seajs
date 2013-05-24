@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>test</title>
+<script src="../../../../dist/sea.js"></script>
+</head>
+<body>
+<p><a href="https://github.com/seajs/seajs/issues/23">#23</a></p>
+<div id="out"></div>
+
+<!-- cache -->
+<iframe src="cache.html" id="cache-frame"></iframe>
+
+<script>
+  document.getElementById('cache-frame').onload = function() {
+    seajs.use('./main')
+  }
+</script>
+</body>
+</html>

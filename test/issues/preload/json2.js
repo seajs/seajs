@@ -1,2 +1,0 @@
-
-this.JSON = this.JSON || {};

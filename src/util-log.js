@@ -1,29 +1,18 @@
 /**
- * The tiny console
+ * util-log.js - The tiny log function
  */
-;(function(util, config) {
 
-  var AP = Array.prototype
+// The safe wrapper for `console.xxx` functions
+// log("message") ==> console.log("message")
+// log("message", "warn") ==> console.warn("message")
+var log = seajs.log = function(msg, type) {
 
-
-  /**
-   * The safe wrapper of console.log/error/...
-   */
-  util.log = function() {
-    if (typeof console !== 'undefined') {
-      var args = AP.slice.call(arguments)
-
-      var type = 'log'
-      var last = args[args.length - 1]
-      console[last] && (type = args.pop())
-
-      // Only show log info in debug mode
-      if (type === 'log' && !config.debug) return
-
-      var out = type === 'dir' ? args[0] : AP.join.call(args, ' ')
-      console[type](out)
-    }
-  }
-
-})(seajs._util, seajs._config)
+  global.console &&
+      // Do NOT print `log(msg)` in non-debug mode
+      (type || configData.debug) &&
+      // Set the default value of type
+      (console[type || (type = "log")]) &&
+      // Call native method of console
+      console[type](msg)
+}
 

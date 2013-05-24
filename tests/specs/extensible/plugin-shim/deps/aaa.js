@@ -1,0 +1,2 @@
+global.aaa = 'aaa'
+

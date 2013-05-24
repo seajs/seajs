@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+<script src="../../../../dist/sea.js"></script>
+</head>
+<body>
+<div id="out"></div>
+
+<script>
+
+  seajs.config({
+    base: './',
+    plugins: ['flush', 'combo'],
+    comboSyntax: ['', '+']
+  })
+
+  seajs.use('../../../test', function(test) {
+
+    seajs.use('a', function(a) {
+      test.assert(a.name === 'a', a.name)
+      done()
+    })
+
+    seajs.flush()
+
+
+    seajs.use(['b', 'c'], function(b, c) {
+      test.assert(b.name === 'b', b.name)
+      test.assert(c.name === 'c', c.name)
+      done()
+    })
+
+    seajs.use('d').flush()
+
+
+    var n = 0
+
+    function done() {
+      if (++n === 2) {
+        test.next()
+      }
+    }
+
+  })
+
+
+
+</script>
+
+</body>
+</html>

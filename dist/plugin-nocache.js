@@ -1,0 +1,1 @@
+(function(c){var e="seajs-nocache="+(new Date).getTime(),d={};c.on("fetch",function(a){var b=a.requestUri||a.uri;-1===b.indexOf("seajs-nocache=")&&(b+=(-1===b.indexOf("?")?"?":"&")+e,d[b]=a.uri,a.requestUri=b)});c.on("define",function(a){d[a.uri]&&(a.uri=d[a.uri])});define(c.dir+"plugin-nocache",[],{})})(seajs);

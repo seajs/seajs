@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>SeaJS - A Module Loader for the Web</title>
-<link rel="stylesheet" href="assets/home.css">
+<title>Sea.js - A Module Loader for the Web</title>
+<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
@@ -12,13 +12,14 @@
   <div id="header-inner">
 
   <h1 id="logo">
-    <a href="./"><img src="assets/images/logo.png" width="144" height="50" title="SeaJS"></a>
+    <a href="#intro"><img src="assets/images/logo.png" width="144" height="50" title="Sea.js"></a>
   </h1>
 
   <ul id="nav">
     <li><a href="#intro">介绍</a></li>
-    <li><a href="#api">使用文档</a></li>
-    <li><a href="#articles">大家谈</a></li>
+    <li><a href="#docs">文档</a></li>
+    <li><a href="#downloads">下载</a></li>
+    <li><a href="#community">社区</a></li>
     <li><a href="#about">关于</a></li>
   </ul>
 
@@ -33,370 +34,342 @@
 
   <div class="page" id="page-intro">
 
-    <h2>A Module Loader for the Web</h2>
+    <div class="headline">
+      <h2>提供简单、极致的模块化开发体验</h2>
+      <p>A Module Loader for the Web</p>
+    </div>
+
+    <div class="quick-start">
+      <a href="#quick-start" class="button">5 分钟上手 Sea.js
+        <span class="extra">享受编码的乐趣</span>
+      </a>
+    </div>
 
     <div class="words">
 
-      <p>
-        SeaJS 是一个适用于 Web 浏览器端的模块加载器。使用 SeaJS，可以更好地组织 JavaScript 代码。
-      </p>
+      <h3 id="why">为什么使用 Sea.js ？</h3>
 
       <p>
-        也许你已注意到右边的美图：蓝天碧海之间，沙滩爱侣相伴。无论生活还是工作，我们都期望能享受如此良辰美景。SeaJS
-        在努力让我们的生活变得更美好。
-      </p>
-
-
-      <h3 id="glance">快速入门</h3>
-
-      <p>
-        在 SeaJS 的世界里，一个文件就是一个模块。所有模块都遵循 <a href="https://github.com/seajs/seajs/issues/242" target="_blank">CMD</a> 规范，我们可以像在 <a href="http://nodejs.org/" target="_blank">Node</a> 环境中一样来书写模块代码：
-      </p>
-
-<pre>
-define(function(require, exports, module) {
-  var $ = require('jquery');
-
-  exports.sayHello = function() {
-    $('#hello').toggle('slow');
-  };
-});
-</pre>
-
-      <p>
-        将上面的代码保存为 <code>hello.js</code>，然后就可以通过 SeaJS 来加载使用了：
-      </p>
-
-<pre>
-seajs.config({
-  alias: {
-    'jquery': 'http://modules.seajs.org/jquery/1.7.2/jquery.js'
-  }
-});
-
-seajs.use(['./hello', 'jquery'], function(hello, $) {
-  $('#beautiful-sea').click(hello.sayHello);
-});
-</pre>
-
-      <p>
-        赶紧点击右上角的美图，与模块世界打个招呼吧 ^_^
-      </p>
-
-
-      <h3 id="features">核心特性</h3>
-
-      <p>
-        无论是中小型站点，还是大型复杂应用，使用 SeaJS，都可以让我们的工作变得更轻松愉悦。SeaJS 具有以下核心特性：
+        Sea.js 追求简单、自然的代码书写和组织方式，具有以下核心特性：
       </p>
 
       <ul>
-        <li>简单一致的模块格式</li>
-        <li>依赖的自动管理</li>
-        <li>脚本的异步并行加载</li>
-        <li>丰富的插件</li>
-        <li>友好的调试</li>
+        <li><strong>简单友好的模块定义规范</strong>：Sea.js
+          遵循 <a href="https://github.com/spmjs/specification/blob/master/draft/module.md" target="_blank">CMD</a>
+          规范，可以像 <a href="http://nodejs.org/" target="_blank">Node.js</a> 一般书写模块代码。
+        </li>
+        <li><strong>自然直观的代码组织方式</strong>：依赖的自动加载、配置的简洁清晰，可以让我们更多地享受编码的乐趣。</li>
       </ul>
 
       <p>
-        SeaJS 带来的最大好处是：提升代码的可维护性。上面的每一项特性，在使用文档中都会有详细阐述。如果一个网站的 JS
-        文件超过 3 个，就适合用 SeaJS 来组织和维护代码。涉及的 JS 文件越多，SeaJS 就越适合。
+        Sea.js 还提供常用插件，非常有助于开发调试和性能优化，并具有丰富的可扩展接口。
       </p>
-
-      <p>
-        SeaJS 追求的是更简单、自然的代码书写和组织方式。
-      </p>
-
-
-      <h3 id="docs">使用文档</h3>
-
-      <p>
-        SeaJS 上手非常容易，精通也不难。找点时间，读读下面的文档就行：
-      </p>
-
-      <ul>
-        <li><a href="#api">使用文档</a></li>
-        <li><a href="#articles">大家谈</a></li>
-      </ul>
-
-      <p>
-        遇到问题时，欢迎到 <a href="#about">SeaJS 社区</a> 寻找帮助。
-      </p>
-
 
       <h3 id="compatible">兼容性</h3>
 
       <p>
-        SeaJS 兼容所有 PC 和 Mobile 端的主流浏览器：
+        Sea.js 具备完善的<a href="../tests/runner.html">测试用例</a>，兼容所有主流浏览器：
       </p>
 
 <pre class="text">
-IE 5.5+           ✔
 Chrome 3+         ✔
 Firefox 2+        ✔
 Safari 3.2+       ✔
 Opera 10+         ✔
+IE 5.5+           ✔
 </pre>
 
       <p>
-        下面是 SeaJS 的 Test Suite：
-        <br>
-        <br>
-        <a href="http://seajs.org/test/runner.html" target="_blank">http://seajs.org/test/runner.html</a>
-        <br>
-        <br>
-        欢迎各位朋友继续帮忙测试，用例比较多，需耐心等待 2 - 30 分钟。若测试未通过，请将测试结果和浏览器 UA 信息通过 <a href="mailto:lifesinger@gmail.com">邮件</a> 或 <a href="http://weibo.com/lifesinger" target="_blank">微博</a> 反馈给我们。
+        Sea.js 可运行在 Mobile 端，包括 Hybrid 模式的 App 上。理论上，Sea.js 可以运行在任何浏览器引擎上。
       </p>
 
-
-      <h3 id="companies">哪些公司在用</h3>
+      <h3 id="companies">使用 Sea.js 的产品</h3>
 
       <p>
-        感谢以下公司、产品对 SeaJS 的信任：
+        感谢以下公司、产品对 Sea.js 的信赖与支持：
       </p>
 
       <ol id="company-logos">
-        <li><a href="https://www.alipay.com/" target="_blank"><img alt="支付宝" data-src="assets/companies/alipay.png" width="103" height="44"></a></li>
-        <li><a href="http://taobao.com/" target="_blank"><img alt="淘宝网" data-src="assets/companies/taobao.png" width="164" height="44"></a></li>
-        <li><a href="http://etao.com/" target="_blank"><img alt="一淘" data-src="assets/companies/etao.png" width="64" height="44"></a></li>
-        <li><a href="http://laiwang.com/" target="_blank"><img alt="来往" data-src="assets/companies/laiwang.png" width="46" height="44"></a></li>
-        <li class="clear"></li>
-        <li><a href="http://pengyou.com/" target="_blank"><img alt="朋友" data-src="assets/companies/pengyou.png" width="126" height="44"></a></li>
-        <li><a href="http://baixing.com/" target="_blank"><img alt="百姓网" data-src="assets/companies/baixing.png" width="104" height="44"></a></li>
-        <li><a href="http://faxianla.com/" target="_blank"><img alt="发现啦" data-src="assets/companies/faxianla.png?v2" width="133" height="44"></a></li>
-        <li><a href="http://howzhi.com/" target="_blank"><img alt="好知" data-src="assets/companies/howzhi.png" width="84" height="44"></a></li>
-        <li class="clear"></li>
-        <li><a href="http://t.163.com/" target="_blank"><img alt="网易微博" data-src="assets/companies/t163.png" width="122" height="44"></a></li>
-        <li><a href="http://clicki.cn/" target="_blank"><img alt="Clicki" data-src="assets/companies/clicki.png" width="106" height="44"></a></li>
-        <li><a href="http://xueqiu.com/" target="_blank"><img alt="雪球" data-src="assets/companies/xueqiu.png" width="88" height="44"></a></li>
-        <li><a href="http://edoctor.cn/" target="_blank"><img alt="医道网" data-src="assets/companies/edoctor.png" width="131" height="44"></a></li>
-        <li class="clear"></li>
-        <li><a href="http://mbaobao.com/" target="_blank"><img alt="麦包包" data-src="assets/companies/mbaobao.png" width="103" height="44"></a></li>
-        <li><a href="http://sodao.com/" target="_blank"><img alt="搜道网" data-src="assets/companies/sodao.png" width="171" height="44"></a></li>
-        <li><a href="http://dnspod.cn/" target="_blank"><img alt="DNSPOD" data-src="assets/companies/dnspod.png" width="138" height="44"></a></li>
+        <li><a href="http://pengyou.com/" target="_blank"><img alt="朋友" data-src="https://i.alipayobjects.com/e/201211/1d8Vxe4cE0.png" width="126" height="44"></a></li>
+        <li><a href="http://t.qq.com/" target="_blank"><img alt="腾讯微博" data-src="https://i.alipayobjects.com/e/201304/2WGUrZpCxo.png" width="176" height="44"></a></li>
+        <li><a href="http://baixing.com/" target="_blank"><img alt="百姓网" data-src="https://i.alipayobjects.com/e/201211/1d8VoTO7wy.png" width="104" height="44"></a></li>
+        <li><a href="https://www.alipay.com/" target="_blank"><img alt="支付宝" data-src="https://i.alipayobjects.com/e/201211/1d8VoSqji8.png" width="103" height="44"></a></li>
+        <li><a href="http://t.163.com/" target="_blank"><img alt="网易微博" data-src="https://i.alipayobjects.com/e/201211/1d8W0ck3D2.png" width="122" height="44"></a></li>
+        <li><a href="http://note.youdao.com/" target="_blank"><img alt="网易云笔记" data-src="https://i.alipayobjects.com/e/201304/2WXQdtXjO0.png" width="164" height="44"></a></li>
+        <li><a href="http://iqiyi.com/" target="_blank"><img alt="爱奇艺" data-src="https://i.alipayobjects.com/e/201304/2WXQrajDrA.png" width="117" height="44"></a></li>
+        <li><a href="http://alibaba.com/" target="_blank"><img alt="Alibaba" data-src="http://ww3.sinaimg.cn/large/68361562gw1e1omdjti3vj.jpg" width="195" height="44"></a></li>
+        <li><a href="http://etao.com/" target="_blank"><img alt="一淘" data-src="https://i.alipayobjects.com/e/201211/1d8adaeedI.png" width="64" height="44"></a></li>
+        <li><a href="http://taobao.com/" target="_blank"><img alt="淘宝网" data-src="https://i.alipayobjects.com/e/201211/1d8W149hCW.png" width="164" height="44"></a></li>
+        <li><a href="http://laiwang.com/" target="_blank"><img alt="来往" data-src="https://i.alipayobjects.com/e/201211/1d8b0fwSDc.png" width="46" height="44"></a></li>
+        <li><a href="http://mbaobao.com/" target="_blank"><img alt="麦包包" data-src="https://i.alipayobjects.com/e/201211/1d8Vwo1a0C.png" width="103" height="44"></a></li>
+        <li><a href="http://faxianla.com/" target="_blank"><img alt="发现啦" data-src="https://i.alipayobjects.com/e/201211/1d8VtmoYj6.png" width="133" height="44"></a></li>
+        <li><a href="http://howzhi.com/" target="_blank"><img alt="好知" data-src="https://i.alipayobjects.com/e/201211/1d8VtHAMdg.png" width="84" height="44"></a></li>
+        <li><a href="http://clicki.cn/" target="_blank"><img alt="Clicki" data-src="https://i.alipayobjects.com/e/201211/1d8VoUZUrE.png" width="106" height="44"></a></li>
+        <li><a href="http://xueqiu.com/" target="_blank"><img alt="雪球" data-src="https://i.alipayobjects.com/e/201211/1d8W2Vc9XA.png" width="88" height="44"></a></li>
+        <li><a href="http://edoctor.cn/" target="_blank"><img alt="医道网" data-src="https://i.alipayobjects.com/e/201211/1d8VoUb70u.png" width="131" height="44"></a></li>
+        <li><a href="http://dnspod.cn/" target="_blank"><img alt="DNSPOD" data-src="https://i.alipayobjects.com/e/201211/1d8VoTupmm.png" width="138" height="44"></a></li>
+        <li><a href="http://www.srxing.com/" target="_blank"><img alt="三人行网络教育" data-src="https://i.alipayobjects.com/e/201211/1d8bt222OC.png" width="140" height="44"></a></li>
+        <li><a href="http://www.meifuzhi.com/" target="_blank"><img alt="美肤志" data-src="http://skintest.duapp.com/images/meifuzhi.png" width="140" height="44"></a></li>
+        <li><a href="http://www.pptv.com/" target="_blank"><img alt="PPTV" data-src="http://static9.pplive.cn/logo/pptv.jpg" width="103" height="44"></a></li>
+        <li><a href="http://sodao.com/" target="_blank"><img alt="搜道网" data-src="https://i.alipayobjects.com/e/201211/1d8Vy06hw4.png" width="171" height="44"></a></li>
+        <li><a href="http://www.uco.com/" target="_blank"><img alt="悠可网" data-src="https://f.cloud.github.com/assets/1171291/33472/8990cde6-5093-11e2-8344-6f9e4acdf3fc.png" width="86" height="44"></a></li>
+        <li><a href="http://www.chufa.la/" target="_blank"><img alt="出发啦" data-src="http://cflimage.b0.upaiyun.com/image/partner/forseajs.png" width="187" height="44"></a></li>
+        <li><a href="http://lovelyresearcher.com/" target="_blank"><img alt="乐研生物" data-src="https://f.cloud.github.com/assets/600263/126394/9e0e6fba-6f58-11e2-9d2c-83d5bb87f2b9.png" width="134" height="44"></a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/272" target="_blank"><img alt="更多使用者" data-src="https://i.alipayobjects.com/e/201211/1d8VwySnTQ.png" width="146" height="44"></a></li>
       </ol>
 
       <div class="clear"></div>
 
       <p>
-        期待出现与你相关的名字，更多使用者请参见：<a href="https://github.com/seajs/seajs/issues/272" target="_blank">SeaJS Users</a>
+        Sea.js 遵循 <a href="../LICENSE.md">MIT 协议</a>，无论个人还是公司，都可以免费自由使用。
       </p>
 
-      <p>
-        SeaJS 遵循 <a href="../LICENSE.md">MIT 协议</a>，无论个人还是公司，都可以免费自由使用。
-      </p>
-
-    </div>
-
-    <div id="side">
-
-      <div id="downloads-link">
-        <a href="#downloads" alt="Download this project"><span>v1.2.1</span></a>
-      </div>
-
-      <div id="social">
-        <!--<iframe data-src="http://markdotto.github.com/github-buttons/github-btn.html?user=seajs&amp;repo=seajs&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe>-->
-        <!--<iframe data-src="http://markdotto.github.com/github-buttons/github-btn.html?user=seajs&amp;repo=seajs&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="90px" height="20px"></iframe>-->
-        <!--<iframe allowtransparency="true" frameborder="0" scrolling="no" src="http://platform.twitter.com/widgets/tweet_button.1340179658.html#_=1341106072057&amp;count=horizontal&amp;id=twitter-widget-0&amp;lang=en&amp;original_referer=http%3A%2F%2Fseajs.org%2F&amp;size=m&amp;text=SeaJS%20-%20A%20Module%20Loader%20for%20the%20Web&amp;url=http%3A%2F%2Fseajs.org%2F&amp;via=lifesinger" class="twitter-share-button twitter-count-horizontal" style="width: 116px; height: 20px; " title="Twitter Tweet Button"></iframe>-->
-      </div>
-
-      <div id="sea-pic">
-        <img id="beautiful-sea" src="assets/images/sea.jpg" width="300" height="300">
-        <!-- Thanks to the beautiful sea picture from: http://www.hassel66.net/life_001.html -->
-        <p id="wish">让生活更美好</p>
-        <p id="hello">Hello, modular world!</p>
-      </div>
-
-      <div id="github">
-
-        <h3>Latest Issues <span><a href="https://github.com/seajs/seajs/issues" target="_blank">#</a></span></h3>
-        <ul id="issues">
-          <li>Loading ...</li>
-        </ul>
-
-        <h3>Latest Commits <span><a href="https://github.com/seajs/seajs/commits/master" target="_blank">#</a></span></h3>
-        <ul id="commits">
-          <li>Loading ...</li>
-        </ul>
-
-      </div>
     </div>
 
   </div>
 
-  <div class="page" id="page-api">
+  <div class="page" id="page-quick-start">
 
-    <h2>Documentation</h2>
+    <h2>5 分钟上手 Sea.js</h2>
+
+    <p>
+      这是个小游戏，调皮的字母来自神秘的大海深处。当鼠标轻轻滑过时，字母会旋转到正确位置。
+      <span class="only-ie"><br>注意：该例子仅在高级浏览器下有效，推荐用 Chrome 浏览。</span>
+      <br>
+      来试试吧，看能否让所有字母都听话……
+    </p>
+
+    <iframe id="quick-start-iframe" src="javascript:;" scrolling="no" frameborder="0" width="800" height="150"></iframe>
+
+    <p>
+      下面花 5 分钟时间，来看看这个小项目如何实现。
+    </p>
+
+
+    <h3>目录结构</h3>
+
+    <p>所有源码都存放在 GitHub 上：<a href="https://github.com/seajs/examples" target="_blank">seajs/examples</a>，目录结构为：</p>
+
+<pre class="text">
+examples/
+  |-- static
+  |     |-- lib       存放 jquery.js 等通用类库
+  |     |-- hello     存放项目的 js、css 等文件
+  |     `-- seajs     存放 sea.js 及其插件
+  `-- hello.html      项目的 html 文件
+</pre>
+
+    <p>我们从 <code>hello.html</code> 入手，来瞧瞧使用 Sea.js 如何组织代码。</p>
+
+
+    <h3>在页面中引入模块</h3>
+
+    <p>
+      在 <code>hello.html</code> 里，与脚本相关的代码只有一行：
+    </p>
+<pre class="sh_html">
+&lt;script
+    src="static/seajs/sea.js"   -- sea.js 路径
+    data-config="hello/config"  -- 给 Sea.js 用的项目配置文件
+    data-main="hello/main"&gt;     -- 项目的起始模块
+&lt;/script&gt;
+</pre>
+
+    <p>
+      <code>sea.js</code> 在下载完成时，会根据 <code>data-config</code> 自动获取配置，然后加载 <code>data-main</code> 指定的模块。
+    </p>
+
+
+    <h3>配置文件</h3>
+
+    <p>打开 <code>config.js</code> 文件：</p>
+
+<pre>
+seajs.config({
+  // 配置插件
+  plugins: ['shim'],
+
+  // 配置别名
+  alias: {
+    // 配置 jquery 的 shim 配置，这样我们就可以通过 require('jquery') 来获取 jQuery
+    'jquery': {
+      src: 'lib/jquery-1.9.1.min.js',
+      exports: 'jQuery'
+    }
+  }
+});
+</pre>
+
+    <p>看起来有点小复杂，先不用去理会具体含义，把这个例子跑通后，再去看使用文档就好。</p>
+
+
+    <h3>模块代码</h3>
+
+    <p>
+      这个小游戏有两个模块 <code>spinning.js</code> 和 <code>main.js</code>，遵循统一的写法：
+    </p>
+
+<pre>
+// 所有模块都通过 define 来定义
+define(function(require, exports, module) {
+
+  // 通过 require 引入依赖
+  var $ = require('jquery');
+  var Spinning = require('./spinning');
+
+  // 通过 exports 对外提供接口
+  exports.doSomething = ...
+
+  // 或者通过 module.exports 提供整个接口
+  module.exports = ...
+
+});
+</pre>
+
+    <p>上面就是 Sea.js 推荐的模块书写格式，是不是很简单？</p>
+
+
+    <h3>打包部署</h3>
+
+    <p>
+      对于正式项目，在发布上线前，还需要对源码进行压缩、合并等操作。
+      <br>
+      这可以通过 Grunt 等工具来实现。简明教程请参考：<a href="https://github.com/seajs/seajs/issues/538">构建工具</a>
+    </p>
+
+
+    <h3>结束语</h3>
+
+    <p>
+      怎么样，Sea.js 入门真的只需 5 分钟吧：）
+    </p>
+
+    <p>
+      使用 Sea.js，可以规范模块的书写格式、能自动处理模块的依赖，还非常有助于代码组织、开发调试和性能优化。Sea.js
+      期待能给你提供简单、极致的模块化开发体验。我相信，你会爱上她的。
+    </p>
+
+    <p>
+      若喜欢，可查看更多例子：<a href="http://seajs.github.com/examples" target="_blank">seajs/examples</a>
+      <br>
+      若已爱上，可以继续阅读：<a href="#docs">使用文档</a>
+    </p>
+
+    <p>
+      有任何疑问，欢迎交流：<a href="https://github.com/seajs/seajs/issues/271" target="_blank">社区</a>
+    </p>
+
+  </div>
+
+  <div class="page" id="page-docs">
+
+    <h2>使用文档</h2>
 
     <div class="words">
 
       <p>
-        这是 SeaJS 的官方文档，阅读过程中有任何疑虑，欢迎到 <a href="https://github.com/seajs/seajs/issues/271" target="_blank">社区</a> 交流。
+        这是 Sea.js 的官方文档。<br/>
+        基础文档推荐按顺序阅读，后续文档可根据兴趣选读。<br/>
+        阅读过程中有任何疑问，欢迎到 <a href="https://github.com/seajs/seajs/issues/271" target="_blank">社区</a> 交流。
       </p>
 
+      <h3>入门</h3>
+      <ul>
+        <li><a href="https://github.com/seajs/seajs/issues/547" target="_blank">前端模块化开发的价值</a></li>
+        <li><a href="#quick-start">5 分钟上手 Sea.js</a></li>
+        <li><a href="https://github.com/seajs/examples" target="_blank">官方示例</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/266" target="_blank">API 快速参考</a></li>
+      </ul>
 
-      <h3>For Users</h3>
+      <h3>基础</h3>
 
       <ul>
         <li><a href="https://github.com/seajs/seajs/issues/240" target="_blank">模块系统</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/242" target="_blank">CMD 模块定义规范</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/242" target="_blank">CMD 模块定义规范</a>
         <li><a href="https://github.com/seajs/seajs/issues/258" target="_blank">模块标识</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/259" target="_blank">require 书写约定</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/260" target="_blank">模块加载器</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/260" target="_blank">模块的加载启动</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/262" target="_blank">配置</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/265" target="_blank">常用插件</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/281" target="_blank">打包部署</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/266" target="_blank">快速参考</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/265" target="_blank">文本插件</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/579" target="_blank">shim 插件</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/538" target="_blank">构建工具</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/267" target="_blank">常见错误信息</a></li>
       </ul>
 
-
-      <h3>For Advanced Users</h3>
-
-      <ul>
-        <li><a href="https://github.com/seajs/seajs/issues/267" target="_blank">常见错误</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/263" target="_blank">SeaJS 的调试接口</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/274" target="_blank">modify 功能</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/275" target="_blank">与 Node 兼容</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/270" target="_blank">debug 调试插件</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/226" target="_blank">combo 请求合并插件</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/224" target="_blank">页面自动刷新 reload 插件</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/323" target="_blank">多语言支持 i18n 插件</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/286" target="_blank">直接调用 jQuery 插件等非标准模块的方法</a></li>
-      </ul>
-
-
-      <h3>For Plugin Developers</h3>
+      <h3>进阶</h3>
 
       <ul>
+        <li><a href="https://github.com/seajs/seajs/issues/263" target="_blank">Sea.js 的调试接口</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/270" target="_blank">调试插件</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/226" target="_blank">性能优化插件</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/595" target="_blank">style 插件</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/426" target="_blank">为什么要有约定和构建工具</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/276" target="_blank">如何参与开发</a></li>
         <li><a href="https://github.com/seajs/seajs/issues/264" target="_blank">插件开发指南</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/276" target="_blank">源码阅读指引</a></li>
       </ul>
 
-    </div>
+      <h3>探讨</h3>
+
+      <ul>
+        <li><a href="https://github.com/seajs/seajs/issues/588" target="_blank">前端模块化开发那点历史</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/269" target="_blank">从 CommonJS 到 Sea.js</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/275" target="_blank">与 Node.js 兼容</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/277" target="_blank">与 RequireJS 的异同</a></li>
+        <li><a href="https://github.com/dexteryy/OzJS/issues/10" target="_blank">与 OzJS 的探讨</a></li>
+      </ul>
+
   </div>
 
-  <div class="page" id="page-articles">
+  </div>
 
-    <h2>Articles</h2>
+  <div class="page" id="page-community">
+
+    <h2>社区</h2>
 
     <div class="words">
 
       <p>
-        下面这些文章是从社区中筛选出来的。注意由于 SeaJS 的版本更新，有些内容已不适合，请选择性阅读。欢迎分享或推荐好文章：<a href="https://github.com/seajs/seajs/issues/278" target="_blank">社区文章推荐</a>
+        Sea.js 崇尚开放、自由，非常欢迎大家的参与。<br>
+        你的加入，会让世界更美好。
       </p>
 
-      <p>
-        注意：打不开时，记得翻墙。
-      </p>
-
-
-      <h3>推荐阅读</h3>
-
       <ul>
-        <li><a href="http://cyj.me/why-seajs/zh/" target="_blank">Why SeaJS</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/04/05/seajs-080-released/" target="_blank">发布 SeaJS 0.8.0 – 海纳百川、有容乃大</a></li>
-        <li><a href="https://speakerdeck.com/u/lifesinger/p/seajs" target="_blank">SeaJS 从入门到精通</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/269" target="_blank">从 CommonJS 到 SeaJS</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/277" target="_blank">RequireJS 与 SeaJS 的异同</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/271" target="_blank">如何参与社区</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/545" target="_blank">如何向开源社区提问题</a></li>
+        <li><a href="https://github.com/seajs/seajs/issues/new" target="_blank">提交 Bug</a></li>
       </ul>
-
-
-      <h3>使用案例</h3>
-
-      <ul>
-        <li><a href="examples/" target="_blank">官方小例子</a></li>
-        <li><a href="http://faxianla.com/" target="_blank">发现啦</a></li>
-        <li><a href="http://pengyou.com/" target="_blank">朋友网</a></li>
-        <li><a href="http://m.taobao.com/" target="_blank">淘宝 Mobile</a></li>
-        <li><a href="http://howzhi.com/" target="_blank">好知</a></li>
-        <li><a href="http://clicki.cn/" target="_blank">Clicki</a></li>
-      </ul>
-
-      <p>
-        还有很多案例，比如支付宝、一淘等，但涉及登录等操作，并且比较复杂，就不放上面了。欢迎各位提交优秀案例：<a href="https://github.com/seajs/seajs/issues/272" target="_blank">SeaJS Users</a>
-      </p>
-
-
-      <h3>2012</h3>
-
-      <ul>
-        <li><a href="http://mrzhang.me/blog/hello-seajs.html" target="_blank">Hello, SeaJS!</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/308" target="_blank">实例解析 SeaJS 内部执行过程 - 从 use 说起</a></li>
-        <li><a href="https://github.com/seajs/seajs/issues/305" target="_blank">SeaJS v1.2 中文注释版</a></li>
-        <li><a href="http://www.zhangxinxu.com/wordpress/2012/07/seajs-node-nodejs-spm-npm/" target="_blank">高富帅 SeaJS 使用示例</a></li>
-        <li><a href="http://www.cnblogs.com/meteoric_cry/archive/2012/07/04/2576513.html" target="_blank">关于 SeaJS</a></li>
-        <li><a href="http://www.cnblogs.com/ljzforever/archive/2012/05/08/2490932.html" target="_blank">SeaJS 学习笔记</a></li>
-        <li><a href="http://www.cnblogs.com/snandy/archive/2012/03/30/2423612.html" target="_blank">JavaScript 模块化开发库之 SeaJS</a></li>
-        <li><a href="http://www.cnblogs.com/snandy/archive/2012/03/07/2378432.html" target="_blank">拥抱模块化的 JavaScript</a></li>
-      </ul>
-
-
-      <h3>2011</h3>
-
-      <ul>
-        <li><a href="http://www.slideshare.net/lifesinger/seajs-10500724" target="_blank">SeaJS – 前端模块化开发探索与网站性能优化实践</a></li>
-        <li><a href="http://www.css88.com/archives/4273" target="_blank">SeaJS 的模块定义、模块加载及模块依赖关系</a></li>
-        <li><a href="http://www.im-ux.com/archives/833" target="_blank">SeaJS 浅析</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/10/27/coffeescript-and-less-in-seajs/" target="_blank">用 SeaJS 玩转 CoffeeScript 和 LESS</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/08/19/jquery-introduction-and-plugins-modulization/" target="_blank">jQuery 模块介绍与 jQuery 插件的深度模块化</a></li>
-        <li><a href="http://www.nodejser.com/?p=146431" target="_blank">SeaJS – 全局 map，调试利器</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/08/01/best-practice-of-version-management/" target="_blank">SeaJS 里版本号和时间戳管理的最佳实践</a></li>
-        <li><a href="http://limu.iteye.com/blog/1136712" target="_blank">扩展 SeaJS 模块定义中的 module 参数的应用示例</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/07/24/online-local-debug/" target="_blank">在线本地调试大观</a></li>
-        <li><a href="http://www.slideshare.net/lifesinger/ss-8641944" target="_blank">开放式类库的构建</a></li>
-        <li><a href="http://www.cnblogs.com/leoo2sk/archive/2011/06/27/write-javascript-with-seajs.html" target="_blank">使用 SeaJS 实现模块化 JavaScript 开发</a></li>
-        <li><a href="http://clonn.blogspot.com/2011/05/seajs-nonblocking-require-library.html" target="_blank">SeaJS，模組化開發加載套件</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/05/26/exports-and-module-load-in-seajs/" target="_blank">SeaJS 中的 exports 和模块加载</a></li>
-        <li><a href="http://www.infoq.com/cn/news/2011/05/nodeparty-hangzhou" target="_blank">NodeParty 杭州站会议纪实：Jscex，SeaJS 与 MyFOX</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/05/18/jquery-plugins-modulization/" target="_blank">jQuery 插件的模块化</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/05/14/seajs-and-nodejs/" target="_blank">SeaJS – 跨环境模块化开发实践</a></li>
-        <li><a href="http://ghsky.com/2011/05/seajs-first-view.html" target="_blank">初识 SeaJS</a></li>
-        <li><a href="http://lifesinger.wordpress.com/2011/04/26/intro-to-seajs/" target="_blank">SeaJS – 不仅仅是模块加载器</a></li>
-      </ul>
-
 
     </div>
   </div>
 
   <div class="page" id="page-about">
 
-    <h2>About</h2>
+    <h2>关于</h2>
 
     <div class="words">
 
+      <img src="https://i.alipayobjects.com/e/201211/1dbVbRY0yK.jpg" width="300" height="300" style="float: right">
+
       <p>
-        SeaJS 是 2010 年由 <a href="https://github.com/lifesinger">lifesinger</a> 发起的开源项目，一直开发维护至今。
+        Sea.js 是一个开源项目，由腾讯、阿里等公司的程序员维护。
+      <br>
+        理念是：<strong>海纳百川、有容乃大</strong>。Sea.js 期望能成为海，开放而自由。
       </p>
 
       <p>
-        开源的目的是：
-      </p>
-
-      <ol>
-        <li>把好的东西分享出来</li>
-        <li>让好的东西变得更好</li>
-        <li>其他一切皆是浮云</li>
-      </ol>
-
-      <p>
-        开源需要疯狂而持久的坚持。特别感谢支付宝、一淘、淘宝等前端团队的同事与朋友们。这是我们共同努力的结果，这是团队的产出。
+        特别感谢家人、朋友们的支持。一路有伴，Sea.js 才越做越好。
       </p>
 
       <p>
-        感谢腾讯朋友网、百姓网、网易微博、发现啦、麦包包、Clicki、好知等等等等网站的使用。有了你们的信任与反馈，SeaJS 才能越做越好。
+        如果有梦，欢迎资助模块生态圈 <a href="https://spmjs.org/" target="_blank">spmjs.org</a>：<br>
+        <a href="https://me.alipay.com/lifesinger" target="_blank">
+          <img src="https://i.alipayobjects.com/e/201211/1dbRyKG5m0.png" width="150"
+               height="37" alt="通过支付宝捐赠">
+        </a>
       </p>
 
       <p>
-        必须感谢所有程序员的伴侣们。有了你们的理解，程序员的代码才漂亮。
-      </p>
-
-      <p>
-        最后，隆重感谢可爱的小雕。其实 SeaJS 是他写的，我只是代笔。<br>
-        <img src="assets/images/xiaodiao.jpg" width="368" height="490">
-      </p>
-
-      <p>
-        SeaJS 社区信息，请访问：<a href="https://github.com/seajs/seajs/issues/271" target="_blank">Community</a>
+        感恩、感谢。<br>
       </p>
 
     </div>
@@ -404,22 +377,51 @@ Opera 10+         ✔
 
   <div class="page" id="page-downloads">
 
-    <h2>Downloads</h2>
+    <h2>下载</h2>
 
     <div class="words">
 
+      <p>
+        所有版本的 zip 包请在这里下载：<a href="https://github.com/seajs/seajs/tags" target="_blank">seajs/tags</a>
+        <br>
+        解压后，目录说明如下：
+      </p>
+      <pre>
+dist      -- sea.js 等压缩好的文件，直接可用
+docs      -- 使用文档
+lib       -- 给 Node.js 用的版本
+src       -- 源码
+tests     -- 测试集
+tools     -- 压缩等工具，可查看 build.xml 得到源码合并顺序
+Makefile  -- 可执行构建、测试等命令</pre>
+
+
+      <h3>最新版本</h3>
+
       <p class="current">
-        <span class="date">2012-08-15</span>
-        <a href="https://github.com/downloads/seajs/seajs/seajs-1.2.1.zip">seajs-1.2.1.zip</a>
-        <a href="https://github.com/seajs/seajs/issues/324" target="_blank">发布说明</a>
+        <span class="date">2013-04-01</span>
+        <a href="https://github.com/seajs/seajs/issues/451" target="_blank">发布 Sea.js 2.0.0</a>
+        <a href="https://github.com/seajs/seajs/archive/2.0.0.zip">直接下载</a>
       </p>
 
 
-      <h3>历史版本</h3>
+      <h3>岁月如歌</h3>
 
       <ul>
         <li>
-          <span class="date">2011-07-12</span>
+          <span class="date">2012-11-27</span>
+          <a href="https://github.com/seajs/seajs/issues/435" target="_blank">1.3.1</a>
+        </li>
+        <li>
+          <span class="date">2012-11-13</span>
+          <a href="https://github.com/seajs/seajs/issues/225" target="_blank">1.3.0</a>
+        </li>
+        <li>
+          <span class="date">2012-08-15</span>
+          <a href="https://github.com/seajs/seajs/issues/324" target="_blank">1.2.1</a>
+        </li>
+        <li>
+          <span class="date">2012-07-12</span>
           <a href="https://github.com/seajs/seajs/issues/282" target="_blank">1.2.0</a>
         </li>
         <li>
@@ -469,7 +471,7 @@ Opera 10+         ✔
 
         <li>
           <span class="date">2010-12-29</span>
-          0.0.1
+          0.1.0
         </li>
 
       </ul>
@@ -481,14 +483,28 @@ Opera 10+         ✔
 
 <div id="footer">
   <div id="footer-inner">
-    <p class="copyright">© 2010 - 2012 seajs.org All Rights Reserved.</p>
+    <p class="copyright">© 2010 - 2022 seajs.org Coding with Pleasure</p>
   </div>
 </div>
 
-<div class="extra">
-  <a href="https://github.com/seajs/seajs"><img style="position: absolute; top: -1px; right: 0; border: 0" src="assets/images/forkme.png" width="149" height="149" alt="Fork me on GitHub"></a>
+<div id="extra">
+  <a href="https://github.com/seajs/seajs" target="_blank"><img style="position: absolute; top: -7px; right: 0; border: 0" src="https://i.alipayobjects.com/e/201211/1dbSqT9ykm.png" width="149" height="149" alt="Fork me on GitHub"></a>
 </div>
 
-<script src="../dist/sea.js" data-main="./assets/home.js?v20120712.js"></script>
+<script src="../dist/sea.js"
+        data-config="./assets/config.js?t=20130305"
+        data-main="./assets/main.js?t=20130305"></script>
+
+<script>
+  var _gaq = _gaq || []
+  _gaq.push(['_setAccount', 'UA-53409-11'])
+  _gaq.push(['_setDomainName', 'seajs.org'])
+  _gaq.push(['_trackPageview'])
+  ;(function(ga, s) {
+    ga.async = true
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'
+    s.parentNode.insertBefore(ga, s)
+  })(document.createElement('script'), document.getElementsByTagName('script')[0])
+</script>
 </body>
 </html>

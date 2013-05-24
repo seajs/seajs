@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="GBK">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
+<title>test</title>
+</head>
+<body>
+<p>
+  <a href="https://github.com/seajs/seajs/issues/218">#218</a>
+</p>
+
+<div id="out"></div>
+
+<script charset="utf-8" src="../../../../dist/sea.js"></script>
+<script charset="utf-8" src="../../../test.js"></script>
+
+<!-- cache it -->
+<script src="utf8.js" charset="utf-8"></script>
+<script src="utf8-module.js" charset="utf-8"></script>
+<!-- 注意：上面两个 script 如果不写 charset，则在 webkit 中会输出乱码。webkit 的超级缓存 bug -->
+
+<script src="utf8.js" charset="utf-8"></script>
+
+<script>
+  seajs.use('./main')
+</script>
+
+</body>
+</html>

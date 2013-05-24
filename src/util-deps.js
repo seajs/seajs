@@ -1,39 +1,21 @@
 /**
- * The parser for dependencies
+ * util-deps.js - The parser for dependencies
+ * ref: tests/research/parse-dependencies/test.html
  */
-;(function(util) {
 
-  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+var SLASH_RE = /\\\\/g
 
+function parseDependencies(code) {
+  var ret = []
 
-  util.parseDependencies = function(code) {
-    // Parse these `requires`:
-    //   var a = require('a');
-    //   someMethod(require('b'));
-    //   require('c');
-    //   ...
-    // Doesn't parse:
-    //   someInstance.require(...);
-    var ret = [], match
+  code.replace(SLASH_RE, "")
+      .replace(REQUIRE_RE, function(m, m1, m2) {
+        if (m2) {
+          ret.push(m2)
+        }
+      })
 
-    code = removeComments(code)
-    REQUIRE_RE.lastIndex = 0
-
-    while ((match = REQUIRE_RE.exec(code))) {
-      if (match[2]) {
-        ret.push(match[2])
-      }
-    }
-
-    return util.unique(ret)
-  }
-
-  // See: research/remove-comments-safely
-  function removeComments(code) {
-    return code
-        .replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '') // block comments
-        .replace(/^\s*\/\/.*$/mg, '') // line comments
-  }
-
-})(seajs._util)
+  return ret
+}
 

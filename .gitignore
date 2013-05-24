@@ -12,3 +12,6 @@ Thumbs.db
 .svn/
 *.swp
 .nojekyll
+.project
+.settings/
+node_modules/

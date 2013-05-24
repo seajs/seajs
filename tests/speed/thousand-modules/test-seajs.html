@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Speed Test</title>
+</head>
+<body>
+<div id="out"></div>
+
+<script src="../../../dist/sea-debug.js"></script>
+<script src="thousand-cmd.js"></script>
+
+<script>
+  var start = new Date().getTime()
+
+  seajs.use('module-999', function (mod) {
+    var end = new Date().getTime()
+
+    printResults(mod.value)
+    printResults('execution time: ' + (end - start) + 'ms')
+  })
+
+
+  function printResults(txt) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    document.getElementById('out').appendChild(d)
+  }
+
+</script>
+
+</body>
+</html>

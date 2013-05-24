@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Speed Test</title>
+</head>
+<body>
+<div id="out"></div>
+
+<script src="http://requirejs.org/docs/release/2.1.2/minified/require.js"></script>
+<!--<script src="https://raw.github.com/jrburke/almond/latest/almond.js"></script>-->
+
+<script src="thousand-amd.js"></script>
+
+<script>
+  var start = new Date().getTime()
+
+  require(['module-999'], function (mod) {
+    var end = new Date().getTime()
+
+    printResults(mod.value)
+    printResults('execution time: ' + (end - start) + 'ms')
+  })
+
+
+  function printResults(txt) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    document.getElementById('out').appendChild(d)
+  }
+
+</script>
+
+</body>
+</html>

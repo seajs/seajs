@@ -1,0 +1,3 @@
+
+jQuery.easing = { name: 'easing' }
+

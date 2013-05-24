@@ -1,30 +1,30 @@
 {
-  "name"          : "seajs",
-  "version"       : "1.2.1",
-  "description"   : "A Module Loader for the Web",
-  "homepage"      : "http://seajs.org/",
-  "keywords"      : ["loader", "module", "commonjs", "browser", "CMD"],
-  "author"        : "Frank Wang <lifesinger@gmail.com>",
-  "engines"       : {"node": ">= 0.6.0"},
-  "dependencies"  : [],
-  "repository"    : {
-                      "type": "git",
-                      "url" : "git://github.com/seajs/seajs.git"
-                    },
-  "main"          : "./lib/sea-node.js",
-  "preferGlobal"  : true,
-  "output"        : {
-                      "sea.js": [
-                        "sea.js",
-                        "util-lang.js",
-                        "util-log.js",
-                        "util-path.js",
-                        "util-fetch.js",
-                        "util-deps.js",
-                        "module.js",
-                        "config.js",
-                        "prepare.js",
-                        "bootstrap.js"
-                      ]
-                    }
+  "family": "seajs",
+  "name": "seajs",
+  "version": "2.1.0",
+  "description": "A Module Loader for the Web",
+  "homepage": "http://seajs.org/",
+  "keywords": ["module", "loader"],
+  "author": "Frank Wang <lifesinger@gmail.com>",
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "node-static": "~0.6.9",
+    "grunt-contrib-concat": "~0.2.0",
+    "gcc": "~0.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/seajs/seajs.git"
+  },
+  "main": "./lib/sea.js",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://seajs.org/LICENSE.md"
+    }
+  ]
 }
