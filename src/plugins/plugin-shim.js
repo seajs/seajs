@@ -22,9 +22,9 @@
 
   function onConfig(data) {
     if (!data) return
-    var alias = data.alias
+    var shim = data.shim
 
-    for (var id in alias) {
+    for (var id in shim) {
       (function(item) {
         if (typeof item === "string") return
 
@@ -39,7 +39,7 @@
                   typeof exports === "string" ? global[exports] :
                       exports
             })
-      })(alias[id])
+      })(shim[id])
     }
   }
 
