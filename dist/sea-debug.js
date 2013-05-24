@@ -57,11 +57,8 @@ var eventsCache = seajs.events = {}
 
 // Bind event
 seajs.on = function(event, callback) {
-  if (!callback) return seajs
-
   var list = eventsCache[event] || (eventsCache[event] = [])
   list.push(callback)
-
   return seajs
 }
 
