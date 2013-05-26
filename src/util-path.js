@@ -168,7 +168,7 @@ var loc = location
 var cwd = dirname(loc.href)
 var scripts = doc.getElementsByTagName("script")
 
-// Recommend to add `seajs-node` id for the `sea.js` script element
+// Recommend to add `seajsnode` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajsnode") ||
     scripts[scripts.length - 1]
 
