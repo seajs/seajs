@@ -8,7 +8,6 @@ var anonymousModuleData
 var fetchingList = {}
 var fetchedList = {}
 var callbackList = {}
-var waitingsList = {}
 
 // 1 - The module file is being fetched now
 // 2 - The module data has been saved to cachedModules
@@ -79,30 +78,12 @@ function load(uris, callback) {
     (function(uri) {
       var mod = cachedModules[uri]
 
-      if (mod.dependencies.length) {
-        loadWaitings(function() {
-          mod.status < STATUS_SAVED ? fetch(uri, done) : done()
-        })
-      }
-      else {
-        mod.status < STATUS_SAVED ?
-            fetch(uri, loadWaitings) : done()
-      }
+      mod.status < STATUS_SAVED ?
+          fetch(uri, loadDependencies) :
+          loadDependencies()
 
-      function loadWaitings(cb) {
-        cb || (cb = done)
-
-        var waitings = mod.dependencies.length ?
-            getUnloadedUris(mod.dependencies) : []
-
-        if (waitings.length === 0) {
-          cb()
-        }
-        // Load all unloaded dependencies
-        else {
-          waitingsList[uri] = waitings
-          load(waitings, cb)
-        }
+      function loadDependencies() {
+        load(mod.dependencies, done)
       }
 
       function done() {
@@ -114,7 +95,6 @@ function load(uris, callback) {
           callback()
         }
       }
-
     })(unloadedUris[i])
   }
 }
