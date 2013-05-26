@@ -151,10 +151,17 @@ function fetch(uri, callback) {
 }
 
 function define(id, deps, factory) {
+  var argsLen = arguments.length
+
   // define(factory)
-  if (arguments.length === 1) {
+  if (argsLen === 1) {
     factory = id
     id = undefined
+  }
+  // define(id, factory)
+  else if (argsLen === 2) {
+    factory = deps
+    deps = undefined
   }
 
   // Parse dependencies according to the module factory code
@@ -194,13 +201,9 @@ function save(uri, meta) {
   if (mod.status < STATUS_SAVED) {
     // Let the id of anonymous module equal to its uri
     mod.id = meta.id || uri
-
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-
-    if (mod.factory !== undefined) {
-      mod.status = STATUS_SAVED
-    }
+    mod.status = STATUS_SAVED
   }
 }
 
@@ -311,7 +314,9 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
+seajs.Module = Module
 Module.load = use
+
 seajs.resolve = id2Uri
 global.define = define
 

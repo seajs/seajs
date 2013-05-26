@@ -5,8 +5,10 @@
  */
 (function(seajs, global) {
 
+  var Module = seajs.Module
+
   // seajs.config({
-  // alias: {
+  // shim: {
   //   "jquery": {
   //     src: "lib/jquery.js",
   //     exports: "jQuery" or function
@@ -20,19 +22,24 @@
   seajs.on("config", onConfig)
   onConfig(seajs.config.data)
 
+
   function onConfig(data) {
     if (!data) return
     var shim = data.shim
 
     for (var id in shim) {
       (function(item) {
-        if (typeof item === "string") return
+        var src = item.src ? seajs.resolve(item.src) : ""
 
         // Set dependencies
-        item.src && item.deps && define(item.src, item.deps)
+        if (src && item.deps) {
+          var mod = new Module(src)
+          seajs.cache[src] = mod
+          mod.dependencies = item.deps
+        }
 
-        // Define the proxy cmd module
-        define(id, item.src ? [seajs.resolve(item.src)] : item.deps || [],
+        // Define the proxy module
+        define(id, src ? [src] : item.deps || [],
             function() {
               var exports = item.exports
               return typeof exports === "function" ? exports() :
