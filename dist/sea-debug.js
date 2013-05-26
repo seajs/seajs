@@ -204,7 +204,7 @@ function parseMap(uri) {
   var ret = uri
 
   if (map) {
-    for (var i = 0; i < map.length; i++) {
+    for (var i = 0, len = map.length; i < len; i++) {
       var rule = map[i]
 
       ret = isFunction(rule) ?
@@ -278,7 +278,7 @@ var loc = location
 var cwd = dirname(loc.href)
 var scripts = doc.getElementsByTagName("script")
 
-// Recommend to add `seajs-node` id for the `sea.js` script element
+// Recommend to add `seajsnode` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajsnode") ||
     scripts[scripts.length - 1]
 
@@ -507,7 +507,7 @@ function Module(uri) {
 function resolve(ids, refUri) {
   if (isArray(ids)) {
     var ret = []
-    for (var i = 0; i < ids.length; i++) {
+    for (var i = 0, len = ids.length; i < len; i++) {
       ret[i] = resolve(ids[i], refUri)
     }
     return ret
@@ -526,7 +526,7 @@ function use(uris, callback) {
   load(uris, function() {
     var exports = []
 
-    for (var i = 0; i < uris.length; i++) {
+    for (var i = 0, len = uris.length; i < len; i++) {
       exports[i] = getExports(cachedModules[uris[i]])
     }
 
@@ -759,7 +759,7 @@ function getModule(uri) {
 function getUnloadedUris(uris) {
   var ret = []
 
-  for (var i = 0; i < uris.length; i++) {
+  for (var i = 0, len = uris.length; i < len; i++) {
     var uri = uris[i]
     if (uri && getModule(uri).status < STATUS_LOADED) {
       ret.push(uri)
