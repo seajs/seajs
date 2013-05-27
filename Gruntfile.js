@@ -31,7 +31,6 @@ module.exports = function(grunt) {
 
           "src/module.js",
           "src/config.js",
-          "src/bootstrap.js",
 
           "src/outro.js"
         ],
