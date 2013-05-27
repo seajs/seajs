@@ -182,10 +182,13 @@ function getScriptAbsoluteSrc(node) {
       node.getAttribute("src", 4)
 }
 
-// Get/set current working directory
-seajs.cwd = function(val) {
-  return val ? (cwd = realpath(val + "/")) : cwd
+// Get/set the loader directory
+seajs.dir = function(val) {
+  return val ? (loaderDir = val) : loaderDir
 }
 
-seajs.dir = loaderDir
+// Get/set current working directory
+seajs.cwd = function(val) {
+  return val ? (cwd = val) : cwd
+}
 
