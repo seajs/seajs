@@ -26,6 +26,7 @@ function Module(uri) {
   this.dependencies = []
   this.exports = null
   this.status = 0
+  this.options = {}
 }
 
 function resolve(ids, refUri) {
@@ -44,7 +45,7 @@ function resolve(ids, refUri) {
   return data.uri || id2Uri(data.id, refUri)
 }
 
-function use(uris, callback) {
+function use(uris, callback, options) {
   isArray(uris) || (uris = [uris])
 
   load(uris, function() {
@@ -57,10 +58,10 @@ function use(uris, callback) {
     if (callback) {
       callback.apply(global, exports)
     }
-  })
+  }, options)
 }
 
-function load(uris, callback) {
+function load(uris, callback, options) {
   var unloadedUris = getUnloadedUris(uris)
 
   if (unloadedUris.length === 0) {
@@ -73,30 +74,40 @@ function load(uris, callback) {
 
   var len = unloadedUris.length
   var remain = len
+  var order = (options || {}).order
 
-  for (var i = 0; i < len; i++) {
-    (function(uri) {
-      var mod = cachedModules[uri]
+  _load(0)
 
-      mod.status < STATUS_SAVED ?
-          fetch(uri, loadDependencies) :
-          loadDependencies()
+  function _load(i) {
+    var mod = cachedModules[unloadedUris[i++]]
 
-      function loadDependencies() {
-        load(mod.dependencies, done)
-      }
+    mod.status < STATUS_SAVED ?
+        fetch(mod.uri, loadDeps) :
+        loadDeps()
 
-      function done() {
+    // Parallel loading
+    order || i < len && _load(i)
+
+    function loadDeps() {
+      load(mod.dependencies, function() {
+
+        // DO NOT change status when it is great than LOADED
         if (mod.status < STATUS_LOADED) {
           mod.status = STATUS_LOADED
         }
 
+        // Fire callback when all dependencies are loaded
         if (--remain === 0) {
           callback()
         }
-      }
-    })(unloadedUris[i])
+
+        // Serial loading
+        order && i < len && _load(i)
+
+      }, mod.options)
+    }
   }
+
 }
 
 function fetch(uri, callback) {
@@ -150,7 +161,7 @@ function fetch(uri, callback) {
   }
 }
 
-function define(id, deps, factory) {
+function define(id, deps, factory, options) {
   var argsLen = arguments.length
 
   // define(factory)
@@ -169,7 +180,13 @@ function define(id, deps, factory) {
     deps = parseDependencies(factory.toString())
   }
 
-  var data = { id: id, uri: resolve(id), deps: deps, factory: factory }
+  var data = {
+    id: id,
+    uri: resolve(id),
+    deps: deps,
+    factory: factory,
+    options: options
+  }
 
   // Try to derive uri in IE6-9 for anonymous modules
   if (!data.uri && doc.attachEvent) {
@@ -204,6 +221,7 @@ function save(uri, meta) {
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
     mod.status = STATUS_SAVED
+    mod.options = meta.options || {}
   }
 }
 
