@@ -70,7 +70,7 @@
   }
 
 
-  define(seajs.dir + "plugin-flush", [], {})
+  define(seajs.config.data.dir + "plugin-flush", [], {})
 
 })(seajs);
 

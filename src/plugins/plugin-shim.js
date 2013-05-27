@@ -29,29 +29,24 @@
 
     for (var id in shim) {
       (function(item) {
-        var src = item.src ? seajs.resolve(item.src) : ""
-
-        // Set dependencies
-        if (src && item.deps) {
-          var mod = new Module(src)
-          seajs.cache[src] = mod
-          mod.dependencies = item.deps
+        var deps = item.deps || []
+        if (item.src) {
+          deps.push(seajs.resolve(item.src))
         }
 
         // Define the proxy module
-        define(id, src ? [src] : item.deps || [],
-            function() {
-              var exports = item.exports
-              return typeof exports === "function" ? exports() :
-                  typeof exports === "string" ? global[exports] :
-                      exports
-            })
+        define(id, deps, function() {
+          var exports = item.exports
+          return typeof exports === "function" ? exports() :
+              typeof exports === "string" ? global[exports] : exports
+        }, { order: true })
+
       })(shim[id])
     }
   }
 
 
-  define(seajs.dir + "plugin-shim", [], {})
+  define(seajs.config.data.dir + "plugin-shim", [], {})
 
 })(seajs, typeof global === "undefined" ? this : global);
 

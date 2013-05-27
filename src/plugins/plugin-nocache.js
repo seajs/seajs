@@ -28,7 +28,7 @@
   })
 
 
-  define(seajs.dir + "plugin-nocache", [], {})
+  define(seajs.config.data.dir + "plugin-nocache", [], {})
 
 })(seajs);
 

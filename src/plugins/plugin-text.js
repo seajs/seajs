@@ -147,7 +147,7 @@
   }
 
 
-  define(seajs.dir + "plugin-text", [], {})
+  define(seajs.config.data.dir + "plugin-text", [], {})
 
 })(seajs, this);
 
