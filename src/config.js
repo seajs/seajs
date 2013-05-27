@@ -26,7 +26,23 @@ configData.cwd = cwd
 configData.charset = "utf-8"
 
 // Modules that are needed to load before all other modules
-configData.preload = []
+configData.preload = (function() {
+  var plugins = []
+
+  // Convert `seajs-xxx` to `seajs-xxx=1`
+  // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
+  var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
+
+  // Add cookie string
+  str += " " + doc.cookie
+
+  // Exclude seajs-xxx=0
+  str.replace(/seajs-(\w+)=1/g, function(m, name) {
+    plugins.push(name)
+  })
+
+  return plugin2preload(plugins)
+})()
 
 // configData.debug - Debug mode. The default value is false
 // configData.alias - An object containing shorthands of module id

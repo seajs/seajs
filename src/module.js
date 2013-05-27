@@ -297,9 +297,11 @@ function getUnloadedUris(uris) {
 
 function getExports(mod) {
   var exports = exec(mod)
+
   if (exports === null && (!mod || !IS_CSS_RE.test(mod.uri))) {
     emit("error", mod)
   }
+  
   return exports
 }
 
