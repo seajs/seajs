@@ -136,10 +136,11 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = dirname(refUri || cwd) + id
+    ret = (refUri ? dirname(refUri) : configData.cwd) + id
   }
   else if (isRoot(id)) {
-    ret = (cwd.match(ROOT_DIR_RE) || ["/"])[0] + id.substring(1)
+    var m = configData.cwd.match(ROOT_DIR_RE)
+    ret = m ? m[0] + id.substring(1) : id
   }
   // top-level id
   else {
@@ -180,15 +181,5 @@ function getScriptAbsoluteSrc(node) {
       node.src :
     // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
       node.getAttribute("src", 4)
-}
-
-// Get/set the loader directory
-seajs.dir = function(val) {
-  return val ? (loaderDir = val) : loaderDir
-}
-
-// Get/set current working directory
-seajs.cwd = function(val) {
-  return val ? (cwd = val) : cwd
 }
 
