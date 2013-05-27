@@ -1,5 +1,6 @@
 define([
   'backbone-shim',
+  'combo-long',
   'combo-map',
   'module-constructor',
   'mutable-shim',
