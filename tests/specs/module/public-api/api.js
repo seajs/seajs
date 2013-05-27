@@ -26,14 +26,15 @@ define(function(require, exports, mod) {
   assert(typeof(seajs.cache) === 'object', 'seajs.cache')
   assert(typeof(seajs.events) === 'object', 'seajs.events')
   assert(typeof(seajs.version) === 'string', seajs.version)
+  assert(isFunction(seajs.Module), 'seajs.Module')
   assert(isFunction(seajs.on), 'seajs.on')
   assert(isFunction(seajs.emit), 'seajs.emit')
   assert(isFunction(seajs.off), 'seajs.off')
   assert(isFunction(seajs.resolve), 'seajs.resolve')
   assert(isFunction(seajs.require), 'seajs.require')
-  assert(isFunction(seajs.cwd), 'seajs.cwd')
-  assert(typeof(seajs.dir) === 'string', 'seajs.dir')
-  assert(getOwnPropertyCount(seajs) === 13, getOwnPropertyCount(seajs))
+  //assert(isFunction(seajs.cwd), 'seajs.cwd')
+  //assert(isFunction(seajs.dir), 'seajs.dir')
+  assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
 
 
   // Module
@@ -67,11 +68,12 @@ define(function(require, exports, mod) {
   //assert(isArray(mod.waitings), 'module.waitings')
   assert(isFunction(mod.factory), 'module.factory')
   assert(typeof mod.exports === 'object', 'module.exports')
+  assert(typeof mod.options === 'object', 'module.options')
   //assert(mod.parent instanceof Module, 'module.parent')
   //assert(mod.parent.parent === undefined, 'module.parent.parent')
   assert(mod.status === 4, 'module.status')
   //assert(isFunction(mod.load), 'module.load')
-  assert(getOwnPropertyCount(mod) === 6, getOwnPropertyCount(mod))
+  assert(getOwnPropertyCount(mod) === 7, getOwnPropertyCount(mod))
 
 
   test.next()

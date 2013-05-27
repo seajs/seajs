@@ -144,9 +144,9 @@ define(function(require) {
   assert(id2Uri('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js') === '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', 'id2Uri')
 
   var _cwd = cwd
-  seajs.cwd('/User/lifesinger/path/to/root/')
+  seajs.config({ cwd: '/User/lifesinger/path/to/root/' })
   assert(id2Uri('/C/path/to/a') === '/C/path/to/a.js', 'id2Uri ' + id2Uri('/C/path/to/a'))
-  seajs.cwd(_cwd)
+  seajs.config({ cwd: _cwd })
 
 
   assert(isAbsolute('http://test.com/') === true, 'isAbsolute')

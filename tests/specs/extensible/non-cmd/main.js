@@ -1,25 +1,15 @@
 
 seajs.config({
-  base: './non-cmd/',
-
-  alias: {
-    'jquery-src': 'lib/jquery.js',
-    'jquery.easing-src': 'lib/jquery.easing.js'
-  }
+  base: './non-cmd/'
 })
 
-
-
-define('jquery.easing-src', ['jquery-src'])
-
-define('jquery.easing', ['jquery.easing-src'], function() {
-  return global.jQuery
-})
-
-define('jquery', ['jquery-src'], function() {
-  return global.jQuery
-})
-
+define('jquery.easing',
+    ['lib/jquery.js', 'lib/jquery.easing.js'],
+    function() {
+      return global.jQuery
+    },
+    { order: true }
+)
 
 seajs.use('init')
 
