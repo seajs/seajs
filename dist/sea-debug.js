@@ -13,6 +13,7 @@ var seajs = global.seajs = {
   version: "2.1.0"
 }
 
+var configData = {}
 
 /**
  * util-lang.js - The minimal language enhancement
@@ -246,10 +247,11 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = dirname(refUri || cwd) + id
+    ret = (refUri ? dirname(refUri) : configData.cwd) + id
   }
   else if (isRoot(id)) {
-    ret = (cwd.match(ROOT_DIR_RE) || ["/"])[0] + id.substring(1)
+    var m = configData.cwd.match(ROOT_DIR_RE)
+    ret = m ? m[0] + id.substring(1) : id
   }
   // top-level id
   else {
@@ -291,13 +293,6 @@ function getScriptAbsoluteSrc(node) {
     // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
       node.getAttribute("src", 4)
 }
-
-// Get/set current working directory
-seajs.cwd = function(val) {
-  return val ? (cwd = realpath(val + "/")) : cwd
-}
-
-seajs.dir = loaderDir
 
 
 /**
@@ -483,7 +478,6 @@ var anonymousModuleData
 var fetchingList = {}
 var fetchedList = {}
 var callbackList = {}
-var waitingsList = {}
 
 // 1 - The module file is being fetched now
 // 2 - The module data has been saved to cachedModules
@@ -502,6 +496,7 @@ function Module(uri) {
   this.dependencies = []
   this.exports = null
   this.status = 0
+  this.options = {}
 }
 
 function resolve(ids, refUri) {
@@ -520,7 +515,7 @@ function resolve(ids, refUri) {
   return data.uri || id2Uri(data.id, refUri)
 }
 
-function use(uris, callback) {
+function use(uris, callback, options) {
   isArray(uris) || (uris = [uris])
 
   load(uris, function() {
@@ -533,10 +528,10 @@ function use(uris, callback) {
     if (callback) {
       callback.apply(global, exports)
     }
-  })
+  }, options)
 }
 
-function load(uris, callback) {
+function load(uris, callback, options) {
   var unloadedUris = getUnloadedUris(uris)
 
   if (unloadedUris.length === 0) {
@@ -549,49 +544,40 @@ function load(uris, callback) {
 
   var len = unloadedUris.length
   var remain = len
+  var order = (options || {}).order
 
-  for (var i = 0; i < len; i++) {
-    (function(uri) {
-      var mod = cachedModules[uri]
+  _load(0)
 
-      if (mod.dependencies.length) {
-        loadWaitings(function() {
-          mod.status < STATUS_SAVED ? fetch(uri, done) : done()
-        })
-      }
-      else {
-        mod.status < STATUS_SAVED ?
-            fetch(uri, loadWaitings) : done()
-      }
+  function _load(i) {
+    var mod = cachedModules[unloadedUris[i++]]
 
-      function loadWaitings(cb) {
-        cb || (cb = done)
+    mod.status < STATUS_SAVED ?
+        fetch(mod.uri, loadDeps) :
+        loadDeps()
 
-        var waitings = mod.dependencies.length ?
-            getUnloadedUris(mod.dependencies) : []
+    // Parallel loading
+    order || i < len && _load(i)
 
-        if (waitings.length === 0) {
-          cb()
-        }
-        // Load all unloaded dependencies
-        else {
-          waitingsList[uri] = waitings
-          load(waitings, cb)
-        }
-      }
+    function loadDeps() {
+      load(mod.dependencies, function() {
 
-      function done() {
+        // DO NOT change status when it is great than LOADED
         if (mod.status < STATUS_LOADED) {
           mod.status = STATUS_LOADED
         }
 
+        // Fire callback when all dependencies are loaded
         if (--remain === 0) {
           callback()
         }
-      }
 
-    })(unloadedUris[i])
+        // Serial loading
+        order && i < len && _load(i)
+
+      }, mod.options)
+    }
   }
+
 }
 
 function fetch(uri, callback) {
@@ -645,11 +631,18 @@ function fetch(uri, callback) {
   }
 }
 
-function define(id, deps, factory) {
+function define(id, deps, factory, options) {
+  var argsLen = arguments.length
+
   // define(factory)
-  if (arguments.length === 1) {
+  if (argsLen === 1) {
     factory = id
     id = undefined
+  }
+  // define(id, factory)
+  else if (argsLen === 2) {
+    factory = deps
+    deps = undefined
   }
 
   // Parse dependencies according to the module factory code
@@ -657,7 +650,13 @@ function define(id, deps, factory) {
     deps = parseDependencies(factory.toString())
   }
 
-  var data = { id: id, uri: resolve(id), deps: deps, factory: factory }
+  var data = {
+    id: id,
+    uri: resolve(id),
+    deps: deps,
+    factory: factory,
+    options: options
+  }
 
   // Try to derive uri in IE6-9 for anonymous modules
   if (!data.uri && doc.attachEvent) {
@@ -689,13 +688,10 @@ function save(uri, meta) {
   if (mod.status < STATUS_SAVED) {
     // Let the id of anonymous module equal to its uri
     mod.id = meta.id || uri
-
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-
-    if (mod.factory !== undefined) {
-      mod.status = STATUS_SAVED
-    }
+    mod.status = STATUS_SAVED
+    mod.options = meta.options || {}
   }
 }
 
@@ -806,7 +802,9 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
+seajs.Module = Module
 Module.load = use
+
 seajs.resolve = id2Uri
 global.define = define
 
@@ -819,34 +817,39 @@ seajs.require = function(id) {
  * config.js - The configuration for the loader
  */
 
-var configData = config.data = {
-  // The root path to use for id2uri parsing
-  base: (function() {
-    var ret = loaderDir
+// The root path to use for id2uri parsing
+configData.base = (function() {
+  var ret = loaderDir
 
-    // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
-    // baseUri should be `http://test.com/libs/`
-    var m = ret.match(/^(.+?\/)(?:seajs\/)+(?:\d[^/]+\/)?$/)
-    if (m) {
-      ret = m[1]
-    }
+  // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
+  // baseUri should be `http://test.com/libs/`
+  var m = ret.match(/^(.+?\/)(?:seajs\/)+(?:\d[^/]+\/)?$/)
+  if (m) {
+    ret = m[1]
+  }
 
-    return ret
-  })(),
+  return ret
+})()
 
-  // The charset for requesting files
-  charset: "utf-8",
+// The loader directory
+configData.dir = loaderDir
 
-  // Modules that are needed to load before all other modules
-  preload: []
+// The current working directory
+configData.cwd = cwd
 
-  // debug - Debug mode. The default value is false
-  // alias - An object containing shorthands of module id
-  // paths - An object containing path shorthands in module id
-  // vars - The {xxx} variables in module id
-  // map - An array containing rules to map module uri
-  // plugins - An array containing needed plugins
-}
+// The charset for requesting files
+configData.charset = "utf-8"
+
+// Modules that are needed to load before all other modules
+configData.preload = []
+
+// configData.debug - Debug mode. The default value is false
+// configData.alias - An object containing shorthands of module id
+// configData.paths - An object containing path shorthands in module id
+// configData.vars - The {xxx} variables in module id
+// configData.map - An array containing rules to map module uri
+// configData.plugins - An array containing needed plugins
+
 
 function config(data) {
   for (var key in data) {
@@ -885,13 +888,14 @@ function config(data) {
   return seajs
 }
 
+config.data = configData
 seajs.config = config
 
 function plugin2preload(arr) {
   var ret = [], name
 
   while ((name = arr.shift())) {
-    ret.push(loaderDir + "plugin-" + name)
+    ret.push(configData.dir + "plugin-" + name)
   }
   return ret
 }
