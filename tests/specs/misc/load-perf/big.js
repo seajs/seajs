@@ -1,5 +1,5 @@
 
-define("big.js",[], {});
+define("big.js",[],{})
 
 
 /*
