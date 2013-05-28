@@ -572,7 +572,9 @@ function load(uris, callback, options) {
     order || next()
 
     function loadDeps() {
-      mod.status = STATUS_LOADING
+      if (mod.status < STATUS_LOADING) {
+        mod.status = STATUS_LOADING
+      }
 
       load(mod.dependencies, function() {
         // DO NOT change status when it is great than LOADED
