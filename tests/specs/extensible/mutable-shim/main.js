@@ -21,7 +21,7 @@ seajs.on("resolve", function(data) {
 
     shim[m[0]] = {
       src: 'angular/' + m[1] + '.js',
-      deps: ['jquery']
+      deps: ['lib/jquery.js']
     }
 
     seajs.config({ shim: shim })
