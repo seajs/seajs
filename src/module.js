@@ -76,10 +76,10 @@ function load(uris, callback, options) {
   emit("load", unloadedUris)
 
   // Handle LOADING modules
-  for (var j = unloadedUris.length - 1; j >= 0; j--) {
-    var mod = cachedModules[unloadedUris[j]]
+  for (var i = unloadedUris.length - 1; i >= 0; i--) {
+    var mod = cachedModules[unloadedUris[i]]
     if (mod.status === STATUS_LOADING) {
-      unloadedUris.splice(j, 1)
+      unloadedUris.splice(i, 1)
       mod.onload.push(done)
     }
   }
@@ -89,17 +89,17 @@ function load(uris, callback, options) {
   var order = (options || {}).order
 
   // Start loading
-  next(0)
+  next()
 
-  function _load(i) {
-    var mod = cachedModules[unloadedUris[i++]]
+  function _load(uri) {
+    var mod = cachedModules[uri]
 
     mod.status < STATUS_SAVED ?
-        fetch(mod.uri, loadDeps) :
+        fetch(uri, loadDeps) :
         loadDeps()
 
     // Parallel loading
-    order || next(i)
+    order || next()
 
     function loadDeps() {
       mod.status = STATUS_LOADING
@@ -116,23 +116,24 @@ function load(uris, callback, options) {
         while ((fn = fns.shift())) fn()
 
         // Check whether all unloadedUris are loaded
-        done(i)
+        done()
       }, mod.options)
     }
   }
 
-  function next(i) {
-    i < len && _load(i)
+  function next() {
+    var uri = unloadedUris.shift()
+    uri && _load(uri)
   }
 
-  function done(i) {
+  function done() {
     // Fire callback when all dependencies are loaded
     if (--remain === 0) {
       callback()
     }
-    else if (i) {
+    else {
       // Serial loading
-      order && next(i)
+      order && next()
     }
   }
 
