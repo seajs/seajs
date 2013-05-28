@@ -1,5 +1,5 @@
-/* ----- START OF "js/6v/lib/gallery/jquery/jquery.js" */
-define("js/6v/lib/gallery/jquery/jquery.js",[], function () {});
+
+define("big.js",[], {});
 
 
 /*

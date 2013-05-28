@@ -11,14 +11,16 @@ var callbackList = {}
 
 // 1 - The module file is being fetched now
 // 2 - The module data has been saved to cachedModules
-// 3 - The module and all its dependencies are ready to execute
-// 4 - The module is being executed
-// 5 - The module is executed and `module.exports` is available
+// 3 - The module dependencies are being loaded
+// 4 - The module and all its dependencies are ready to execute
+// 5 - The module is being executed
+// 6 - The module is executed and `module.exports` is available
 var STATUS_FETCHING = 1
 var STATUS_SAVED = 2
-var STATUS_LOADED = 3
-var STATUS_EXECUTING = 4
-var STATUS_EXECUTED = 5
+var STATUS_LOADING = 3
+var STATUS_LOADED = 4
+var STATUS_EXECUTING = 5
+var STATUS_EXECUTED = 6
 
 
 function Module(uri) {
@@ -27,6 +29,7 @@ function Module(uri) {
   this.exports = null
   this.status = 0
   this.options = {}
+  this.onload = []
 }
 
 function resolve(ids, refUri) {
@@ -72,11 +75,21 @@ function load(uris, callback, options) {
   // Emit `load` event for plugins such as plugin-combo
   emit("load", unloadedUris)
 
+  // Handle LOADING modules
+  for (var j = unloadedUris.length - 1; j >= 0; j--) {
+    var mod = cachedModules[unloadedUris[j]]
+    if (mod.status === STATUS_LOADING) {
+      unloadedUris.splice(j, 1)
+      mod.onload.push(done)
+    }
+  }
+
   var len = unloadedUris.length
   var remain = len
   var order = (options || {}).order
 
-  _load(0)
+  // Start loading
+  next(0)
 
   function _load(i) {
     var mod = cachedModules[unloadedUris[i++]]
@@ -86,25 +99,40 @@ function load(uris, callback, options) {
         loadDeps()
 
     // Parallel loading
-    order || i < len && _load(i)
+    order || next(i)
 
     function loadDeps() {
-      load(mod.dependencies, function() {
+      mod.status = STATUS_LOADING
 
+      load(mod.dependencies, function() {
         // DO NOT change status when it is great than LOADED
         if (mod.status < STATUS_LOADED) {
           mod.status = STATUS_LOADED
         }
 
-        // Fire callback when all dependencies are loaded
-        if (--remain === 0) {
-          callback()
-        }
+        // Fire onload
+        var fn, fns = mod.onload
+        mod.onload = []
+        while ((fn = fns.shift())) fn()
 
-        // Serial loading
-        order && i < len && _load(i)
-
+        // Check whether all unloadedUris are loaded
+        done(i)
       }, mod.options)
+    }
+  }
+
+  function next(i) {
+    i < len && _load(i)
+  }
+
+  function done(i) {
+    // Fire callback when all dependencies are loaded
+    if (--remain === 0) {
+      callback()
+    }
+    else if (i) {
+      // Serial loading
+      order && next(i)
     }
   }
 

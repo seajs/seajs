@@ -11,27 +11,26 @@
 <script>
 
   seajs.config({
-    base: './',
-    comboMaxLength: 999999999
+    base: './'
   })
 
   seajs.on('request', function(data) {
     var requestUri = data.requestUri
-    if (requestUri.indexOf('async.js') > 0) {
-      data.requestUri = 'js/6v/biz/rfqma/buyrequest/combo.js'
+    if (requestUri.indexOf('??') > 0) {
+      data.requestUri = seajs.config.data.base + 'combo.js'
     }
   })
 
   seajs.use('../../../test', function(test) {
     var start = new Date().getTime()
 
-    seajs.use([
-      'js/6v/biz/rfqma/buyrequest/form'
-    ], function() {
-      test.assert(true,
-          'execution time: ' + (new Date().getTime() - start) + 'ms')
+    seajs.use(['main'], function() {
+      var diff = new Date().getTime() - start
+      test.assert(true, 'execution time: ' + diff + 'ms')
+
       test.next()
     })
+
   })
 
 </script>
