@@ -1,1 +1,0 @@
-(function(c,e){function a(b){if(b){b=b.shim;for(var a in b)(function(b){var d=b.deps||[];b.src&&d.push(c.resolve(b.src));define(a,d,function(){var a=b.exports;return"function"===typeof a?a():"string"===typeof a?e[a]:a},{order:!0})})(b[a])}}c.on("config",a);a(c.config.data);define(c.config.data.dir+"plugin-shim",[],{})})(seajs,"undefined"===typeof global?this:global);

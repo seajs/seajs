@@ -69,12 +69,12 @@ define(function(require, exports, mod) {
   //assert(isArray(mod.waitings), 'module.waitings')
   assert(isFunction(mod.factory), 'module.factory')
   assert(typeof mod.exports === 'object', 'module.exports')
-  assert(typeof mod.options === 'object', 'module.options')
+  //assert(typeof mod.options === 'object', 'module.options')
   //assert(mod.parent instanceof Module, 'module.parent')
   //assert(mod.parent.parent === undefined, 'module.parent.parent')
   assert(mod.status === 5, 'module.status')
   //assert(isFunction(mod.load), 'module.load')
-  assert(getOwnPropertyCount(mod) === 8, getOwnPropertyCount(mod))
+  assert(getOwnPropertyCount(mod) === 7, getOwnPropertyCount(mod))
 
 
   test.next()
