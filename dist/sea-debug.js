@@ -545,9 +545,10 @@ function load(uris, callback) {
   emit("load", unloadedUris)
 
   var remain = unloadedUris.length
+  var i, len
 
   // Handle LOADING modules
-  for (var i = remain - 1; i >= 0; i--) {
+  for (i = remain - 1; i >= 0; i--) {
     var mod = cachedModules[unloadedUris[i]]
     if (mod.status === STATUS_LOADING) {
       unloadedUris.splice(i, 1)
@@ -555,8 +556,10 @@ function load(uris, callback) {
     }
   }
 
-  // Start loading
-  next()
+  // Start parallel loading
+  for (i = 0, len = unloadedUris.length; i < len; i++) {
+    _load(unloadedUris[i])
+  }
 
   function _load(uri) {
     var mod = cachedModules[uri]
@@ -564,9 +567,6 @@ function load(uris, callback) {
     mod.status < STATUS_SAVED ?
         fetch(uri, loadDeps) :
         loadDeps()
-
-    // Parallel loading
-    next()
 
     function loadDeps() {
       if (mod.status < STATUS_LOADING) {
@@ -588,11 +588,6 @@ function load(uris, callback) {
         done()
       })
     }
-  }
-
-  function next() {
-    var uri = unloadedUris.shift()
-    uri && _load(uri)
   }
 
   function done() {
