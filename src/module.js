@@ -11,16 +11,14 @@ var callbackList = {}
 
 // 1 - The module file is being fetched now
 // 2 - The module data has been saved to cachedModules
-// 3 - The module dependencies are being loaded
-// 4 - The module and all its dependencies are ready to execute
-// 5 - The module is being executed
-// 6 - The module is executed and `module.exports` is available
+// 3 - The module and all its dependencies are ready to execute
+// 4 - The module is being executed
+// 5 - The module is executed and `module.exports` is available
 var STATUS_FETCHING = 1
 var STATUS_SAVED = 2
-var STATUS_LOADING = 3
-var STATUS_LOADED = 4
-var STATUS_EXECUTING = 5
-var STATUS_EXECUTED = 6
+var STATUS_LOADED = 3
+var STATUS_EXECUTING = 4
+var STATUS_EXECUTED = 5
 
 
 function Module(uri) {
@@ -74,52 +72,36 @@ function load(uris, callback) {
   // Emit `load` event for plugins such as plugin-combo
   emit("load", unloadedUris)
 
-  var remain = unloadedUris.length
-  var i, len
-
-  // Handle LOADING modules
-  for (i = remain - 1; i >= 0; i--) {
-    var mod = cachedModules[unloadedUris[i]]
-    if (mod.status === STATUS_LOADING) {
-      unloadedUris.splice(i, 1)
-      mod.callbacks.push(done)
-    }
-  }
-
-  // Start parallel loading
-  for (i = 0, len = unloadedUris.length; i < len; i++) {
-    _load(unloadedUris[i])
+  // Register callbacks and start parallel loading
+  for (var i = 0, remain = unloadedUris.length; i < remain; i++) {
+    var uri = unloadedUris[i]
+    cachedModules[uri].callbacks.push(done)
+    _load(uri)
   }
 
   function _load(uri) {
     var mod = cachedModules[uri]
 
-    mod.status < STATUS_SAVED ?
-        fetch(uri, loadDeps) :
-        loadDeps()
+    if (mod.status < STATUS_FETCHING) {
+      fetch(uri, loadDeps)
+    }
+    else if (mod.status === STATUS_SAVED) {
+      setTimeout(loadDeps, 0)
+    }
 
     function loadDeps() {
-      if (mod.status < STATUS_LOADING) {
-        mod.status = STATUS_LOADING
-      }
-
       load(mod.dependencies, function() {
-        // DO NOT change status when it is great than LOADED
-        if (mod.status < STATUS_LOADED) {
-          mod.status = STATUS_LOADED
-        }
+        mod.status = STATUS_LOADED
 
-        // Fire onload callbacks
+        // Fire loaded callbacks
         var fn, fns = mod.callbacks
         mod.callbacks = []
         while ((fn = fns.shift())) fn()
-
-        // Check whether all unloadedUris are loaded
-        done()
       })
     }
   }
 
+  // Check whether all unloadedUris are loaded
   function done() {
     if (--remain === 0) {
       callback()
