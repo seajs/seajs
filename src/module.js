@@ -29,7 +29,7 @@ function Module(uri) {
   this.exports = null
   this.status = 0
   this.options = {}
-  this.onload = []
+  this.callbacks = []
 }
 
 function resolve(ids, refUri) {
@@ -80,7 +80,7 @@ function load(uris, callback, options) {
     var mod = cachedModules[unloadedUris[i]]
     if (mod.status === STATUS_LOADING) {
       unloadedUris.splice(i, 1)
-      mod.onload.push(done)
+      mod.callbacks.push(done)
     }
   }
 
@@ -112,9 +112,9 @@ function load(uris, callback, options) {
           mod.status = STATUS_LOADED
         }
 
-        // Fire onload
-        var fn, fns = mod.onload
-        mod.onload = []
+        // Fire onload callbacks
+        var fn, fns = mod.callbacks
+        mod.callbacks = []
         while ((fn = fns.shift())) fn()
 
         // Check whether all unloadedUris are loaded
