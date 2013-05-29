@@ -19,7 +19,7 @@ test_http:
 	@node tools/server.js tests/runner.html?console
 
 totoro:
-	@totoro-test --adapter=tests/totoro-adapter.js
+	@totoro --adapter=tests/totoro-adapter.js
 
 size:
 	@tools/size.sh
