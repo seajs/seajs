@@ -28,7 +28,6 @@ function Module(uri) {
   this.dependencies = []
   this.exports = null
   this.status = 0
-  this.options = {}
   this.callbacks = []
 }
 
@@ -48,7 +47,7 @@ function resolve(ids, refUri) {
   return data.uri || id2Uri(data.id, refUri)
 }
 
-function use(uris, callback, options) {
+function use(uris, callback) {
   isArray(uris) || (uris = [uris])
 
   load(uris, function() {
@@ -61,10 +60,10 @@ function use(uris, callback, options) {
     if (callback) {
       callback.apply(global, exports)
     }
-  }, options)
+  })
 }
 
-function load(uris, callback, options) {
+function load(uris, callback) {
   var unloadedUris = getUnloadedUris(uris)
 
   if (unloadedUris.length === 0) {
@@ -86,7 +85,6 @@ function load(uris, callback, options) {
 
   var len = unloadedUris.length
   var remain = len
-  var order = (options || {}).order
 
   // Start loading
   next()
@@ -99,7 +97,7 @@ function load(uris, callback, options) {
         loadDeps()
 
     // Parallel loading
-    order || next()
+    next()
 
     function loadDeps() {
       if (mod.status < STATUS_LOADING) {
@@ -119,7 +117,7 @@ function load(uris, callback, options) {
 
         // Check whether all unloadedUris are loaded
         done()
-      }, mod.options)
+      })
     }
   }
 
@@ -129,13 +127,8 @@ function load(uris, callback, options) {
   }
 
   function done() {
-    // Fire callback when all dependencies are loaded
     if (--remain === 0) {
       callback()
-    }
-    else {
-      // Serial loading
-      order && next()
     }
   }
 
@@ -192,7 +185,7 @@ function fetch(uri, callback) {
   }
 }
 
-function define(id, deps, factory, options) {
+function define(id, deps, factory) {
   var argsLen = arguments.length
 
   // define(factory)
@@ -215,8 +208,7 @@ function define(id, deps, factory, options) {
     id: id,
     uri: resolve(id),
     deps: deps,
-    factory: factory,
-    options: options
+    factory: factory
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
@@ -247,12 +239,10 @@ function save(uri, meta) {
 
   // Do NOT override already saved modules
   if (mod.status < STATUS_SAVED) {
-    // Let the id of anonymous module equal to its uri
     mod.id = meta.id || uri
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
     mod.status = STATUS_SAVED
-    mod.options = meta.options || {}
   }
 }
 
