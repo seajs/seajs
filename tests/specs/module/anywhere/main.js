@@ -22,7 +22,7 @@ define('biz/e', [], function(require, exports) {
   exports.name = 'e'
 });
 
-define('anywhere-main', null, function(require) {
+define('anywhere-main', function(require) {
   var test = require('../../test')
 
   var a = require('biz/a')
@@ -45,6 +45,7 @@ define('anywhere-main', null, function(require) {
 })
 
 seajs.use('./anywhere/biz', function() {
+  console.log(1)
   seajs.use('anywhere-main')
 });
 
