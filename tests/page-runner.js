@@ -148,7 +148,7 @@
         (currentPage - 1) + ' / ' + testSuites.length + ' { &nbsp;' +
             'Passed: <span class="pass">' + result.pass.count + '</span> ' +
             'Failed: <span class="fail">' + result.fail.count + '</span> ' +
-            'Errors: <span class="error">' + result.error.count + '</span>}' +
+            'Errors: <span class="error">' + result.error.count + '</span> }' +
             '&nbsp; ' +
             (page ?
                 'Running ' + page + ' ... ' :
