@@ -544,17 +544,16 @@ function load(uris, callback) {
   // Emit `load` event for plugins such as plugin-combo
   emit("load", unloadedUris)
 
+  var remain = unloadedUris.length
+
   // Handle LOADING modules
-  for (var i = unloadedUris.length - 1; i >= 0; i--) {
+  for (var i = remain - 1; i >= 0; i--) {
     var mod = cachedModules[unloadedUris[i]]
     if (mod.status === STATUS_LOADING) {
       unloadedUris.splice(i, 1)
       mod.callbacks.push(done)
     }
   }
-
-  var len = unloadedUris.length
-  var remain = len
 
   // Start loading
   next()
