@@ -65,7 +65,7 @@ define(function(require, exports, mod) {
   assert(mod instanceof Module, 'module')
   assert(typeof mod.id === 'string', 'module.id')
   assert(isArray(mod.dependencies), 'module.dependencies')
-  assert(isArray(mod.onload), 'module.onload')
+  assert(isArray(mod.callbacks), 'module.callbacks')
   //assert(isArray(mod.waitings), 'module.waitings')
   assert(isFunction(mod.factory), 'module.factory')
   assert(typeof mod.exports === 'object', 'module.exports')
