@@ -29,7 +29,7 @@
   seajs.use(['../../../test'], function(test) {
     g.push(3)
 
-    test.assert(g.join() === '2,1,3' || g.join() === '2,3', g.join())
+    test.assert(g.join() === '1,2,3', g.join())
     test.next()
   })
 

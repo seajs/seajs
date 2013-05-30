@@ -45,7 +45,6 @@ define('anywhere-main', function(require) {
 })
 
 seajs.use('./anywhere/biz', function() {
-  console.log(1)
   seajs.use('anywhere-main')
 });
 
