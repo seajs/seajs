@@ -542,22 +542,25 @@ function load(uris, callback) {
   // Emit `load` event for plugins such as plugin-combo
   emit("load", unloadedUris)
 
-  // Register callbacks and start parallel loading
-  for (var i = 0, remain = unloadedUris.length; i < remain; i++) {
-    var uri = unloadedUris[i]
-    cachedModules[uri].callbacks.push(done)
-    _load(uri)
+  var len = unloadedUris.length
+  var remain = len
+
+  // Register callbacks
+  for (var i = 0; i < len; i++) {
+    cachedModules[unloadedUris[i]].callbacks.push(done)
+  }
+
+  // Start parallel loading
+  for (i = 0; i < len; i++) {
+    _load(unloadedUris[i])
   }
 
   function _load(uri) {
     var mod = cachedModules[uri]
 
-    if (mod.status < STATUS_FETCHING) {
-      fetch(uri, loadDeps)
-    }
-    else if (mod.status === STATUS_SAVED) {
-      setTimeout(loadDeps, 0)
-    }
+    mod.status < STATUS_FETCHING ?
+        fetch(uri, loadDeps) :
+        mod.status === STATUS_SAVED && loadDeps()
 
     function loadDeps() {
       load(mod.dependencies, function() {
