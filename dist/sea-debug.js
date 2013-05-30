@@ -684,7 +684,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = getModule(uri)
+  var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
 
   // Do NOT override already saved modules
   if (mod.status < STATUS_SAVED) {
@@ -747,18 +747,16 @@ Module.prototype.destroy = function() {
 
 // Helpers
 
-function getModule(uri) {
-  return cachedModules[uri] ||
-      (cachedModules[uri] = new Module(uri))
-}
-
 function getUnloadedUris(uris) {
   var ret = []
 
   for (var i = 0, len = uris.length; i < len; i++) {
     var uri = uris[i]
-    if (uri && getModule(uri).status < STATUS_LOADED) {
-      ret.push(uri)
+    if (uri) {
+      var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
+      if (mod.status < STATUS_LOADED) {
+        ret.push(uri)
+      }
     }
   }
 
