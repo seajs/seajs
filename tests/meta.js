@@ -11,6 +11,7 @@ var testSuites = [
   'specs/extensible/plugin-flush',
   'specs/extensible/plugin-style',
 
+  'specs/misc/bootstrap',
   'specs/misc/callback-order',
   'specs/misc/ie-cache',
   'specs/misc/load-perf',
