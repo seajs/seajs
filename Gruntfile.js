@@ -44,7 +44,7 @@ module.exports = function(grunt) {
         dest: "dist/sea.js",
         options: grunt.util._.merge({
           banner: "/*! Sea.js <%= pkg.version %> | seajs.org/LICENSE.md\n" +
-              "//@ sourceMappingURL=sea.js.map\n*/",
+              "//# sourceMappingURL=sea.js.map\n*/",
           source_map_format: "V3",
           create_source_map: "dist/sea.js.map"
         }, GCC_OPTIONS)
