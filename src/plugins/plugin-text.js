@@ -135,7 +135,7 @@
   }
 
   // For node environment
-  if (typeof module !== "undefined" && typeof module !== "function" ) {
+  if (typeof process === "object") {
     xhr = function(filename, callback) {
       callback(require("fs").readFileSync(pure(filename), "utf8"))
     }
