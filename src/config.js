@@ -53,6 +53,9 @@ configData.preload = (function() {
 
 
 function config(data) {
+  // Clear id2Uri cache to avoid getting old uri when config is updated
+  id2UriCache = {}
+
   for (var key in data) {
     var curr = data[key]
 
