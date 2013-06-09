@@ -92,8 +92,9 @@ module.exports = function(grunt) {
 
     code = grunt.file.read(minfile)
     code = code.replace('function $', 'function _')
-    code = code.replace('$.data=', '_.data=')
-    code = code.replace('.config=$', '.config=_')
+    code = code.replace('$=', '_=')
+    code = code.replace('$.', '_.')
+    code = code.replace('=$', '=_')
     grunt.file.write(minfile, code)
     grunt.log.writeln('$ in "' + minfile + '" is fixed.')
   })
