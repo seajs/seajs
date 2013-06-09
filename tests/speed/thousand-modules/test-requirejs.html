@@ -10,17 +10,22 @@
 
 <script src="http://requirejs.org/docs/release/2.1.6/minified/require.js"></script>
 <!--<script src="https://raw.github.com/jrburke/almond/latest/almond.js"></script>-->
+<script src="../vendor/require.js"></script>
 
 <script src="thousand-amd.js"></script>
 
 <script>
+
+  var n = 999
+  printResults('n = ' + n)
+
   var start = new Date().getTime()
 
-  require(['module-999'], function (mod) {
+  require(['module-' + n], function (mod) {
     var end = new Date().getTime()
 
-    printResults(mod.value)
     printResults('execution time: ' + (end - start) + 'ms')
+    printResults(mod.value)
   })
 
 

@@ -239,6 +239,7 @@ function isRoot(id) {
 
 
 var ROOT_DIR_RE = /^.*?\/\/.*?\//
+var id2UriCache = {}
 
 function addBase(id, refUri) {
   var ret
@@ -264,14 +265,21 @@ function addBase(id, refUri) {
 function id2Uri(id, refUri) {
   if (!id) return ""
 
+  // Memoize id2Uri function to avoiding duplicated computations
+  var cacheKey = id + refUri
+  if (id2UriCache[cacheKey]) {
+    return id2UriCache[cacheKey]
+  }
+
   id = parseAlias(id)
   id = parsePaths(id)
   id = parseVars(id)
-  id = addBase(id, refUri)
-  id = normalize(id)
-  id = parseMap(id)
 
-  return id
+  var uri = addBase(id, refUri)
+  uri = normalize(uri)
+  uri = parseMap(uri)
+
+  return (id2UriCache[cacheKey] = uri)
 }
 
 
@@ -868,6 +876,9 @@ configData.preload = (function() {
 
 
 function config(data) {
+  // Clear id2Uri cache to avoid getting old uri when config is updated
+  id2UriCache = {}
+
   for (var key in data) {
     var curr = data[key]
 

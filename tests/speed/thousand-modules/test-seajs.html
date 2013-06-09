@@ -8,17 +8,21 @@
 <body>
 <div id="out"></div>
 
-<script src="../../../dist/sea.js"></script>
+<script src="../../../dist/sea-debug.js"></script>
 <script src="thousand-cmd.js"></script>
 
 <script>
+
+  var n = 999
+  printResults('n = ' + n)
+
   var start = new Date().getTime()
 
-  seajs.use('module-999', function (mod) {
+  seajs.use('module-' + n, function (mod) {
     var end = new Date().getTime()
 
-    printResults(mod.value)
     printResults('execution time: ' + (end - start) + 'ms')
+    printResults(mod.value)
   })
 
 

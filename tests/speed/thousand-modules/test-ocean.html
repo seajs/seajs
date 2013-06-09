@@ -8,19 +8,23 @@
 <body>
 <div id="out"></div>
 
-<script src="https://raw.github.com/nqdeng/ocean/master/build/ocean.js"></script>
-<!--<script src="/~lifesinger/third-party/ocean/build/ocean.js"></script>-->
+<!--<script src="https://raw.github.com/nqdeng/ocean/master/build/ocean.js"></script>-->
+<script src="../vendor/ocean.js"></script>
 
 <script src="thousand-cmd.js"></script>
 
 <script>
+
+  var n = 999
+  printResults('n = ' + n)
+
   var start = new Date().getTime()
 
-  seajs.use('module-999', function (mod) {
+  seajs.use('module-' + n, function (mod) {
     var end = new Date().getTime()
 
-    printResults(mod.value)
     printResults('execution time: ' + (end - start) + 'ms')
+    printResults(mod.value)
   })
 
 
