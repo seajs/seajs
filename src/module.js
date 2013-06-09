@@ -9,24 +9,28 @@ var fetchingList = {}
 var fetchedList = {}
 var callbackList = {}
 
-// 1 - The module file is being fetched now
-// 2 - The module data has been saved to cachedModules
-// 3 - The module and all its dependencies are ready to execute
-// 4 - The module is being executed
-// 5 - The module is executed and `module.exports` is available
-var STATUS_FETCHING = 1
-var STATUS_SAVED = 2
-var STATUS_LOADED = 3
-var STATUS_EXECUTING = 4
-var STATUS_EXECUTED = 5
+var STATUS = {
+  // 1 - The module file is being fetched now
+  FETCHING: 1,
+  // 2 - The module data has been saved to cachedModules
+  SAVED: 2,
+  // 3 - The module and all its dependencies are ready to execute
+  LOADED: 3,
+  // 4 - The module is being executed
+  EXECUTING: 4,
+  // 5 - The module is executed and `module.exports` is available
+  EXECUTED: 5
+}
 
-
-function Module(uri) {
-  this.uri = uri
-  this.dependencies = []
-  this.exports = null
-  this.status = 0
-  this.callbacks = []
+// NOTICE: `createModule(uri)` is faster than `new Module(uri)`
+function createModule(uri) {
+  return {
+    uri: uri,
+    dependencies: [],
+    exports: null,
+    status: 0,
+    callbacks: []
+  }
 }
 
 function resolve(ids, refUri) {
@@ -88,13 +92,13 @@ function load(uris, callback) {
   function _load(uri) {
     var mod = cachedModules[uri]
 
-    mod.status < STATUS_FETCHING ?
+    mod.status < STATUS.FETCHING ?
         fetch(uri, loadDeps) :
-        mod.status === STATUS_SAVED && loadDeps()
+        mod.status === STATUS.SAVED && loadDeps()
 
     function loadDeps() {
       load(mod.dependencies, function() {
-        mod.status = STATUS_LOADED
+        mod.status = STATUS.LOADED
 
         // Fire loaded callbacks
         var fn, fns = mod.callbacks
@@ -114,7 +118,7 @@ function load(uris, callback) {
 }
 
 function fetch(uri, callback) {
-  cachedModules[uri].status = STATUS_FETCHING
+  cachedModules[uri].status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
   var data = { uri: uri }
@@ -214,14 +218,14 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
+  var mod = cachedModules[uri] || (cachedModules[uri] = createModule(uri))
 
   // Do NOT override already saved modules
-  if (mod.status < STATUS_SAVED) {
+  if (mod.status < STATUS.SAVED) {
     mod.id = meta.id || uri
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-    mod.status = STATUS_SAVED
+    mod.status = STATUS.SAVED
   }
 }
 
@@ -234,11 +238,11 @@ function exec(mod) {
   // When module is executed, DO NOT execute it again. When module
   // is being executed, just return `module.exports` too, for avoiding
   // circularly calling
-  if (mod.status >= STATUS_EXECUTING) {
+  if (mod.status >= STATUS.EXECUTING) {
     return mod.exports
   }
 
-  mod.status = STATUS_EXECUTING
+  mod.status = STATUS.EXECUTING
 
 
   function resolveInThisContext(id) {
@@ -264,14 +268,9 @@ function exec(mod) {
       factory
 
   mod.exports = exports === undefined ? mod.exports : exports
-  mod.status = STATUS_EXECUTED
+  mod.status = STATUS.EXECUTED
 
   return mod.exports
-}
-
-Module.prototype.destroy = function() {
-  delete cachedModules[this.uri]
-  delete fetchedList[this.uri]
 }
 
 
@@ -283,8 +282,8 @@ function getUnloadedUris(uris) {
   for (var i = 0, len = uris.length; i < len; i++) {
     var uri = uris[i]
     if (uri) {
-      var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
-      if (mod.status < STATUS_LOADED) {
+      var mod = cachedModules[uri] || (cachedModules[uri] = createModule(uri))
+      if (mod.status < STATUS.LOADED) {
         ret.push(uri)
       }
     }
@@ -332,11 +331,18 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
-seajs.Module = Module
-Module.load = use
+global.define = define
+
+
+// For developers
+
+seajs.Module = {
+  STATUS: STATUS,
+  load: use,
+  fetchedList: fetchedList
+}
 
 seajs.resolve = id2Uri
-global.define = define
 
 seajs.require = function(id) {
   return (cachedModules[id2Uri(id)] || {}).exports

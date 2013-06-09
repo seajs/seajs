@@ -3,7 +3,7 @@
  */
 (function(seajs) {
 
-  var STATUS_FETCHING = 1
+  var FETCHING = seajs.Module.STATUS.FETCHING
 
   var comboHash = {}
   var cachedModules = seajs.cache
@@ -20,7 +20,7 @@
       var mod = cachedModules[uri]
 
       // Remove fetching and fetched uris, excluded uris, combo uris
-      if (mod.status < STATUS_FETCHING &&
+      if (mod.status < FETCHING &&
           (!comboExcludes || !comboExcludes.test(uri)) &&
           !isComboUri(uri)) {
         needComboUris.push(uri)
