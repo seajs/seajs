@@ -21,7 +21,7 @@ define(function(require) {
   test.assert(seajs.find('seajs-find/xx')[1].name === '2', 'seajs.find')
   test.assert(seajs.find('seajs-find/zz').length === 0, 'seajs.find')
 
-  console.log(require.resolve('./c'))
+  //console.log(require.resolve('./c'))
 
   require.async('./c', function(c) {
     test.assert(c.name === 'c', c.name)

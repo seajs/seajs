@@ -5,3 +5,4 @@ var define
 var module
 var require
 var global
+var process

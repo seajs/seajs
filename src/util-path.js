@@ -94,7 +94,7 @@ function parseMap(uri) {
   var ret = uri
 
   if (map) {
-    for (var i = 0; i < map.length; i++) {
+    for (var i = 0, len = map.length; i < len; i++) {
       var rule = map[i]
 
       ret = isFunction(rule) ?
@@ -128,6 +128,7 @@ function isRoot(id) {
 
 
 var ROOT_DIR_RE = /^.*?\/\/.*?\//
+var id2UriCache = {}
 
 function addBase(id, refUri) {
   var ret
@@ -136,10 +137,11 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = dirname(refUri || cwd) + id
+    ret = (refUri ? dirname(refUri) : configData.cwd) + id
   }
   else if (isRoot(id)) {
-    ret = (cwd.match(ROOT_DIR_RE) || ["/"])[0] + id.substring(1)
+    var m = configData.cwd.match(ROOT_DIR_RE)
+    ret = m ? m[0] + id.substring(1) : id
   }
   // top-level id
   else {
@@ -152,14 +154,21 @@ function addBase(id, refUri) {
 function id2Uri(id, refUri) {
   if (!id) return ""
 
+  // Memoize id2Uri function to avoiding duplicated computations
+  var cacheKey = id + refUri
+  if (id2UriCache[cacheKey]) {
+    return id2UriCache[cacheKey]
+  }
+
   id = parseAlias(id)
   id = parsePaths(id)
   id = parseVars(id)
-  id = addBase(id, refUri)
-  id = normalize(id)
-  id = parseMap(id)
 
-  return id
+  var uri = addBase(id, refUri)
+  uri = normalize(uri)
+  uri = parseMap(uri)
+
+  return (id2UriCache[cacheKey] = uri)
 }
 
 
@@ -168,12 +177,12 @@ var loc = location
 var cwd = dirname(loc.href)
 var scripts = doc.getElementsByTagName("script")
 
-// Recommend to add `seajs-node` id for the `sea.js` script element
+// Recommend to add `seajsnode` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajsnode") ||
     scripts[scripts.length - 1]
 
 // When `sea.js` is inline, set loaderDir to current working directory
-var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript)) || cwd
+var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
 
 function getScriptAbsoluteSrc(node) {
   return node.hasAttribute ? // non-IE6/7
@@ -181,11 +190,4 @@ function getScriptAbsoluteSrc(node) {
     // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
       node.getAttribute("src", 4)
 }
-
-// Get/set current working directory
-seajs.cwd = function(val) {
-  return val ? (cwd = realpath(val + "/")) : cwd
-}
-
-seajs.dir = loaderDir
 

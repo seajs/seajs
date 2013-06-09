@@ -3,6 +3,8 @@
  */
 (function(seajs, global, doc, loc) {
 
+  var MAX_TRY = 100
+  var pollCount = 0
   var config = getConfig()
 
   // Force debug to true when url contains `?seajs-debug`
@@ -152,8 +154,6 @@
         o.console + "; path=/; expires=" + date.toUTCString()
   }
 
-  var MAX_TRY = 100
-  var pollCount = 0
 
   function appendToBody(div) {
     pollCount++
@@ -185,7 +185,7 @@
   }
 
 
-  define(seajs.dir + "plugin-debug", [], {})
+  define(seajs.config.data.dir + "plugin-debug", [], {})
 
 })(seajs, this, document, location);
 

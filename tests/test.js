@@ -66,7 +66,7 @@ if (typeof document !== 'undefined') {
 
   var WARNING_TIME = isLocal() ? 50 : 5000
   var isNode = typeof process !== 'undefined'
-  var INITIAL_CWD = isNode && seajs.cwd()
+  var INITIAL_CWD = isNode && seajs.config.data.cwd
 
   var queue = []
   var time
@@ -150,8 +150,7 @@ if (typeof document !== 'undefined') {
     if (isNode) {
       var parts = id.split('/')
       process.chdir(INITIAL_CWD + 'tests/specs/' + parts[0])
-      seajs.cwd(normalize(process.cwd()))
-      //console.log('  cwd = ' + seajs.cwd())
+      seajs.config({ cwd: normalize(process.cwd()) + "/" })
       id = parts[1]
     }
 

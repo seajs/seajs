@@ -6,7 +6,7 @@ define([
   'anywhere',
   'cache',
   'chain',
-  'circular',
+  //'circular',
   'define',
   'dependencies',
   'destroy',

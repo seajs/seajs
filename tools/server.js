@@ -6,10 +6,9 @@ var spawn = require('child_process').spawn
 var Static = require('node-static')
 
 
-function createServer(dir, cmd) {
-  dir = dir || '.'
-
-  var file = new Static.Server(fs.realpathSync(dir))
+function createServer(filepath, port) {
+  port = parseInt(port || 9012)
+  var file = new Static.Server(fs.realpathSync('.'))
 
   var server = http.createServer(function(request, response) {
     request.addListener('end',function() {
@@ -17,30 +16,22 @@ function createServer(dir, cmd) {
     }).resume()
   })
 
-  server.listen(9012, function() {
-    if (cmd) {
-      var args = cmd.split(' ')
-      args = args.map(function(arg) {
-        return arg.trim()
-      })
-      args = args.filter(function(arg) {
-        return arg.length
-      })
-      var runner = spawn(args[0], args.slice(1))
-      runner.stdout.on('data', function(data) {
-        print(data.valueOf())
-      })
-      runner.on('exit', function(code) {
-        if (code === 127) {
-          print(cmd + ' not available')
-        }
-        server.close()
-        process.exit(code)
-      })
-    }
+  server.listen(port, function() {
+    var page = 'http://127.0.0.1:' + port + '/' + filepath
+    var runner = spawn('phantomjs', ['tools/phantom.js', page])
+
+    runner.stdout.on('data', function(data) {
+      print(data.valueOf())
+    })
+
+    runner.on('exit', function(code) {
+      if (code === 127) {
+        print('phantomjs not available')
+      }
+      server.close()
+      process.exit(code)
+    })
   })
 }
 
-var dir = process.argv[2] || '.'
-var cmd = process.argv.slice(3)
-createServer(dir, cmd.join(' '))
+createServer(process.argv[2], process.argv[3])

@@ -1,5 +1,5 @@
 define([
-  'circular',
+  //'circular',
   'inline',
   'math',
   'order-no-matter'

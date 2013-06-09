@@ -8,11 +8,10 @@
 <body>
 <div id="out"></div>
 
-<script src="http://requirejs.org/docs/release/2.1.6/minified/require.js"></script>
-<!--<script src="https://raw.github.com/jrburke/almond/latest/almond.js"></script>-->
-<script src="../vendor/require.js"></script>
+<!--<script src="https://raw.github.com/nqdeng/ocean/master/build/ocean.js"></script>-->
+<script src="../vendor/ocean.js"></script>
 
-<script src="thousand-amd.js"></script>
+<script src="thousand-cmd.js"></script>
 
 <script>
 
@@ -21,7 +20,7 @@
 
   var start = new Date().getTime()
 
-  require(['module-' + n], function (mod) {
+  seajs.use('module-' + n, function (mod) {
     var end = new Date().getTime()
 
     printResults('execution time: ' + (end - start) + 'ms')

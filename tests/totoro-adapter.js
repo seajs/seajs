@@ -130,6 +130,7 @@
 
     'end': function() {
       stats.duration = new Date().getTime() - start
+      stats.tests = stats.passes
       report({
         orderId: id,
         action: 'end',

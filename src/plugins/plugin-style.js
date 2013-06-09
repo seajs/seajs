@@ -40,7 +40,7 @@
   }
 
 
-  define(seajs.dir + "plugin-style", [], {})
+  define(seajs.config.data.dir + "plugin-style", [], {})
 
 })(seajs);
 

@@ -8,7 +8,6 @@ var anonymousModuleData
 var fetchingList = {}
 var fetchedList = {}
 var callbackList = {}
-var waitingsList = {}
 
 // 1 - The module file is being fetched now
 // 2 - The module data has been saved to cachedModules
@@ -27,12 +26,13 @@ function Module(uri) {
   this.dependencies = []
   this.exports = null
   this.status = 0
+  this.callbacks = []
 }
 
 function resolve(ids, refUri) {
   if (isArray(ids)) {
     var ret = []
-    for (var i = 0; i < ids.length; i++) {
+    for (var i = 0, len = ids.length; i < len; i++) {
       ret[i] = resolve(ids[i], refUri)
     }
     return ret
@@ -51,7 +51,7 @@ function use(uris, callback) {
   load(uris, function() {
     var exports = []
 
-    for (var i = 0; i < uris.length; i++) {
+    for (var i = 0, len = uris.length; i < len; i++) {
       exports[i] = getExports(cachedModules[uris[i]])
     }
 
@@ -75,55 +75,42 @@ function load(uris, callback) {
   var len = unloadedUris.length
   var remain = len
 
+  // Register callbacks
   for (var i = 0; i < len; i++) {
-    (function(uri) {
-      var mod = cachedModules[uri]
-
-      if (mod.dependencies.length) {
-        loadWaitings(function(circular) {
-          mod.status < STATUS_SAVED ? fetch(uri, cb) : cb()
-          function cb() {
-            done(circular)
-          }
-        })
-      }
-      else {
-        mod.status < STATUS_SAVED ?
-            fetch(uri, loadWaitings) : done()
-      }
-
-      function loadWaitings(cb) {
-        cb || (cb = done)
-
-        var waitings = getUnloadedUris(mod.dependencies)
-        if (waitings.length === 0) {
-          cb()
-        }
-        // Break circular waiting callbacks
-        else if (isCircularWaiting(mod)) {
-          printCircularLog(circularStack)
-          circularStack.length = 0
-          cb(true)
-        }
-        // Load all unloaded dependencies
-        else {
-          waitingsList[uri] = waitings
-          load(waitings, cb)
-        }
-      }
-
-      function done(circular) {
-        if (!circular && mod.status < STATUS_LOADED) {
-          mod.status = STATUS_LOADED
-        }
-
-        if (--remain === 0) {
-          callback()
-        }
-      }
-
-    })(unloadedUris[i])
+    cachedModules[unloadedUris[i]].callbacks.push(done)
   }
+
+  // Start parallel loading
+  for (i = 0; i < len; i++) {
+    _load(unloadedUris[i])
+  }
+
+  function _load(uri) {
+    var mod = cachedModules[uri]
+
+    mod.status < STATUS_FETCHING ?
+        fetch(uri, loadDeps) :
+        mod.status === STATUS_SAVED && loadDeps()
+
+    function loadDeps() {
+      load(mod.dependencies, function() {
+        mod.status = STATUS_LOADED
+
+        // Fire loaded callbacks
+        var fn, fns = mod.callbacks
+        mod.callbacks = []
+        while ((fn = fns.shift())) fn()
+      })
+    }
+  }
+
+  // Check whether all unloadedUris are loaded
+  function done() {
+    if (--remain === 0) {
+      callback()
+    }
+  }
+
 }
 
 function fetch(uri, callback) {
@@ -178,10 +165,17 @@ function fetch(uri, callback) {
 }
 
 function define(id, deps, factory) {
+  var argsLen = arguments.length
+
   // define(factory)
-  if (arguments.length === 1) {
+  if (argsLen === 1) {
     factory = id
     id = undefined
+  }
+  // define(id, factory)
+  else if (argsLen === 2) {
+    factory = deps
+    deps = undefined
   }
 
   // Parse dependencies according to the module factory code
@@ -189,7 +183,12 @@ function define(id, deps, factory) {
     deps = parseDependencies(factory.toString())
   }
 
-  var data = { id: id, uri: resolve(id), deps: deps, factory: factory }
+  var data = {
+    id: id,
+    uri: resolve(id),
+    deps: deps,
+    factory: factory
+  }
 
   // Try to derive uri in IE6-9 for anonymous modules
   if (!data.uri && doc.attachEvent) {
@@ -215,19 +214,14 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = getModule(uri)
+  var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
 
   // Do NOT override already saved modules
   if (mod.status < STATUS_SAVED) {
-    // Let the id of anonymous module equal to its uri
     mod.id = meta.id || uri
-
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-
-    if (mod.factory !== undefined) {
-      mod.status = STATUS_SAVED
-    }
+    mod.status = STATUS_SAVED
   }
 }
 
@@ -283,18 +277,16 @@ Module.prototype.destroy = function() {
 
 // Helpers
 
-function getModule(uri) {
-  return cachedModules[uri] ||
-      (cachedModules[uri] = new Module(uri))
-}
-
 function getUnloadedUris(uris) {
   var ret = []
 
-  for (var i = 0; i < uris.length; i++) {
+  for (var i = 0, len = uris.length; i < len; i++) {
     var uri = uris[i]
-    if (uri && getModule(uri).status < STATUS_LOADED) {
-      ret.push(uri)
+    if (uri) {
+      var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
+      if (mod.status < STATUS_LOADED) {
+        ret.push(uri)
+      }
     }
   }
 
@@ -303,61 +295,12 @@ function getUnloadedUris(uris) {
 
 function getExports(mod) {
   var exports = exec(mod)
+
   if (exports === null && (!mod || !IS_CSS_RE.test(mod.uri))) {
     emit("error", mod)
   }
+  
   return exports
-}
-
-var circularStack = []
-
-function isCircularWaiting(mod) {
-  var waitings = waitingsList[mod.uri] || []
-  if (waitings.length === 0) {
-    return false
-  }
-
-  circularStack.push(mod.uri)
-  if (isOverlap(waitings, circularStack)) {
-    cutWaitings(waitings)
-    return true
-  }
-
-  for (var i = 0; i < waitings.length; i++) {
-    if (isCircularWaiting(cachedModules[waitings[i]])) {
-      return true
-    }
-  }
-
-  circularStack.pop()
-  return false
-}
-
-function isOverlap(arrA, arrB) {
-  for (var i = 0; i < arrA.length; i++) {
-    for (var j = 0; j < arrB.length; j++) {
-      if (arrB[j] === arrA[i]) {
-        return true
-      }
-    }
-  }
-  return false
-}
-
-function cutWaitings(waitings) {
-  var uri = circularStack[0]
-
-  for (var i = waitings.length - 1; i >= 0; i--) {
-    if (waitings[i] === uri) {
-      waitings.splice(i, 1)
-      break
-    }
-  }
-}
-
-function printCircularLog(stack) {
-  stack.push(stack[0])
-  log("Circular dependencies: " + stack.join(" -> "))
 }
 
 function preload(callback) {
@@ -389,7 +332,9 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
+seajs.Module = Module
 Module.load = use
+
 seajs.resolve = id2Uri
 global.define = define
 

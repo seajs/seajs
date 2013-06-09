@@ -31,7 +31,6 @@ module.exports = function(grunt) {
 
           "src/module.js",
           "src/config.js",
-          "src/bootstrap.js",
 
           "src/outro.js"
         ],
@@ -45,7 +44,7 @@ module.exports = function(grunt) {
         dest: "dist/sea.js",
         options: grunt.util._.merge({
           banner: "/*! Sea.js <%= pkg.version %> | seajs.org/LICENSE.md\n" +
-              "//@ sourceMappingURL=sea.js.map\n*/",
+              "//# sourceMappingURL=sea.js.map\n*/",
           source_map_format: "V3",
           create_source_map: "dist/sea.js.map"
         }, GCC_OPTIONS)
@@ -86,6 +85,17 @@ module.exports = function(grunt) {
     code = code.replace("dist/sea-debug.js", "sea-debug.js")
     grunt.file.write(mapfile, code)
     grunt.log.writeln('"' + mapfile + '" is fixed.')
+
+    // No `$` variable in compressed code to avoiding conflicting
+    // when inline in velocity template.
+    var minfile = "dist/sea.js"
+
+    code = grunt.file.read(minfile)
+    code = code.replace('function $', 'function _')
+    code = code.replace('$.data=', '_.data=')
+    code = code.replace('.config=$', '.config=_')
+    grunt.file.write(minfile, code)
+    grunt.log.writeln('$ in "' + minfile + '" is fixed.')
   })
 
 

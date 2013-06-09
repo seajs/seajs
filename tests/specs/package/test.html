@@ -9,9 +9,15 @@
 <body>
 <div id="out"></div>
 <script>
+
+  seajs.config({
+    debug: true
+  })
+
   seajs.use(['../../test', './meta'], function(test, data) {
     test.run(data)
   })
+
 </script>
 </body>
 </html>

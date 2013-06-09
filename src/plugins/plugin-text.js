@@ -135,7 +135,7 @@
   }
 
   // For node environment
-  if (typeof module !== "undefined") {
+  if (typeof process === "object") {
     xhr = function(filename, callback) {
       callback(require("fs").readFileSync(pure(filename), "utf8"))
     }
@@ -147,7 +147,7 @@
   }
 
 
-  define(seajs.dir + "plugin-text", [], {})
+  define(seajs.config.data.dir + "plugin-text", [], {})
 
 })(seajs, this);
 

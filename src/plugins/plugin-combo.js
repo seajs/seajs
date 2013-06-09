@@ -276,7 +276,7 @@
   }
 
 
-  define(seajs.dir + "plugin-combo", [], {})
+  define(seajs.config.data.dir + "plugin-combo", [], {})
 
 })(seajs);
 
