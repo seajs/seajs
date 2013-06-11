@@ -8,9 +8,6 @@ var DOT_RE = /\/\.\//g
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
 
-var URI_END_RE = /\?|\.(?:css|js)$|\/$/
-var HASH_END_RE = /#$/
-
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
 // ref: http://jsperf.com/regex-vs-split/2
@@ -28,14 +25,32 @@ function realpath(path) {
   // "http://a//b/c"   ==> "http://a/b/c"
   // "https://a//b/c"  ==> "https://a/b/c"
   // "/a/b//"          ==> "/a/b/"
-  path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+  if (path.indexOf("//") > 7) { // for performance
+    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+  }
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  while (path.match(DOUBLE_DOT_RE)) {
-    path = path.replace(DOUBLE_DOT_RE, "/")
+  if (path.indexOf('../') > 0) { // for performance
+    while (path.match(DOUBLE_DOT_RE)) {
+      path = path.replace(DOUBLE_DOT_RE, "/")
+    }
   }
 
   return path
+}
+
+// Get file extension
+// ext("path/to/?xxx")  ==> undefined
+// ext("path/to/dir/")  ==> undefined
+// ext("path/to/a.js")  ==> "js"
+// NOTICE: This function is faster than RegExp /\?|\.(?:css|js)$|\/$/
+function extname(path) {
+  var pos = path.lastIndexOf(".")
+  if (pos > 0 &&
+      path.indexOf("?") === -1 &&
+      path.charAt(path.length - 1) !== "/") {
+    return path.substring(pos + 1).toLowerCase()
+  }
 }
 
 // Normalize an uri
@@ -46,11 +61,15 @@ function normalize(uri) {
   uri = realpath(uri)
 
   // Add the default `.js` extension except that the uri ends with `#`
-  if (HASH_END_RE.test(uri)) {
+  var last = uri.charAt(uri.length - 1)
+  if (last === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri)) {
-    uri += ".js"
+  else {
+    var ext = extname(uri)
+    if (ext !== "js" && ext !== "css") {
+      uri += ".js"
+    }
   }
 
   // issue #256: fix `:80` bug in IE
@@ -110,20 +129,16 @@ function parseMap(uri) {
 }
 
 
-var ABSOLUTE_RE = /^\/\/.|:\//
-var RELATIVE_RE = /^\./
-var ROOT_RE = /^\//
-
 function isAbsolute(id) {
-  return ABSOLUTE_RE.test(id)
+  return id.indexOf(":/") > 0 || id.indexOf("//") === 0
 }
 
 function isRelative(id) {
-  return RELATIVE_RE.test(id)
+  return id.charAt(0) === "."
 }
 
 function isRoot(id) {
-  return ROOT_RE.test(id)
+  return id.charAt(0) === "/"
 }
 
 
