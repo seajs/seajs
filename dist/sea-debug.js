@@ -13,7 +13,7 @@ var seajs = global.seajs = {
   version: "2.1.0"
 }
 
-var data = {}
+var data = seajs.data = {}
 
 /**
  * util-lang.js - The minimal language enhancement
@@ -92,7 +92,7 @@ seajs.off = function(event, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-var emit = seajs.emit = function(event, args) {
+var emit = seajs.emit = function(event, data) {
   var list = eventsCache[event], fn
 
   if (list) {
@@ -101,7 +101,7 @@ var emit = seajs.emit = function(event, args) {
 
     // Execute event callbacks
     while ((fn = list.shift())) {
-      fn(args)
+      fn(data)
     }
   }
 
@@ -596,9 +596,9 @@ function fetch(uri, callback) {
   cachedModules[uri].status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
-  var args = { uri: uri }
-  emit("fetch", args)
-  var requestUri = args.requestUri || uri
+  var emitData = { uri: uri }
+  emit("fetch", emitData)
+  var requestUri = emitData.requestUri || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -614,15 +614,15 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Emit `request` event for plugins such as plugin-text
-  emit("request", args = {
+  emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
     callback: onRequested,
     charset: data.charset
   })
 
-  if (!args.requested) {
-    request(args.requestUri, onRequested, args.charset)
+  if (!emitData.requested) {
+    request(emitData.requestUri, onRequested, emitData.charset)
   }
 
   function onRequested() {
@@ -813,7 +813,6 @@ seajs.Module = Module
 Module.STATUS = STATUS
 Module.load = use
 
-seajs.data = data
 data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri
