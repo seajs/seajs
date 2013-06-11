@@ -22,15 +22,12 @@ var STATUS = {
   EXECUTED: 5
 }
 
-// NOTICE: `createModule(uri)` is faster than `new Module(uri)`
-function createModule(uri) {
-  return {
-    uri: uri,
-    dependencies: [],
-    exports: null,
-    status: 0,
-    callbacks: []
-  }
+function Module(uri) {
+  this.uri = uri
+  this.dependencies = []
+  this.exports = null
+  this.status = 0
+  this.callbacks = []
 }
 
 function resolve(ids, refUri) {
@@ -121,9 +118,9 @@ function fetch(uri, callback) {
   cachedModules[uri].status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
-  var data = { uri: uri }
-  emit("fetch", data)
-  var requestUri = data.requestUri || uri
+  var args = { uri: uri }
+  emit("fetch", args)
+  var requestUri = args.requestUri || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -139,16 +136,15 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Emit `request` event for plugins such as plugin-text
-  var charset = configData.charset
-  emit("request", data = {
+  emit("request", args = {
     uri: uri,
     requestUri: requestUri,
     callback: onRequested,
-    charset: charset
+    charset: data.charset
   })
 
-  if (!data.requested) {
-    request(data.requestUri, onRequested, charset)
+  if (!args.requested) {
+    request(args.requestUri, onRequested, args.charset)
   }
 
   function onRequested() {
@@ -218,7 +214,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = cachedModules[uri] || (cachedModules[uri] = createModule(uri))
+  var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -282,7 +278,7 @@ function getUnloadedUris(uris) {
   for (var i = 0, len = uris.length; i < len; i++) {
     var uri = uris[i]
     if (uri) {
-      var mod = cachedModules[uri] || (cachedModules[uri] = createModule(uri))
+      var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
       if (mod.status < STATUS.LOADED) {
         ret.push(uri)
       }
@@ -303,7 +299,7 @@ function getExports(mod) {
 }
 
 function preload(callback) {
-  var preloadMods = configData.preload
+  var preloadMods = data.preload
   var len = preloadMods.length
 
   if (len) {
@@ -335,12 +331,12 @@ global.define = define
 
 
 // For developers
+seajs.Module = Module
+Module.STATUS = STATUS
+Module.load = use
 
-seajs.Module = {
-  STATUS: STATUS,
-  load: use,
-  fetchedList: fetchedList
-}
+seajs.data = data
+data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri
 

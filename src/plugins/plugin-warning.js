@@ -47,7 +47,7 @@
       }
 
 
-  define(seajs.config.data.dir + "plugin-warning", [], {})
+  define(seajs.data.dir + "plugin-warning", [], {})
 
 })(seajs);
 

@@ -9,7 +9,7 @@ var log = seajs.log = function(msg, type) {
 
   global.console &&
       // Do NOT print `log(msg)` in non-debug mode
-      (type || configData.debug) &&
+      (type || data.debug) &&
       // Set the default value of type
       (console[type || (type = "log")]) &&
       // Call native method of console

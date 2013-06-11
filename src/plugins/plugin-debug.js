@@ -185,7 +185,7 @@
   }
 
 
-  define(seajs.config.data.dir + "plugin-debug", [], {})
+  define(seajs.data.dir + "plugin-debug", [], {})
 
 })(seajs, this, document, location);
 

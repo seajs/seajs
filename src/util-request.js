@@ -74,7 +74,7 @@ function addOnload(node, callback, isCSS) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!isCSS && !configData.debug) {
+      if (!isCSS && !data.debug) {
         head.removeChild(node)
       }
 

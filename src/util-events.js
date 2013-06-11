@@ -2,7 +2,7 @@
  * util-events.js - The minimal events support
  */
 
-var eventsCache = seajs.events = {}
+var eventsCache = data.events = {}
 
 // Bind event
 seajs.on = function(event, callback) {
@@ -17,7 +17,7 @@ seajs.on = function(event, callback) {
 seajs.off = function(event, callback) {
   // Remove *all* events
   if (!(event || callback)) {
-    seajs.events = eventsCache = {}
+    data.events = eventsCache = {}
     return seajs
   }
 
@@ -40,7 +40,7 @@ seajs.off = function(event, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-var emit = seajs.emit = function(event, data) {
+var emit = seajs.emit = function(event, args) {
   var list = eventsCache[event], fn
 
   if (list) {
@@ -49,7 +49,7 @@ var emit = seajs.emit = function(event, data) {
 
     // Execute event callbacks
     while ((fn = list.shift())) {
-      fn(data)
+      fn(args)
     }
   }
 

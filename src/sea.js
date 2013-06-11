@@ -3,4 +3,4 @@ var seajs = global.seajs = {
   version: "@VERSION"
 }
 
-var configData = {}
+var data = {}

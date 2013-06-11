@@ -7,14 +7,14 @@
 
   var comboHash = {}
   var cachedModules = seajs.cache
-  var configData = seajs.config.data
+  var data = seajs.data
 
   seajs.on("load", setComboHash)
   seajs.on("fetch", setRequestUri)
 
   function setComboHash(uris) {
     var needComboUris = []
-    var comboExcludes = configData.comboExcludes
+    var comboExcludes = data.comboExcludes
 
     forEach(uris, function(uri) {
       var mod = cachedModules[uri]
@@ -207,8 +207,8 @@
   }
 
   function setHash(root, files) {
-    var comboSyntax = configData.comboSyntax || ["??", ","]
-    var comboMaxLength = configData.comboMaxLength || 2000
+    var comboSyntax = data.comboSyntax || ["??", ","]
+    var comboMaxLength = data.comboMaxLength || 2000
 
     var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
     var exceedMax = comboPath.length > comboMaxLength
@@ -260,7 +260,7 @@
   }
 
   function isComboUri(uri) {
-    var comboSyntax = configData.comboSyntax || ["??", ","]
+    var comboSyntax = data.comboSyntax || ["??", ","]
     var s1 = comboSyntax[0]
     var s2 = comboSyntax[1]
 
@@ -269,14 +269,14 @@
 
 
   // For test
-  if (configData.test) {
+  if (data.test) {
     var test = seajs.test || (seajs.test = {})
     test.uris2paths = uris2paths
     test.paths2hash = paths2hash
   }
 
 
-  define(seajs.config.data.dir + "plugin-combo", [], {})
+  define(seajs.data.dir + "plugin-combo", [], {})
 
 })(seajs);
 

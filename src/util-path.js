@@ -62,12 +62,12 @@ var PATHS_RE = /^([^/:]+)(\/.+)$/
 var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
-  var alias = configData.alias
+  var alias = data.alias
   return alias && isString(alias[id]) ? alias[id] : id
 }
 
 function parsePaths(id) {
-  var paths = configData.paths
+  var paths = data.paths
   var m
 
   if (paths && (m = id.match(PATHS_RE)) && isString(paths[m[1]])) {
@@ -78,7 +78,7 @@ function parsePaths(id) {
 }
 
 function parseVars(id) {
-  var vars = configData.vars
+  var vars = data.vars
 
   if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
@@ -90,7 +90,7 @@ function parseVars(id) {
 }
 
 function parseMap(uri) {
-  var map = configData.map
+  var map = data.map
   var ret = uri
 
   if (map) {
@@ -137,15 +137,15 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = (refUri ? dirname(refUri) : configData.cwd) + id
+    ret = (refUri ? dirname(refUri) : data.cwd) + id
   }
   else if (isRoot(id)) {
-    var m = configData.cwd.match(ROOT_DIR_RE)
+    var m = data.cwd.match(ROOT_DIR_RE)
     ret = m ? m[0] + id.substring(1) : id
   }
   // top-level id
   else {
-    ret = configData.base + id
+    ret = data.base + id
   }
 
   return ret
