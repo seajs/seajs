@@ -52,12 +52,12 @@ data.preload = (function() {
 // data.plugins - An array containing needed plugins
 
 
-function config(obj) {
+function config(configData) {
   // Clear id2Uri cache to avoid getting old uri when config is updated
   id2UriCache = {}
 
-  for (var key in obj) {
-    var curr = obj[key]
+  for (var key in configData) {
+    var curr = configData[key]
 
     // Convert plugins to preload config
     if (curr && key === "plugins") {
@@ -88,7 +88,7 @@ function config(obj) {
     }
   }
 
-  emit("config", obj)
+  emit("config", configData)
   return seajs
 }
 
