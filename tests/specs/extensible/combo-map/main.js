@@ -3,8 +3,8 @@ seajs.config({
   base: './combo-map/'
 })
 
-seajs.on('fetch', function(args) {
-  args.requestUri = args.uri.replace(/\/(a|b|c)\.js/, '/combo.js')
+seajs.on('fetch', function(data) {
+  data.requestUri = data.uri.replace(/\/(a|b|c)\.js/, '/combo.js')
 })
 
 

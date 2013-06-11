@@ -15,10 +15,10 @@
    // preload: ['jquery']
   })
 
-  seajs.on('request', function(args) {
-    var requestUri = args.requestUri
+  seajs.on('request', function(data) {
+    var requestUri = data.requestUri
     if (requestUri.indexOf('??') > 0) {
-      args.requestUri = seajs.data.base + 'combo.js'
+      data.requestUri = seajs.data.base + 'combo.js'
     }
   })
 

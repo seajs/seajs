@@ -32,8 +32,8 @@
     }
   })
 
-  seajs.on("resolve", function(args) {
-    var id = args.id
+  seajs.on("resolve", function(data) {
+    var id = data.id
     if (!id) return ""
 
     var pluginName
@@ -45,7 +45,7 @@
       id = m[2]
     }
 
-    var uri = seajs.resolve(id, args.refUri)
+    var uri = seajs.resolve(id, data.refUri)
     var t = uri.replace(/\.(?:js|css)(\?|$)/, "$1")
 
     // http://path/to/a.tpl
@@ -59,19 +59,19 @@
       uriCache[uri] = pluginName
     }
 
-    args.uri = uri
+    data.uri = uri
   })
 
-  seajs.on("request", function(args) {
-    var name = uriCache[args.uri]
+  seajs.on("request", function(data) {
+    var name = uriCache[data.uri]
 
     if (name) {
-      xhr(args.requestUri, function(content) {
-        plugins[name].exec(args.uri, content)
-        args.callback()
+      xhr(data.requestUri, function(content) {
+        plugins[name].exec(data.uri, content)
+        data.callback()
       })
 
-      args.requested = true
+      data.requested = true
     }
   })
 

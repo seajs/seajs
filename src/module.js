@@ -118,9 +118,9 @@ function fetch(uri, callback) {
   cachedModules[uri].status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
-  var args = { uri: uri }
-  emit("fetch", args)
-  var requestUri = args.requestUri || uri
+  var emitData = { uri: uri }
+  emit("fetch", emitData)
+  var requestUri = emitData.requestUri || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -136,15 +136,15 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Emit `request` event for plugins such as plugin-text
-  emit("request", args = {
+  emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
     callback: onRequested,
     charset: data.charset
   })
 
-  if (!args.requested) {
-    request(args.requestUri, onRequested, args.charset)
+  if (!emitData.requested) {
+    request(emitData.requestUri, onRequested, emitData.charset)
   }
 
   function onRequested() {
@@ -335,7 +335,6 @@ seajs.Module = Module
 Module.STATUS = STATUS
 Module.load = use
 
-seajs.data = data
 data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri

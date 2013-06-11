@@ -3,4 +3,4 @@ var seajs = global.seajs = {
   version: "@VERSION"
 }
 
-var data = {}
+var data = seajs.data = {}
