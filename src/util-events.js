@@ -17,7 +17,9 @@ seajs.on = function(name, callback) {
 seajs.off = function(name, callback) {
   // Remove *all* events
   if (!(name || callback)) {
-    data.events = events = {}
+    for (var prop in events) {
+      delete events[prop]
+    }
     return seajs
   }
 
