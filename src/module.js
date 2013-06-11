@@ -2,8 +2,8 @@
  * module.js - The core of module loader
  */
 
-var cachedModules = seajs.cache = {}
-var anonymousModuleData
+var cachedMods = seajs.cache = {}
+var anonymousMeta
 
 var fetchingList = {}
 var fetchedList = {}
@@ -12,7 +12,7 @@ var callbackList = {}
 var STATUS = {
   // 1 - The module file is being fetched now
   FETCHING: 1,
-  // 2 - The module data has been saved to cachedModules
+  // 2 - The module data has been saved to cachedMods
   SAVED: 2,
   // 3 - The module and all its dependencies are ready to execute
   LOADED: 3,
@@ -40,10 +40,10 @@ function resolve(ids, refUri) {
   }
 
   // Emit `resolve` event for plugins such as plugin-text
-  var data = { id: ids, refUri: refUri }
-  emit("resolve", data)
+  var emitData = { id: ids, refUri: refUri }
+  emit("resolve", emitData)
 
-  return data.uri || id2Uri(data.id, refUri)
+  return emitData.uri || id2Uri(emitData.id, refUri)
 }
 
 function use(uris, callback) {
@@ -53,7 +53,7 @@ function use(uris, callback) {
     var exports = []
 
     for (var i = 0, len = uris.length; i < len; i++) {
-      exports[i] = getExports(cachedModules[uris[i]])
+      exports[i] = getExports(cachedMods[uris[i]])
     }
 
     if (callback) {
@@ -78,7 +78,7 @@ function load(uris, callback) {
 
   // Register callbacks
   for (var i = 0; i < len; i++) {
-    cachedModules[unloadedUris[i]].callbacks.push(done)
+    cachedMods[unloadedUris[i]].callbacks.push(done)
   }
 
   // Start parallel loading
@@ -87,7 +87,7 @@ function load(uris, callback) {
   }
 
   function _load(uri) {
-    var mod = cachedModules[uri]
+    var mod = cachedMods[uri]
 
     mod.status < STATUS.FETCHING ?
         fetch(uri, loadDeps) :
@@ -115,7 +115,7 @@ function load(uris, callback) {
 }
 
 function fetch(uri, callback) {
-  cachedModules[uri].status = STATUS.FETCHING
+  cachedMods[uri].status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
   var emitData = { uri: uri }
@@ -152,9 +152,9 @@ function fetch(uri, callback) {
     fetchedList[requestUri] = true
 
     // Save meta data of anonymous module
-    if (anonymousModuleData) {
-      save(uri, anonymousModuleData)
-      anonymousModuleData = undefined
+    if (anonymousMeta) {
+      save(uri, anonymousMeta)
+      anonymousMeta = undefined
     }
 
     // Call callbacks
@@ -183,7 +183,7 @@ function define(id, deps, factory) {
     deps = parseDependencies(factory.toString())
   }
 
-  var data = {
+  var meta = {
     id: id,
     uri: resolve(id),
     deps: deps,
@@ -191,11 +191,11 @@ function define(id, deps, factory) {
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
-  if (!data.uri && doc.attachEvent) {
+  if (!meta.uri && doc.attachEvent) {
     var script = getCurrentScript()
 
     if (script) {
-      data.uri = script.src
+      meta.uri = script.src
     }
     else {
       log("Failed to derive: " + factory)
@@ -206,15 +206,15 @@ function define(id, deps, factory) {
   }
 
   // Emit `define` event, used in plugin-nocache, seajs node version etc
-  emit("define", data)
+  emit("define", meta)
 
-  data.uri ? save(data.uri, data) :
+  meta.uri ? save(meta.uri, meta) :
       // Save information for "saving" work in the script onload event
-      anonymousModuleData = data
+      anonymousMeta = meta
 }
 
 function save(uri, meta) {
-  var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
+  var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -246,7 +246,7 @@ function exec(mod) {
   }
 
   function require(id) {
-    return getExports(cachedModules[resolveInThisContext(id)])
+    return getExports(cachedMods[resolveInThisContext(id)])
   }
 
   require.resolve = resolveInThisContext
@@ -278,7 +278,7 @@ function getUnloadedUris(uris) {
   for (var i = 0, len = uris.length; i < len; i++) {
     var uri = uris[i]
     if (uri) {
-      var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
+      var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
       if (mod.status < STATUS.LOADED) {
         ret.push(uri)
       }
@@ -334,12 +334,11 @@ global.define = define
 seajs.Module = Module
 Module.STATUS = STATUS
 Module.load = use
-
 data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri
 
 seajs.require = function(id) {
-  return (cachedModules[id2Uri(id)] || {}).exports
+  return (cachedMods[id2Uri(id)] || {}).exports
 }
 
