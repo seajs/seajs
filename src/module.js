@@ -63,55 +63,62 @@ function use(uris, callback) {
 }
 
 function load(uris, callback) {
-  var unloadedUris = getUnloadedUris(uris)
+  // Emit `load` event for plugins such as plugin-combo
+  emit("load", uris)
 
-  if (unloadedUris.length === 0) {
+  var len = uris.length
+  var remain = len
+  var mod
+
+  // Initialize modules
+  for (var i = 0; i < len; i++) {
+    mod = getModule(uris[i])
+
+    if (mod.status < STATUS.LOADED) {
+      mod.callbacks.push(done)
+    }
+    else {
+      remain--
+    }
+  }
+
+  if (remain === 0) {
     callback()
     return
   }
 
-  // Emit `load` event for plugins such as plugin-combo
-  emit("load", unloadedUris)
-
-  var len = unloadedUris.length
-  var remain = len
-
-  // Register callbacks
-  for (var i = 0; i < len; i++) {
-    cachedMods[unloadedUris[i]].callbacks.push(done)
-  }
-
   // Start parallel loading
   for (i = 0; i < len; i++) {
-    _load(unloadedUris[i])
-  }
+    mod = getModule(uris[i])
 
-  function _load(uri) {
-    var mod = cachedMods[uri]
-
-    mod.status < STATUS.FETCHING ?
-        fetch(uri, loadDeps) :
-        mod.status === STATUS.SAVED && loadDeps()
-
-    function loadDeps() {
-      load(mod.dependencies, function() {
-        mod.status = STATUS.LOADED
-
-        // Fire loaded callbacks
-        var fn, fns = mod.callbacks
-        mod.callbacks = []
-        while ((fn = fns.shift())) fn()
-      })
+    if (mod.status < STATUS.FETCHING) {
+      fetch(mod.uri, mod._load)
+    }
+    else if (mod.status === STATUS.SAVED) {
+      mod._load()
     }
   }
 
-  // Check whether all unloadedUris are loaded
+  // Check whether all unloaded uris are loaded
   function done() {
     if (--remain === 0) {
       callback()
     }
   }
 
+}
+
+Module.prototype._load = function() {
+  var mod = this
+
+  load(mod.dependencies, function() {
+    mod.status = STATUS.LOADED
+
+    // Fire loaded callbacks
+    var fn, fns = mod.callbacks
+    mod.callbacks = []
+    while ((fn = fns.shift())) fn()
+  })
 }
 
 function fetch(uri, callback) {
@@ -214,7 +221,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
+  var mod = getModule(uri)
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -272,20 +279,8 @@ function exec(mod) {
 
 // Helpers
 
-function getUnloadedUris(uris) {
-  var ret = []
-
-  for (var i = 0, len = uris.length; i < len; i++) {
-    var uri = uris[i]
-    if (uri) {
-      var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
-      if (mod.status < STATUS.LOADED) {
-        ret.push(uri)
-      }
-    }
-  }
-
-  return ret
+function getModule(uri) {
+  return cachedMods[uri] || (cachedMods[uri] = new Module(uri))
 }
 
 function getExports(mod) {
