@@ -66,7 +66,7 @@ if (typeof document !== 'undefined') {
 
   var WARNING_TIME = isLocal() ? 50 : 5000
   var isNode = typeof process !== 'undefined'
-  var INITIAL_CWD = isNode && seajs.config.data.cwd
+  var INITIAL_CWD = isNode && seajs.data.cwd
 
   var queue = []
   var time
@@ -122,21 +122,21 @@ if (typeof document !== 'undefined') {
 
   // Helpers
 
-  var configData = global.seajs && seajs.config.data || {}
-  var defaultConfig = copy(configData, {})
+  var data = global.seajs && seajs.data || {}
+  var defaultConfig = copy(data, {})
 
   function reset(id) {
     global.consoleMsgStack.length = 0
     seajs.off()
 
     // Restore default configurations
-    copy(defaultConfig, configData)
+    copy(defaultConfig, data)
 
     // Reset plugins
     for (var uri in seajs.cache) {
       if (uri.indexOf('/dist/plugin-') > 0) {
         delete seajs.cache[uri]
-        delete seajs.Module.fetchedList[uri]
+        delete seajs.data.fetchedList[uri]
 
         if (typeof process !== 'undefined' &&
             process.execPath.indexOf('node.exe') > 0) {
