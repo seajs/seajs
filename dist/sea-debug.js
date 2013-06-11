@@ -13,7 +13,7 @@ var seajs = global.seajs = {
   version: "2.1.0"
 }
 
-var configData = {}
+var data = {}
 
 /**
  * util-lang.js - The minimal language enhancement
@@ -42,7 +42,7 @@ var log = seajs.log = function(msg, type) {
 
   global.console &&
       // Do NOT print `log(msg)` in non-debug mode
-      (type || configData.debug) &&
+      (type || data.debug) &&
       // Set the default value of type
       (console[type || (type = "log")]) &&
       // Call native method of console
@@ -54,7 +54,7 @@ var log = seajs.log = function(msg, type) {
  * util-events.js - The minimal events support
  */
 
-var eventsCache = seajs.events = {}
+var eventsCache = data.events = {}
 
 // Bind event
 seajs.on = function(event, callback) {
@@ -69,7 +69,7 @@ seajs.on = function(event, callback) {
 seajs.off = function(event, callback) {
   // Remove *all* events
   if (!(event || callback)) {
-    seajs.events = eventsCache = {}
+    data.events = eventsCache = {}
     return seajs
   }
 
@@ -92,7 +92,7 @@ seajs.off = function(event, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-var emit = seajs.emit = function(event, data) {
+var emit = seajs.emit = function(event, args) {
   var list = eventsCache[event], fn
 
   if (list) {
@@ -101,7 +101,7 @@ var emit = seajs.emit = function(event, data) {
 
     // Execute event callbacks
     while ((fn = list.shift())) {
-      fn(data)
+      fn(args)
     }
   }
 
@@ -173,12 +173,12 @@ var PATHS_RE = /^([^/:]+)(\/.+)$/
 var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
-  var alias = configData.alias
+  var alias = data.alias
   return alias && isString(alias[id]) ? alias[id] : id
 }
 
 function parsePaths(id) {
-  var paths = configData.paths
+  var paths = data.paths
   var m
 
   if (paths && (m = id.match(PATHS_RE)) && isString(paths[m[1]])) {
@@ -189,7 +189,7 @@ function parsePaths(id) {
 }
 
 function parseVars(id) {
-  var vars = configData.vars
+  var vars = data.vars
 
   if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
@@ -201,7 +201,7 @@ function parseVars(id) {
 }
 
 function parseMap(uri) {
-  var map = configData.map
+  var map = data.map
   var ret = uri
 
   if (map) {
@@ -248,15 +248,15 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = (refUri ? dirname(refUri) : configData.cwd) + id
+    ret = (refUri ? dirname(refUri) : data.cwd) + id
   }
   else if (isRoot(id)) {
-    var m = configData.cwd.match(ROOT_DIR_RE)
+    var m = data.cwd.match(ROOT_DIR_RE)
     ret = m ? m[0] + id.substring(1) : id
   }
   // top-level id
   else {
-    ret = configData.base + id
+    ret = data.base + id
   }
 
   return ret
@@ -379,7 +379,7 @@ function addOnload(node, callback, isCSS) {
       node.onload = node.onerror = node.onreadystatechange = null
 
       // Remove the script to reduce memory leak
-      if (!isCSS && !configData.debug) {
+      if (!isCSS && !data.debug) {
         head.removeChild(node)
       }
 
@@ -500,15 +500,12 @@ var STATUS = {
   EXECUTED: 5
 }
 
-// NOTICE: `createModule(uri)` is faster than `new Module(uri)`
-function createModule(uri) {
-  return {
-    uri: uri,
-    dependencies: [],
-    exports: null,
-    status: 0,
-    callbacks: []
-  }
+function Module(uri) {
+  this.uri = uri
+  this.dependencies = []
+  this.exports = null
+  this.status = 0
+  this.callbacks = []
 }
 
 function resolve(ids, refUri) {
@@ -599,9 +596,9 @@ function fetch(uri, callback) {
   cachedModules[uri].status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
-  var data = { uri: uri }
-  emit("fetch", data)
-  var requestUri = data.requestUri || uri
+  var args = { uri: uri }
+  emit("fetch", args)
+  var requestUri = args.requestUri || uri
 
   if (fetchedList[requestUri]) {
     callback()
@@ -617,16 +614,15 @@ function fetch(uri, callback) {
   callbackList[requestUri] = [callback]
 
   // Emit `request` event for plugins such as plugin-text
-  var charset = configData.charset
-  emit("request", data = {
+  emit("request", args = {
     uri: uri,
     requestUri: requestUri,
     callback: onRequested,
-    charset: charset
+    charset: data.charset
   })
 
-  if (!data.requested) {
-    request(data.requestUri, onRequested, charset)
+  if (!args.requested) {
+    request(args.requestUri, onRequested, args.charset)
   }
 
   function onRequested() {
@@ -696,7 +692,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = cachedModules[uri] || (cachedModules[uri] = createModule(uri))
+  var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -760,7 +756,7 @@ function getUnloadedUris(uris) {
   for (var i = 0, len = uris.length; i < len; i++) {
     var uri = uris[i]
     if (uri) {
-      var mod = cachedModules[uri] || (cachedModules[uri] = createModule(uri))
+      var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
       if (mod.status < STATUS.LOADED) {
         ret.push(uri)
       }
@@ -781,7 +777,7 @@ function getExports(mod) {
 }
 
 function preload(callback) {
-  var preloadMods = configData.preload
+  var preloadMods = data.preload
   var len = preloadMods.length
 
   if (len) {
@@ -813,12 +809,12 @@ global.define = define
 
 
 // For developers
+seajs.Module = Module
+Module.STATUS = STATUS
+Module.load = use
 
-seajs.Module = {
-  STATUS: STATUS,
-  load: use,
-  fetchedList: fetchedList
-}
+seajs.data = data
+data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri
 
@@ -832,7 +828,7 @@ seajs.require = function(id) {
  */
 
 // The root path to use for id2uri parsing
-configData.base = (function() {
+data.base = (function() {
   var ret = loaderDir
 
   // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
@@ -846,16 +842,16 @@ configData.base = (function() {
 })()
 
 // The loader directory
-configData.dir = loaderDir
+data.dir = loaderDir
 
 // The current working directory
-configData.cwd = cwd
+data.cwd = cwd
 
 // The charset for requesting files
-configData.charset = "utf-8"
+data.charset = "utf-8"
 
 // Modules that are needed to load before all other modules
-configData.preload = (function() {
+data.preload = (function() {
   var plugins = []
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
@@ -873,20 +869,20 @@ configData.preload = (function() {
   return plugin2preload(plugins)
 })()
 
-// configData.debug - Debug mode. The default value is false
-// configData.alias - An object containing shorthands of module id
-// configData.paths - An object containing path shorthands in module id
-// configData.vars - The {xxx} variables in module id
-// configData.map - An array containing rules to map module uri
-// configData.plugins - An array containing needed plugins
+// data.debug - Debug mode. The default value is false
+// data.alias - An object containing shorthands of module id
+// data.paths - An object containing path shorthands in module id
+// data.vars - The {xxx} variables in module id
+// data.map - An array containing rules to map module uri
+// data.plugins - An array containing needed plugins
 
 
-function config(data) {
+function config(obj) {
   // Clear id2Uri cache to avoid getting old uri when config is updated
   id2UriCache = {}
 
-  for (var key in data) {
-    var curr = data[key]
+  for (var key in obj) {
+    var curr = obj[key]
 
     // Convert plugins to preload config
     if (curr && key === "plugins") {
@@ -894,7 +890,7 @@ function config(data) {
       curr = plugin2preload(curr)
     }
 
-    var prev = configData[key]
+    var prev = data[key]
 
     // Merge object config such as alias, vars
     if (prev && isObject(prev)) {
@@ -907,28 +903,27 @@ function config(data) {
       if (isArray(prev)) {
         curr = prev.concat(curr)
       }
-      // Make sure that `configData.base` is an absolute directory
+      // Make sure that `data.base` is an absolute directory
       else if (key === "base") {
         curr = normalize(addBase(curr + "/"))
       }
 
       // Set config
-      configData[key] = curr
+      data[key] = curr
     }
   }
 
-  emit("config", data)
+  emit("config", obj)
   return seajs
 }
 
-config.data = configData
 seajs.config = config
 
 function plugin2preload(arr) {
   var ret = [], name
 
   while ((name = arr.shift())) {
-    ret.push(configData.dir + "plugin-" + name)
+    ret.push(data.dir + "plugin-" + name)
   }
   return ret
 }
