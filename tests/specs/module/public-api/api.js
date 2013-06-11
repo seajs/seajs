@@ -24,16 +24,16 @@ define(function(require, exports, mod) {
   assert(isFunction(seajs.use), 'seajs.use')
   assert(isFunction(seajs.log), 'seajs.log')
   assert(typeof(seajs.cache) === 'object', 'seajs.cache')
-  assert(typeof(seajs.events) === 'object', 'seajs.events')
+  assert(typeof(seajs.data) === 'object', 'seajs.data')
+  assert(typeof(seajs.data.events) === 'object', 'data.events')
+  assert(typeof(seajs.data.fetchedList) === 'object', 'data.fetchedList')
   assert(typeof(seajs.version) === 'string', seajs.version)
-  assert(typeof(seajs.Module) === 'object', 'seajs.Module')
+  assert(isFunction(seajs.Module), 'seajs.Module')
   assert(isFunction(seajs.on), 'seajs.on')
   assert(isFunction(seajs.emit), 'seajs.emit')
   assert(isFunction(seajs.off), 'seajs.off')
   assert(isFunction(seajs.resolve), 'seajs.resolve')
   assert(isFunction(seajs.require), 'seajs.require')
-  //assert(isFunction(seajs.cwd), 'seajs.cwd')
-  //assert(isFunction(seajs.dir), 'seajs.dir')
   assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
 
 
@@ -41,12 +41,11 @@ define(function(require, exports, mod) {
   var Module = seajs.Module
   assert(typeof Module.STATUS === 'object', 'Module.STATUS')
   assert(isFunction(Module.load), 'Module.load')
-  assert(typeof Module.fetchedList === 'object', 'Module.fetchedList')
   //assert(Module.define, 'Module.define')
   //assert(isFunction(Module.prototype.load), 'Module.prototype.load')
   //assert(isFunction(Module.prototype.execute), 'Module.prototype.execute')
   //assert(isFunction(Module.prototype.destroy), 'Module.prototype.destroy')
-  assert(getOwnPropertyCount(Module) === 3, getOwnPropertyCount(Module))
+  assert(getOwnPropertyCount(Module) === 2, getOwnPropertyCount(Module))
   assert(getOwnPropertyCount(Module.prototype) === 0, getOwnPropertyCount(Module.prototype))
 
   
@@ -84,6 +83,7 @@ define(function(require, exports, mod) {
   function getOwnPropertyCount(o) {
     var n = 0
     for (var p in o) {
+      console.log(p)
       // Old safari would get prototype
       if (o.hasOwnProperty(p) && p !== 'prototype') {
         n++

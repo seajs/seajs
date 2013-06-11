@@ -27,7 +27,7 @@ define(function(require) {
 
   // Delete './a' from cache
   delete seajs.cache[url]
-  delete seajs.Module.fetchedList[url]
+  delete seajs.data.fetchedList[url]
 
   if (_require && typeof process !== 'undefined' &&
       process.execPath.indexOf('node.exe') > 0) {
