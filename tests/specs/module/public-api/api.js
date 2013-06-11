@@ -83,7 +83,6 @@ define(function(require, exports, mod) {
   function getOwnPropertyCount(o) {
     var n = 0
     for (var p in o) {
-      console.log(p)
       // Old safari would get prototype
       if (o.hasOwnProperty(p) && p !== 'prototype') {
         n++
