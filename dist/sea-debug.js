@@ -121,9 +121,6 @@ var DOT_RE = /\/\.\//g
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
 
-var URI_END_RE = /\?|\.(?:css|js)$|\/$/
-var HASH_END_RE = /#$/
-
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
 // ref: http://jsperf.com/regex-vs-split/2
@@ -141,14 +138,32 @@ function realpath(path) {
   // "http://a//b/c"   ==> "http://a/b/c"
   // "https://a//b/c"  ==> "https://a/b/c"
   // "/a/b//"          ==> "/a/b/"
-  path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+  if (path.indexOf("//") > 7) { // for performance
+    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+  }
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  while (path.match(DOUBLE_DOT_RE)) {
-    path = path.replace(DOUBLE_DOT_RE, "/")
+  if (path.indexOf('../') > 0) { // for performance
+    while (path.match(DOUBLE_DOT_RE)) {
+      path = path.replace(DOUBLE_DOT_RE, "/")
+    }
   }
 
   return path
+}
+
+// Get file extension
+// ext("path/to/?xxx")  ==> undefined
+// ext("path/to/dir/")  ==> undefined
+// ext("path/to/a.js")  ==> "js"
+// NOTICE: This function is faster than RegExp /\?|\.(?:css|js)$|\/$/
+function extname(path) {
+  var pos = path.lastIndexOf(".")
+  if (pos > 0 &&
+      path.indexOf("?") === -1 &&
+      path.charAt(path.length - 1) !== "/") {
+    return path.substring(pos + 1).toLowerCase()
+  }
 }
 
 // Normalize an uri
@@ -159,11 +174,15 @@ function normalize(uri) {
   uri = realpath(uri)
 
   // Add the default `.js` extension except that the uri ends with `#`
-  if (HASH_END_RE.test(uri)) {
+  var last = uri.charAt(uri.length - 1)
+  if (last === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri)) {
-    uri += ".js"
+  else {
+    var ext = extname(uri)
+    if (ext !== "js" && ext !== "css") {
+      uri += ".js"
+    }
   }
 
   // issue #256: fix `:80` bug in IE
@@ -223,20 +242,16 @@ function parseMap(uri) {
 }
 
 
-var ABSOLUTE_RE = /^\/\/.|:\//
-var RELATIVE_RE = /^\./
-var ROOT_RE = /^\//
-
 function isAbsolute(id) {
-  return ABSOLUTE_RE.test(id)
+  return id.indexOf(":/") > 0 || id.indexOf("//") === 0
 }
 
 function isRelative(id) {
-  return RELATIVE_RE.test(id)
+  return id.charAt(0) === "."
 }
 
 function isRoot(id) {
-  return ROOT_RE.test(id)
+  return id.charAt(0) === "/"
 }
 
 
@@ -543,55 +558,62 @@ function use(uris, callback) {
 }
 
 function load(uris, callback) {
-  var unloadedUris = getUnloadedUris(uris)
+  // Emit `load` event for plugins such as plugin-combo
+  emit("load", uris)
 
-  if (unloadedUris.length === 0) {
+  var len = uris.length
+  var remain = len
+  var mod
+
+  // Initialize modules
+  for (var i = 0; i < len; i++) {
+    mod = getModule(uris[i])
+
+    if (mod.status < STATUS.LOADED) {
+      mod.callbacks.push(done)
+    }
+    else {
+      remain--
+    }
+  }
+
+  if (remain === 0) {
     callback()
     return
   }
 
-  // Emit `load` event for plugins such as plugin-combo
-  emit("load", unloadedUris)
-
-  var len = unloadedUris.length
-  var remain = len
-
-  // Register callbacks
-  for (var i = 0; i < len; i++) {
-    cachedMods[unloadedUris[i]].callbacks.push(done)
-  }
-
   // Start parallel loading
   for (i = 0; i < len; i++) {
-    _load(unloadedUris[i])
-  }
+    mod = getModule(uris[i])
 
-  function _load(uri) {
-    var mod = cachedMods[uri]
-
-    mod.status < STATUS.FETCHING ?
-        fetch(uri, loadDeps) :
-        mod.status === STATUS.SAVED && loadDeps()
-
-    function loadDeps() {
-      load(mod.dependencies, function() {
-        mod.status = STATUS.LOADED
-
-        // Fire loaded callbacks
-        var fn, fns = mod.callbacks
-        mod.callbacks = []
-        while ((fn = fns.shift())) fn()
-      })
+    if (mod.status < STATUS.FETCHING) {
+      fetch(mod.uri, mod._load)
+    }
+    else if (mod.status === STATUS.SAVED) {
+      mod._load()
     }
   }
 
-  // Check whether all unloadedUris are loaded
+  // Check whether all unloaded uris are loaded
   function done() {
     if (--remain === 0) {
       callback()
     }
   }
 
+}
+
+Module.prototype._load = function() {
+  var mod = this
+
+  load(mod.dependencies, function() {
+    mod.status = STATUS.LOADED
+
+    // Fire loaded callbacks
+    var fn, fns = mod.callbacks
+    mod.callbacks = []
+    while ((fn = fns.shift())) fn()
+  })
 }
 
 function fetch(uri, callback) {
@@ -694,7 +716,7 @@ function define(id, deps, factory) {
 }
 
 function save(uri, meta) {
-  var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
+  var mod = getModule(uri)
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -752,20 +774,8 @@ function exec(mod) {
 
 // Helpers
 
-function getUnloadedUris(uris) {
-  var ret = []
-
-  for (var i = 0, len = uris.length; i < len; i++) {
-    var uri = uris[i]
-    if (uri) {
-      var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
-      if (mod.status < STATUS.LOADED) {
-        ret.push(uri)
-      }
-    }
-  }
-
-  return ret
+function getModule(uri) {
+  return cachedMods[uri] || (cachedMods[uri] = new Module(uri))
 }
 
 function getExports(mod) {
