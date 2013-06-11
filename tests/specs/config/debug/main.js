@@ -2,10 +2,10 @@ define(function(require) {
 
   var test = require('../../../test')
   var consoleMsgStack = global.consoleMsgStack
-  var configData = seajs.config.data
+  var data = seajs.data
   var isNode = typeof process !== 'undefined'
 
-  test.assert(configData.debug === undefined, 'debug = ' + configData.debug)
+  test.assert(data.debug === undefined, 'debug = ' + data.debug)
   test.assert(isNode || hasScript('test.js') === false, 'The inserted script was removed automatically, when debug is off')
 
 
@@ -26,7 +26,7 @@ define(function(require) {
   test.assert(consoleMsgStack.pop() === '4', 'Show warn info in console at anytime')
 
 
-  test.assert(configData.debug === true, 'debug = ' + configData.debug)
+  test.assert(data.debug === true, 'debug = ' + data.debug)
 
   require.async('./a', function(a) {
     test.assert(a.name === 'a', 'a.name = ' + a.name)

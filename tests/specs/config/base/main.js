@@ -17,7 +17,7 @@ define(function(require) {
     base: './'
   })
 
-  var base = seajs.config.data.base
+  var base = seajs.data.base
   test.assert(/tests\/specs\/config\/$/.test(base), base)
 
 
@@ -44,7 +44,7 @@ define(function(require) {
     base: '/'
   })
 
-  base = seajs.config.data.base
+  base = seajs.data.base
   var href = (global.location || {}).href
 
   test.assert(!href || // For Node.js
