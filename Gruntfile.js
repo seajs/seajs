@@ -96,6 +96,7 @@ module.exports = function(grunt) {
     code = code.replace(/\$\./g, '_.')
     code = code.replace(/\$&&/g, '_&&')
     code = code.replace(/=\$/g, '=_')
+    code = code.replace(/\$\(/g, '_(')
     grunt.file.write(minfile, code)
     grunt.log.writeln('$ in "' + minfile + '" is fixed.')
   })
