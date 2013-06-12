@@ -27,12 +27,12 @@ function realpath(path) {
   // "http://a//b/c"   ==> "http://a/b/c"
   // "https://a//b/c"  ==> "https://a/b/c"
   // "/a/b//"          ==> "/a/b/"
-  if (path.lastIndexOf("//") > 7) { // for performance
+  if (path.replace("://", "").indexOf("//") > 0) { // For performance
     path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
   }
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  if (path.indexOf('../') > 0) { // for performance
+  if (path.indexOf('../') > 0) { // For performance
     while (path.match(DOUBLE_DOT_RE)) {
       path = path.replace(DOUBLE_DOT_RE, "/")
     }
@@ -44,8 +44,10 @@ function realpath(path) {
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
-  if (normalizeCache[uri]) {
-    return normalizeCache[uri]
+  var key = uri
+
+  if (normalizeCache[key]) {
+    return normalizeCache[key]
   }
 
   // Call realpath() before adding extension, so that most of uris will
@@ -60,23 +62,19 @@ function normalize(uri) {
   // Exclude ? and directory path
   // NOTICE: This code below is faster than RegExp /\?|\.(?:css|js)$|\/$/
   else if (uri.indexOf("?") === -1 && last !== "/") {
-    var extname = ".js"
-
     var pos = uri.lastIndexOf(".")
-    if (pos > 0) {
-      extname = uri.substring(pos + 1).toLowerCase()
-      if (extname === "js" || extname === "css") {
-        extname = ""
-      }
-    }
+    var extname = pos > 0 ? uri.substring(pos + 1).toLowerCase() : ""
 
-    uri += extname
+    if (extname !== "js" && extname !== "css") {
+      uri += ".js"
+    }
   }
 
   // issue #256: fix `:80` bug in IE
   uri = uri.replace(":80/", "/")
 
-  return (normalizeCache[uri] = uri)
+  // Memoize normalize function
+  return (normalizeCache[key] = uri)
 }
 
 
