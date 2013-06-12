@@ -89,7 +89,7 @@ function load(uris, callback) {
 
   // Start parallel loading
   for (i = 0; i < len; i++) {
-    mod = cachedMods(uris[i])
+    mod = cachedMods[uris[i]]
 
     if (mod.status < STATUS.FETCHING) {
       mod._fetch()
