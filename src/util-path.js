@@ -2,14 +2,13 @@
  * util-path.js - The utilities for operating path such as id, uri
  */
 
-var normalizeCache = {}
-var id2UriCache = {}
-
 var DIRNAME_RE = /[^?#]*\//
 
 var DOT_RE = /\/\.\//g
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
+
+var normalizeCache = {}
 
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
@@ -28,7 +27,7 @@ function realpath(path) {
   // "http://a//b/c"   ==> "http://a/b/c"
   // "https://a//b/c"  ==> "https://a/b/c"
   // "/a/b//"          ==> "/a/b/"
-  if (path.indexOf("//") > 7) { // for performance
+  if (path.lastIndexOf("//") > 7) { // for performance
     path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
   }
 
@@ -40,20 +39,6 @@ function realpath(path) {
   }
 
   return path
-}
-
-// Get file extension
-// ext("path/to/?xxx")  ==> undefined
-// ext("path/to/dir/")  ==> undefined
-// ext("path/to/a.js")  ==> "js"
-// NOTICE: This function is faster than RegExp /\?|\.(?:css|js)$|\/$/
-function extname(path) {
-  var pos = path.lastIndexOf(".")
-  if (pos > 0 &&
-      path.indexOf("?") === -1 &&
-      path.charAt(path.length - 1) !== "/") {
-    return path.substring(pos + 1).toLowerCase()
-  }
 }
 
 // Normalize an uri
@@ -72,11 +57,20 @@ function normalize(uri) {
   if (last === "#") {
     uri = uri.slice(0, -1)
   }
-  else {
-    var ext = extname(uri)
-    if (ext !== "js" && ext !== "css") {
-      uri += ".js"
+  // Exclude ? and directory path
+  // NOTICE: This code below is faster than RegExp /\?|\.(?:css|js)$|\/$/
+  else if (uri.indexOf("?") === -1 && last !== "/") {
+    var extname = ".js"
+
+    var pos = uri.lastIndexOf(".")
+    if (pos > 0) {
+      extname = uri.substring(pos + 1).toLowerCase()
+      if (extname === "js" || extname === "css") {
+        extname = ""
+      }
     }
+
+    uri += extname
   }
 
   // issue #256: fix `:80` bug in IE
@@ -177,12 +171,6 @@ function addBase(id, refUri) {
 function id2Uri(id, refUri) {
   if (!id) return ""
 
-  // Memoize id2Uri function to avoiding duplicated computations
-  var key = id + refUri || ""
-  if (id2UriCache[key]) {
-    return id2UriCache[key]
-  }
-
   id = parseAlias(id)
   id = parsePaths(id)
   id = parseVars(id)
@@ -191,7 +179,7 @@ function id2Uri(id, refUri) {
   uri = normalize(uri)
   uri = parseMap(uri)
 
-  return (id2UriCache[key] = uri)
+  return uri
 }
 
 
