@@ -86,6 +86,7 @@ module.exports = function(grunt) {
     grunt.file.write(mapfile, code)
     grunt.log.writeln('"' + mapfile + '" is fixed.')
 
+    /*
     // No `$` variable in compressed code to avoiding conflicting
     // when inline in velocity template.
     var minfile = "dist/sea.js"
@@ -94,9 +95,12 @@ module.exports = function(grunt) {
     code = code.replace('function $', 'function _')
     code = code.replace('$=', '_=')
     code = code.replace(/\$\./g, '_.')
+    code = code.replace(/\$&&/g, '_&&')
     code = code.replace(/=\$/g, '=_')
+    code = code.replace(/\$\(/g, '_(')
     grunt.file.write(minfile, code)
     grunt.log.writeln('$ in "' + minfile + '" is fixed.')
+    */
   })
 
 

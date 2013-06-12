@@ -24,7 +24,9 @@ define(function(require, exports, mod) {
   assert(isFunction(seajs.use), 'seajs.use')
   assert(isFunction(seajs.log), 'seajs.log')
   assert(typeof(seajs.cache) === 'object', 'seajs.cache')
-  assert(typeof(seajs.events) === 'object', 'seajs.events')
+  assert(typeof(seajs.data) === 'object', 'seajs.data')
+  assert(typeof(seajs.data.events) === 'object', 'data.events')
+  assert(typeof(seajs.data.fetchedList) === 'object', 'data.fetchedList')
   assert(typeof(seajs.version) === 'string', seajs.version)
   assert(isFunction(seajs.Module), 'seajs.Module')
   assert(isFunction(seajs.on), 'seajs.on')
@@ -32,21 +34,20 @@ define(function(require, exports, mod) {
   assert(isFunction(seajs.off), 'seajs.off')
   assert(isFunction(seajs.resolve), 'seajs.resolve')
   assert(isFunction(seajs.require), 'seajs.require')
-  //assert(isFunction(seajs.cwd), 'seajs.cwd')
-  //assert(isFunction(seajs.dir), 'seajs.dir')
   assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
 
 
   // Module
-  var Module = mod.constructor
-  //assert(Module.STATUS, 'Module.STATUS')
-  assert(Module.load, 'Module.load')
+  var Module = seajs.Module
+  assert(typeof Module.STATUS === 'object', 'Module.STATUS')
+  assert(isFunction(Module.load), 'Module.load')
   //assert(Module.define, 'Module.define')
-  //assert(isFunction(Module.prototype.load), 'Module.prototype.load')
+  assert(isFunction(Module.prototype._load), 'Module.prototype._load')
+  assert(isFunction(Module.prototype._fetch), 'Module.prototype._fetch')
   //assert(isFunction(Module.prototype.execute), 'Module.prototype.execute')
-  assert(isFunction(Module.prototype.destroy), 'Module.prototype.destroy')
-  assert(getOwnPropertyCount(Module) === 1, getOwnPropertyCount(Module))
-  assert(getOwnPropertyCount(Module.prototype) === 1, getOwnPropertyCount(Module.prototype))
+  //assert(isFunction(Module.prototype.destroy), 'Module.prototype.destroy')
+  assert(getOwnPropertyCount(Module) === 2, getOwnPropertyCount(Module))
+  assert(getOwnPropertyCount(Module.prototype) === 2, getOwnPropertyCount(Module.prototype))
 
   
   // require
@@ -62,7 +63,7 @@ define(function(require, exports, mod) {
 
   
   // module
-  assert(mod instanceof Module, 'module')
+  //assert(mod instanceof Module, 'module')
   assert(typeof mod.id === 'string', 'module.id')
   assert(isArray(mod.dependencies), 'module.dependencies')
   assert(isArray(mod.callbacks), 'module.callbacks')

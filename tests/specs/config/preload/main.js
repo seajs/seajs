@@ -9,7 +9,7 @@ function done(test) {
 }
 
 
-var configData = seajs.config.data
+var configData = seajs.data
 
 seajs.config({
   preload: ['./preload/a']

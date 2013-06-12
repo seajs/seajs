@@ -2,24 +2,25 @@
  * module.js - The core of module loader
  */
 
-var cachedModules = seajs.cache = {}
-var anonymousModuleData
+var cachedMods = seajs.cache = {}
+var anonymousMeta
 
 var fetchingList = {}
 var fetchedList = {}
 var callbackList = {}
 
-// 1 - The module file is being fetched now
-// 2 - The module data has been saved to cachedModules
-// 3 - The module and all its dependencies are ready to execute
-// 4 - The module is being executed
-// 5 - The module is executed and `module.exports` is available
-var STATUS_FETCHING = 1
-var STATUS_SAVED = 2
-var STATUS_LOADED = 3
-var STATUS_EXECUTING = 4
-var STATUS_EXECUTED = 5
-
+var STATUS = {
+  // 1 - The module file is being fetched now
+  FETCHING: 1,
+  // 2 - The module data has been saved to cachedMods
+  SAVED: 2,
+  // 3 - The module and all its dependencies are ready to execute
+  LOADED: 3,
+  // 4 - The module is being executed
+  EXECUTING: 4,
+  // 5 - The module is executed and `module.exports` is available
+  EXECUTED: 5
+}
 
 function Module(uri) {
   this.uri = uri
@@ -39,10 +40,10 @@ function resolve(ids, refUri) {
   }
 
   // Emit `resolve` event for plugins such as plugin-text
-  var data = { id: ids, refUri: refUri }
-  emit("resolve", data)
+  var emitData = { id: ids, refUri: refUri }
+  emit("resolve", emitData)
 
-  return data.uri || id2Uri(data.id, refUri)
+  return emitData.uri || id2Uri(emitData.id, refUri)
 }
 
 function use(uris, callback) {
@@ -52,7 +53,7 @@ function use(uris, callback) {
     var exports = []
 
     for (var i = 0, len = uris.length; i < len; i++) {
-      exports[i] = getExports(cachedModules[uris[i]])
+      exports[i] = getExports(cachedMods[uris[i]])
     }
 
     if (callback) {
@@ -62,89 +63,97 @@ function use(uris, callback) {
 }
 
 function load(uris, callback) {
-  var unloadedUris = getUnloadedUris(uris)
+  // Emit `load` event for plugins such as plugin-combo
+  emit("load", uris)
 
-  if (unloadedUris.length === 0) {
+  var len = uris.length
+  var remain = len
+  var mod
+
+  // Initialize modules
+  for (var i = 0; i < len; i++) {
+    mod = getModule(uris[i])
+
+    if (mod.status < STATUS.LOADED) {
+      mod.callbacks.push(done)
+    }
+    else {
+      remain--
+    }
+  }
+
+  if (remain === 0) {
     callback()
     return
   }
 
-  // Emit `load` event for plugins such as plugin-combo
-  emit("load", unloadedUris)
-
-  var len = unloadedUris.length
-  var remain = len
-
-  // Register callbacks
-  for (var i = 0; i < len; i++) {
-    cachedModules[unloadedUris[i]].callbacks.push(done)
-  }
-
   // Start parallel loading
   for (i = 0; i < len; i++) {
-    _load(unloadedUris[i])
-  }
+    mod = cachedMods[uris[i]]
 
-  function _load(uri) {
-    var mod = cachedModules[uri]
-
-    mod.status < STATUS_FETCHING ?
-        fetch(uri, loadDeps) :
-        mod.status === STATUS_SAVED && loadDeps()
-
-    function loadDeps() {
-      load(mod.dependencies, function() {
-        mod.status = STATUS_LOADED
-
-        // Fire loaded callbacks
-        var fn, fns = mod.callbacks
-        mod.callbacks = []
-        while ((fn = fns.shift())) fn()
-      })
+    if (mod.status < STATUS.FETCHING) {
+      mod._fetch()
+    }
+    else if (mod.status === STATUS.SAVED) {
+      mod._load()
     }
   }
 
-  // Check whether all unloadedUris are loaded
+  // Check whether all unloaded uris are loaded
   function done() {
     if (--remain === 0) {
       callback()
     }
   }
-
 }
 
-function fetch(uri, callback) {
-  cachedModules[uri].status = STATUS_FETCHING
+Module.prototype._load = function() {
+  var mod = this
+
+  load(mod.dependencies, function() {
+    mod.status = STATUS.LOADED
+
+    // Fire loaded callbacks
+    var fn, fns = mod.callbacks
+    mod.callbacks = []
+    while ((fn = fns.shift())) fn()
+  })
+}
+
+Module.prototype._fetch = function() {
+  var mod = this
+  var uri = mod.uri
+
+  mod.status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
-  var data = { uri: uri }
-  emit("fetch", data)
-  var requestUri = data.requestUri || uri
+  var emitData = { uri: uri }
+  emit("fetch", emitData)
+  var requestUri = emitData.requestUri || uri
 
-  if (fetchedList[requestUri]) {
-    callback()
+  if (!requestUri || fetchedList[requestUri]) {
+    mod._load()
     return
   }
 
   if (fetchingList[requestUri]) {
-    callbackList[requestUri].push(callback)
+    callbackList[requestUri].push(mod)
     return
   }
 
   fetchingList[requestUri] = true
-  callbackList[requestUri] = [callback]
+  callbackList[requestUri] = [mod]
 
   // Emit `request` event for plugins such as plugin-text
-  var charset = configData.charset
-  emit("request", data = {
+  emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
     callback: onRequested,
-    charset: charset
+    charset: data.charset
   })
 
-  if (!data.requested) {
-    request(data.requestUri, onRequested, charset)
+  if (!emitData.requested) {
+    request(emitData.requestUri, onRequested, emitData.charset)
   }
 
   function onRequested() {
@@ -152,15 +161,15 @@ function fetch(uri, callback) {
     fetchedList[requestUri] = true
 
     // Save meta data of anonymous module
-    if (anonymousModuleData) {
-      save(uri, anonymousModuleData)
-      anonymousModuleData = undefined
+    if (anonymousMeta) {
+      save(uri, anonymousMeta)
+      anonymousMeta = undefined
     }
 
     // Call callbacks
-    var fn, fns = callbackList[requestUri]
+    var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((fn = fns.shift())) fn()
+    while ((m = mods.shift())) m._load()
   }
 }
 
@@ -183,7 +192,7 @@ function define(id, deps, factory) {
     deps = parseDependencies(factory.toString())
   }
 
-  var data = {
+  var meta = {
     id: id,
     uri: resolve(id),
     deps: deps,
@@ -191,11 +200,11 @@ function define(id, deps, factory) {
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
-  if (!data.uri && doc.attachEvent) {
+  if (!meta.uri && doc.attachEvent) {
     var script = getCurrentScript()
 
     if (script) {
-      data.uri = script.src
+      meta.uri = script.src
     }
     else {
       log("Failed to derive: " + factory)
@@ -206,22 +215,22 @@ function define(id, deps, factory) {
   }
 
   // Emit `define` event, used in plugin-nocache, seajs node version etc
-  emit("define", data)
+  emit("define", meta)
 
-  data.uri ? save(data.uri, data) :
+  meta.uri ? save(meta.uri, meta) :
       // Save information for "saving" work in the script onload event
-      anonymousModuleData = data
+      anonymousMeta = meta
 }
 
 function save(uri, meta) {
-  var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
+  var mod = getModule(uri)
 
   // Do NOT override already saved modules
-  if (mod.status < STATUS_SAVED) {
+  if (mod.status < STATUS.SAVED) {
     mod.id = meta.id || uri
     mod.dependencies = resolve(meta.deps || [], uri)
     mod.factory = meta.factory
-    mod.status = STATUS_SAVED
+    mod.status = STATUS.SAVED
   }
 }
 
@@ -234,11 +243,11 @@ function exec(mod) {
   // When module is executed, DO NOT execute it again. When module
   // is being executed, just return `module.exports` too, for avoiding
   // circularly calling
-  if (mod.status >= STATUS_EXECUTING) {
+  if (mod.status >= STATUS.EXECUTING) {
     return mod.exports
   }
 
-  mod.status = STATUS_EXECUTING
+  mod.status = STATUS.EXECUTING
 
 
   function resolveInThisContext(id) {
@@ -246,7 +255,7 @@ function exec(mod) {
   }
 
   function require(id) {
-    return getExports(cachedModules[resolveInThisContext(id)])
+    return getExports(cachedMods[resolveInThisContext(id)])
   }
 
   require.resolve = resolveInThisContext
@@ -264,33 +273,16 @@ function exec(mod) {
       factory
 
   mod.exports = exports === undefined ? mod.exports : exports
-  mod.status = STATUS_EXECUTED
+  mod.status = STATUS.EXECUTED
 
   return mod.exports
-}
-
-Module.prototype.destroy = function() {
-  delete cachedModules[this.uri]
-  delete fetchedList[this.uri]
 }
 
 
 // Helpers
 
-function getUnloadedUris(uris) {
-  var ret = []
-
-  for (var i = 0, len = uris.length; i < len; i++) {
-    var uri = uris[i]
-    if (uri) {
-      var mod = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
-      if (mod.status < STATUS_LOADED) {
-        ret.push(uri)
-      }
-    }
-  }
-
-  return ret
+function getModule(uri) {
+  return cachedMods[uri] || (cachedMods[uri] = new Module(uri))
 }
 
 function getExports(mod) {
@@ -304,7 +296,7 @@ function getExports(mod) {
 }
 
 function preload(callback) {
-  var preloadMods = configData.preload
+  var preloadMods = data.preload
   var len = preloadMods.length
 
   if (len) {
@@ -332,13 +324,18 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
-seajs.Module = Module
-Module.load = use
-
-seajs.resolve = id2Uri
 global.define = define
 
+
+// For developers
+seajs.Module = Module
+Module.STATUS = STATUS
+Module.load = use
+data.fetchedList = fetchedList
+
+seajs.resolve = id2Uri
+
 seajs.require = function(id) {
-  return (cachedModules[id2Uri(id)] || {}).exports
+  return (cachedMods[id2Uri(id)] || {}).exports
 }
 

@@ -2,11 +2,11 @@
  * util-events.js - The minimal events support
  */
 
-var eventsCache = seajs.events = {}
+var events = data.events = {}
 
 // Bind event
-seajs.on = function(event, callback) {
-  var list = eventsCache[event] || (eventsCache[event] = [])
+seajs.on = function(name, callback) {
+  var list = events[name] || (events[name] = [])
   list.push(callback)
   return seajs
 }
@@ -14,14 +14,14 @@ seajs.on = function(event, callback) {
 // Remove event. If `callback` is undefined, remove all callbacks for the
 // event. If `event` and `callback` are both undefined, remove all callbacks
 // for all events
-seajs.off = function(event, callback) {
+seajs.off = function(name, callback) {
   // Remove *all* events
-  if (!(event || callback)) {
-    seajs.events = eventsCache = {}
+  if (!(name || callback)) {
+    events = data.events = {}
     return seajs
   }
 
-  var list = eventsCache[event]
+  var list = events[name]
   if (list) {
     if (callback) {
       for (var i = list.length - 1; i >= 0; i--) {
@@ -31,7 +31,7 @@ seajs.off = function(event, callback) {
       }
     }
     else {
-      delete eventsCache[event]
+      delete events[name]
     }
   }
 
@@ -40,8 +40,8 @@ seajs.off = function(event, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks are passed the same
 // arguments as `emit` is, apart from the event name
-var emit = seajs.emit = function(event, data) {
-  var list = eventsCache[event], fn
+var emit = seajs.emit = function(name, data) {
+  var list = events[name], fn
 
   if (list) {
     // Copy callback lists to prevent modification

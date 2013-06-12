@@ -17,7 +17,7 @@ define(function(require) {
     base: './'
   })
 
-  var base = seajs.config.data.base
+  var base = seajs.data.base
   test.assert(/tests\/specs\/config\/$/.test(base), base)
 
 
@@ -37,20 +37,6 @@ define(function(require) {
   test.assert(require.resolve('z') === expectedPath('z'),
       'actual = ' + require.resolve('z')
           + ' expected = ' + expectedPath('z'))
-
-
-  // rare but allowed case
-  seajs.config({
-    base: '/'
-  })
-
-  base = seajs.config.data.base
-  var href = (global.location || {}).href
-
-  test.assert(!href || // For Node.js
-      href.indexOf('file://') === 0 ||
-      href.indexOf(base) === 0, base)
-
 
   test.next()
 

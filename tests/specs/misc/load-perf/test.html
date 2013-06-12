@@ -18,7 +18,7 @@
   seajs.on('request', function(data) {
     var requestUri = data.requestUri
     if (requestUri.indexOf('??') > 0) {
-      data.requestUri = seajs.config.data.base + 'combo.js'
+      data.requestUri = seajs.data.base + 'combo.js'
     }
   })
 

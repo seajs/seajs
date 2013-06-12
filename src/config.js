@@ -3,7 +3,7 @@
  */
 
 // The root path to use for id2uri parsing
-configData.base = (function() {
+data.base = (function() {
   var ret = loaderDir
 
   // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
@@ -17,16 +17,16 @@ configData.base = (function() {
 })()
 
 // The loader directory
-configData.dir = loaderDir
+data.dir = loaderDir
 
 // The current working directory
-configData.cwd = cwd
+data.cwd = cwd
 
 // The charset for requesting files
-configData.charset = "utf-8"
+data.charset = "utf-8"
 
 // Modules that are needed to load before all other modules
-configData.preload = (function() {
+data.preload = (function() {
   var plugins = []
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
@@ -44,20 +44,18 @@ configData.preload = (function() {
   return plugin2preload(plugins)
 })()
 
-// configData.debug - Debug mode. The default value is false
-// configData.alias - An object containing shorthands of module id
-// configData.paths - An object containing path shorthands in module id
-// configData.vars - The {xxx} variables in module id
-// configData.map - An array containing rules to map module uri
-// configData.plugins - An array containing needed plugins
+// data.debug - Debug mode. The default value is false
+// data.alias - An object containing shorthands of module id
+// data.paths - An object containing path shorthands in module id
+// data.vars - The {xxx} variables in module id
+// data.map - An array containing rules to map module uri
+// data.plugins - An array containing needed plugins
 
 
-function config(data) {
-  // Clear id2Uri cache to avoid getting old uri when config is updated
-  id2UriCache = {}
+function config(configData) {
 
-  for (var key in data) {
-    var curr = data[key]
+  for (var key in configData) {
+    var curr = configData[key]
 
     // Convert plugins to preload config
     if (curr && key === "plugins") {
@@ -65,7 +63,7 @@ function config(data) {
       curr = plugin2preload(curr)
     }
 
-    var prev = configData[key]
+    var prev = data[key]
 
     // Merge object config such as alias, vars
     if (prev && isObject(prev)) {
@@ -78,28 +76,27 @@ function config(data) {
       if (isArray(prev)) {
         curr = prev.concat(curr)
       }
-      // Make sure that `configData.base` is an absolute directory
+      // Make sure that `data.base` is an absolute directory
       else if (key === "base") {
         curr = normalize(addBase(curr + "/"))
       }
 
       // Set config
-      configData[key] = curr
+      data[key] = curr
     }
   }
 
-  emit("config", data)
+  emit("config", configData)
   return seajs
 }
 
-config.data = configData
 seajs.config = config
 
 function plugin2preload(arr) {
   var ret = [], name
 
   while ((name = arr.shift())) {
-    ret.push(configData.dir + "plugin-" + name)
+    ret.push(data.dir + "plugin-" + name)
   }
   return ret
 }

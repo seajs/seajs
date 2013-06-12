@@ -80,7 +80,7 @@ define(function(require) {
 
     // Max length limit
     seajs.config({
-      comboMaxLength: (seajs.config.data.base + 'long/1.js+2.js+3.js').length
+      comboMaxLength: (seajs.data.base + 'long/1.js+2.js+3.js').length
     })
 
     // long/1.js+2.js+3.js

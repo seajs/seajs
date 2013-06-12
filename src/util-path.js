@@ -8,8 +8,7 @@ var DOT_RE = /\/\.\//g
 var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
 
-var URI_END_RE = /\?|\.(?:css|js)$|\/$/
-var HASH_END_RE = /#$/
+var normalizeCache = {}
 
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
@@ -28,11 +27,15 @@ function realpath(path) {
   // "http://a//b/c"   ==> "http://a/b/c"
   // "https://a//b/c"  ==> "https://a/b/c"
   // "/a/b//"          ==> "/a/b/"
-  path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+  if (path.replace("://", "").indexOf("//") > 0) { // For performance
+    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
+  }
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  while (path.match(DOUBLE_DOT_RE)) {
-    path = path.replace(DOUBLE_DOT_RE, "/")
+  if (path.indexOf('../') > 0) { // For performance
+    while (path.match(DOUBLE_DOT_RE)) {
+      path = path.replace(DOUBLE_DOT_RE, "/")
+    }
   }
 
   return path
@@ -41,20 +44,37 @@ function realpath(path) {
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
+  var key = uri
+
+  if (normalizeCache[key]) {
+    return normalizeCache[key]
+  }
+
   // Call realpath() before adding extension, so that most of uris will
   // contains no `.` and will just return in realpath() call
   uri = realpath(uri)
 
   // Add the default `.js` extension except that the uri ends with `#`
-  if (HASH_END_RE.test(uri)) {
+  var last = uri.charAt(uri.length - 1)
+  if (last === "#") {
     uri = uri.slice(0, -1)
   }
-  else if (!URI_END_RE.test(uri)) {
-    uri += ".js"
+  // Exclude ? and directory path
+  // NOTICE: This code below is faster than RegExp /\?|\.(?:css|js)$|\/$/
+  else if (uri.indexOf("?") === -1 && last !== "/") {
+    var pos = uri.lastIndexOf(".")
+    var extname = pos > 0 ? uri.substring(pos + 1).toLowerCase() : ""
+
+    if (extname !== "js" && extname !== "css") {
+      uri += ".js"
+    }
   }
 
   // issue #256: fix `:80` bug in IE
-  return uri.replace(":80/", "/")
+  uri = uri.replace(":80/", "/")
+
+  // Memoize normalize function
+  return (normalizeCache[key] = uri)
 }
 
 
@@ -62,12 +82,12 @@ var PATHS_RE = /^([^/:]+)(\/.+)$/
 var VARS_RE = /{([^{]+)}/g
 
 function parseAlias(id) {
-  var alias = configData.alias
+  var alias = data.alias
   return alias && isString(alias[id]) ? alias[id] : id
 }
 
 function parsePaths(id) {
-  var paths = configData.paths
+  var paths = data.paths
   var m
 
   if (paths && (m = id.match(PATHS_RE)) && isString(paths[m[1]])) {
@@ -78,7 +98,7 @@ function parsePaths(id) {
 }
 
 function parseVars(id) {
-  var vars = configData.vars
+  var vars = data.vars
 
   if (vars && id.indexOf("{") > -1) {
     id = id.replace(VARS_RE, function(m, key) {
@@ -90,7 +110,7 @@ function parseVars(id) {
 }
 
 function parseMap(uri) {
-  var map = configData.map
+  var map = data.map
   var ret = uri
 
   if (map) {
@@ -110,25 +130,20 @@ function parseMap(uri) {
 }
 
 
-var ABSOLUTE_RE = /^\/\/.|:\//
-var RELATIVE_RE = /^\./
-var ROOT_RE = /^\//
-
 function isAbsolute(id) {
-  return ABSOLUTE_RE.test(id)
+  return id.indexOf(":/") > 0 || id.indexOf("//") === 0
 }
 
 function isRelative(id) {
-  return RELATIVE_RE.test(id)
+  return id.charAt(0) === "."
 }
 
 function isRoot(id) {
-  return ROOT_RE.test(id)
+  return id.charAt(0) === "/"
 }
 
 
 var ROOT_DIR_RE = /^.*?\/\/.*?\//
-var id2UriCache = {}
 
 function addBase(id, refUri) {
   var ret
@@ -137,15 +152,15 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = (refUri ? dirname(refUri) : configData.cwd) + id
+    ret = (refUri ? dirname(refUri) : data.cwd) + id
   }
   else if (isRoot(id)) {
-    var m = configData.cwd.match(ROOT_DIR_RE)
+    var m = data.cwd.match(ROOT_DIR_RE)
     ret = m ? m[0] + id.substring(1) : id
   }
   // top-level id
   else {
-    ret = configData.base + id
+    ret = data.base + id
   }
 
   return ret
@@ -153,12 +168,6 @@ function addBase(id, refUri) {
 
 function id2Uri(id, refUri) {
   if (!id) return ""
-
-  // Memoize id2Uri function to avoiding duplicated computations
-  var cacheKey = id + refUri
-  if (id2UriCache[cacheKey]) {
-    return id2UriCache[cacheKey]
-  }
 
   id = parseAlias(id)
   id = parsePaths(id)
@@ -168,7 +177,7 @@ function id2Uri(id, refUri) {
   uri = normalize(uri)
   uri = parseMap(uri)
 
-  return (id2UriCache[cacheKey] = uri)
+  return uri
 }
 
 
