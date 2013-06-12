@@ -115,6 +115,9 @@ var emit = seajs.emit = function(name, data) {
  * util-path.js - The utilities for operating path such as id, uri
  */
 
+var normalizeCache = {}
+var id2UriCache = {}
+
 var DIRNAME_RE = /[^?#]*\//
 
 var DOT_RE = /\/\.\//g
@@ -169,6 +172,10 @@ function extname(path) {
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
+  if (normalizeCache[uri]) {
+    return normalizeCache[uri]
+  }
+
   // Call realpath() before adding extension, so that most of uris will
   // contains no `.` and will just return in realpath() call
   uri = realpath(uri)
@@ -186,7 +193,9 @@ function normalize(uri) {
   }
 
   // issue #256: fix `:80` bug in IE
-  return uri.replace(":80/", "/")
+  uri = uri.replace(":80/", "/")
+
+  return (normalizeCache[uri] = uri)
 }
 
 
@@ -256,7 +265,6 @@ function isRoot(id) {
 
 
 var ROOT_DIR_RE = /^.*?\/\/.*?\//
-var id2UriCache = {}
 
 function addBase(id, refUri) {
   var ret
@@ -283,9 +291,9 @@ function id2Uri(id, refUri) {
   if (!id) return ""
 
   // Memoize id2Uri function to avoiding duplicated computations
-  var cacheKey = id + refUri
-  if (id2UriCache[cacheKey]) {
-    return id2UriCache[cacheKey]
+  var key = id + refUri || ""
+  if (id2UriCache[key]) {
+    return id2UriCache[key]
   }
 
   id = parseAlias(id)
@@ -296,7 +304,7 @@ function id2Uri(id, refUri) {
   uri = normalize(uri)
   uri = parseMap(uri)
 
-  return (id2UriCache[cacheKey] = uri)
+  return (id2UriCache[key] = uri)
 }
 
 
