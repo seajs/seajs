@@ -131,7 +131,7 @@ Module.prototype._fetch = function() {
   emit("fetch", emitData)
   var requestUri = emitData.requestUri || uri
 
-  if (fetchedList[requestUri]) {
+  if (!requestUri || fetchedList[requestUri]) {
     mod._load()
     return
   }
