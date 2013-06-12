@@ -69,9 +69,7 @@ seajs.on = function(name, callback) {
 seajs.off = function(name, callback) {
   // Remove *all* events
   if (!(name || callback)) {
-    for (var prop in events) {
-      delete events[prop]
-    }
+    events = data.events = {}
     return seajs
   }
 
@@ -578,7 +576,7 @@ function load(uris, callback) {
 
   // Start parallel loading
   for (i = 0; i < len; i++) {
-    mod = getModule(uris[i])
+    mod = cachedMods[uris[i]]
 
     if (mod.status < STATUS.FETCHING) {
       mod._fetch()
@@ -594,7 +592,6 @@ function load(uris, callback) {
       callback()
     }
   }
-
 }
 
 Module.prototype._load = function() {
@@ -621,7 +618,7 @@ Module.prototype._fetch = function() {
   emit("fetch", emitData)
   var requestUri = emitData.requestUri || uri
 
-  if (fetchedList[requestUri]) {
+  if (!requestUri || fetchedList[requestUri]) {
     mod._load()
     return
   }
