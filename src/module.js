@@ -92,12 +92,10 @@ function load(uris, callback) {
     mod = getModule(uris[i])
 
     if (mod.status < STATUS.FETCHING) {
-      fetch(mod.uri, function() {
-        _load(mod)
-      })
+      mod._fetch()
     }
     else if (mod.status === STATUS.SAVED) {
-      _load(mod)
+      mod._load()
     }
   }
 
@@ -110,7 +108,9 @@ function load(uris, callback) {
 
 }
 
-function _load(mod) {
+Module.prototype._load = function() {
+  var mod = this
+
   load(mod.dependencies, function() {
     mod.status = STATUS.LOADED
 
@@ -121,8 +121,11 @@ function _load(mod) {
   })
 }
 
-function fetch(uri, callback) {
-  cachedMods[uri].status = STATUS.FETCHING
+Module.prototype._fetch = function() {
+  var mod = this
+  var uri = mod.uri
+
+  mod.status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
   var emitData = { uri: uri }
@@ -130,17 +133,17 @@ function fetch(uri, callback) {
   var requestUri = emitData.requestUri || uri
 
   if (fetchedList[requestUri]) {
-    callback()
+    mod._load()
     return
   }
 
   if (fetchingList[requestUri]) {
-    callbackList[requestUri].push(callback)
+    callbackList[requestUri].push(mod)
     return
   }
 
   fetchingList[requestUri] = true
-  callbackList[requestUri] = [callback]
+  callbackList[requestUri] = [mod]
 
   // Emit `request` event for plugins such as plugin-text
   emit("request", emitData = {
@@ -165,9 +168,9 @@ function fetch(uri, callback) {
     }
 
     // Call callbacks
-    var fn, fns = callbackList[requestUri]
+    var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((fn = fns.shift())) fn()
+    while ((m = mods.shift())) m._load()
   }
 }
 
