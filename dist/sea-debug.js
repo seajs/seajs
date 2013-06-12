@@ -140,12 +140,12 @@ function realpath(path) {
   // "http://a//b/c"   ==> "http://a/b/c"
   // "https://a//b/c"  ==> "https://a/b/c"
   // "/a/b//"          ==> "/a/b/"
-  if (path.lastIndexOf("//") > 7) { // for performance
+  if (path.replace("://", "").indexOf("//") > 0) { // For performance
     path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
   }
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  if (path.indexOf('../') > 0) { // for performance
+  if (path.indexOf('../') > 0) { // For performance
     while (path.match(DOUBLE_DOT_RE)) {
       path = path.replace(DOUBLE_DOT_RE, "/")
     }
@@ -157,8 +157,10 @@ function realpath(path) {
 // Normalize an uri
 // normalize("path/to/a") ==> "path/to/a.js"
 function normalize(uri) {
-  if (normalizeCache[uri]) {
-    return normalizeCache[uri]
+  var key = uri
+
+  if (normalizeCache[key]) {
+    return normalizeCache[key]
   }
 
   // Call realpath() before adding extension, so that most of uris will
@@ -173,23 +175,19 @@ function normalize(uri) {
   // Exclude ? and directory path
   // NOTICE: This code below is faster than RegExp /\?|\.(?:css|js)$|\/$/
   else if (uri.indexOf("?") === -1 && last !== "/") {
-    var extname = ".js"
-
     var pos = uri.lastIndexOf(".")
-    if (pos > 0) {
-      extname = uri.substring(pos + 1).toLowerCase()
-      if (extname === "js" || extname === "css") {
-        extname = ""
-      }
-    }
+    var extname = pos > 0 ? uri.substring(pos + 1).toLowerCase() : ""
 
-    uri += extname
+    if (extname !== "js" && extname !== "css") {
+      uri += ".js"
+    }
   }
 
   // issue #256: fix `:80` bug in IE
   uri = uri.replace(":80/", "/")
 
-  return (normalizeCache[uri] = uri)
+  // Memoize normalize function
+  return (normalizeCache[key] = uri)
 }
 
 
@@ -583,12 +581,10 @@ function load(uris, callback) {
     mod = getModule(uris[i])
 
     if (mod.status < STATUS.FETCHING) {
-      fetch(mod.uri, function() {
-        _load(mod)
-      })
+      mod._fetch()
     }
     else if (mod.status === STATUS.SAVED) {
-      _load(mod)
+      mod._load()
     }
   }
 
@@ -601,7 +597,9 @@ function load(uris, callback) {
 
 }
 
-function _load(mod) {
+Module.prototype._load = function() {
+  var mod = this
+
   load(mod.dependencies, function() {
     mod.status = STATUS.LOADED
 
@@ -612,8 +610,11 @@ function _load(mod) {
   })
 }
 
-function fetch(uri, callback) {
-  cachedMods[uri].status = STATUS.FETCHING
+Module.prototype._fetch = function() {
+  var mod = this
+  var uri = mod.uri
+
+  mod.status = STATUS.FETCHING
 
   // Emit `fetch` event for plugins such as plugin-combo
   var emitData = { uri: uri }
@@ -621,17 +622,17 @@ function fetch(uri, callback) {
   var requestUri = emitData.requestUri || uri
 
   if (fetchedList[requestUri]) {
-    callback()
+    mod._load()
     return
   }
 
   if (fetchingList[requestUri]) {
-    callbackList[requestUri].push(callback)
+    callbackList[requestUri].push(mod)
     return
   }
 
   fetchingList[requestUri] = true
-  callbackList[requestUri] = [callback]
+  callbackList[requestUri] = [mod]
 
   // Emit `request` event for plugins such as plugin-text
   emit("request", emitData = {
@@ -656,9 +657,9 @@ function fetch(uri, callback) {
     }
 
     // Call callbacks
-    var fn, fns = callbackList[requestUri]
+    var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((fn = fns.shift())) fn()
+    while ((m = mods.shift())) m._load()
   }
 }
 
