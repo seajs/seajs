@@ -92,10 +92,12 @@ function load(uris, callback) {
     mod = getModule(uris[i])
 
     if (mod.status < STATUS.FETCHING) {
-      fetch(mod.uri, mod._load)
+      fetch(mod.uri, function() {
+        _load(mod)
+      })
     }
     else if (mod.status === STATUS.SAVED) {
-      mod._load()
+      _load(mod)
     }
   }
 
@@ -108,9 +110,7 @@ function load(uris, callback) {
 
 }
 
-Module.prototype._load = function() {
-  var mod = this
-
+function _load(mod) {
   load(mod.dependencies, function() {
     mod.status = STATUS.LOADED
 
