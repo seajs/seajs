@@ -10,6 +10,8 @@
   var data = seajs.data
 
   var comboHash = data.comboHash = {}
+  var comboHashValues = data.comboHashValues = []
+
   var comboSyntax = ["??", ","]
   var comboMaxLength = 2000
 
@@ -51,7 +53,7 @@
   }
 
   function setRequestUri(data) {
-    data.requestUri = comboHash[data.uri] || data.uri
+    data.requestUri = comboHashValues[comboHash[data.uri]] || data.uri
   }
 
 
@@ -236,8 +238,11 @@
         throw new Error("The combo url is too long: " + comboPath)
       }
 
+      var key = comboHashValues.length
+      comboHashValues[key] = comboPath
+
       for (var i = 0, len = files.length; i < len; i++) {
-        comboHash[root + files[i]] = comboPath
+        comboHash[root + files[i]] = key
       }
     }
   }
