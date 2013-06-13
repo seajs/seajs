@@ -132,10 +132,8 @@ function realpath(path) {
   path = path.replace(DOT_RE, "/")
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  if (path.indexOf('../') > 0) {
-    while (path.match(DOUBLE_DOT_RE)) {
-      path = path.replace(DOUBLE_DOT_RE, "/")
-    }
+  while (path.match(DOUBLE_DOT_RE)) {
+    path = path.replace(DOUBLE_DOT_RE, "/")
   }
 
   return path
@@ -143,25 +141,18 @@ function realpath(path) {
 
 // Normalize an id
 // normalize("path/to/a") ==> "path/to/a.js"
+// NOTICE: substring is faster than negative slice
 function normalize(path) {
-  var last = path.charAt(path.length - 1)
+  var last = path.length - 1
 
-  // Add the default `.js` extension except that the uri ends with `#`
-  if (last === "#") {
-    path = path.slice(0, -1)
-  }
-  // Exclude ? and directory path
-  // NOTICE: This code below is faster than RegExp /\?|\.(?:css|js)$|\/$/
-  else if (path.indexOf("?") === -1 && last !== "/") {
-    var pos = path.lastIndexOf(".")
-    var extname = pos > 0 ? path.substring(pos + 1).toLowerCase() : ""
-
-    if (extname !== "js" && extname !== "css") {
-      path += ".js"
-    }
+  // If the uri ends with `#`, just return it without '#'
+  if (path.charAt(last) === "#") {
+    return path.substring(0, last)
   }
 
-  return path
+  return  (path.substring(last - 2) === ".js" ||
+      path.indexOf("?") > 0 ||
+      path.substring(last - 3) === ".css") ? path : path + ".js"
 }
 
 
