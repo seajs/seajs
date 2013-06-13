@@ -10,7 +10,8 @@
   var data = seajs.data
 
   var comboHash = data.comboHash = {}
-  var DEFAULT_URL_MAX_LENGTH = 2000
+  var comboSyntax = ["??", ","]
+  var comboMaxLength = 2000
 
 
   seajs.on("load", setComboHash)
@@ -22,8 +23,11 @@
       return
     }
 
-    var needComboUris = []
+    data.comboSyntax && (comboSyntax = data.comboSyntax)
+    data.comboMaxLength && (comboMaxLength = data.comboMaxLength)
+
     var comboExcludes = data.comboExcludes
+    var needComboUris = []
 
     for (var i = 0; i < len; i++) {
       var uri = uris[i]
@@ -216,16 +220,16 @@
   }
 
   function setHash(root, files) {
-    var comboSyntax = data.comboSyntax || ["??", ","]
-    var comboMaxLength = data.comboMaxLength || DEFAULT_URL_MAX_LENGTH
-
     var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
     var exceedMax = comboPath.length > comboMaxLength
 
     // http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url
     if (files.length > 1 && exceedMax) {
-      setHash(root, files.splice(0, Math.ceil(files.length / 2)))
-      setHash(root, files)
+      var parts = splitFiles(files,
+          comboMaxLength - (root + comboSyntax[0]).length)
+
+      setHash(root, parts[0])
+      setHash(root, parts[1])
     }
     else {
       if (exceedMax) {
@@ -234,6 +238,18 @@
 
       for (var i = 0, len = files.length; i < len; i++) {
         comboHash[root + files[i]] = comboPath
+      }
+    }
+  }
+
+  function splitFiles(files, filesMaxLength) {
+    var sep = comboSyntax[1]
+    var s = files[0]
+
+    for (var i = 1, len = files.length; i < len; i++) {
+      s += sep + files[i]
+      if (s.length > filesMaxLength) {
+        return [files.splice(0, i), files]
       }
     }
   }
