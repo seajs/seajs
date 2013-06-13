@@ -132,9 +132,7 @@ function dirname(path) {
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
   // /a/b/./c/./d ==> /a/b/c/d
-  if (path.indexOf('/./') > 0) {
-    path = path.replace(DOT_RE, "/")
-  }
+  path = path.replace(DOT_RE, "/")
 
   // "file:///a//b/c"  ==> "file:///a/b/c"
   // "http://a//b/c"   ==> "http://a/b/c"
@@ -145,7 +143,7 @@ function realpath(path) {
   }
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  if (path.indexOf('/../') > 0) {
+  if (path.indexOf('../') > 0) {
     while (path.match(DOUBLE_DOT_RE)) {
       path = path.replace(DOUBLE_DOT_RE, "/")
     }
