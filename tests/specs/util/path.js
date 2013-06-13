@@ -148,6 +148,7 @@ define(function(require) {
   seajs.config({ cwd: _cwd })
 
 
+  /*
   assert(isAbsolute('http://test.com/') === true, 'isAbsolute')
   assert(isAbsolute('https://test.com/') === true, 'isAbsolute')
   assert(isAbsolute('file:///c/') === true, 'isAbsolute')
@@ -158,6 +159,7 @@ define(function(require) {
   assert(isRoot('/') === true, 'isRoot')
   assert(isRoot('//') === true, 'isRoot')
   assert(isRoot('/a') === true, 'isRoot')
+  */
 
   /*
   assert(isTopLevel('xxx') === true, 'isTopLevel')
