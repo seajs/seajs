@@ -472,10 +472,12 @@ var manager = (function () {
 				for (i = 0, len = ids.length; i < len; ++i) {
 					id = ids[i];
 
+          /* This cache is WRONG! -- lifesinger
 					if (idCache[id]) { // Use cached result.
 						ids[i] = idCache[id];
 						continue;
 					}
+					*/
 
 					// Resolve alias.
 					if (id.charAt(0) === '#') {
