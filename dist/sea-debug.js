@@ -132,18 +132,20 @@ function dirname(path) {
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
   // /a/b/./c/./d ==> /a/b/c/d
-  path = path.replace(DOT_RE, "/")
+  if (path.indexOf('/./') > 0) {
+    path = path.replace(DOT_RE, "/")
+  }
 
   // "file:///a//b/c"  ==> "file:///a/b/c"
   // "http://a//b/c"   ==> "http://a/b/c"
   // "https://a//b/c"  ==> "https://a/b/c"
   // "/a/b//"          ==> "/a/b/"
-  if (path.replace("://", "").indexOf("//") > 0) { // For performance
+  if (path.replace("://", "").indexOf("//") > 0) {
     path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
   }
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  if (path.indexOf('../') > 0) { // For performance
+  if (path.indexOf('/../') > 0) {
     while (path.match(DOUBLE_DOT_RE)) {
       path = path.replace(DOUBLE_DOT_RE, "/")
     }
@@ -180,9 +182,6 @@ function normalize(uri) {
       uri += ".js"
     }
   }
-
-  // issue #256: fix `:80` bug in IE
-  uri = uri.replace(":80/", "/")
 
   // Memoize normalize function
   return (normalizeCache[key] = uri)
@@ -597,7 +596,7 @@ function load(uris, callback) {
 Module.prototype._load = function() {
   var mod = this
 
-  load(mod.dependencies, function() {
+  load(resolve(mod.dependencies, mod.uri), function() {
     mod.status = STATUS.LOADED
 
     // Fire loaded callbacks
@@ -715,7 +714,7 @@ function save(uri, meta) {
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
     mod.id = meta.id || uri
-    mod.dependencies = resolve(meta.deps || [], uri)
+    mod.dependencies = meta.deps || []
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
