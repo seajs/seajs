@@ -208,35 +208,27 @@ function parseMap(uri) {
 }
 
 
-function isAbsolute(id) {
-  return id.indexOf(":/") > 0 || id.indexOf("//") === 0
-}
-
-function isRelative(id) {
-  return id.charAt(0) === "."
-}
-
-function isRoot(id) {
-  return id.charAt(0) === "/"
-}
-
-
+var ABSOLUTE_RE = /^\/\/.|:\//
 var ROOT_DIR_RE = /^.*?\/\/.*?\//
 
 function addBase(id, refUri) {
   var ret
+  var first = id.charAt(0)
 
-  if (isAbsolute(id)) {
+  // Absolute
+  if (ABSOLUTE_RE.test(id)) {
     ret = id
   }
-  else if (isRelative(id)) {
+  // Relative
+  else if (first === ".") {
     ret = realpath((refUri ? dirname(refUri) : data.cwd) + id)
   }
-  else if (isRoot(id)) {
+  // Root
+  else if (first === "/") {
     var m = data.cwd.match(ROOT_DIR_RE)
     ret = m ? m[0] + id.substring(1) : id
   }
-  // top-level id
+  // Top-level
   else {
     ret = data.base + id
   }
