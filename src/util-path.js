@@ -30,7 +30,7 @@ function realpath(path) {
 
 // Normalize an id
 // normalize("path/to/a") ==> "path/to/a.js"
-// NOTICE: substring is faster than negative slice
+// NOTICE: substring is faster than negative slice and RegExp
 function normalize(path) {
   var last = path.length - 1
 
