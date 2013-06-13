@@ -3,29 +3,43 @@
  */
 (function(seajs) {
 
-  var FETCHING = seajs.Module.STATUS.FETCHING
+  var Module = seajs.Module
+  var FETCHING = Module.STATUS.FETCHING
 
-  var comboHash = {}
   var cachedMods = seajs.cache
   var data = seajs.data
+
+  var comboHash = data.comboHash = {}
+  var DEFAULT_URL_MAX_LENGTH = 2000
+
 
   seajs.on("load", setComboHash)
   seajs.on("fetch", setRequestUri)
 
   function setComboHash(uris) {
+    var len = uris.length
+    if (len < 2) {
+      return
+    }
+
     var needComboUris = []
     var comboExcludes = data.comboExcludes
 
-    forEach(uris, function(uri) {
-      var mod = cachedMods[uri] || (cachedMods[uri] = new seajs.Module(uri))
+    for (var i = 0; i < len; i++) {
+      var uri = uris[i]
+
+      if (comboHash[uri]) {
+        continue
+      }
+
+      var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
 
       // Remove fetching and fetched uris, excluded uris, combo uris
       if (mod.status < FETCHING &&
-          (!comboExcludes || !comboExcludes.test(uri)) &&
-          !isComboUri(uri)) {
+          (!comboExcludes || !comboExcludes.test(uri)) && !isComboUri(uri)) {
         needComboUris.push(uri)
       }
-    })
+    }
 
     if (needComboUris.length > 1) {
       paths2hash(uris2paths(needComboUris))
@@ -33,22 +47,11 @@
   }
 
   function setRequestUri(data) {
-    var uri = data.uri
-    data.requestUri = comboHash[uri] || uri
+    data.requestUri = comboHash[data.uri] || data.uri
   }
 
 
   // Helpers
-
-  var forEach = [].forEach ?
-      function(arr, fn) {
-        arr.forEach(fn)
-      } :
-      function(arr, fn) {
-        for (var i = 0; i < arr.length; i++) {
-          fn(arr[i], i, arr)
-        }
-      }
 
   function uris2paths(uris) {
     return meta2paths(uris2meta(uris))
@@ -83,19 +86,20 @@
   function uris2meta(uris) {
     var meta = { __KEYS: [] }
 
-    forEach(uris, function(uri) {
-      var parts = uri.replace("://", "__").split("/")
+    for (var i = 0, len = uris.length; i < len; i++) {
+      var parts = uris[i].replace("://", "__").split("/")
       var m = meta
 
-      forEach(parts, function(part) {
+      for (var j = 0, l = parts.length; j < l; j++) {
+        var part = parts[j]
+
         if (!m[part]) {
           m[part] = { __KEYS: [] }
           m.__KEYS.push(part)
         }
         m = m[part]
-      })
-
-    })
+      }
+    }
 
     return meta
   }
@@ -125,13 +129,15 @@
   // ]
   function meta2paths(meta) {
     var paths = []
+    var __KEYS = meta.__KEYS
 
-    forEach(meta.__KEYS, function(part) {
+    for (var i = 0, len = __KEYS.length; i < len; i++) {
+      var part = __KEYS[i]
       var root = part
       var m = meta[part]
       var KEYS = m.__KEYS
 
-      while(KEYS.length === 1) {
+      while (KEYS.length === 1) {
         root += "/" + KEYS[0]
         m = m[KEYS[0]]
         KEYS = m.__KEYS
@@ -140,7 +146,7 @@
       if (KEYS.length) {
         paths.push([root.replace("__", "://"), meta2arr(m)])
       }
-    })
+    }
 
     return paths
   }
@@ -160,21 +166,24 @@
   // ]
   function meta2arr(meta) {
     var arr = []
+    var __KEYS = meta.__KEYS
 
-    forEach(meta.__KEYS, function(key) {
+    for (var i = 0, len = __KEYS.length; i < len; i++) {
+      var key = __KEYS[i]
       var r = meta2arr(meta[key])
 
       // key = "c"
       // r = ["d.js", "e.js"]
-      if (r.length) {
-        forEach(r, function(part) {
-          arr.push(key + "/" + part)
-        })
+      var m = r.length
+      if (m) {
+        for (var j = 0; j < m; j++) {
+          arr.push(key + "/" + r[j])
+        }
       }
       else {
         arr.push(key)
       }
-    })
+    }
 
     return arr
   }
@@ -193,22 +202,22 @@
   // "http://example.com/p/b.css"  ==> "http://example.com/p/??a.css,b.css"
   //
   function paths2hash(paths) {
-
-    forEach(paths, function(path) {
+    for (var i = 0, len = paths.length; i < len; i++) {
+      var path = paths[i]
       var root = path[0] + "/"
       var group = files2group(path[1])
 
-      forEach(group, function(files) {
-        setHash(root, files)
-      })
-    })
+      for (var j = 0, m = group.length; j < m; j++) {
+        setHash(root, group[j])
+      }
+    }
 
     return comboHash
   }
 
   function setHash(root, files) {
     var comboSyntax = data.comboSyntax || ["??", ","]
-    var comboMaxLength = data.comboMaxLength || 2000
+    var comboMaxLength = data.comboMaxLength || DEFAULT_URL_MAX_LENGTH
 
     var comboPath = root + comboSyntax[0] + files.join(comboSyntax[1])
     var exceedMax = comboPath.length > comboMaxLength
@@ -223,9 +232,9 @@
         throw new Error("The combo url is too long: " + comboPath)
       }
 
-      forEach(files, function(part) {
-        comboHash[root + part] = comboPath
-      })
+      for (var i = 0, len = files.length; i < len; i++) {
+        comboHash[root + files[i]] = comboPath
+      }
     }
   }
 
@@ -238,16 +247,17 @@
     var group = []
     var hash = {}
 
-    forEach(files, function(file) {
+    for (var i = 0, len = files.length; i < len; i++) {
+      var file = files[i]
       var ext = getExt(file)
       if (ext) {
         (hash[ext] || (hash[ext] = [])).push(file)
       }
-    })
+    }
 
-    for (var ext in hash) {
-      if (hash.hasOwnProperty(ext)) {
-        group.push(hash[ext])
+    for (var k in hash) {
+      if (hash.hasOwnProperty(k)) {
+        group.push(hash[k])
       }
     }
 
