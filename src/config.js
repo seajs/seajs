@@ -78,9 +78,7 @@ function config(configData) {
       }
       // Make sure that `data.base` is an absolute path
       else if (key === "base") {
-        if (curr[curr.length - 1] !== "/") {
-          curr += "/"
-        }
+        (curr.slice(-1) === "/") || (curr += "/")
         curr = addBase(curr)
       }
 
