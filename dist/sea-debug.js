@@ -116,10 +116,7 @@ var emit = seajs.emit = function(name, data) {
 var DIRNAME_RE = /[^?#]*\//
 
 var DOT_RE = /\/\.\//g
-var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
-
-var normalizeCache = {}
 
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
@@ -134,14 +131,6 @@ function realpath(path) {
   // /a/b/./c/./d ==> /a/b/c/d
   path = path.replace(DOT_RE, "/")
 
-  // "file:///a//b/c"  ==> "file:///a/b/c"
-  // "http://a//b/c"   ==> "http://a/b/c"
-  // "https://a//b/c"  ==> "https://a/b/c"
-  // "/a/b//"          ==> "/a/b/"
-  if (path.replace("://", "").indexOf("//") > 0) {
-    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
-  }
-
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
   if (path.indexOf('../') > 0) {
     while (path.match(DOUBLE_DOT_RE)) {
@@ -152,37 +141,27 @@ function realpath(path) {
   return path
 }
 
-// Normalize an uri
+// Normalize an id
 // normalize("path/to/a") ==> "path/to/a.js"
-function normalize(uri) {
-  var key = uri
-
-  if (normalizeCache[key]) {
-    return normalizeCache[key]
-  }
-
-  // Call realpath() before adding extension, so that most of uris will
-  // contains no `.` and will just return in realpath() call
-  uri = realpath(uri)
+function normalize(path) {
+  var last = path.charAt(path.length - 1)
 
   // Add the default `.js` extension except that the uri ends with `#`
-  var last = uri.charAt(uri.length - 1)
   if (last === "#") {
-    uri = uri.slice(0, -1)
+    path = path.slice(0, -1)
   }
   // Exclude ? and directory path
   // NOTICE: This code below is faster than RegExp /\?|\.(?:css|js)$|\/$/
-  else if (uri.indexOf("?") === -1 && last !== "/") {
-    var pos = uri.lastIndexOf(".")
-    var extname = pos > 0 ? uri.substring(pos + 1).toLowerCase() : ""
+  else if (path.indexOf("?") === -1 && last !== "/") {
+    var pos = path.lastIndexOf(".")
+    var extname = pos > 0 ? path.substring(pos + 1).toLowerCase() : ""
 
     if (extname !== "js" && extname !== "css") {
-      uri += ".js"
+      path += ".js"
     }
   }
 
-  // Memoize normalize function
-  return (normalizeCache[key] = uri)
+  return path
 }
 
 
@@ -260,7 +239,7 @@ function addBase(id, refUri) {
     ret = id
   }
   else if (isRelative(id)) {
-    ret = (refUri ? dirname(refUri) : data.cwd) + id
+    ret = realpath((refUri ? dirname(refUri) : data.cwd) + id)
   }
   else if (isRoot(id)) {
     var m = data.cwd.match(ROOT_DIR_RE)
@@ -280,9 +259,9 @@ function id2Uri(id, refUri) {
   id = parseAlias(id)
   id = parsePaths(id)
   id = parseVars(id)
+  id = normalize(id)
 
   var uri = addBase(id, refUri)
-  uri = normalize(uri)
   uri = parseMap(uri)
 
   return uri
@@ -902,9 +881,12 @@ function config(configData) {
       if (isArray(prev)) {
         curr = prev.concat(curr)
       }
-      // Make sure that `data.base` is an absolute directory
+      // Make sure that `data.base` is an absolute path
       else if (key === "base") {
-        curr = normalize(addBase(curr + "/"))
+        if (curr[curr.length - 1] !== "/") {
+          curr += "/"
+        }
+        curr = addBase(curr)
       }
 
       // Set config
