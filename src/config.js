@@ -76,9 +76,12 @@ function config(configData) {
       if (isArray(prev)) {
         curr = prev.concat(curr)
       }
-      // Make sure that `data.base` is an absolute directory
+      // Make sure that `data.base` is an absolute path
       else if (key === "base") {
-        curr = normalize(addBase(curr + "/"))
+        if (curr[curr.length - 1] !== "/") {
+          curr += "/"
+        }
+        curr = addBase(curr)
       }
 
       // Set config

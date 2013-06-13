@@ -14,7 +14,7 @@ define(function(require) {
 
   // relative
   seajs.config({
-    base: './'
+    base: '.'
   })
 
   var base = seajs.data.base

@@ -5,10 +5,7 @@
 var DIRNAME_RE = /[^?#]*\//
 
 var DOT_RE = /\/\.\//g
-var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
-
-var normalizeCache = {}
 
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
@@ -23,58 +20,28 @@ function realpath(path) {
   // /a/b/./c/./d ==> /a/b/c/d
   path = path.replace(DOT_RE, "/")
 
-  // "file:///a//b/c"  ==> "file:///a/b/c"
-  // "http://a//b/c"   ==> "http://a/b/c"
-  // "https://a//b/c"  ==> "https://a/b/c"
-  // "/a/b//"          ==> "/a/b/"
-  if (path.replace("://", "").indexOf("//") > 0) { // For performance
-    path = path.replace(MULTIPLE_SLASH_RE, "$1\/")
-  }
-
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  if (path.indexOf('../') > 0) { // For performance
-    while (path.match(DOUBLE_DOT_RE)) {
-      path = path.replace(DOUBLE_DOT_RE, "/")
-    }
+  while (path.match(DOUBLE_DOT_RE)) {
+    path = path.replace(DOUBLE_DOT_RE, "/")
   }
 
   return path
 }
 
-// Normalize an uri
+// Normalize an id
 // normalize("path/to/a") ==> "path/to/a.js"
-function normalize(uri) {
-  var key = uri
+// NOTICE: substring is faster than negative slice and RegExp
+function normalize(path) {
+  var last = path.length - 1
 
-  if (normalizeCache[key]) {
-    return normalizeCache[key]
+  // If the uri ends with `#`, just return it without '#'
+  if (path.charAt(last) === "#") {
+    return path.substring(0, last)
   }
 
-  // Call realpath() before adding extension, so that most of uris will
-  // contains no `.` and will just return in realpath() call
-  uri = realpath(uri)
-
-  // Add the default `.js` extension except that the uri ends with `#`
-  var last = uri.charAt(uri.length - 1)
-  if (last === "#") {
-    uri = uri.slice(0, -1)
-  }
-  // Exclude ? and directory path
-  // NOTICE: This code below is faster than RegExp /\?|\.(?:css|js)$|\/$/
-  else if (uri.indexOf("?") === -1 && last !== "/") {
-    var pos = uri.lastIndexOf(".")
-    var extname = pos > 0 ? uri.substring(pos + 1).toLowerCase() : ""
-
-    if (extname !== "js" && extname !== "css") {
-      uri += ".js"
-    }
-  }
-
-  // issue #256: fix `:80` bug in IE
-  uri = uri.replace(":80/", "/")
-
-  // Memoize normalize function
-  return (normalizeCache[key] = uri)
+  return  (path.substring(last - 2) === ".js" ||
+      path.indexOf("?") > 0 ||
+      path.substring(last - 3) === ".css") ? path : path + ".js"
 }
 
 
@@ -130,35 +97,27 @@ function parseMap(uri) {
 }
 
 
-function isAbsolute(id) {
-  return id.indexOf(":/") > 0 || id.indexOf("//") === 0
-}
-
-function isRelative(id) {
-  return id.charAt(0) === "."
-}
-
-function isRoot(id) {
-  return id.charAt(0) === "/"
-}
-
-
+var ABSOLUTE_RE = /^\/\/.|:\//
 var ROOT_DIR_RE = /^.*?\/\/.*?\//
 
 function addBase(id, refUri) {
   var ret
+  var first = id.charAt(0)
 
-  if (isAbsolute(id)) {
+  // Absolute
+  if (ABSOLUTE_RE.test(id)) {
     ret = id
   }
-  else if (isRelative(id)) {
-    ret = (refUri ? dirname(refUri) : data.cwd) + id
+  // Relative
+  else if (first === ".") {
+    ret = realpath((refUri ? dirname(refUri) : data.cwd) + id)
   }
-  else if (isRoot(id)) {
+  // Root
+  else if (first === "/") {
     var m = data.cwd.match(ROOT_DIR_RE)
     ret = m ? m[0] + id.substring(1) : id
   }
-  // top-level id
+  // Top-level
   else {
     ret = data.base + id
   }
@@ -172,9 +131,9 @@ function id2Uri(id, refUri) {
   id = parseAlias(id)
   id = parsePaths(id)
   id = parseVars(id)
+  id = normalize(id)
 
   var uri = addBase(id, refUri)
-  uri = normalize(uri)
   uri = parseMap(uri)
 
   return uri

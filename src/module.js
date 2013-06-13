@@ -110,7 +110,7 @@ function load(uris, callback) {
 Module.prototype._load = function() {
   var mod = this
 
-  load(mod.dependencies, function() {
+  load(resolve(mod.dependencies, mod.uri), function() {
     mod.status = STATUS.LOADED
 
     // Fire loaded callbacks
@@ -228,7 +228,7 @@ function save(uri, meta) {
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
     mod.id = meta.id || uri
-    mod.dependencies = resolve(meta.deps || [], uri)
+    mod.dependencies = meta.deps || []
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
