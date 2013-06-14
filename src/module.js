@@ -71,7 +71,7 @@ function load(uris, callback) {
   var remain = len
   var mod
 
-  // Initialize modules
+  // Initialize modules and register callbacks
   for (var i = 0; i < len; i++) {
     mod = getModule(uris[i])
 
@@ -122,7 +122,7 @@ Module.prototype._load = function() {
   load(uris, function() {
     mod.status = STATUS.LOADED
 
-    // Fire loaded callbacks
+    // Fire callbacks on loaded
     var fn, fns = mod._callbacks
     mod._callbacks = []
     while ((fn = fns.shift())) fn()
