@@ -64,10 +64,6 @@ function use(uris, callback) {
 }
 
 function load(uris, callback) {
-  if (uris.length === 0) {
-    callback()
-  }
-
   // Emit `load` event for plugins such as plugin-combo
   emit("load", uris)
 
