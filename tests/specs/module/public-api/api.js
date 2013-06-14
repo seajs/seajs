@@ -20,20 +20,25 @@ define(function(require, exports, mod) {
   
   // seajs
   assert(seajs, 'seajs')
+  assert(typeof(seajs.version) === 'string', seajs.version)
+
   assert(isFunction(seajs.config), 'seajs.config')
   assert(isFunction(seajs.use), 'seajs.use')
   assert(isFunction(seajs.log), 'seajs.log')
+
+  assert(isFunction(seajs.on), 'seajs.on')
+  assert(isFunction(seajs.emit), 'seajs.emit')
+  assert(isFunction(seajs.off), 'seajs.off')
+
   assert(typeof(seajs.cache) === 'object', 'seajs.cache')
   assert(typeof(seajs.data) === 'object', 'seajs.data')
   assert(typeof(seajs.data.events) === 'object', 'data.events')
   assert(typeof(seajs.data.fetchedList) === 'object', 'data.fetchedList')
-  assert(typeof(seajs.version) === 'string', seajs.version)
+
   assert(isFunction(seajs.Module), 'seajs.Module')
-  assert(isFunction(seajs.on), 'seajs.on')
-  assert(isFunction(seajs.emit), 'seajs.emit')
-  assert(isFunction(seajs.off), 'seajs.off')
   assert(isFunction(seajs.resolve), 'seajs.resolve')
   assert(isFunction(seajs.require), 'seajs.require')
+
   assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
 
 
@@ -65,17 +70,22 @@ define(function(require, exports, mod) {
   // module
   //assert(mod instanceof Module, 'module')
   assert(typeof mod.id === 'string', 'module.id')
+  assert(typeof mod.uri === 'string', 'module.uri')
   assert(isArray(mod.dependencies), 'module.dependencies')
-  assert(isArray(mod.callbacks), 'module.callbacks')
-  //assert(isArray(mod.waitings), 'module.waitings')
-  assert(isFunction(mod.factory), 'module.factory')
   assert(typeof mod.exports === 'object', 'module.exports')
+  assert(isFunction(mod.factory), 'module.factory')
+  assert(mod.status === 4, 'module.status')
+
+  assert(isArray(mod._callbacks), 'module._callbacks')
+  assert(typeof (mod._resolveCache) === 'object', 'module._resolveCache')
+
+  //assert(isArray(mod.waitings), 'module.waitings')
   //assert(typeof mod.options === 'object', 'module.options')
   //assert(mod.parent instanceof Module, 'module.parent')
   //assert(mod.parent.parent === undefined, 'module.parent.parent')
-  assert(mod.status === 4, 'module.status')
   //assert(isFunction(mod.load), 'module.load')
-  assert(getOwnPropertyCount(mod) === 7, getOwnPropertyCount(mod))
+
+  assert(getOwnPropertyCount(mod) === 8, getOwnPropertyCount(mod))
 
 
   test.next()
