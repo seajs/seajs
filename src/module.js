@@ -27,7 +27,8 @@ function Module(uri) {
   this.dependencies = []
   this.exports = null
   this.status = 0
-  this.callbacks = []
+  this._callbacks = []
+  this._resolveCache = {}
 }
 
 function resolve(ids, refUri) {
@@ -63,6 +64,10 @@ function use(uris, callback) {
 }
 
 function load(uris, callback) {
+  if (uris.length === 0) {
+    callback()
+  }
+
   // Emit `load` event for plugins such as plugin-combo
   emit("load", uris)
 
@@ -75,7 +80,7 @@ function load(uris, callback) {
     mod = getModule(uris[i])
 
     if (mod.status < STATUS.LOADED) {
-      mod.callbacks.push(done)
+      mod._callbacks.push(done)
     }
     else {
       remain--
@@ -109,13 +114,21 @@ function load(uris, callback) {
 
 Module.prototype._load = function() {
   var mod = this
+  var deps = mod.dependencies
+  var uris = []
 
-  load(resolve(mod.dependencies, mod.uri), function() {
+  // Resolve dependencies and cache result
+  for (var i = 0, len = deps.length; i < len; i++) {
+    var id = deps[i]
+    mod._resolveCache[id] = uris[i] = resolve(id, mod.uri)
+  }
+
+  load(uris, function() {
     mod.status = STATUS.LOADED
 
     // Fire loaded callbacks
-    var fn, fns = mod.callbacks
-    mod.callbacks = []
+    var fn, fns = mod._callbacks
+    mod._callbacks = []
     while ((fn = fns.shift())) fn()
   })
 }
@@ -251,7 +264,7 @@ function exec(mod) {
 
 
   function resolveInThisContext(id) {
-    return resolve(id, mod.uri)
+    return mod._resolveCache[id] || resolve(id, mod.uri)
   }
 
   function require(id) {
