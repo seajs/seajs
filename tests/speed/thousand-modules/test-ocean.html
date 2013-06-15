@@ -7,18 +7,29 @@
 </head>
 <body>
 <div id="out"></div>
+<p>Please enable cache and REFRESH this page to see the exact result.</p>
 
 <!--<script src="https://raw.github.com/nqdeng/ocean/master/build/ocean.js"></script>-->
 <script src="../vendor/ocean.js"></script>
 
-<script src="thousand-cmd.js"></script>
-
 <script>
+
+  function printResults(txt) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    document.getElementById('out').appendChild(d)
+  }
 
   var n = 999
   printResults('n = ' + n)
 
   var start = new Date().getTime()
+
+</script>
+
+<script src="thousand-cmd.js"></script>
+
+<script>
 
   seajs.use('module-' + n, function (mod) {
     var end = new Date().getTime()
@@ -26,13 +37,6 @@
     printResults('execution time: ' + (end - start) + 'ms')
     printResults(mod.value)
   })
-
-
-  function printResults(txt) {
-    var d = document.createElement('div')
-    d.innerHTML = txt
-    document.getElementById('out').appendChild(d)
-  }
 
 </script>
 

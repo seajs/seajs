@@ -32,12 +32,13 @@ define(function(require) {
   //   'http://example.com/p/c/e.js' ==> 'http://example.com/p/??a.js,c/d.js,c/e.js'
   //
   var hash = util.paths2hash(paths)
+  var values = seajs.data.comboHashValues
   //console.dir(hash)
 
   var comboPath = 'http://example.com/p/??a.js,c/d.js,c/e.js'
-  test.assert(hash['http://example.com/p/a.js'] === comboPath, hash['http://example.com/p/a.js'])
-  test.assert(hash['http://example.com/p/c/d.js'] === comboPath, hash['http://example.com/p/c/d.js'])
-  test.assert(hash['http://example.com/p/c/e.js'] === comboPath, hash['http://example.com/p/c/e.js'])
+  test.assert(values[hash['http://example.com/p/a.js']] === comboPath, hash['http://example.com/p/a.js'])
+  test.assert(values[hash['http://example.com/p/c/d.js']] === comboPath, hash['http://example.com/p/c/d.js'])
+  test.assert(values[hash['http://example.com/p/c/e.js']] === comboPath, hash['http://example.com/p/c/e.js'])
 
 
   // Test seajs.use
