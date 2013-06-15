@@ -119,7 +119,7 @@ Module.prototype._fetch = function() {
 
   // Empty uri or a non-CMD module
   if (!requestUri || fetchedList[requestUri]) {
-    mod._onload()
+    mod._load()
     return
   }
 
@@ -156,11 +156,7 @@ Module.prototype._fetch = function() {
     // Call callbacks
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((m = mods.shift())) {
-      if (m.status === STATUS.SAVED) {
-        m._load()
-      }
-    }
+    while ((m = mods.shift())) m._load()
   }
 }
 
