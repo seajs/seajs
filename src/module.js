@@ -43,6 +43,18 @@ Module.get = function(uri, deps) {
   return cachedMods[uri] || (cachedMods[uri] = new Module(uri, deps))
 }
 
+Module.save = function(uri, meta) {
+  var mod = Module.get(uri)
+
+  // Do NOT override already saved modules
+  if (mod.status < STATUS.SAVED) {
+    mod.id = meta.id || uri
+    mod.dependencies = meta.deps
+    mod.factory = meta.factory
+    mod.status = STATUS.SAVED
+  }
+}
+
 // Resolve module.dependencies
 Module.prototype._resolve = function() {
   var mod = this
@@ -104,6 +116,31 @@ Module.prototype._load = function() {
   }
 }
 
+// Call this method when module is loaded
+Module.prototype._onload = function() {
+  var mod = this
+  mod.status = STATUS.LOADED
+
+  // Call onload callback
+  if (mod._callback) {
+    mod._callback()
+  }
+
+  // Notify waiting modules to fire onload
+  var waitings = mod._waitings
+  var uri, m
+
+  for (uri in waitings) {
+    if (waitings.hasOwnProperty(uri)) {
+      m = cachedMods[uri]
+      m._remain -= waitings[uri]
+      if (m._remain === 0) {
+        m._onload()
+      }
+    }
+  }
+}
+
 // Fetch a module
 Module.prototype._fetch = function() {
   var mod = this
@@ -148,7 +185,7 @@ Module.prototype._fetch = function() {
 
     // Save meta data of anonymous module
     if (anonymousMeta) {
-      save(uri, anonymousMeta)
+      Module.save(uri, anonymousMeta)
       anonymousMeta = undefined
     }
 
@@ -156,31 +193,6 @@ Module.prototype._fetch = function() {
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
     while ((m = mods.shift())) m._load()
-  }
-}
-
-// Call this method when module is loaded
-Module.prototype._onload = function() {
-  var mod = this
-  mod.status = STATUS.LOADED
-
-  // Call onload callback
-  if (mod._callback) {
-    mod._callback()
-  }
-
-  // Notify waiting modules to fire onload
-  var waitings = mod._waitings
-  var uri, m
-
-  for (uri in waitings) {
-    if (waitings.hasOwnProperty(uri)) {
-      m = cachedMods[uri]
-      m._remain -= waitings[uri]
-      if (m._remain === 0) {
-        m._onload()
-      }
-    }
   }
 }
 
@@ -274,22 +286,9 @@ function define(id, deps, factory) {
   // Emit `define` event, used in plugin-nocache, seajs node version etc
   emit("define", meta)
 
-  meta.uri ? save(meta.uri, meta) :
+  meta.uri ? Module.save(meta.uri, meta) :
       // Save information for "saving" work in the script onload event
       anonymousMeta = meta
-}
-
-// Create a module and save it to cachedMods
-function save(uri, meta) {
-  var mod = Module.get(uri)
-
-  // Do NOT override already saved modules
-  if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri
-    mod.dependencies = meta.deps
-    mod.factory = meta.factory
-    mod.status = STATUS.SAVED
-  }
 }
 
 // Use function is equal to load a anonymous module
