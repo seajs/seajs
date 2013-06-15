@@ -544,7 +544,7 @@ Module.prototype._load = function() {
     if (m.status < STATUS.FETCHING) {
       m._fetch()
     }
-    else if (mod.status === STATUS.SAVED) {
+    else if (m.status === STATUS.SAVED) {
       m._load()
     }
   }
