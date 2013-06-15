@@ -10,16 +10,18 @@ var fetchedList = {}
 var callbackList = {}
 
 var STATUS = Module.STATUS = {
-  // 1 - The module file is being fetched now
+  // 1 - The `module.uri` is being fetched
   FETCHING: 1,
-  // 2 - The module data has been saved to cachedMods
+  // 2 - The meta data has been saved to cachedMods
   SAVED: 2,
-  // 3 - The module and all its dependencies are ready to execute
-  LOADED: 3,
+  // 3 - The `module.dependencies` are being loaded
+  LOADING: 3,
+  // 3 - The module are ready to execute
+  LOADED: 4,
   // 4 - The module is being executed
-  EXECUTING: 4,
-  // 5 - The module is executed and `module.exports` is available
-  EXECUTED: 5
+  EXECUTING: 5,
+  // 5 - The `module.exports` is available
+  EXECUTED: 6
 }
 
 
@@ -41,18 +43,6 @@ function Module(uri, deps) {
 
 Module.get = function(uri, deps) {
   return cachedMods[uri] || (cachedMods[uri] = new Module(uri, deps))
-}
-
-Module.save = function(uri, meta) {
-  var mod = Module.get(uri)
-
-  // Do NOT override already saved modules
-  if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri
-    mod.dependencies = meta.deps
-    mod.factory = meta.factory
-    mod.status = STATUS.SAVED
-  }
 }
 
 // Resolve module.dependencies
@@ -77,9 +67,16 @@ Module.prototype._resolve = function() {
 // Load module.dependencies and fire onload when all done
 Module.prototype._load = function() {
   var mod = this
-  var uris = mod._resolve()
+
+  // If the module is being loaded, just wait it onload call
+  if (mod.status >= STATUS.LOADING) {
+    return
+  }
+
+  mod.status = STATUS.LOADING
 
   // Emit `load` event for plugins such as plugin-combo
+  var uris = mod._resolve()
   emit("load", uris)
 
   var len = mod._remain = uris.length
@@ -185,7 +182,7 @@ Module.prototype._fetch = function() {
 
     // Save meta data of anonymous module
     if (anonymousMeta) {
-      Module.save(uri, anonymousMeta)
+      save(uri, anonymousMeta)
       anonymousMeta = undefined
     }
 
@@ -286,7 +283,7 @@ function define(id, deps, factory) {
   // Emit `define` event, used in plugin-nocache, seajs node version etc
   emit("define", meta)
 
-  meta.uri ? Module.save(meta.uri, meta) :
+  meta.uri ? save(meta.uri, meta) :
       // Save information for "saving" work in the script onload event
       anonymousMeta = meta
 }
@@ -323,6 +320,18 @@ function resolve(id, refUri) {
   emit("resolve", emitData)
 
   return emitData.uri || id2Uri(emitData.id, refUri)
+}
+
+function save(uri, meta) {
+  var mod = Module.get(uri)
+
+  // Do NOT override already saved modules
+  if (mod.status < STATUS.SAVED) {
+    mod.id = meta.id || uri
+    mod.dependencies = meta.deps
+    mod.factory = meta.factory
+    mod.status = STATUS.SAVED
+  }
 }
 
 function getExports(mod) {
@@ -374,6 +383,6 @@ data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri
 seajs.require = function(id) {
-  return Module.get(resolve(id)).exports
+  return (cachedMods[resolve(id)] || {}).exports
 }
 
