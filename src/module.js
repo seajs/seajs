@@ -329,10 +329,10 @@ function resolve(id, refUri) {
 function getExports(mod) {
   var exports = mod._exec()
 
-  if (exports === null && (!mod || !IS_CSS_RE.test(mod.uri))) {
+  if (exports === null && !IS_CSS_RE.test(mod.uri)) {
     emit("error", mod)
   }
-  
+
   return exports
 }
 
