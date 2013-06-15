@@ -39,6 +39,17 @@ function Module(uri, deps) {
   this._callback = null
 }
 
+Module.get = function(uri, deps) {
+  var mod = cachedMods[uri]
+
+  if (!mod) {
+    mod = new Module(uri, deps)
+    cachedMods[mod.uri] = mod
+  }
+
+  return mod
+}
+
 // Resolve module.dependencies
 Module.prototype._resolve = function() {
   var mod = this
@@ -66,7 +77,7 @@ Module.prototype._load = function() {
 
   // Initialize modules and register waitings
   for (var i = 0; i < len; i++) {
-    m = initModule(uris[i])
+    m = Module.get(uris[i])
 
     if (m.status < STATUS.LOADED) {
       m._waitings[mod.uri] = mod
@@ -178,7 +189,7 @@ Module.prototype._onload = function() {
 }
 
 // Execute a module
-Module.ptototype._exec = function () {
+Module.prototype._exec = function () {
   var mod = this
 
   // When module is executed, DO NOT execute it again. When module
@@ -274,7 +285,7 @@ function define(id, deps, factory) {
 
 // Create a module and save it to cachedMods
 function save(uri, meta) {
-  var mod = initModule(uri)
+  var mod = Module.get(uri)
 
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
@@ -287,7 +298,7 @@ function save(uri, meta) {
 
 // Use function is equal to load a anonymous module
 function use(ids, callback, refUri) {
-  var mod = new Module(refUri, isArray(ids) ? ids : [ids])
+  var mod = Module.get(refUri, isArray(ids) ? ids : [ids])
 
   mod._callback = function() {
     var exports = []
@@ -314,10 +325,6 @@ function resolve(id, refUri) {
   emit("resolve", emitData)
 
   return emitData.uri || id2Uri(emitData.id, refUri)
-}
-
-function initModule(uri) {
-  return cachedMods[uri] || (cachedMods[uri] = new Module(uri))
 }
 
 function getExports(mod) {
@@ -369,6 +376,6 @@ data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri
 seajs.require = function(id) {
-  return (cachedMods[resolve(id)] || {}).exports
+  return Module.get(resolve(id)).exports
 }
 
