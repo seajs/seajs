@@ -499,11 +499,15 @@ Module.prototype._resolve = function() {
   var mod = this
   var ids = mod.dependencies, id
   var cache = mod._resolveCache
-  var uris = []
+  var uris = [], uri
 
   for (var i = 0, len = ids.length; i < len; i++) {
     id = ids[i]
-    uris[i] = cache[id] || (cache[id] = resolve(id, mod.uri))
+    uri = cache[id]
+
+    // Use `isString` to exclude values such as "toString" etc.
+    uris[i] = isString(uri) ?
+        uri : (cache[id] = resolve(id, mod.uri))
   }
 
   return uris
@@ -525,7 +529,8 @@ Module.prototype._load = function() {
     m = Module.get(uris[i])
 
     if (m.status < STATUS.LOADED) {
-      m._waitings[mod.uri] = mod
+      // Maybe duplicate
+      m._waitings[mod.uri] = (m._waitings[mod.uri] || 0) + 1
     }
     else {
       mod._remain--
@@ -621,8 +626,9 @@ Module.prototype._onload = function() {
 
   for (uri in waitings) {
     if (waitings.hasOwnProperty(uri)) {
-      m = waitings[uri]
-      if (--m._remain === 0) {
+      m = cachedMods[uri]
+      m._remain -= waitings[uri]
+      if (m._remain === 0) {
         m._onload()
       }
     }
