@@ -461,16 +461,18 @@ var fetchedList = {}
 var callbackList = {}
 
 var STATUS = Module.STATUS = {
-  // 1 - The module file is being fetched now
+  // 1 - The `module.uri` is being fetched
   FETCHING: 1,
-  // 2 - The module data has been saved to cachedMods
+  // 2 - The meta data has been saved to cachedMods
   SAVED: 2,
-  // 3 - The module and all its dependencies are ready to execute
-  LOADED: 3,
+  // 3 - The `module.dependencies` are being loaded
+  LOADING: 3,
+  // 3 - The module are ready to execute
+  LOADED: 4,
   // 4 - The module is being executed
-  EXECUTING: 4,
-  // 5 - The module is executed and `module.exports` is available
-  EXECUTED: 5
+  EXECUTING: 5,
+  // 5 - The `module.exports` is available
+  EXECUTED: 6
 }
 
 
@@ -516,9 +518,16 @@ Module.prototype._resolve = function() {
 // Load module.dependencies and fire onload when all done
 Module.prototype._load = function() {
   var mod = this
-  var uris = mod._resolve()
+
+  // If the module is being loaded, just wait it onload call
+  if (mod.status >= STATUS.LOADING) {
+    return
+  }
+
+  mod.status = STATUS.LOADING
 
   // Emit `load` event for plugins such as plugin-combo
+  var uris = mod._resolve()
   emit("load", uris)
 
   var len = mod._remain = uris.length
@@ -551,6 +560,31 @@ Module.prototype._load = function() {
     }
     else if (m.status === STATUS.SAVED) {
       m._load()
+    }
+  }
+}
+
+// Call this method when module is loaded
+Module.prototype._onload = function() {
+  var mod = this
+  mod.status = STATUS.LOADED
+
+  // Call onload callback
+  if (mod._callback) {
+    mod._callback()
+  }
+
+  // Notify waiting modules to fire onload
+  var waitings = mod._waitings
+  var uri, m
+
+  for (uri in waitings) {
+    if (waitings.hasOwnProperty(uri)) {
+      m = cachedMods[uri]
+      m._remain -= waitings[uri]
+      if (m._remain === 0) {
+        m._onload()
+      }
     }
   }
 }
@@ -607,31 +641,6 @@ Module.prototype._fetch = function() {
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
     while ((m = mods.shift())) m._load()
-  }
-}
-
-// Call this method when module is loaded
-Module.prototype._onload = function() {
-  var mod = this
-  mod.status = STATUS.LOADED
-
-  // Call onload callback
-  if (mod._callback) {
-    mod._callback()
-  }
-
-  // Notify waiting modules to fire onload
-  var waitings = mod._waitings
-  var uri, m
-
-  for (uri in waitings) {
-    if (waitings.hasOwnProperty(uri)) {
-      m = cachedMods[uri]
-      m._remain -= waitings[uri]
-      if (m._remain === 0) {
-        m._onload()
-      }
-    }
   }
 }
 
@@ -730,19 +739,6 @@ function define(id, deps, factory) {
       anonymousMeta = meta
 }
 
-// Create a module and save it to cachedMods
-function save(uri, meta) {
-  var mod = Module.get(uri)
-
-  // Do NOT override already saved modules
-  if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri
-    mod.dependencies = meta.deps
-    mod.factory = meta.factory
-    mod.status = STATUS.SAVED
-  }
-}
-
 // Use function is equal to load a anonymous module
 function use(ids, callback, uri) {
   var mod = Module.get(
@@ -777,13 +773,25 @@ function resolve(id, refUri) {
   return emitData.uri || id2Uri(emitData.id, refUri)
 }
 
+function save(uri, meta) {
+  var mod = Module.get(uri)
+
+  // Do NOT override already saved modules
+  if (mod.status < STATUS.SAVED) {
+    mod.id = meta.id || uri
+    mod.dependencies = meta.deps
+    mod.factory = meta.factory
+    mod.status = STATUS.SAVED
+  }
+}
+
 function getExports(mod) {
   var exports = mod._exec()
 
-  if (exports === null && (!mod || !IS_CSS_RE.test(mod.uri))) {
+  if (exports === null && !IS_CSS_RE.test(mod.uri)) {
     emit("error", mod)
   }
-  
+
   return exports
 }
 
@@ -826,7 +834,7 @@ data.fetchedList = fetchedList
 
 seajs.resolve = id2Uri
 seajs.require = function(id) {
-  return Module.get(resolve(id)).exports
+  return (cachedMods[resolve(id)] || {}).exports
 }
 
 
