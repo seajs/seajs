@@ -45,19 +45,22 @@ define(function(require, exports, mod) {
   // Module
   var Module = seajs.Module
   assert(typeof Module.STATUS === 'object', 'Module.STATUS')
-  assert(isFunction(Module.load), 'Module.load')
+
+  assert(isFunction(Module.get), 'Module.get')
   //assert(Module.define, 'Module.define')
+
+  assert(isFunction(Module.prototype._resolve), 'Module.prototype._resolve')
   assert(isFunction(Module.prototype._load), 'Module.prototype._load')
+  assert(isFunction(Module.prototype._onload), 'Module.prototype._onload')
   assert(isFunction(Module.prototype._fetch), 'Module.prototype._fetch')
-  //assert(isFunction(Module.prototype.execute), 'Module.prototype.execute')
-  //assert(isFunction(Module.prototype.destroy), 'Module.prototype.destroy')
+  assert(isFunction(Module.prototype._exec), 'Module.prototype._exec')
+
   assert(getOwnPropertyCount(Module) === 2, getOwnPropertyCount(Module))
-  assert(getOwnPropertyCount(Module.prototype) === 2, getOwnPropertyCount(Module.prototype))
+  assert(getOwnPropertyCount(Module.prototype) === 5, getOwnPropertyCount(Module.prototype))
 
   
   // require
   assert(isFunction(require), 'require')
-  //assert(require.cache === seajs.cache, 'require.cache')
   assert(isFunction(require.resolve), 'require.resolve')
   assert(isFunction(require.async), 'require.async')
   assert(getOwnPropertyCount(require) === 2, getOwnPropertyCount(require))
@@ -68,16 +71,19 @@ define(function(require, exports, mod) {
 
   
   // module
-  //assert(mod instanceof Module, 'module')
+  assert(mod instanceof Module, 'module')
+
   assert(typeof mod.id === 'string', 'module.id')
   assert(typeof mod.uri === 'string', 'module.uri')
   assert(isArray(mod.dependencies), 'module.dependencies')
   assert(typeof mod.exports === 'object', 'module.exports')
   assert(isFunction(mod.factory), 'module.factory')
-  assert(mod.status === 4, 'module.status')
+  assert(mod.status === 5, 'module.status')
 
-  assert(isArray(mod._callbacks), 'module._callbacks')
-  assert(typeof (mod._resolveCache) === 'object', 'module._resolveCache')
+  assert(typeof mod._waitings === 'object', 'module._waitings')
+  assert(typeof mod._remain === 'number', 'module._remain')
+  assert(typeof mod._resolveCache === 'object', 'module._resolveCache')
+  assert(typeof mod._callback === 'object', 'module._callback')
 
   //assert(isArray(mod.waitings), 'module.waitings')
   //assert(typeof mod.options === 'object', 'module.options')
@@ -85,7 +91,7 @@ define(function(require, exports, mod) {
   //assert(mod.parent.parent === undefined, 'module.parent.parent')
   //assert(isFunction(mod.load), 'module.load')
 
-  assert(getOwnPropertyCount(mod) === 8, getOwnPropertyCount(mod))
+  assert(getOwnPropertyCount(mod) === 10, getOwnPropertyCount(mod))
 
 
   test.next()
