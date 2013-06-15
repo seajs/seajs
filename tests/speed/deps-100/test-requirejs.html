@@ -7,13 +7,17 @@
 </head>
 <body>
 <div id="out"></div>
+<p>Please enable cache and REFRESH this page to see the exact result.</p>
 
 <script src="../vendor/require.js"></script>
+
+<script>
+  var start = new Date().getTime()
+</script>
+
 <script src="combo-amd.js"></script>
 
 <script>
-
-  var start = new Date().getTime()
 
   require(['100/89-89'], function() {
     var end = new Date().getTime()

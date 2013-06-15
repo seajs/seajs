@@ -7,13 +7,17 @@
 </head>
 <body>
 <div id="out"></div>
+<p>Please enable cache and REFRESH this page to see the exact result.</p>
 
 <script src="../../../dist/sea-debug.js"></script>
+
+<script>
+  var start = new Date().getTime()
+</script>
+
 <script src="combo-cmd.js"></script>
 
 <script>
-
-  var start = new Date().getTime()
 
   seajs.use('18/1-1', function() {
     var end = new Date().getTime()
