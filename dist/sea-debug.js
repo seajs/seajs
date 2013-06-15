@@ -475,7 +475,7 @@ var STATUS = Module.STATUS = {
 
 
 function Module(uri, deps) {
-  this.uri = uri || data.cwd + "_anonymous_" + cid()
+  this.uri = uri
   this.dependencies = deps || []
   this.exports = null
   this.status = 0
@@ -491,25 +491,19 @@ function Module(uri, deps) {
 }
 
 Module.get = function(uri, deps) {
-  var mod = cachedMods[uri]
-
-  if (!mod) {
-    mod = new Module(uri, deps)
-    cachedMods[mod.uri] = mod
-  }
-
-  return mod
+  return cachedMods[uri] || (cachedMods[uri] = new Module(uri, deps))
 }
 
 // Resolve module.dependencies
 Module.prototype._resolve = function() {
   var mod = this
   var ids = mod.dependencies, id
+  var cache = mod._resolveCache
   var uris = []
 
   for (var i = 0, len = ids.length; i < len; i++) {
     id = ids[i]
-    uris[i] = mod._resolveCache[id] = resolve(id, mod.uri)
+    uris[i] = cache[id] || (cache[id] = resolve(id, mod.uri))
   }
 
   return uris
@@ -744,8 +738,11 @@ function save(uri, meta) {
 }
 
 // Use function is equal to load a anonymous module
-function use(ids, callback, refUri) {
-  var mod = Module.get(refUri, isArray(ids) ? ids : [ids])
+function use(ids, callback, uri) {
+  var mod = Module.get(
+      uri || data.cwd + "_anonymous_" + cid(),
+      isArray(ids) ? ids : [ids]
+  )
 
   mod._callback = function() {
     var exports = []
