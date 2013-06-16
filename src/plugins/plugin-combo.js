@@ -6,11 +6,8 @@
   var Module = seajs.Module
   var FETCHING = Module.STATUS.FETCHING
 
-  var cachedMods = seajs.cache
   var data = seajs.data
-
   var comboHash = data.comboHash = {}
-  var comboHashValues = data.comboHashValues = []
 
   var comboSyntax = ["??", ","]
   var comboMaxLength = 2000
@@ -38,7 +35,7 @@
         continue
       }
 
-      var mod = cachedMods[uri] || (cachedMods[uri] = new Module(uri))
+      var mod = Module.get(uri)
 
       // Remove fetching and fetched uris, excluded uris, combo uris
       if (mod.status < FETCHING &&
@@ -53,7 +50,7 @@
   }
 
   function setRequestUri(data) {
-    data.requestUri = comboHashValues[comboHash[data.uri]] || data.uri
+    data.requestUri = comboHash[data.uri] || data.uri
   }
 
 
@@ -238,11 +235,8 @@
         throw new Error("The combo url is too long: " + comboPath)
       }
 
-      var key = comboHashValues.length
-      comboHashValues[key] = comboPath
-
       for (var i = 0, len = files.length; i < len; i++) {
-        comboHash[root + files[i]] = key
+        comboHash[root + files[i]] = comboPath
       }
     }
   }
