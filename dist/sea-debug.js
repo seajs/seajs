@@ -569,9 +569,10 @@ Module.prototype._onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  // Call onload callback
   if (mod._callback) {
     mod._callback()
+    // Reduce memory leak
+    delete mod._callback
   }
 
   // Notify waiting modules to fire onload
@@ -657,7 +658,6 @@ Module.prototype._exec = function () {
 
   mod.status = STATUS.EXECUTING
 
-
   // Create require
   var uri = mod.uri
 
@@ -674,9 +674,7 @@ Module.prototype._exec = function () {
     return require
   }
 
-
   // Exec factory
-
   var factory = mod.factory
 
   var exports = isFunction(factory) ?
@@ -685,6 +683,9 @@ Module.prototype._exec = function () {
 
   mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.EXECUTED
+
+  // Reduce memory taken
+  delete mod._resolveCache
 
   return mod.exports
 }
