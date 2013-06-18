@@ -263,7 +263,7 @@ function define(id, deps, factory) {
   var meta = {
     id: id,
     uri: resolve(id),
-    deps: deps || [],
+    deps: deps,
     factory: factory
   }
 
@@ -330,9 +330,12 @@ function save(uri, meta) {
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
     mod.id = meta.id || uri
-    mod.dependencies = meta.deps
+    mod.dependencies = meta.deps || []
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
+
+    // Resolve dependencies immediately based on current config
+    mod._resolve()
   }
 }
 

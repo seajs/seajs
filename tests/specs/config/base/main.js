@@ -38,7 +38,24 @@ define(function(require) {
       'actual = ' + require.resolve('z')
           + ' expected = ' + expectedPath('z'))
 
-  test.next()
+
+  // base path is changed dynamically
+  seajs.config({
+    base: './base/c'
+  })
+
+  define('c', ['c-1'], function(r, exports) {
+    exports.name = r('c-1').name
+  })
+
+  seajs.config({
+    base: './base'
+  })
+
+  seajs.use('c/c', function(c) {
+    test.assert(c.name === 'c-1', c.name)
+    test.next()
+  })
 
 })
 
