@@ -21,9 +21,18 @@ define(function(require) {
     done()
   })
 
+  // Duplicate modules
+  require.async(['./a', './c1', './a', '', ''], function(a, c1, a2, e1, e2) {
+    test.assert(a.name === 'a', a.name)
+    test.assert(c1.name === 'c1', c1.name)
+    test.assert(a2.name === 'a', a2.name)
+    test.assert(e1 === null, 'null')
+    test.assert(e2 === null, 'null')
+    done()
+  })
 
   function done() {
-    if (++count === 3) {
+    if (++count === 4) {
       test.next()
     }
   }

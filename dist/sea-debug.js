@@ -467,11 +467,11 @@ var STATUS = Module.STATUS = {
   SAVED: 2,
   // 3 - The `module.dependencies` are being loaded
   LOADING: 3,
-  // 3 - The module are ready to execute
+  // 4 - The module are ready to execute
   LOADED: 4,
-  // 4 - The module is being executed
+  // 5 - The module is being executed
   EXECUTING: 5,
-  // 5 - The `module.exports` is available
+  // 6 - The `module.exports` is available
   EXECUTED: 6
 }
 
@@ -484,10 +484,10 @@ function Module(uri, deps) {
 
   // Who depend on me
   this._waitings = {}
+
   // The number of unloaded dependencies
   this._remain = 0
-  // The cache for _resolve method to speed up performance
-  this._resolveCache = {}
+
   // This function will be called when onload
   this._callback = null
 }
@@ -499,19 +499,12 @@ Module.get = function(uri, deps) {
 // Resolve module.dependencies
 Module.prototype._resolve = function() {
   var mod = this
-  var ids = mod.dependencies, id
-  var cache = mod._resolveCache
-  var uris = [], uri
+  var ids = mod.dependencies
+  var uris = []
 
   for (var i = 0, len = ids.length; i < len; i++) {
-    id = ids[i]
-    uri = cache[id]
-
-    // Use `isString` to exclude values such as "toString" etc.
-    uris[i] = isString(uri) ?
-        uri : (cache[id] = resolve(id, mod.uri))
+    uris[i] = resolve(ids[i], mod.uri)
   }
-
   return uris
 }
 
@@ -569,7 +562,6 @@ Module.prototype._onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  // Call onload callback
   if (mod._callback) {
     mod._callback()
   }
@@ -657,7 +649,6 @@ Module.prototype._exec = function () {
 
   mod.status = STATUS.EXECUTING
 
-
   // Create require
   var uri = mod.uri
 
@@ -666,7 +657,7 @@ Module.prototype._exec = function () {
   }
 
   require.resolve = function(id) {
-    return mod._resolveCache[id] || resolve(id, uri)
+    return resolve(id, uri)
   }
 
   require.async = function(ids, callback) {
@@ -674,9 +665,7 @@ Module.prototype._exec = function () {
     return require
   }
 
-
   // Exec factory
-
   var factory = mod.factory
 
   var exports = isFunction(factory) ?
@@ -712,7 +701,7 @@ function define(id, deps, factory) {
   var meta = {
     id: id,
     uri: resolve(id),
-    deps: deps || [],
+    deps: deps,
     factory: factory
   }
 
@@ -779,7 +768,7 @@ function save(uri, meta) {
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
     mod.id = meta.id || uri
-    mod.dependencies = meta.deps
+    mod.dependencies = meta.deps || []
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
