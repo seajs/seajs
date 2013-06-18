@@ -488,9 +488,6 @@ function Module(uri, deps) {
   // The number of unloaded dependencies
   this._remain = 0
 
-  // The cache for _resolve method to speed up performance
-  this._resolveCache = {}
-
   // This function will be called when onload
   this._callback = null
 }
@@ -502,19 +499,12 @@ Module.get = function(uri, deps) {
 // Resolve module.dependencies
 Module.prototype._resolve = function() {
   var mod = this
-  var ids = mod.dependencies, id
-  var cache = mod._resolveCache
-  var uris = [], uri
+  var ids = mod.dependencies
+  var uris = []
 
   for (var i = 0, len = ids.length; i < len; i++) {
-    id = ids[i]
-    uri = cache[id]
-
-    // Use `isString` to exclude values such as "toString" etc.
-    uris[i] = isString(uri) ?
-        uri : (cache[id] = resolve(id, mod.uri))
+    uris[i] = resolve(ids[i], mod.uri)
   }
-
   return uris
 }
 
@@ -667,7 +657,7 @@ Module.prototype._exec = function () {
   }
 
   require.resolve = function(id) {
-    return mod._resolveCache[id] || resolve(id, uri)
+    return resolve(id, uri)
   }
 
   require.async = function(ids, callback) {
@@ -684,9 +674,6 @@ Module.prototype._exec = function () {
 
   mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.EXECUTED
-
-  // Reduce memory taken
-  delete mod._resolveCache
 
   return mod.exports
 }
@@ -714,7 +701,7 @@ function define(id, deps, factory) {
   var meta = {
     id: id,
     uri: resolve(id),
-    deps: deps || [],
+    deps: deps,
     factory: factory
   }
 
@@ -781,7 +768,7 @@ function save(uri, meta) {
   // Do NOT override already saved modules
   if (mod.status < STATUS.SAVED) {
     mod.id = meta.id || uri
-    mod.dependencies = meta.deps
+    mod.dependencies = meta.deps || []
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
