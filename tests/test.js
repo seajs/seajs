@@ -249,7 +249,7 @@ if (typeof document !== 'undefined') {
   }
 
   function id2File(id) {
-    return id.indexOf('.js') > 0 ? id : id + '/main.js'
+    return id.indexOf('.js') > 0 ? id : './' + id + '/main.js'
   }
 
   function printElapsedTime() {
