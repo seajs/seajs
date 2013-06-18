@@ -31,7 +31,7 @@
     for (var i = 0; i < len; i++) {
       var uri = uris[i]
 
-      if (comboHash[uri]) {
+      if (getComboPath(uri)) {
         continue
       }
 
@@ -50,19 +50,13 @@
   }
 
   function setRequestUri(data) {
-    data.requestUri = comboHash[data.uri] || data.uri
+    data.requestUri = getComboPath(data.uri) || data.uri
   }
 
   function cleanUp(data) {
-    var comboUri = data.requestUri
-    if (isComboUri(comboUri)) {
-
-      for (var uri in comboHash) {
-        if (comboHash === comboUri) {
-          delete comboHash[uri]
-        }
-      }
-
+    var comboPath = getComboPath(data.requestUri)
+    if (comboPath && isComboUri(comboPath)) {
+      delete comboHash[comboPath]
     }
   }
 
@@ -248,8 +242,10 @@
         throw new Error("The combo url is too long: " + comboPath)
       }
 
+      var hash = comboHash[comboPath] = {}
+
       for (var i = 0, len = files.length; i < len; i++) {
-        comboHash[root + files[i]] = comboPath
+        hash[root + files[i]] = true
       }
     }
   }
@@ -303,6 +299,16 @@
     var s2 = comboSyntax[1]
 
     return s1 && uri.indexOf(s1) > 0 || s2 && uri.indexOf(s2) > 0
+  }
+
+  function getComboPath(uri) {
+    for (var comboPath in comboHash) {
+      if (comboHash.hasOwnProperty(comboPath)) {
+        if (comboHash[comboPath][uri]) {
+          return comboPath
+        }
+      }
+    }
   }
 
 
