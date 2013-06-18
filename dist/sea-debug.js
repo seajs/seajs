@@ -492,7 +492,7 @@ function Module(uri, deps) {
   this._resolveCache = {}
 
   // This function will be called when onload
-  this._callback = undefined
+  this._callback = null
 }
 
 Module.get = function(uri, deps) {
