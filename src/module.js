@@ -36,9 +36,6 @@ function Module(uri, deps) {
 
   // The number of unloaded dependencies
   this._remain = 0
-
-  // This function will be called when onload
-  this._callback = null
 }
 
 Module.get = function(uri, deps) {
@@ -128,6 +125,10 @@ Module.prototype._onload = function() {
       }
     }
   }
+
+  // Reduce memory taken
+  delete mod._waitings
+  delete mod._remain
 }
 
 // Fetch a module
@@ -175,7 +176,7 @@ Module.prototype._fetch = function() {
     // Save meta data of anonymous module
     if (anonymousMeta) {
       save(uri, anonymousMeta)
-      anonymousMeta = undefined
+      anonymousMeta = null
     }
 
     // Call callbacks
@@ -223,6 +224,9 @@ Module.prototype._exec = function () {
 
   mod.exports = exports === undefined ? mod.exports : exports
   mod.status = STATUS.EXECUTED
+
+  // Reduce memory leak
+  delete mod.factory
 
   return mod.exports
 }
@@ -295,6 +299,8 @@ function use(ids, callback, uri) {
     if (callback) {
       callback.apply(global, exports)
     }
+
+    delete mod._callback
   }
 
   mod._load()
