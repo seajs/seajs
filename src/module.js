@@ -182,9 +182,6 @@ Module.prototype._fetch = function() {
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
     while ((m = mods.shift())) m._load()
-
-    // Emit `requested` event for plugins such as plugin-combo
-    emit("requested", emitData)
   }
 }
 

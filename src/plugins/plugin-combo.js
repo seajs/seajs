@@ -5,16 +5,16 @@
 
   var Module = seajs.Module
   var FETCHING = Module.STATUS.FETCHING
-  var data = seajs.data
 
-  var comboHash = {}
+  var data = seajs.data
+  var comboHash = data.comboHash = {}
+
   var comboSyntax = ["??", ","]
   var comboMaxLength = 2000
 
 
   seajs.on("load", setComboHash)
   seajs.on("fetch", setRequestUri)
-  seajs.on("requested", cleanUp)
 
   function setComboHash(uris) {
     var len = uris.length
@@ -31,7 +31,7 @@
     for (var i = 0; i < len; i++) {
       var uri = uris[i]
 
-      if (getComboPath(uri)) {
+      if (comboHash[uri]) {
         continue
       }
 
@@ -50,14 +50,7 @@
   }
 
   function setRequestUri(data) {
-    data.requestUri = getComboPath(data.uri) || data.uri
-  }
-
-  function cleanUp(data) {
-    var comboPath = getComboPath(data.requestUri)
-    if (comboPath && isComboUri(comboPath)) {
-      delete comboHash[comboPath]
-    }
+    data.requestUri = comboHash[data.uri] || data.uri
   }
 
 
@@ -242,10 +235,8 @@
         throw new Error("The combo url is too long: " + comboPath)
       }
 
-      var hash = comboHash[comboPath] = {}
-
       for (var i = 0, len = files.length; i < len; i++) {
-        hash[root + files[i]] = true
+        comboHash[root + files[i]] = comboPath
       }
     }
   }
@@ -299,16 +290,6 @@
     var s2 = comboSyntax[1]
 
     return s1 && uri.indexOf(s1) > 0 || s2 && uri.indexOf(s2) > 0
-  }
-
-  function getComboPath(uri) {
-    for (var comboPath in comboHash) {
-      if (comboHash.hasOwnProperty(comboPath)) {
-        if (comboHash[comboPath][uri]) {
-          return comboPath
-        }
-      }
-    }
   }
 
 
