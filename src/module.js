@@ -16,11 +16,11 @@ var STATUS = Module.STATUS = {
   SAVED: 2,
   // 3 - The `module.dependencies` are being loaded
   LOADING: 3,
-  // 3 - The module are ready to execute
+  // 4 - The module are ready to execute
   LOADED: 4,
-  // 4 - The module is being executed
+  // 5 - The module is being executed
   EXECUTING: 5,
-  // 5 - The `module.exports` is available
+  // 6 - The `module.exports` is available
   EXECUTED: 6
 }
 
@@ -33,10 +33,13 @@ function Module(uri, deps) {
 
   // Who depend on me
   this._waitings = {}
+
   // The number of unloaded dependencies
   this._remain = 0
+
   // The cache for _resolve method to speed up performance
   this._resolveCache = {}
+
   // This function will be called when onload
   this._callback = null
 }
@@ -120,8 +123,6 @@ Module.prototype._onload = function() {
 
   if (mod._callback) {
     mod._callback()
-    // Reduce memory leak
-    delete mod._callback
   }
 
   // Notify waiting modules to fire onload
