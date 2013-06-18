@@ -5,16 +5,16 @@
 
   var Module = seajs.Module
   var FETCHING = Module.STATUS.FETCHING
-
   var data = seajs.data
-  var comboHash = data.comboHash = {}
 
+  var comboHash = {}
   var comboSyntax = ["??", ","]
   var comboMaxLength = 2000
 
 
   seajs.on("load", setComboHash)
   seajs.on("fetch", setRequestUri)
+  seajs.on("requested", cleanUp)
 
   function setComboHash(uris) {
     var len = uris.length
@@ -51,6 +51,19 @@
 
   function setRequestUri(data) {
     data.requestUri = comboHash[data.uri] || data.uri
+  }
+
+  function cleanUp(data) {
+    var comboUri = data.requestUri
+    if (isComboUri(comboUri)) {
+
+      for (var uri in comboHash) {
+        if (comboHash === comboUri) {
+          delete comboHash[uri]
+        }
+      }
+
+    }
   }
 
 
