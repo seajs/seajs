@@ -39,6 +39,10 @@ define(function(require) {
           + ' expected = ' + expectedPath('z'))
 
 
+  /* REMOVE support for this rare case
+  // and RECOMMEND to place config before all modules
+  // https://github.com/seajs/seajs/blob/f84c0d8ad1adf61148ac40683869906566b028ee/src/module.js
+  //
   // base path is changed dynamically
   seajs.config({
     base: './base/c'
@@ -54,8 +58,11 @@ define(function(require) {
 
   seajs.use('c/c', function(c) {
     test.assert(c.name === 'c-1', c.name)
-    test.next()
   })
+  */
+
+
+  test.next()
 
 })
 
