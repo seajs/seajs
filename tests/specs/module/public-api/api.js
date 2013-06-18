@@ -83,14 +83,14 @@ define(function(require, exports, mod) {
   assert(typeof mod._waitings === 'object', 'module._waitings')
   assert(typeof mod._remain === 'number', 'module._remain')
 //  assert(typeof mod._resolveCache === 'object', 'module._resolveCache')
-  assert(typeof mod._callback === 'object', 'module._callback')
+//  assert(typeof mod._callback === 'object', 'module._callback')
 
   //assert(typeof mod.options === 'object', 'module.options')
   //assert(mod.parent instanceof Module, 'module.parent')
   //assert(mod.parent.parent === undefined, 'module.parent.parent')
   //assert(isFunction(mod.load), 'module.load')
 
-  assert(getOwnPropertyCount(mod) === 9, getOwnPropertyCount(mod))
+  assert(getOwnPropertyCount(mod) === 8, getOwnPropertyCount(mod))
 
 
   test.next()
