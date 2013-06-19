@@ -42,6 +42,13 @@ define(function(require, exports, mod) {
   assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
 
 
+  // define
+  assert(isFunction(define), 'define')
+  assert(typeof define.cmd === 'object', 'define.cmd')
+
+  assert(getOwnPropertyCount(define) === 1, getOwnPropertyCount(define))
+
+
   // Module
   var Module = seajs.Module
   assert(typeof Module.STATUS === 'object', 'Module.STATUS')
