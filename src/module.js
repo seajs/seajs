@@ -369,6 +369,7 @@ seajs.use = function(ids, callback) {
 }
 
 global.define = define
+define.cmd = {}
 
 
 // For Developers
