@@ -240,10 +240,18 @@ function define(id, deps, factory) {
     factory = id
     id = undefined
   }
-  // define(id, factory)
   else if (argsLen === 2) {
     factory = deps
-    deps = undefined
+
+    // define(deps, factory)
+    if (isArray(id)) {
+      deps = id
+      id = undefined
+    }
+    // define(id, factory)
+    else {
+      deps = undefined
+    }
   }
 
   // Parse dependencies according to the module factory code
