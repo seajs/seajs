@@ -65,7 +65,7 @@ Module.prototype._load = function() {
 
   mod.status = STATUS.LOADING
 
-  // Emit `load` event for plugins such as plugin-combo
+  // Emit `load` event for plugins such as combo plugin
   var uris = mod._resolve()
   emit("load", uris)
 
@@ -138,7 +138,7 @@ Module.prototype._fetch = function() {
 
   mod.status = STATUS.FETCHING
 
-  // Emit `fetch` event for plugins such as plugin-combo
+  // Emit `fetch` event for plugins such as combo plugin
   var emitData = { uri: uri }
   emit("fetch", emitData)
   var requestUri = emitData.requestUri || uri
@@ -157,7 +157,7 @@ Module.prototype._fetch = function() {
   fetchingList[requestUri] = true
   callbackList[requestUri] = [mod]
 
-  // Emit `request` event for plugins such as plugin-text
+  // Emit `request` event for plugins such as text plugin
   emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
@@ -281,7 +281,7 @@ function define(id, deps, factory) {
     }
   }
 
-  // Emit `define` event, used in plugin-nocache, seajs node version etc
+  // Emit `define` event, used in nocache plugin, seajs node version etc
   emit("define", meta)
 
   meta.uri ? save(meta.uri, meta) :
@@ -318,7 +318,7 @@ function use(ids, callback, uri) {
 // Helpers
 
 function resolve(id, refUri) {
-  // Emit `resolve` event for plugins such as plugin-text
+  // Emit `resolve` event for plugins such as text plugin
   var emitData = { id: id, refUri: refUri }
   emit("resolve", emitData)
 

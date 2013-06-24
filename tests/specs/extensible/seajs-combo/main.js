@@ -1,6 +1,6 @@
 
 seajs.config({
-  base: "./plugin-combo/",
+  base: "./seajs-combo/",
   test: true,
   plugins: ["combo"]
 })

@@ -19,7 +19,7 @@ define(function(require) {
     var scripts = document.getElementsByTagName('script')
     for (var i = 0; i < scripts.length; i++) {
       var src = scripts[i].src
-      if (src && /\/plugin-nocache\/\w\.js/.test(src)) {
+      if (src && /\/seajs-nocache\/\w\.js/.test(src)) {
         test.assert(src.indexOf(timestamp) > 0, src)
       }
     }
