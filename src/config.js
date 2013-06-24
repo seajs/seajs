@@ -2,19 +2,12 @@
  * config.js - The configuration for the loader
  */
 
+var BASE_RE = /^(.+?\/)(\?\?)?(seajs\/)+/
+
 // The root path to use for id2uri parsing
-data.base = (function() {
-  var ret = loaderDir
-
-  // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
-  // baseUri should be `http://test.com/libs/`
-  var m = ret.match(/^(.+?\/)(?:seajs\/)+(?:\d[^/]+\/)?$/)
-  if (m) {
-    ret = m[1]
-  }
-
-  return ret
-})()
+// If loaderUri is `http://test.com/libs/seajs/[??][seajs/1.2.3/]sea.js`, the
+// baseUri should be `http://test.com/libs/`
+data.base = (loaderDir.match(BASE_RE) || ["", loaderDir])[1]
 
 // The loader directory
 data.dir = loaderDir
@@ -30,7 +23,7 @@ data.preload = (function() {
   var plugins = []
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
-  // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
+  // NOTE: use `seajs-xxx=1` flag in uri or cookie to preload `seajs-xxx`
   var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
   // Add cookie string
@@ -41,7 +34,7 @@ data.preload = (function() {
     plugins.push(name)
   })
 
-  return plugin2preload(plugins)
+  return plugins
 })()
 
 // data.debug - Debug mode. The default value is false
@@ -56,13 +49,6 @@ function config(configData) {
 
   for (var key in configData) {
     var curr = configData[key]
-
-    // Convert plugins to preload config
-    if (curr && key === "plugins") {
-      key = "preload"
-      curr = plugin2preload(curr)
-    }
-
     var prev = data[key]
 
     // Merge object config such as alias, vars
@@ -92,13 +78,4 @@ function config(configData) {
 }
 
 seajs.config = config
-
-function plugin2preload(arr) {
-  var ret = [], name
-
-  while ((name = arr.shift())) {
-    ret.push(data.dir + "plugin-" + name)
-  }
-  return ret
-}
 
