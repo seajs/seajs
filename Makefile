@@ -22,4 +22,4 @@ totoro:
 	@totoro --adapter=tests/totoro-adapter.js
 
 size:
-	@tools/size.sh
+	@tools/size.sh sea
