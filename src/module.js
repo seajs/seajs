@@ -104,8 +104,8 @@ Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  if (mod._callback) {
-    mod._callback()
+  if (mod.callback) {
+    mod.callback()
   }
 
   // Notify waiting modules to fire onload
@@ -309,7 +309,7 @@ Module.use = function (ids, callback, uri) {
       isArray(ids) ? ids : [ids]
   )
 
-  mod._callback = function() {
+  mod.callback = function() {
     var exports = []
     var uris = mod.resolve()
 
@@ -321,7 +321,7 @@ Module.use = function (ids, callback, uri) {
       callback.apply(global, exports)
     }
 
-    delete mod._callback
+    delete mod.callback
   }
 
   mod.load()
