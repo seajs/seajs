@@ -38,12 +38,8 @@ function Module(uri, deps) {
   this._remain = 0
 }
 
-Module.get = function(uri, deps) {
-  return cachedMods[uri] || (cachedMods[uri] = new Module(uri, deps))
-}
-
 // Resolve module.dependencies
-Module.prototype._resolve = function() {
+Module.prototype.resolve = function() {
   var mod = this
   var ids = mod.dependencies
   var uris = []
@@ -55,7 +51,7 @@ Module.prototype._resolve = function() {
 }
 
 // Load module.dependencies and fire onload when all done
-Module.prototype._load = function() {
+Module.prototype.load = function() {
   var mod = this
 
   // If the module is being loaded, just wait it onload call
@@ -66,7 +62,7 @@ Module.prototype._load = function() {
   mod.status = STATUS.LOADING
 
   // Emit `load` event for plugins such as combo plugin
-  var uris = mod._resolve()
+  var uris = mod.resolve()
   emit("load", uris)
 
   var len = mod._remain = uris.length
@@ -86,7 +82,7 @@ Module.prototype._load = function() {
   }
 
   if (mod._remain === 0) {
-    mod._onload()
+    mod.onload()
     return
   }
 
@@ -95,16 +91,16 @@ Module.prototype._load = function() {
     m = cachedMods[uris[i]]
 
     if (m.status < STATUS.FETCHING) {
-      m._fetch()
+      m.fetch()
     }
     else if (m.status === STATUS.SAVED) {
-      m._load()
+      m.load()
     }
   }
 }
 
 // Call this method when module is loaded
-Module.prototype._onload = function() {
+Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
@@ -121,7 +117,7 @@ Module.prototype._onload = function() {
       m = cachedMods[uri]
       m._remain -= waitings[uri]
       if (m._remain === 0) {
-        m._onload()
+        m.onload()
       }
     }
   }
@@ -132,7 +128,7 @@ Module.prototype._onload = function() {
 }
 
 // Fetch a module
-Module.prototype._fetch = function() {
+Module.prototype.fetch = function() {
   var mod = this
   var uri = mod.uri
 
@@ -145,7 +141,7 @@ Module.prototype._fetch = function() {
 
   // Empty uri or a non-CMD module
   if (!requestUri || fetchedList[requestUri]) {
-    mod._load()
+    mod.load()
     return
   }
 
@@ -182,12 +178,15 @@ Module.prototype._fetch = function() {
     // Call callbacks
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((m = mods.shift())) m._load()
+    while ((m = mods.shift())) m.load()
+
+    // Emit `requested` event
+    emit("requested", emitData)
   }
 }
 
 // Execute a module
-Module.prototype._exec = function () {
+Module.prototype.exec = function () {
   var mod = this
 
   // When module is executed, DO NOT execute it again. When module
@@ -203,7 +202,7 @@ Module.prototype._exec = function () {
   var uri = mod.uri
 
   function require(id) {
-    return cachedMods[require.resolve(id)]._exec()
+    return cachedMods[require.resolve(id)].exec()
   }
 
   require.resolve = function(id) {
@@ -211,7 +210,7 @@ Module.prototype._exec = function () {
   }
 
   require.async = function(ids, callback) {
-    use(ids, callback, uri + "_async_" + cid())
+    Module.use(ids, callback, uri + "_async_" + cid())
     return require
   }
 
@@ -226,7 +225,7 @@ Module.prototype._exec = function () {
     exports = mod.exports
   }
 
-  // Emit error event
+  // Emit `error` event
   if (exports === null && !IS_CSS_RE.test(uri)) {
     emit("error", mod)
   }
@@ -241,7 +240,7 @@ Module.prototype._exec = function () {
 }
 
 // Define a module
-function define(id, deps, factory) {
+Module.define = function (id, deps, factory) {
   var argsLen = arguments.length
 
   // define(factory)
@@ -298,8 +297,13 @@ function define(id, deps, factory) {
       anonymousMeta = meta
 }
 
+// Get an existed module or create a new one
+Module.get = function(uri, deps) {
+  return cachedMods[uri] || (cachedMods[uri] = new Module(uri, deps))
+}
+
 // Use function is equal to load a anonymous module
-function use(ids, callback, uri) {
+Module.use = function (ids, callback, uri) {
   var mod = Module.get(
       uri || data.cwd + "_anonymous_" + cid(),
       isArray(ids) ? ids : [ids]
@@ -307,10 +311,10 @@ function use(ids, callback, uri) {
 
   mod._callback = function() {
     var exports = []
-    var uris = mod._resolve()
+    var uris = mod.resolve()
 
     for (var i = 0, len = uris.length; i < len; i++) {
-      exports[i] = cachedMods[uris[i]]._exec()
+      exports[i] = cachedMods[uris[i]].exec()
     }
 
     if (callback) {
@@ -320,7 +324,7 @@ function use(ids, callback, uri) {
     delete mod._callback
   }
 
-  mod._load()
+  mod.load()
 }
 
 
@@ -351,7 +355,7 @@ function preload(callback) {
   var len = preloadMods.length
 
   if (len) {
-    use(preloadMods, function() {
+    Module.use(preloadMods, function() {
       // Remove the loaded preload modules
       preloadMods.splice(0, len)
 
@@ -370,13 +374,13 @@ function preload(callback) {
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
-    use(ids, callback)
+    Module.use(ids, callback)
   })
   return seajs
 }
 
-global.define = define
-define.cmd = {}
+Module.define.cmd = {}
+global.define = Module.define
 
 
 // For Developers
