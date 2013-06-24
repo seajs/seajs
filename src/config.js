@@ -30,7 +30,7 @@ data.preload = (function() {
   str += " " + doc.cookie
 
   // Exclude seajs-xxx=0
-  str.replace(/seajs-(\w+)=1/g, function(m, name) {
+  str.replace(/(seajs-\w+)=1/g, function(m, name) {
     plugins.push(name)
   })
 
