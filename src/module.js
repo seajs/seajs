@@ -203,7 +203,7 @@ Module.prototype._exec = function () {
   var uri = mod.uri
 
   function require(id) {
-    return getExports(cachedMods[require.resolve(id)])
+    return cachedMods[require.resolve(id)]._exec()
   }
 
   require.resolve = function(id) {
@@ -222,13 +222,22 @@ Module.prototype._exec = function () {
       factory(require, mod.exports = {}, mod) :
       factory
 
-  mod.exports = exports === undefined ? mod.exports : exports
-  mod.status = STATUS.EXECUTED
+  if (exports === undefined) {
+    exports = mod.exports
+  }
+
+  // Emit error event
+  if (exports === null && !IS_CSS_RE.test(uri)) {
+    emit("error", mod)
+  }
 
   // Reduce memory leak
   delete mod.factory
 
-  return mod.exports
+  mod.exports = exports
+  mod.status = STATUS.EXECUTED
+
+  return exports
 }
 
 // Define a module
@@ -301,7 +310,7 @@ function use(ids, callback, uri) {
     var uris = mod._resolve()
 
     for (var i = 0, len = uris.length; i < len; i++) {
-      exports[i] = getExports(cachedMods[uris[i]])
+      exports[i] = cachedMods[uris[i]]._exec()
     }
 
     if (callback) {
@@ -335,16 +344,6 @@ function save(uri, meta) {
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
   }
-}
-
-function getExports(mod) {
-  var exports = mod._exec()
-
-  if (exports === null && !IS_CSS_RE.test(mod.uri)) {
-    emit("error", mod)
-  }
-
-  return exports
 }
 
 function preload(callback) {
