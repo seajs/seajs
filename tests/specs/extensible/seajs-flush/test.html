@@ -12,7 +12,10 @@
 
   seajs.config({
     base: './',
-    plugins: ['flush', 'combo'],
+    preload: [
+      "../../../../seajs-combo/dist/seajs-combo-debug",
+      "../../../../seajs-flush/dist/seajs-flush-debug"
+    ],
     comboSyntax: ['', '+']
   })
 
