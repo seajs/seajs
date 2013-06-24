@@ -6,8 +6,5 @@ node_js:
 before_script:
   - phantomjs --version
 
-install:
-  - npm install node-static
-
 script:
   - make test
