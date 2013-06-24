@@ -236,6 +236,9 @@ Module.prototype.exec = function () {
   mod.exports = exports
   mod.status = STATUS.EXECUTED
 
+  // Emit `exec` event
+  emit("exec", mod)
+
   return exports
 }
 
