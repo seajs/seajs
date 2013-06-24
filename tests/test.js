@@ -134,7 +134,7 @@ if (typeof document !== 'undefined') {
 
     // Reset plugins
     for (var uri in seajs.cache) {
-      if (uri.indexOf('/dist/plugin-') > 0) {
+      if (uri.indexOf('/dist/seajs-') > 0) {
         delete seajs.cache[uri]
         delete seajs.data.fetchedList[uri]
 

@@ -7,9 +7,9 @@ var testSuites = [
   'specs/module',
   'specs/package',
   'specs/extensible',
-  'specs/extensible/plugin-debug',
-  'specs/extensible/plugin-flush',
-  'specs/extensible/plugin-style',
+  'specs/extensible/seajs-debug',
+  'specs/extensible/seajs-flush',
+  'specs/extensible/seajs-style',
 
   'specs/misc/bootstrap',
   'specs/misc/callback-order',
