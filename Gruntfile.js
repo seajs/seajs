@@ -3,15 +3,6 @@ module.exports = function(grunt) {
 
   var path = require("path")
 
-  const GCC_OPTIONS = {
-    compilation_level: "SIMPLE_OPTIMIZATIONS",
-    externs: "tools/extern.js",
-
-    warning_level: "VERBOSE",
-    jscomp_off: "checkTypes",
-    jscomp_error: "checkDebuggerStatement"
-  }
-
 
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
@@ -42,24 +33,20 @@ module.exports = function(grunt) {
       seajs: {
         src: "dist/sea-debug.js",
         dest: "dist/sea.js",
-        options: grunt.util._.merge({
+        options: {
           banner: "/*! Sea.js <%= pkg.version %> | seajs.org/LICENSE.md\n" +
               "//# sourceMappingURL=sea.js.map\n*/",
-          source_map_format: "V3",
-          create_source_map: "dist/sea.js.map"
-        }, GCC_OPTIONS)
-      },
 
-      plugins: {
-        files: grunt.file.expandMapping(
-            "src/plugins/*.js", "dist/",
-            {
-              "rename": function(dest, matchedSrcPath) {
-                return path.join(dest, matchedSrcPath.split("/").pop())
-              }
-            }
-        ),
-        options: GCC_OPTIONS
+          source_map_format: "V3",
+          create_source_map: "dist/sea.js.map",
+
+          compilation_level: "SIMPLE_OPTIMIZATIONS",
+          externs: "tools/extern.js",
+
+          warning_level: "VERBOSE",
+          jscomp_off: "checkTypes",
+          jscomp_error: "checkDebuggerStatement"
+        }
       }
     }
 
@@ -108,8 +95,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-concat")
 
   grunt.registerTask("default", ["concat", "embed", "gcc:seajs", "fix"])
-  grunt.registerTask("plugins", ["gcc:plugins"])
-  grunt.registerTask("all", ["default", "plugins"])
 
 }
 
