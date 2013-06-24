@@ -54,15 +54,16 @@ define(function(require, exports, mod) {
   assert(typeof Module.STATUS === 'object', 'Module.STATUS')
 
   assert(isFunction(Module.get), 'Module.get')
-  //assert(Module.define, 'Module.define')
+  assert(isFunction(Module.define), 'Module.define')
+  assert(isFunction(Module.use), 'Module.use')
 
-  assert(isFunction(Module.prototype._resolve), 'Module.prototype._resolve')
-  assert(isFunction(Module.prototype._load), 'Module.prototype._load')
-  assert(isFunction(Module.prototype._onload), 'Module.prototype._onload')
-  assert(isFunction(Module.prototype._fetch), 'Module.prototype._fetch')
-  assert(isFunction(Module.prototype._exec), 'Module.prototype._exec')
+  assert(isFunction(Module.prototype.resolve), 'Module.prototype.resolve')
+  assert(isFunction(Module.prototype.load), 'Module.prototype.load')
+  assert(isFunction(Module.prototype.onload), 'Module.prototype.onload')
+  assert(isFunction(Module.prototype.fetch), 'Module.prototype.fetch')
+  assert(isFunction(Module.prototype.exec), 'Module.prototype.exec')
 
-  assert(getOwnPropertyCount(Module) === 2, getOwnPropertyCount(Module))
+  assert(getOwnPropertyCount(Module) === 4, getOwnPropertyCount(Module))
   assert(getOwnPropertyCount(Module.prototype) === 5, getOwnPropertyCount(Module.prototype))
 
   
