@@ -8,11 +8,11 @@ var Static = require('node-static')
 
 function createServer(filepath, port) {
   port = parseInt(port || 9012)
-  var file = new Static.Server(fs.realpathSync('.'))
+  var fileServer = new Static.Server(fs.realpathSync('../'))
 
   var server = http.createServer(function(request, response) {
     request.addListener('end',function() {
-      file.serve(request, response)
+      fileServer.serve(request, response)
     }).resume()
   })
 
