@@ -4,7 +4,9 @@ node_js:
   - 0.8
 
 before_script:
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs.git ../seajs-combo
   - phantomjs --version
+
 
 script:
   - make test
