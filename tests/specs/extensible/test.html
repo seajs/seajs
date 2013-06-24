@@ -9,7 +9,23 @@
 <body>
 <div id="out"></div>
 <script>
-  seajs.use(['../../test', './meta'], function(test, data) {
+
+  seajs.config({
+    test: true,
+    alias: {
+      "seajs-combo": "../../../../seajs-combo/dist/seajs-combo-debug",
+      "seajs-flush": "../../../../seajs-flush/dist/seajs-flush"
+    },
+    comboExcludes: function(uri) {
+      return uri.indexOf('/test.js') > 0 || uri.indexOf('/meta.js') > 0
+    }
+  })
+
+  // Clear preload
+  var preloadMods = seajs.data.preload
+  seajs.data.preload.length = 0
+
+  seajs.use(['../../test', './meta'].concat(preloadMods), function(test, data) {
     test.run(data)
   })
 </script>
