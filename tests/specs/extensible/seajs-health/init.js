@@ -18,6 +18,7 @@ define(function(require) {
   test.assert(a13.version === '1.3', a13.name)
 
 
+  var data = seajs.health()
   var msg2 = global.consoleMsgStack.pop()
   var msg1 = global.consoleMsgStack.pop()
 

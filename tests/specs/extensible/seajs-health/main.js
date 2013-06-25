@@ -1,7 +1,7 @@
 
 seajs.config({
-  preload: ["../../../../seajs-warning/dist/seajs-warning"]
+  preload: ["../../../../seajs-health/dist/seajs-health"]
 })
 
-seajs.use("./seajs-warning/init")
+seajs.use("./seajs-health/init")
 
