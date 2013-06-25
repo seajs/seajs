@@ -4,7 +4,12 @@ node_js:
   - 0.8
 
 before_script:
-  - git clone --depth=50 --branch=master git://github.com/seajs/seajs.git ../seajs-combo
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs-combo.git ../seajs-combo
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs-flush.git ../seajs-flush
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs-style.git ../seajs-style
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs-health.git ../seajs-health
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs-text.git ../seajs-text
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs-debug.git ../seajs-debug
   - phantomjs --version
 
 
