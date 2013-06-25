@@ -489,12 +489,8 @@ function Module(uri, deps) {
   this._remain = 0
 }
 
-Module.get = function(uri, deps) {
-  return cachedMods[uri] || (cachedMods[uri] = new Module(uri, deps))
-}
-
 // Resolve module.dependencies
-Module.prototype._resolve = function() {
+Module.prototype.resolve = function() {
   var mod = this
   var ids = mod.dependencies
   var uris = []
@@ -506,7 +502,7 @@ Module.prototype._resolve = function() {
 }
 
 // Load module.dependencies and fire onload when all done
-Module.prototype._load = function() {
+Module.prototype.load = function() {
   var mod = this
 
   // If the module is being loaded, just wait it onload call
@@ -516,8 +512,8 @@ Module.prototype._load = function() {
 
   mod.status = STATUS.LOADING
 
-  // Emit `load` event for plugins such as plugin-combo
-  var uris = mod._resolve()
+  // Emit `load` event for plugins such as combo plugin
+  var uris = mod.resolve()
   emit("load", uris)
 
   var len = mod._remain = uris.length
@@ -537,7 +533,7 @@ Module.prototype._load = function() {
   }
 
   if (mod._remain === 0) {
-    mod._onload()
+    mod.onload()
     return
   }
 
@@ -546,21 +542,21 @@ Module.prototype._load = function() {
     m = cachedMods[uris[i]]
 
     if (m.status < STATUS.FETCHING) {
-      m._fetch()
+      m.fetch()
     }
     else if (m.status === STATUS.SAVED) {
-      m._load()
+      m.load()
     }
   }
 }
 
 // Call this method when module is loaded
-Module.prototype._onload = function() {
+Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  if (mod._callback) {
-    mod._callback()
+  if (mod.callback) {
+    mod.callback()
   }
 
   // Notify waiting modules to fire onload
@@ -572,7 +568,7 @@ Module.prototype._onload = function() {
       m = cachedMods[uri]
       m._remain -= waitings[uri]
       if (m._remain === 0) {
-        m._onload()
+        m.onload()
       }
     }
   }
@@ -583,20 +579,20 @@ Module.prototype._onload = function() {
 }
 
 // Fetch a module
-Module.prototype._fetch = function() {
+Module.prototype.fetch = function() {
   var mod = this
   var uri = mod.uri
 
   mod.status = STATUS.FETCHING
 
-  // Emit `fetch` event for plugins such as plugin-combo
+  // Emit `fetch` event for plugins such as combo plugin
   var emitData = { uri: uri }
   emit("fetch", emitData)
   var requestUri = emitData.requestUri || uri
 
   // Empty uri or a non-CMD module
   if (!requestUri || fetchedList[requestUri]) {
-    mod._load()
+    mod.load()
     return
   }
 
@@ -608,7 +604,7 @@ Module.prototype._fetch = function() {
   fetchingList[requestUri] = true
   callbackList[requestUri] = [mod]
 
-  // Emit `request` event for plugins such as plugin-text
+  // Emit `request` event for plugins such as text plugin
   emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
@@ -633,12 +629,15 @@ Module.prototype._fetch = function() {
     // Call callbacks
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((m = mods.shift())) m._load()
+    while ((m = mods.shift())) m.load()
+
+    // Emit `requested` event
+    emit("requested", emitData)
   }
 }
 
 // Execute a module
-Module.prototype._exec = function () {
+Module.prototype.exec = function () {
   var mod = this
 
   // When module is executed, DO NOT execute it again. When module
@@ -654,7 +653,7 @@ Module.prototype._exec = function () {
   var uri = mod.uri
 
   function require(id) {
-    return getExports(cachedMods[require.resolve(id)])
+    return cachedMods[require.resolve(id)].exec()
   }
 
   require.resolve = function(id) {
@@ -662,7 +661,7 @@ Module.prototype._exec = function () {
   }
 
   require.async = function(ids, callback) {
-    use(ids, callback, uri + "_async_" + cid())
+    Module.use(ids, callback, uri + "_async_" + cid())
     return require
   }
 
@@ -673,17 +672,29 @@ Module.prototype._exec = function () {
       factory(require, mod.exports = {}, mod) :
       factory
 
-  mod.exports = exports === undefined ? mod.exports : exports
-  mod.status = STATUS.EXECUTED
+  if (exports === undefined) {
+    exports = mod.exports
+  }
+
+  // Emit `error` event
+  if (exports === null && !IS_CSS_RE.test(uri)) {
+    emit("error", mod)
+  }
 
   // Reduce memory leak
   delete mod.factory
 
-  return mod.exports
+  mod.exports = exports
+  mod.status = STATUS.EXECUTED
+
+  // Emit `exec` event
+  emit("exec", mod)
+
+  return exports
 }
 
 // Define a module
-function define(id, deps, factory) {
+Module.define = function (id, deps, factory) {
   var argsLen = arguments.length
 
   // define(factory)
@@ -691,10 +702,18 @@ function define(id, deps, factory) {
     factory = id
     id = undefined
   }
-  // define(id, factory)
   else if (argsLen === 2) {
     factory = deps
-    deps = undefined
+
+    // define(deps, factory)
+    if (isArray(id)) {
+      deps = id
+      id = undefined
+    }
+    // define(id, factory)
+    else {
+      deps = undefined
+    }
   }
 
   // Parse dependencies according to the module factory code
@@ -724,7 +743,7 @@ function define(id, deps, factory) {
     }
   }
 
-  // Emit `define` event, used in plugin-nocache, seajs node version etc
+  // Emit `define` event, used in nocache plugin, seajs node version etc
   emit("define", meta)
 
   meta.uri ? save(meta.uri, meta) :
@@ -732,36 +751,41 @@ function define(id, deps, factory) {
       anonymousMeta = meta
 }
 
+// Get an existed module or create a new one
+Module.get = function(uri, deps) {
+  return cachedMods[uri] || (cachedMods[uri] = new Module(uri, deps))
+}
+
 // Use function is equal to load a anonymous module
-function use(ids, callback, uri) {
+Module.use = function (ids, callback, uri) {
   var mod = Module.get(
       uri || data.cwd + "_anonymous_" + cid(),
       isArray(ids) ? ids : [ids]
   )
 
-  mod._callback = function() {
+  mod.callback = function() {
     var exports = []
-    var uris = mod._resolve()
+    var uris = mod.resolve()
 
     for (var i = 0, len = uris.length; i < len; i++) {
-      exports[i] = getExports(cachedMods[uris[i]])
+      exports[i] = cachedMods[uris[i]].exec()
     }
 
     if (callback) {
       callback.apply(global, exports)
     }
 
-    delete mod._callback
+    delete mod.callback
   }
 
-  mod._load()
+  mod.load()
 }
 
 
 // Helpers
 
 function resolve(id, refUri) {
-  // Emit `resolve` event for plugins such as plugin-text
+  // Emit `resolve` event for plugins such as text plugin
   var emitData = { id: id, refUri: refUri }
   emit("resolve", emitData)
 
@@ -780,22 +804,12 @@ function save(uri, meta) {
   }
 }
 
-function getExports(mod) {
-  var exports = mod._exec()
-
-  if (exports === null && !IS_CSS_RE.test(mod.uri)) {
-    emit("error", mod)
-  }
-
-  return exports
-}
-
 function preload(callback) {
   var preloadMods = data.preload
   var len = preloadMods.length
 
   if (len) {
-    use(preloadMods, function() {
+    Module.use(preloadMods, function() {
       // Remove the loaded preload modules
       preloadMods.splice(0, len)
 
@@ -814,13 +828,13 @@ function preload(callback) {
 seajs.use = function(ids, callback) {
   // Load preload modules before all other modules
   preload(function() {
-    use(ids, callback)
+    Module.use(ids, callback)
   })
   return seajs
 }
 
-global.define = define
-define.cmd = {}
+Module.define.cmd = {}
+global.define = Module.define
 
 
 // For Developers
@@ -838,19 +852,12 @@ seajs.require = function(id) {
  * config.js - The configuration for the loader
  */
 
+var BASE_RE = /^(.+?\/)(\?\?)?(seajs\/)+/
+
 // The root path to use for id2uri parsing
-data.base = (function() {
-  var ret = loaderDir
-
-  // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
-  // baseUri should be `http://test.com/libs/`
-  var m = ret.match(/^(.+?\/)(?:seajs\/)+(?:\d[^/]+\/)?$/)
-  if (m) {
-    ret = m[1]
-  }
-
-  return ret
-})()
+// If loaderUri is `http://test.com/libs/seajs/[??][seajs/1.2.3/]sea.js`, the
+// baseUri should be `http://test.com/libs/`
+data.base = (loaderDir.match(BASE_RE) || ["", loaderDir])[1]
 
 // The loader directory
 data.dir = loaderDir
@@ -866,18 +873,18 @@ data.preload = (function() {
   var plugins = []
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
-  // NOTE: use `seajs-xxx=1` flag in url or cookie to enable `plugin-xxx`
+  // NOTE: use `seajs-xxx=1` flag in uri or cookie to preload `seajs-xxx`
   var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
   // Add cookie string
   str += " " + doc.cookie
 
   // Exclude seajs-xxx=0
-  str.replace(/seajs-(\w+)=1/g, function(m, name) {
+  str.replace(/(seajs-\w+)=1/g, function(m, name) {
     plugins.push(name)
   })
 
-  return plugin2preload(plugins)
+  return plugins
 })()
 
 // data.debug - Debug mode. The default value is false
@@ -892,13 +899,6 @@ function config(configData) {
 
   for (var key in configData) {
     var curr = configData[key]
-
-    // Convert plugins to preload config
-    if (curr && key === "plugins") {
-      key = "preload"
-      curr = plugin2preload(curr)
-    }
-
     var prev = data[key]
 
     // Merge object config such as alias, vars
@@ -928,15 +928,6 @@ function config(configData) {
 }
 
 seajs.config = config
-
-function plugin2preload(arr) {
-  var ret = [], name
-
-  while ((name = arr.shift())) {
-    ret.push(data.dir + "plugin-" + name)
-  }
-  return ret
-}
 
 
 })(this);

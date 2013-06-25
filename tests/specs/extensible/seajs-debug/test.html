@@ -11,6 +11,13 @@
 
 <script src="../../../../dist/sea.js"></script>
 <script>
+
+  seajs.config({
+    alias: {
+      'seajs-debug': '../../../../../seajs-debug/dist/seajs-debug'
+    }
+  })
+
   seajs.use('./main')
 </script>
 

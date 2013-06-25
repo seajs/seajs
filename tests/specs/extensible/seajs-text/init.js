@@ -45,6 +45,20 @@ define(function(require) {
   test.assert(require.resolve('json!d') === require.resolve('d'), require.resolve('json!d'))
 
 
+
+  // handlebars
+
+  var template = require('./h.handlebars')
+  var value = template({foo: 'bar'}, {
+    helpers: {
+      _: function(v) {
+        return v + 's'
+      }
+    }
+  })
+  test.assert(value === '<span>bars</span>', value)
+
+
   test.next()
 
 });

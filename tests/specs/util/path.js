@@ -14,7 +14,7 @@ define(function(require) {
   assert(dirname('http://cdn.com/js/file.js?t=xxx') === 'http://cdn.com/js/', 'dirname')
   assert(dirname('http://cdn.com/js/file.js?t=xxx#zzz') === 'http://cdn.com/js/', 'dirname')
   assert(dirname('http://example.com/page/index.html#zzz?t=xxx') === 'http://example.com/page/', 'dirname')
-  assert(dirname('http://example.com/arale/seajs/1.2.0/??sea.js,plugin-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname')
+  assert(dirname('http://example.com/arale/seajs/1.2.0/??sea.js,seajs-combo.js') === 'http://example.com/arale/seajs/1.2.0/', 'dirname')
   assert(dirname('http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js') === 'http://cdn.com/', 'dirname')
   assert(dirname('http://seajs.com/docs/#/abc') === 'http://seajs.com/docs/', 'dirname')
   //assert(dirname('') === null, 'dirname')
