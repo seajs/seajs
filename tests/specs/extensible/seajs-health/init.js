@@ -19,11 +19,27 @@ define(function(require) {
 
 
   var data = seajs.health()
-  var msg2 = global.consoleMsgStack.pop()
-  var msg1 = global.consoleMsgStack.pop()
+  var multiVersions = data.multiVersions
+  var keys = []
 
-  test.assert(msg1.indexOf('This module has multiple versions:') === 0, 'console message')
-  test.assert(msg2.indexOf('This module has multiple versions:') === 0, 'console message')
+  for (var key in multiVersions) {
+    if (multiVersions.hasOwnProperty(key)) {
+      keys.push(key)
+    }
+  }
+
+  test.assert(keys.length === 2, keys.length)
+  test.assert(keys[0].indexOf('/xx/{version}/xx.js') > 0, keys[0])
+  test.assert(keys[1].indexOf('/zz/a-{version}.js') > 0, keys[1])
+
+  test.assert(multiVersions[keys[0]].length === 2, multiVersions[keys[0]].length)
+  test.assert(multiVersions[keys[0]][0].indexOf('/xx/1.0.0/xx.js') > 0, multiVersions[keys[0]][0])
+  test.assert(multiVersions[keys[0]][1].indexOf('/xx/1.2.0/xx.js') > 0, multiVersions[keys[0]][1])
+
+  test.assert(multiVersions[keys[1]].length === 2, multiVersions[keys[1]].length)
+  test.assert(multiVersions[keys[1]][0].indexOf('/zz/a-1.2.js') > 0, multiVersions[keys[1]][0])
+  test.assert(multiVersions[keys[1]][1].indexOf('/zz/a-1.3.js') > 0, multiVersions[keys[1]][1])
+
 
   test.next()
 
