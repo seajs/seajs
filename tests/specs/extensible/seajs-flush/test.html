@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <title>test</title>
-<script src="../../../../dist/sea.js"></script>
+<script src="../../../../dist/sea-debug.js"></script>
+<script src="../../../../../seajs-combo/dist/seajs-combo.js"></script>
+<script src="../../../../../seajs-flush/dist/seajs-flush.js"></script>
 </head>
 <body>
 <div id="out"></div>
@@ -12,14 +14,15 @@
 
   seajs.config({
     base: './',
-    alias: {
-      "seajs-combo": "../../../../../seajs-combo/dist/seajs-combo",
-      "seajs-flush": "../../../../../seajs-flush/dist/seajs-flush"
-    },
     comboSyntax: ['', '+']
   })
 
-  seajs.use(['../../../test'].concat(["seajs-combo", "seajs-flush"]), function(test) {
+  seajs.use('../../../test', function(test) {
+
+    // seajs/seajs-flush#1
+    seajs.config({
+      preload: ['p']
+    })
 
     seajs.use('a', function(a) {
       test.assert(a.name === 'a', a.name)
@@ -54,7 +57,7 @@
       }
     }
 
-  })
+  }).flush()
 
 </script>
 

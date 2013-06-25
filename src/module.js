@@ -307,10 +307,7 @@ Module.get = function(uri, deps) {
 
 // Use function is equal to load a anonymous module
 Module.use = function (ids, callback, uri) {
-  var mod = Module.get(
-      uri || data.cwd + "_anonymous_" + cid(),
-      isArray(ids) ? ids : [ids]
-  )
+  var mod = Module.get(uri, isArray(ids) ? ids : [ids])
 
   mod.callback = function() {
     var exports = []
@@ -328,6 +325,25 @@ Module.use = function (ids, callback, uri) {
   }
 
   mod.load()
+}
+
+// Load preload modules before all other modules
+Module.preload = function(callback) {
+  var preloadMods = data.preload
+  var len = preloadMods.length
+
+  if (len) {
+    Module.use(preloadMods, function() {
+      // Remove the loaded preload modules
+      preloadMods.splice(0, len)
+
+      // Allow preload modules to add new preload modules
+      Module.preload(callback)
+    }, data.cwd + "_preload_" + cid())
+  }
+  else {
+    callback()
+  }
 }
 
 
@@ -353,31 +369,12 @@ function save(uri, meta) {
   }
 }
 
-function preload(callback) {
-  var preloadMods = data.preload
-  var len = preloadMods.length
-
-  if (len) {
-    Module.use(preloadMods, function() {
-      // Remove the loaded preload modules
-      preloadMods.splice(0, len)
-
-      // Allow preload modules to add new preload modules
-      preload(callback)
-    })
-  }
-  else {
-    callback()
-  }
-}
-
 
 // Public API
 
 seajs.use = function(ids, callback) {
-  // Load preload modules before all other modules
-  preload(function() {
-    Module.use(ids, callback)
+  Module.preload(function() {
+    Module.use(ids, callback, data.cwd + "_use_" + cid())
   })
   return seajs
 }
@@ -390,6 +387,7 @@ global.define = Module.define
 
 seajs.Module = Module
 data.fetchedList = fetchedList
+data.cid = cid
 
 seajs.resolve = id2Uri
 seajs.require = function(id) {
