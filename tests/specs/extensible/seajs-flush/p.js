@@ -1,4 +1,4 @@
-// nothing
+define("p", ["p1"], { name: "p" })
 
 /*! Sea.js 2.1.0 | seajs.org/LICENSE.md
  //# sourceMappingURL=sea.js.map
