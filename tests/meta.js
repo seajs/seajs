@@ -7,11 +7,11 @@ var testSuites = [
   'specs/module',
   'specs/package',
   'specs/extensible',
-  'specs/extensible/seajs-debug',
+  //'specs/extensible/seajs-debug',
   'specs/extensible/seajs-flush',
   'specs/extensible/seajs-style',
 
-  'specs/misc/bootstrap',
+  //'specs/misc/bootstrap',
   'specs/misc/callback-order',
   'specs/misc/ie-cache',
   'specs/misc/load-perf',
@@ -28,8 +28,6 @@ if (typeof define === 'function') {
     'specs/config',
     'specs/module',
     'specs/package',
-    'specs/extensible',
-
     'specs/node'
   ])
 }
