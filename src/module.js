@@ -328,7 +328,7 @@ Module.use = function (ids, callback, uri) {
 }
 
 // Load preload modules before all other modules
-Module.preload = function (callback) {
+Module.preload = function(callback) {
   var preloadMods = data.preload
   var len = preloadMods.length
 
