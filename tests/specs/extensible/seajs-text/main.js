@@ -1,14 +1,11 @@
 
 seajs.config({
+  base: './seajs-text/',
   alias: {
-    'd': 'path/to/d.json',
-    'handlebars': 'gallery/handlebars/1.0.2/handlebars.js'
-  },
-  paths: {
-    'gallery': 'https://a.alipayobjects.com/gallery'
+    'd': 'path/to/d.json'
   },
   preload: ["../../../../seajs-text/dist/seajs-text"]
 })
 
-seajs.use('./seajs-text/init')
+seajs.use('init')
 
