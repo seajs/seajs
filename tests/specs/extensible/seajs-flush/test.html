@@ -24,6 +24,8 @@
       preload: ['p']
     })
 
+
+    // Simple example
     seajs.use('a', function(a) {
       test.assert(a.name === 'a', a.name)
       done()
@@ -32,6 +34,7 @@
     seajs.flush()
 
 
+    // Flush multiple use
     seajs.use(['b', 'c'], function(b, c) {
       test.assert(b.name === 'b', b.name)
       test.assert(c.name === 'c', c.name)
@@ -49,6 +52,7 @@
     seajs.flush()
 
 
+    // Deep dependencies
     seajs.use('deep', function(deep) {
       test.assert(deep.name === 'deep', deep.name)
       test.assert(seajs.require('deep1').name === 'deep1', seajs.require('deep1').name)
@@ -59,7 +63,20 @@
     seajs.flush()
 
 
-    var n = 4
+    // Inline module
+    define('z', [], { name: 'z' })
+
+    seajs.use('z', function(z) {
+      test.assert(z.name === 'z', z.name)
+      done()
+    })
+
+    seajs.flush()
+
+
+    // Helpers
+
+    var n = 5
 
     function done() {
       if (--n === 0) {
