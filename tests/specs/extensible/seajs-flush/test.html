@@ -49,7 +49,17 @@
     seajs.flush()
 
 
-    var n = 3
+    seajs.use('deep', function(deep) {
+      test.assert(deep.name === 'deep', deep.name)
+      test.assert(seajs.require('deep1').name === 'deep1', seajs.require('deep1').name)
+      test.assert(seajs.require('deep2').name === 'deep2', seajs.require('deep2').name)
+      done()
+    })
+
+    seajs.flush()
+
+
+    var n = 4
 
     function done() {
       if (--n === 0) {
