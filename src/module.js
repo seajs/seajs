@@ -87,14 +87,23 @@ Module.prototype.load = function() {
   }
 
   // Begin parallel loading
+  var requestCache = {}
+
   for (i = 0; i < len; i++) {
     m = cachedMods[uris[i]]
 
     if (m.status < STATUS.FETCHING) {
-      m.fetch()
+      m.fetch(requestCache)
     }
     else if (m.status === STATUS.SAVED) {
       m.load()
+    }
+  }
+
+  // Send all requests at last to avoid cache bug in IE6-9. Issues#808
+  for (var requestUri in requestCache) {
+    if (requestCache.hasOwnProperty(requestUri)) {
+      requestCache[requestUri]()
     }
   }
 }
@@ -128,7 +137,7 @@ Module.prototype.onload = function() {
 }
 
 // Fetch a module
-Module.prototype.fetch = function() {
+Module.prototype.fetch = function(requestCache) {
   var mod = this
   var uri = mod.uri
 
@@ -161,8 +170,16 @@ Module.prototype.fetch = function() {
     charset: data.charset
   })
 
+  requestUri = emitData.requestUri
+
   if (!emitData.requested) {
-    request(emitData.requestUri, onRequested, emitData.charset)
+    requestCache ?
+        requestCache[requestUri] = sendRequest :
+        sendRequest()
+  }
+
+  function sendRequest() {
+    request(requestUri, onRequested, emitData.charset)
   }
 
   function onRequested() {
