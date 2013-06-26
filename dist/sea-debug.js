@@ -621,16 +621,14 @@ Module.prototype.fetch = function(requestCache) {
     charset: data.charset
   })
 
-  requestUri = emitData.requestUri
-
   if (!emitData.requested) {
     requestCache ?
-        requestCache[requestUri] = sendRequest :
+        requestCache[emitData.requestUri] = sendRequest :
         sendRequest()
   }
 
   function sendRequest() {
-    request(requestUri, onRequested, emitData.charset)
+    request(emitData.requestUri, onRequested, emitData.charset)
   }
 
   function onRequested() {
