@@ -166,7 +166,7 @@ Module.prototype.fetch = function(requestCache) {
   emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
-    callback: onRequested,
+    onRequested: onRequested,
     charset: data.charset
   })
 
@@ -177,7 +177,7 @@ Module.prototype.fetch = function(requestCache) {
   }
 
   function sendRequest() {
-    request(emitData.requestUri, onRequested, emitData.charset)
+    request(emitData.requestUri, emitData.onRequested, emitData.charset)
   }
 
   function onRequested() {
