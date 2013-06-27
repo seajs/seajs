@@ -5,7 +5,7 @@
 <title>test</title>
 <script src="../../../../dist/sea-debug.js"></script>
 <script src="../../../../../seajs-combo/dist/seajs-combo.js"></script>
-<script src="../../../../../seajs-flush/dist/seajs-flush.js"></script>
+<script src="../../../../../seajs-flush/dist/seajs-flush-debug.js"></script>
 </head>
 <body>
 <div id="out"></div>
@@ -24,6 +24,8 @@
       preload: ['p']
     })
 
+
+    // Simple example
     seajs.use('a', function(a) {
       test.assert(a.name === 'a', a.name)
       done()
@@ -32,6 +34,7 @@
     seajs.flush()
 
 
+    // Flush multiple use
     seajs.use(['b', 'c'], function(b, c) {
       test.assert(b.name === 'b', b.name)
       test.assert(c.name === 'c', c.name)
@@ -49,10 +52,36 @@
     seajs.flush()
 
 
-    var n = 3
+    // Deep dependencies
+    seajs.use('deep', function(deep) {
+      test.assert(deep.name === 'deep', deep.name)
+      test.assert(seajs.require('deep1').name === 'deep1', seajs.require('deep1').name)
+      test.assert(seajs.require('deep2').name === 'deep2', seajs.require('deep2').name)
+      done()
+    })
+
+    seajs.flush()
+
+
+    // Inline module
+    function last() {
+      var t
+
+      define('last', [], {})
+      seajs.use('last', function() { t = 'inline module' })
+
+      seajs.flush()
+      test.assert(t, t)
+    }
+
+
+    // Helpers
+
+    var n = 4
 
     function done() {
       if (--n === 0) {
+        last()
         test.next()
       }
     }
