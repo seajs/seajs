@@ -194,9 +194,6 @@ Module.prototype.fetch = function(requestCache) {
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
     while ((m = mods.shift())) m.load()
-
-    // Emit `requested` event
-    emit("requested", emitData)
   }
 }
 
