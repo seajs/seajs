@@ -15,7 +15,7 @@ test_http:
 	@node tools/server.js seajs/tests/runner.html?console
 
 totoro:
-	@totoro --adapter=tests/totoro-adapter.js
+	@totoro --adapter=tests/totoro-adapter.js --client-root=../
 
 size:
 	@tools/size.sh sea
