@@ -617,7 +617,7 @@ Module.prototype.fetch = function(requestCache) {
   emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
-    onRequested: onRequested,
+    onRequest: onRequest,
     charset: data.charset
   })
 
@@ -628,10 +628,10 @@ Module.prototype.fetch = function(requestCache) {
   }
 
   function sendRequest() {
-    request(emitData.requestUri, emitData.onRequested, emitData.charset)
+    request(emitData.requestUri, emitData.onRequest, emitData.charset)
   }
 
-  function onRequested() {
+  function onRequest() {
     delete fetchingList[requestUri]
     fetchedList[requestUri] = true
 
