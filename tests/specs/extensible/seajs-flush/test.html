@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <title>test</title>
-<script src="../../../../dist/sea.js"></script>
+<script src="../../../../dist/sea-debug.js"></script>
 <script src="../../../../../seajs-combo/dist/seajs-combo.js"></script>
-<script src="../../../../../seajs-flush/dist/seajs-flush.js"></script>
+<script src="../../../../../seajs-flush/dist/seajs-flush-debug.js"></script>
 </head>
 <body>
 <div id="out"></div>
@@ -64,22 +64,24 @@
 
 
     // Inline module
-    define('z', [], { name: 'z' })
+    function last() {
+      var t
 
-    seajs.use('z', function(z) {
-      test.assert(z.name === 'z', z.name)
-      done()
-    })
+      define('last', [], {})
+      seajs.use('last', function() { t = 'inline module' })
 
-    seajs.flush()
+      seajs.flush()
+      test.assert(t, t)
+    }
 
 
     // Helpers
 
-    var n = 5
+    var n = 4
 
     function done() {
       if (--n === 0) {
+        last()
         test.next()
       }
     }
