@@ -55,7 +55,7 @@
 
       <ul>
         <li><strong>简单友好的模块定义规范</strong>：Sea.js
-          遵循 <a href="https://github.com/spmjs/specification/blob/master/draft/module.md" target="_blank">CMD</a>
+          遵循 <a href="https://github.com/cmdjs/specification/blob/master/draft/module.md" target="_blank">CMD</a>
           规范，可以像 <a href="http://nodejs.org/" target="_blank">Node.js</a> 一般书写模块代码。
         </li>
         <li><strong>自然直观的代码组织方式</strong>：依赖的自动加载、配置的简洁清晰，可以让我们更多地享受编码的乐趣。</li>
@@ -115,6 +115,7 @@ IE 5.5+           ✔
         <li><a href="http://www.uco.com/" target="_blank"><img alt="悠可网" data-src="https://f.cloud.github.com/assets/1171291/33472/8990cde6-5093-11e2-8344-6f9e4acdf3fc.png" width="86" height="44"></a></li>
         <li><a href="http://www.chufa.la/" target="_blank"><img alt="出发啦" data-src="http://cflimage.b0.upaiyun.com/image/partner/forseajs.png" width="187" height="44"></a></li>
         <li><a href="http://lovelyresearcher.com/" target="_blank"><img alt="乐研生物" data-src="https://f.cloud.github.com/assets/600263/126394/9e0e6fba-6f58-11e2-9d2c-83d5bb87f2b9.png" width="134" height="44"></a></li>
+        <li><a href="http://m.xunlei.com/xunlei.html" target="_blank"><img alt="手机迅雷" data-src="https://f.cloud.github.com/assets/1555529/356903/a591bef2-a119-11e2-9451-58533cb79115.png" width="44" height="44"></a></li>
         <li><a href="https://github.com/seajs/seajs/issues/272" target="_blank"><img alt="更多使用者" data-src="https://i.alipayobjects.com/e/201211/1d8VwySnTQ.png" width="146" height="44"></a></li>
       </ol>
 
@@ -152,55 +153,41 @@ IE 5.5+           ✔
 
 <pre class="text">
 examples/
-  |-- static
-  |     |-- lib       存放 jquery.js 等通用类库
-  |     |-- hello     存放项目的 js、css 等文件
-  |     `-- seajs     存放 sea.js 及其插件
-  `-- hello.html      项目的 html 文件
+  |-- sea-modules      存放 seajs、jquery 等文件，这也是模块的部署目录
+  |-- static           存放各个项目的 js、css 文件
+  |     |-- hello
+  |     |-- lucky
+  |     `-- todo
+  `-- app              存放 html 等文件
+        |-- hello.html
+        |-- lucky.html
+        `-- todo.html
 </pre>
 
     <p>我们从 <code>hello.html</code> 入手，来瞧瞧使用 Sea.js 如何组织代码。</p>
 
 
-    <h3>在页面中引入模块</h3>
+    <h3>在页面中加载模块</h3>
 
     <p>
-      在 <code>hello.html</code> 里，与脚本相关的代码只有一行：
+      在 <code>hello.html</code> 页尾，通过 <code>script</code> 引入 <code>sea.js</code> 后，有一段配置代码：
     </p>
-<pre class="sh_html">
-&lt;script
-    src="static/seajs/sea.js"   -- sea.js 路径
-    data-config="hello/config"  -- 给 Sea.js 用的项目配置文件
-    data-main="hello/main"&gt;     -- 项目的起始模块
-&lt;/script&gt;
-</pre>
-
-    <p>
-      <code>sea.js</code> 在下载完成时，会根据 <code>data-config</code> 自动获取配置，然后加载 <code>data-main</code> 指定的模块。
-    </p>
-
-
-    <h3>配置文件</h3>
-
-    <p>打开 <code>config.js</code> 文件：</p>
-
 <pre>
+// seajs 的简单配置
 seajs.config({
-  // 配置插件
-  plugins: ['shim'],
-
-  // 配置别名
+  base: "../sea-modules/",
   alias: {
-    // 配置 jquery 的 shim 配置，这样我们就可以通过 require('jquery') 来获取 jQuery
-    'jquery': {
-      src: 'lib/jquery-1.9.1.min.js',
-      exports: 'jQuery'
-    }
+    "jquery": "jquery/jquery/1.10.1/jquery.js"
   }
-});
+})
+
+// 加载入口模块
+seajs.use("../static/hello/src/main")
 </pre>
 
-    <p>看起来有点小复杂，先不用去理会具体含义，把这个例子跑通后，再去看使用文档就好。</p>
+    <p>
+      <code>sea.js</code> 在下载完成后，会自动加载入口模块。页面中的代码就这么简单。
+    </p>
 
 
     <h3>模块代码</h3>
@@ -226,15 +213,15 @@ define(function(require, exports, module) {
 });
 </pre>
 
-    <p>上面就是 Sea.js 推荐的模块书写格式，是不是很简单？</p>
+    <p>上面就是 Sea.js 推荐的 CMD 模块书写格式。如果你有使用过 Node.js，一切都很自然。</p>
 
 
-    <h3>打包部署</h3>
+    <h3>构建部署</h3>
 
     <p>
       对于正式项目，在发布上线前，还需要对源码进行压缩、合并等操作。
       <br>
-      这可以通过 Grunt 等工具来实现。简明教程请参考：<a href="https://github.com/seajs/seajs/issues/538">构建工具</a>
+      这可以通过 spm 或 Grunt 等工具来实现。简明教程请参考：<a href="https://github.com/seajs/seajs/issues/538">构建工具</a>
     </p>
 
 
@@ -250,9 +237,9 @@ define(function(require, exports, module) {
     </p>
 
     <p>
-      若喜欢，可查看更多例子：<a href="http://seajs.github.com/examples" target="_blank">seajs/examples</a>
+      若喜欢，可查看更多例子：<a href="http://seajs.github.io/examples" target="_blank">seajs/examples</a>
       <br>
-      若已爱上，可以继续阅读：<a href="#docs">使用文档</a>
+      若已爱上，请继续阅读：<a href="#docs">使用文档</a>
     </p>
 
     <p>
@@ -351,7 +338,7 @@ define(function(require, exports, module) {
       <img src="https://i.alipayobjects.com/e/201211/1dbVbRY0yK.jpg" width="300" height="300" style="float: right">
 
       <p>
-        Sea.js 是一个开源项目，由腾讯、阿里等公司的程序员维护。
+        Sea.js 是一个开源项目，目前由阿里、腾讯等公司共同维护。
       <br>
         理念是：<strong>海纳百川、有容乃大</strong>。Sea.js 期望能成为海，开放而自由。
       </p>
@@ -369,7 +356,7 @@ define(function(require, exports, module) {
       </p>
 
       <p>
-        感恩、感谢。<br>
+        感谢、感恩。<br>
       </p>
 
     </div>
@@ -395,19 +382,30 @@ tests     -- 测试集
 tools     -- 压缩等工具，可查看 build.xml 得到源码合并顺序
 Makefile  -- 可执行构建、测试等命令</pre>
 
+      <p>
+        推荐使用 spm 安装：
+      </p>
+      <pre>
+$ npm install spm -g
+$ spm install seajs</pre>
+
 
       <h3>最新版本</h3>
 
       <p class="current">
-        <span class="date">2013-04-01</span>
-        <a href="https://github.com/seajs/seajs/issues/451" target="_blank">发布 Sea.js 2.0.0</a>
-        <a href="https://github.com/seajs/seajs/archive/2.0.0.zip">直接下载</a>
+        <span class="date">2013-06-28</span>
+        <a href="https://github.com/seajs/seajs/issues/813" target="_blank">发布 Sea.js 2.1.0</a>
+        <a href="https://github.com/seajs/seajs/archive/2.1.0.zip">直接下载</a>
       </p>
 
 
       <h3>岁月如歌</h3>
 
       <ul>
+        <li>
+          <span class="date">2013-04-01</span>
+          <a href="https://github.com/seajs/seajs/issues/451" target="_blank">2.0.0</a>
+        </li>
         <li>
           <span class="date">2012-11-27</span>
           <a href="https://github.com/seajs/seajs/issues/435" target="_blank">1.3.1</a>
@@ -492,9 +490,20 @@ Makefile  -- 可执行构建、测试等命令</pre>
 </div>
 
 <script src="../dist/sea.js"></script>
-<script src="assets/config.js"></script>
 <script>
+
+  seajs.config({
+    paths: {
+      'gallery': 'https://a.alipayobjects.com/gallery'
+    },
+    alias: {
+      'jquery': 'gallery/jquery/1.8.2/jquery.js',
+      'seajs-debug': 'https://raw.github.com/seajs/seajs-debug/master/dist/seajs-debug.js'
+    }
+  })
+
   seajs.use("./assets/main")
+
 </script>
 
 <script>
@@ -508,5 +517,6 @@ Makefile  -- 可执行构建、测试等命令</pre>
     s.parentNode.insertBefore(ga, s)
   })(document.createElement('script'), document.getElementsByTagName('script')[0])
 </script>
+
 </body>
 </html>
