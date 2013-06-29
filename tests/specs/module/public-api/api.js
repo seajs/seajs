@@ -13,14 +13,13 @@ define(function(require, exports, mod) {
     return toString.call(obj) === "[object Array]"
   }
 
-    
+
   // seajs
   assert(seajs, 'seajs')
   assert(typeof(seajs.version) === 'string', seajs.version)
 
   assert(isFunction(seajs.config), 'seajs.config')
   assert(isFunction(seajs.use), 'seajs.use')
-  assert(isFunction(seajs.log), 'seajs.log')
 
   assert(isFunction(seajs.on), 'seajs.on')
   assert(isFunction(seajs.emit), 'seajs.emit')
@@ -36,7 +35,7 @@ define(function(require, exports, mod) {
   assert(isFunction(seajs.resolve), 'seajs.resolve')
   assert(isFunction(seajs.require), 'seajs.require')
 
-  assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
+  assert(getOwnPropertyCount(seajs) === 11, getOwnPropertyCount(seajs))
 
 
   // define

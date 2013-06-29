@@ -296,12 +296,9 @@ Module.define = function (id, deps, factory) {
     if (script) {
       meta.uri = script.src
     }
-    else {
-      log("Failed to derive: " + factory)
 
-      // NOTE: If the id-deriving methods above is failed, then falls back
-      // to use onload event to get the uri
-    }
+    // NOTE: If the id-deriving methods above is failed, then falls back
+    // to use onload event to get the uri
   }
 
   // Emit `define` event, used in nocache plugin, seajs node version etc

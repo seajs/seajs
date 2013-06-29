@@ -3,6 +3,7 @@ define([
   'module-constructor',
   'seajs-combo',
   'seajs-health',
+  'seajs-log',
   'seajs-text'
 ])
 
