@@ -880,10 +880,8 @@ data.preload = (function() {
 // data.paths - An object containing path shorthands in module id
 // data.vars - The {xxx} variables in module id
 // data.map - An array containing rules to map module uri
-// data.plugins - An array containing needed plugins
 
-
-function config(configData) {
+seajs.config = function(configData) {
 
   for (var key in configData) {
     var curr = configData[key]
@@ -914,8 +912,6 @@ function config(configData) {
   emit("config", configData)
   return seajs
 }
-
-seajs.config = config
 
 
 })(this);
