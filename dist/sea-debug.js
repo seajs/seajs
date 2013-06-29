@@ -37,25 +37,6 @@ function cid() {
 
 
 /**
- * util-log.js - The tiny log function
- */
-
-// The safe wrapper for `console.xxx` functions
-// log("message") ==> console.log("message")
-// log("message", "warn") ==> console.warn("message")
-var log = seajs.log = function(msg, type) {
-
-  global.console &&
-      // Do NOT print `log(msg)` in non-debug mode
-      (type || data.debug) &&
-      // Set the default value of type
-      (console[type || (type = "log")]) &&
-      // Call native method of console
-      console[type](msg)
-}
-
-
-/**
  * util-events.js - The minimal events support
  */
 
@@ -747,12 +728,9 @@ Module.define = function (id, deps, factory) {
     if (script) {
       meta.uri = script.src
     }
-    else {
-      log("Failed to derive: " + factory)
 
-      // NOTE: If the id-deriving methods above is failed, then falls back
-      // to use onload event to get the uri
-    }
+    // NOTE: If the id-deriving methods above is failed, then falls back
+    // to use onload event to get the uri
   }
 
   // Emit `define` event, used in nocache plugin, seajs node version etc
@@ -897,15 +875,13 @@ data.preload = (function() {
   return plugins
 })()
 
-// data.debug - Debug mode. The default value is false
 // data.alias - An object containing shorthands of module id
 // data.paths - An object containing path shorthands in module id
 // data.vars - The {xxx} variables in module id
 // data.map - An array containing rules to map module uri
-// data.plugins - An array containing needed plugins
+// data.debug - Debug mode. The default value is false
 
-
-function config(configData) {
+seajs.config = function(configData) {
 
   for (var key in configData) {
     var curr = configData[key]
@@ -936,8 +912,6 @@ function config(configData) {
   emit("config", configData)
   return seajs
 }
-
-seajs.config = config
 
 
 })(this);

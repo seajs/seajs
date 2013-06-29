@@ -1,9 +1,16 @@
 define(function(require) {
 
   var test = require('../../../test')
+
   var consoleMsgStack = global.consoleMsgStack
   var data = seajs.data
   var isNode = typeof process !== 'undefined'
+
+
+  // basic cases
+  require('./log.js')
+  consoleMsgStack.length = 0
+
 
   test.assert(data.debug === undefined, 'debug = ' + data.debug)
   test.assert(isNode || hasScript('test.js') === false, 'The inserted script was removed automatically, when debug is off')
@@ -36,6 +43,9 @@ define(function(require) {
   })
 
 
+  test.assert(seajs.log() === undefined, 'sea.log is NOT chainable')
+
+
   function hasScript(filename) {
     var head = document.getElementsByTagName('head')[0]
     var scripts = head.getElementsByTagName('script')
@@ -50,4 +60,3 @@ define(function(require) {
   }
 
 })
-

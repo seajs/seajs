@@ -14,7 +14,6 @@ module.exports = function(grunt) {
           "src/sea.js",
 
           "src/util-lang.js",
-          "src/util-log.js",
           "src/util-events.js",
           "src/util-path.js",
           "src/util-request.js",

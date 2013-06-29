@@ -1,6 +1,6 @@
 define(function(require) {
 
-  var test = require('../../test')
+  var test = require('../../../test')
   var assert = test.assert
 
 
@@ -19,8 +19,6 @@ define(function(require) {
   assert(seajs.log({ name: 'a' }, 'dir') === undefined, 'dir')
 
   assert(seajs.log('seajs.log test', 'groupEnd') === undefined, 'groupEnd')
-
-  test.next()
 
 });
 
