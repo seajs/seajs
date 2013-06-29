@@ -13,11 +13,7 @@ define(function(require, exports, mod) {
     return toString.call(obj) === "[object Array]"
   }
 
-  
-  // define
-  assert(isFunction(define), 'define')
-
-  
+    
   // seajs
   assert(seajs, 'seajs')
   assert(typeof(seajs.version) === 'string', seajs.version)
