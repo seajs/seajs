@@ -477,7 +477,7 @@ Module.prototype.resolve = function() {
   var uris = []
 
   for (var i = 0, len = ids.length; i < len; i++) {
-    uris[i] = resolve(ids[i], mod.uri)
+    uris[i] = Module.resolve(ids[i], mod.uri)
   }
   return uris
 }
@@ -618,7 +618,7 @@ Module.prototype.fetch = function(requestCache) {
 
     // Save meta data of anonymous module
     if (anonymousMeta) {
-      save(uri, anonymousMeta)
+      Module.save(uri, anonymousMeta)
       anonymousMeta = null
     }
 
@@ -650,7 +650,7 @@ Module.prototype.exec = function () {
   }
 
   require.resolve = function(id) {
-    return resolve(id, uri)
+    return Module.resolve(id, uri)
   }
 
   require.async = function(ids, callback) {
@@ -686,6 +686,15 @@ Module.prototype.exec = function () {
   return exports
 }
 
+// Resolve id to uri
+Module.resolve = function(id, refUri) {
+  // Emit `resolve` event for plugins such as text plugin
+  var emitData = { id: id, refUri: refUri }
+  emit("resolve", emitData)
+
+  return emitData.uri || id2Uri(emitData.id, refUri)
+}
+
 // Define a module
 Module.define = function (id, deps, factory) {
   var argsLen = arguments.length
@@ -716,7 +725,7 @@ Module.define = function (id, deps, factory) {
 
   var meta = {
     id: id,
-    uri: resolve(id),
+    uri: Module.resolve(id),
     deps: deps,
     factory: factory
   }
@@ -736,9 +745,22 @@ Module.define = function (id, deps, factory) {
   // Emit `define` event, used in nocache plugin, seajs node version etc
   emit("define", meta)
 
-  meta.uri ? save(meta.uri, meta) :
+  meta.uri ? Module.save(meta.uri, meta) :
       // Save information for "saving" work in the script onload event
       anonymousMeta = meta
+}
+
+// Save meta data to cachedMods
+Module.save = function(uri, meta) {
+  var mod = Module.get(uri)
+
+  // Do NOT override already saved modules
+  if (mod.status < STATUS.SAVED) {
+    mod.id = meta.id || uri
+    mod.dependencies = meta.deps || []
+    mod.factory = meta.factory
+    mod.status = STATUS.SAVED
+  }
 }
 
 // Get an existed module or create a new one
@@ -788,29 +810,6 @@ Module.preload = function(callback) {
 }
 
 
-// Helpers
-
-function resolve(id, refUri) {
-  // Emit `resolve` event for plugins such as text plugin
-  var emitData = { id: id, refUri: refUri }
-  emit("resolve", emitData)
-
-  return emitData.uri || id2Uri(emitData.id, refUri)
-}
-
-function save(uri, meta) {
-  var mod = Module.get(uri)
-
-  // Do NOT override already saved modules
-  if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri
-    mod.dependencies = meta.deps || []
-    mod.factory = meta.factory
-    mod.status = STATUS.SAVED
-  }
-}
-
-
 // Public API
 
 seajs.use = function(ids, callback) {
@@ -832,7 +831,7 @@ data.cid = cid
 
 seajs.resolve = id2Uri
 seajs.require = function(id) {
-  return (cachedMods[resolve(id)] || {}).exports
+  return (cachedMods[Module.resolve(id)] || {}).exports
 }
 
 
