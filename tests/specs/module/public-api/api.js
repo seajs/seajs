@@ -49,8 +49,10 @@ define(function(require, exports, mod) {
   var Module = seajs.Module
   assert(typeof Module.STATUS === 'object', 'Module.STATUS')
 
-  assert(isFunction(Module.get), 'Module.get')
+  assert(isFunction(Module.resolve), 'Module.resolve')
   assert(isFunction(Module.define), 'Module.define')
+  assert(isFunction(Module.save), 'Module.save')
+  assert(isFunction(Module.get), 'Module.get')
   assert(isFunction(Module.use), 'Module.use')
   assert(isFunction(Module.preload), 'Module.preload')
 
@@ -60,7 +62,7 @@ define(function(require, exports, mod) {
   assert(isFunction(Module.prototype.fetch), 'Module.prototype.fetch')
   assert(isFunction(Module.prototype.exec), 'Module.prototype.exec')
 
-  assert(getOwnPropertyCount(Module) === 5, getOwnPropertyCount(Module))
+  assert(getOwnPropertyCount(Module) === 7, getOwnPropertyCount(Module))
   assert(getOwnPropertyCount(Module.prototype) === 5, getOwnPropertyCount(Module.prototype))
 
   
