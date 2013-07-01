@@ -45,7 +45,7 @@ Module.prototype.resolve = function() {
   var uris = []
 
   for (var i = 0, len = ids.length; i < len; i++) {
-    uris[i] = resolve(ids[i], mod.uri)
+    uris[i] = Module.resolve(ids[i], mod.uri)
   }
   return uris
 }
@@ -218,7 +218,7 @@ Module.prototype.exec = function () {
   }
 
   require.resolve = function(id) {
-    return resolve(id, uri)
+    return Module.resolve(id, uri)
   }
 
   require.async = function(ids, callback) {
@@ -284,7 +284,7 @@ Module.define = function (id, deps, factory) {
 
   var meta = {
     id: id,
-    uri: resolve(id),
+    uri: Module.resolve(id),
     deps: deps,
     factory: factory
   }
@@ -355,16 +355,17 @@ Module.preload = function(callback) {
   }
 }
 
-
-// Helpers
-
-function resolve(id, refUri) {
+// Resolve id to uri
+Module.resolve = function(id, refUri) {
   // Emit `resolve` event for plugins such as text plugin
   var emitData = { id: id, refUri: refUri }
   emit("resolve", emitData)
 
   return emitData.uri || id2Uri(emitData.id, refUri)
 }
+
+
+// Helpers
 
 function save(uri, meta) {
   var mod = Module.get(uri)
@@ -400,6 +401,6 @@ data.cid = cid
 
 seajs.resolve = id2Uri
 seajs.require = function(id) {
-  return (cachedMods[resolve(id)] || {}).exports
+  return (cachedMods[Module.resolve(id)] || {}).exports
 }
 
