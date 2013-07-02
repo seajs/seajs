@@ -646,7 +646,7 @@ Module.prototype.exec = function () {
   var uri = mod.uri
 
   function require(id) {
-    return cachedMods[require.resolve(id)].exec()
+    return Module.get(require.resolve(id)).exec()
   }
 
   require.resolve = function(id) {
