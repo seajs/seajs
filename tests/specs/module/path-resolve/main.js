@@ -21,6 +21,10 @@ define(function(require) {
   test.assert(a2.foo() === 'foo', a2.foo())
   test.assert(a1.foo !== a2.foo, 'a1.foo !== a2.foo')
 
+  // issues#824
+  var lang = 'not-existed'
+  test.assert(require(lang) === null, 'i18n')
+
   require.async('./missing/missing', function(missing) {
     test.assert(missing.bogus === null, 'return null when module file is 404')
     test.next()
