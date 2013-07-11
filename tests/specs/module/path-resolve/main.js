@@ -21,6 +21,11 @@ define(function(require) {
   test.assert(a2.foo() === 'foo', a2.foo())
   test.assert(a1.foo !== a2.foo, 'a1.foo !== a2.foo')
 
+
+  // issues#839
+  test.assert(require.resolve('./').indexOf('.js') === -1, require.resolve('./'))
+
+  
   // issues#824
   var lang = 'not-existed'
   test.assert(require(lang) === null, 'i18n')
