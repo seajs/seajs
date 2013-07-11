@@ -75,9 +75,25 @@
 
       define('last', [], {})
       seajs.use('last', function() { t = 'inline module' })
+      seajs.flush()
+      test.assert(t, 't = ' + t)
+
+
+      // Standalone
+      seajs.use('z', function(z) {
+        test.assert(z.name === 'z', z.name)
+        test.assert(seajs.require('z1').name === 'z1', seajs.require('z1').name)
+        test.assert(seajs.require('z2').name === 'z2', seajs.require('z2').name)
+
+        test.assert(seajs.data.flushUseStack.length === 1, seajs.data.flushUseStack.length)
+        test.next()
+      })
 
       seajs.flush()
-      test.assert(t, t)
+
+      seajs.use('z3', function(z3) {
+        test.assert(false, z3.name)
+      })
     }
 
 
@@ -88,7 +104,6 @@
     function done() {
       if (--n === 0) {
         last()
-        test.next()
       }
     }
 
