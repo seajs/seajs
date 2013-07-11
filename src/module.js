@@ -31,7 +31,7 @@ function Module(uri, deps) {
   this.exports = null
   this.status = 0
 
-  // Who depend on me
+  // Who depends on me
   this._waitings = {}
 
   // The number of unloaded dependencies
