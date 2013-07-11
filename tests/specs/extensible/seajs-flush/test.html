@@ -28,6 +28,12 @@
     // Simple example
     seajs.use('a', function(a) {
       test.assert(a.name === 'a', a.name)
+
+      var comboHash = seajs.data.comboHash
+      test.assert(comboHash[seajs.resolve('a1')] === undefined, seajs.resolve('a1'))
+      test.assert(comboHash[seajs.resolve('a2')].indexOf('/a2.js+a3.js') > 0, seajs.resolve('a2'))
+      test.assert(comboHash[seajs.resolve('a3')].indexOf('/a2.js+a3.js') > 0, seajs.resolve('a3'))
+
       done()
     })
 
@@ -69,9 +75,25 @@
 
       define('last', [], {})
       seajs.use('last', function() { t = 'inline module' })
+      seajs.flush()
+      test.assert(t, 't = ' + t)
+
+
+      // Standalone
+      seajs.use('z', function(z) {
+        test.assert(z.name === 'z', z.name)
+        test.assert(seajs.require('z1').name === 'z1', seajs.require('z1').name)
+        test.assert(seajs.require('z2').name === 'z2', seajs.require('z2').name)
+
+        test.assert(seajs.data.flushUseStack.length === 1, seajs.data.flushUseStack.length)
+        test.next()
+      })
 
       seajs.flush()
-      test.assert(t, t)
+
+      seajs.use('z3', function(z3) {
+        test.assert(false, z3.name)
+      })
     }
 
 
@@ -82,7 +104,6 @@
     function done() {
       if (--n === 0) {
         last()
-        test.next()
       }
     }
 

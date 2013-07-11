@@ -12,7 +12,7 @@ var READY_STATE_RE = /^(?:loaded|complete|undefined)$/
 var currentlyAddingScript
 var interactiveScript
 
-// `onload` event is supported in WebKit < 535.23 and Firefox < 9.0
+// `onload` event is not supported in WebKit < 535.23 and Firefox < 9.0
 // ref:
 //  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
@@ -129,7 +129,7 @@ function getCurrentScript() {
   }
 
   // For IE6-9 browsers, the script onload event may not fire right
-  // after the the script is evaluated. Kris Zyp found that it
+  // after the script is evaluated. Kris Zyp found that it
   // could query the script nodes and the one that is in "interactive"
   // mode indicates the current script
   // ref: http://goo.gl/JHfFW

@@ -1,5 +1,5 @@
 /**
- * Sea.js 2.1.0 | seajs.org/LICENSE.md
+ * Sea.js 2.1.1 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -10,7 +10,7 @@ if (global.seajs) {
 
 var seajs = global.seajs = {
   // The current version of Sea.js being used
-  version: "2.1.0"
+  version: "2.1.1"
 }
 
 var data = seajs.data = {}
@@ -76,8 +76,8 @@ seajs.off = function(name, callback) {
   return seajs
 }
 
-// Emit event, firing all bound callbacks. Callbacks are passed the same
-// arguments as `emit` is, apart from the event name
+// Emit event, firing all bound callbacks. Callbacks receive the same
+// arguments as `emit` does, apart from the event name
 var emit = seajs.emit = function(name, data) {
   var list = events[name], fn
 
@@ -130,15 +130,17 @@ function realpath(path) {
 // NOTICE: substring is faster than negative slice and RegExp
 function normalize(path) {
   var last = path.length - 1
+  var lastC = path.charAt(last)
 
   // If the uri ends with `#`, just return it without '#'
-  if (path.charAt(last) === "#") {
+  if (lastC === "#") {
     return path.substring(0, last)
   }
 
-  return  (path.substring(last - 2) === ".js" ||
+  return (path.substring(last - 2) === ".js" ||
       path.indexOf("?") > 0 ||
-      path.substring(last - 3) === ".css") ? path : path + ".js"
+      path.substring(last - 3) === ".css" ||
+      lastC === "/") ? path : path + ".js"
 }
 
 
@@ -271,7 +273,7 @@ var READY_STATE_RE = /^(?:loaded|complete|undefined)$/
 var currentlyAddingScript
 var interactiveScript
 
-// `onload` event is supported in WebKit < 535.23 and Firefox < 9.0
+// `onload` event is not supported in WebKit < 535.23 and Firefox < 9.0
 // ref:
 //  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
@@ -388,7 +390,7 @@ function getCurrentScript() {
   }
 
   // For IE6-9 browsers, the script onload event may not fire right
-  // after the the script is evaluated. Kris Zyp found that it
+  // after the script is evaluated. Kris Zyp found that it
   // could query the script nodes and the one that is in "interactive"
   // mode indicates the current script
   // ref: http://goo.gl/JHfFW
@@ -463,7 +465,7 @@ function Module(uri, deps) {
   this.exports = null
   this.status = 0
 
-  // Who depend on me
+  // Who depends on me
   this._waitings = {}
 
   // The number of unloaded dependencies
@@ -477,7 +479,7 @@ Module.prototype.resolve = function() {
   var uris = []
 
   for (var i = 0, len = ids.length; i < len; i++) {
-    uris[i] = resolve(ids[i], mod.uri)
+    uris[i] = Module.resolve(ids[i], mod.uri)
   }
   return uris
 }
@@ -618,7 +620,7 @@ Module.prototype.fetch = function(requestCache) {
 
     // Save meta data of anonymous module
     if (anonymousMeta) {
-      save(uri, anonymousMeta)
+      Module.save(uri, anonymousMeta)
       anonymousMeta = null
     }
 
@@ -646,11 +648,11 @@ Module.prototype.exec = function () {
   var uri = mod.uri
 
   function require(id) {
-    return cachedMods[require.resolve(id)].exec()
+    return Module.get(require.resolve(id)).exec()
   }
 
   require.resolve = function(id) {
-    return resolve(id, uri)
+    return Module.resolve(id, uri)
   }
 
   require.async = function(ids, callback) {
@@ -686,6 +688,15 @@ Module.prototype.exec = function () {
   return exports
 }
 
+// Resolve id to uri
+Module.resolve = function(id, refUri) {
+  // Emit `resolve` event for plugins such as text plugin
+  var emitData = { id: id, refUri: refUri }
+  emit("resolve", emitData)
+
+  return emitData.uri || id2Uri(emitData.id, refUri)
+}
+
 // Define a module
 Module.define = function (id, deps, factory) {
   var argsLen = arguments.length
@@ -716,7 +727,7 @@ Module.define = function (id, deps, factory) {
 
   var meta = {
     id: id,
-    uri: resolve(id),
+    uri: Module.resolve(id),
     deps: deps,
     factory: factory
   }
@@ -736,9 +747,22 @@ Module.define = function (id, deps, factory) {
   // Emit `define` event, used in nocache plugin, seajs node version etc
   emit("define", meta)
 
-  meta.uri ? save(meta.uri, meta) :
+  meta.uri ? Module.save(meta.uri, meta) :
       // Save information for "saving" work in the script onload event
       anonymousMeta = meta
+}
+
+// Save meta data to cachedMods
+Module.save = function(uri, meta) {
+  var mod = Module.get(uri)
+
+  // Do NOT override already saved modules
+  if (mod.status < STATUS.SAVED) {
+    mod.id = meta.id || uri
+    mod.dependencies = meta.deps || []
+    mod.factory = meta.factory
+    mod.status = STATUS.SAVED
+  }
 }
 
 // Get an existed module or create a new one
@@ -788,29 +812,6 @@ Module.preload = function(callback) {
 }
 
 
-// Helpers
-
-function resolve(id, refUri) {
-  // Emit `resolve` event for plugins such as text plugin
-  var emitData = { id: id, refUri: refUri }
-  emit("resolve", emitData)
-
-  return emitData.uri || id2Uri(emitData.id, refUri)
-}
-
-function save(uri, meta) {
-  var mod = Module.get(uri)
-
-  // Do NOT override already saved modules
-  if (mod.status < STATUS.SAVED) {
-    mod.id = meta.id || uri
-    mod.dependencies = meta.deps || []
-    mod.factory = meta.factory
-    mod.status = STATUS.SAVED
-  }
-}
-
-
 // Public API
 
 seajs.use = function(ids, callback) {
@@ -832,7 +833,7 @@ data.cid = cid
 
 seajs.resolve = id2Uri
 seajs.require = function(id) {
-  return (cachedMods[resolve(id)] || {}).exports
+  return (cachedMods[Module.resolve(id)] || {}).exports
 }
 
 

@@ -33,15 +33,17 @@ function realpath(path) {
 // NOTICE: substring is faster than negative slice and RegExp
 function normalize(path) {
   var last = path.length - 1
+  var lastC = path.charAt(last)
 
   // If the uri ends with `#`, just return it without '#'
-  if (path.charAt(last) === "#") {
+  if (lastC === "#") {
     return path.substring(0, last)
   }
 
-  return  (path.substring(last - 2) === ".js" ||
+  return (path.substring(last - 2) === ".js" ||
       path.indexOf("?") > 0 ||
-      path.substring(last - 3) === ".css") ? path : path + ".js"
+      path.substring(last - 3) === ".css" ||
+      lastC === "/") ? path : path + ".js"
 }
 
 

@@ -41,9 +41,6 @@ define(function(require) {
   test.assert(jsonB.foo === "'bar'\"", jsonB.foo)
 
   test.assert(/\.json$/.test(require.resolve('path/to/d.json')), require.resolve('path/to/d.json'))
-  test.assert(require.resolve('d') === require.resolve('path/to/d.json'), require.resolve('d'))
-  test.assert(require.resolve('json!d') === require.resolve('d'), require.resolve('json!d'))
-
 
 
   // handlebars

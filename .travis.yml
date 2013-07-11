@@ -10,6 +10,7 @@ before_script:
   - git clone --depth=50 --branch=master git://github.com/seajs/seajs-health.git ../seajs-health
   - git clone --depth=50 --branch=master git://github.com/seajs/seajs-text.git ../seajs-text
   - git clone --depth=50 --branch=master git://github.com/seajs/seajs-debug.git ../seajs-debug
+  - git clone --depth=50 --branch=master git://github.com/seajs/seajs-log.git ../seajs-log
   - phantomjs --version
 
 
