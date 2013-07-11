@@ -76,8 +76,8 @@ seajs.off = function(name, callback) {
   return seajs
 }
 
-// Emit event, firing all bound callbacks. Callbacks are passed the same
-// arguments as `emit` is, apart from the event name
+// Emit event, firing all bound callbacks. Callbacks receive the same
+// arguments as `emit` does, apart from the event name
 var emit = seajs.emit = function(name, data) {
   var list = events[name], fn
 
@@ -273,7 +273,7 @@ var READY_STATE_RE = /^(?:loaded|complete|undefined)$/
 var currentlyAddingScript
 var interactiveScript
 
-// `onload` event is supported in WebKit < 535.23 and Firefox < 9.0
+// `onload` event is not supported in WebKit < 535.23 and Firefox < 9.0
 // ref:
 //  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
@@ -465,7 +465,7 @@ function Module(uri, deps) {
   this.exports = null
   this.status = 0
 
-  // Who depend on me
+  // Who depends on me
   this._waitings = {}
 
   // The number of unloaded dependencies
