@@ -21,7 +21,7 @@ var data = seajs.data = {}
 
 function isType(type) {
   return function(obj) {
-    return Object.prototype.toString.call(obj) === "[object " + type + "]"
+    return {}.toString.call(obj) == "[object " + type + "]"
   }
 }
 
