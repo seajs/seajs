@@ -11,10 +11,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "node-static": "~0.6.9",
-    "grunt-contrib-concat": "~0.2.0",
-    "gcc": "~0.2.0"
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "node-static": "~0.6.9"
   },
   "repository": {
     "type": "git",
