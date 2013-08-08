@@ -15,6 +15,7 @@ var seajs = global.seajs = {
 
 var data = seajs.data = {}
 
+
 /**
  * util-lang.js - The minimal language enhancement
  */
@@ -913,6 +914,5 @@ seajs.config = function(configData) {
   emit("config", configData)
   return seajs
 }
-
 
 })(this);
