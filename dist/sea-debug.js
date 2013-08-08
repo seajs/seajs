@@ -15,7 +15,6 @@ var seajs = global.seajs = {
 
 var data = seajs.data = {}
 
-debugger
 /**
  * util-lang.js - The minimal language enhancement
  */
