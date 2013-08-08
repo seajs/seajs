@@ -6,7 +6,7 @@ MIN=$1.js
 
 SIZE_SRC=$(cat dist/$SRC | wc -c)
 SIZE_MIN=$(cat dist/$MIN | wc -c)
-SIZE_GZIP=$(gzip -nfc --best dist/$MIN | wc -c)
+SIZE_GZIP=$(gzip -c1 dist/$MIN | wc -c)
 
 echo
 echo "\t`echo "scale=3;$SIZE_SRC/1024" | bc -l` KB $SRC"
