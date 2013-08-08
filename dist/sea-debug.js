@@ -15,14 +15,14 @@ var seajs = global.seajs = {
 
 var data = seajs.data = {}
 
-debugger
+
 /**
  * util-lang.js - The minimal language enhancement
  */
 
 function isType(type) {
   return function(obj) {
-    return Object.prototype.toString.call(obj) === "[object " + type + "]"
+    return {}.toString.call(obj) == "[object " + type + "]"
   }
 }
 
@@ -914,6 +914,5 @@ seajs.config = function(configData) {
   emit("config", configData)
   return seajs
 }
-
 
 })(this);

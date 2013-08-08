@@ -4,3 +4,4 @@ var seajs = global.seajs = {
 }
 
 var data = seajs.data = {}
+
