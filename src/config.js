@@ -74,4 +74,3 @@ seajs.config = function(configData) {
   emit("config", configData)
   return seajs
 }
-
