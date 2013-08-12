@@ -17,8 +17,8 @@ var interactiveScript
 //  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldWebKit = (navigator.userAgent
-    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
+var isOldWebKit = +navigator.userAgent
+    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1") < 536
 
 
 function request(url, callback, charset) {
