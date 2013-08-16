@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #usage: ./tools/size.sh
 
 SRC=$1-debug.js
