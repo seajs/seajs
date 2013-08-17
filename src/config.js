@@ -24,7 +24,7 @@ data.preload = (function() {
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
   // NOTE: use `seajs-xxx=1` flag in uri or cookie to preload `seajs-xxx`
-  var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
+  var str = location.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
   // Add cookie string
   str += " " + doc.cookie
