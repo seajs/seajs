@@ -241,9 +241,8 @@ function id2Uri(id, refUri) {
 
 
 var doc = document
-var loc = location
-var cwd = dirname(loc.href)
-var scripts = doc.getElementsByTagName("script")
+var cwd = dirname(doc.URL)
+var scripts = doc.scripts
 
 // Recommend to add `seajsnode` id for the `sea.js` script element
 var loaderScript = doc.getElementById("seajsnode") ||
@@ -279,8 +278,8 @@ var interactiveScript
 //  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldWebKit = (navigator.userAgent
-    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
+var isOldWebKit = +navigator.userAgent
+    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1") < 536
 
 
 function request(url, callback, charset) {
@@ -864,7 +863,7 @@ data.preload = (function() {
 
   // Convert `seajs-xxx` to `seajs-xxx=1`
   // NOTE: use `seajs-xxx=1` flag in uri or cookie to preload `seajs-xxx`
-  var str = loc.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
+  var str = location.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
   // Add cookie string
   str += " " + doc.cookie
