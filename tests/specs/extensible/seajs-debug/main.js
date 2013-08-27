@@ -19,4 +19,6 @@ define(function(require) {
   test.assert(seajs.find('seajs-find/xx')[1].name === '2', 'seajs.find')
   test.assert(seajs.find('seajs-find/zz').length === 0, 'seajs.find')
 
+  test.next()
+
 })
