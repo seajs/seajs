@@ -318,7 +318,8 @@ function request(url, callback, charset) {
 }
 
 function addOnload(node, callback, isCSS) {
-  var missingOnload = isCSS && (isOldWebKit || !("onload" in node))
+  var supportOnload = "onload" in node
+  var missingOnload = isCSS && (isOldWebKit || !supportOnload)
 
   // for Old WebKit and Old Firefox
   if (missingOnload) {
@@ -328,7 +329,7 @@ function addOnload(node, callback, isCSS) {
     return
   }
 
-  ("onload" in node) ?
+  supportOnload ?
       node.onload = node.onerror = onload :
       node.onreadystatechange = onload
 
