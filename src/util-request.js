@@ -67,7 +67,11 @@ function addOnload(node, callback, isCSS) {
     return
   }
 
-  node.onload = node.onerror = node.onreadystatechange = function() {
+  ("onload" in node) ?
+      node.onload = node.onerror = onload :
+      node.onreadystatechange = onload
+
+  function onload() {
     if (READY_STATE_RE.test(node.readyState)) {
 
       // Ensure only run once and handle memory leak in IE
