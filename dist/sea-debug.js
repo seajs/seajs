@@ -1,5 +1,5 @@
 /**
- * Sea.js 2.1.1 | seajs.org/LICENSE.md
+ * Sea.js 2.2.0 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -10,7 +10,7 @@ if (global.seajs) {
 
 var seajs = global.seajs = {
   // The current version of Sea.js being used
-  version: "2.1.1"
+  version: "2.2.0"
 }
 
 var data = seajs.data = {}
@@ -318,7 +318,8 @@ function request(url, callback, charset) {
 }
 
 function addOnload(node, callback, isCSS) {
-  var missingOnload = isCSS && (isOldWebKit || !("onload" in node))
+  var supportOnload = "onload" in node
+  var missingOnload = isCSS && (isOldWebKit || !supportOnload)
 
   // for Old WebKit and Old Firefox
   if (missingOnload) {
@@ -328,7 +329,7 @@ function addOnload(node, callback, isCSS) {
     return
   }
 
-  ("onload" in node) ?
+  supportOnload ?
       node.onload = node.onerror = onload :
       node.onreadystatechange = onload
 
