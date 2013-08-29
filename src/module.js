@@ -237,11 +237,6 @@ Module.prototype.exec = function () {
     exports = mod.exports
   }
 
-  // Emit `error` event
-  if (exports === null && !IS_CSS_RE.test(uri)) {
-    emit("error", mod)
-  }
-
   // Reduce memory leak
   delete mod.factory
 
