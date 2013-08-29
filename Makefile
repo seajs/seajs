@@ -8,12 +8,15 @@ test_node:
 	@node tests/node-runner.js
 
 test_local:
+	@seatools site
 	@seatools test --local
 
 test_http:
+	@seatools site
 	@seatools test --http
 
 totoro:
+	@seatools site
 	@seatools test --totoro
 
 size:
