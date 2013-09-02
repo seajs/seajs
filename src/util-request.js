@@ -7,8 +7,6 @@ var head = doc.getElementsByTagName("head")[0] || doc.documentElement
 var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
-var READY_STATE_RE = /^(?:loaded|complete|undefined)$/
-
 var currentlyAddingScript
 var interactiveScript
 
@@ -32,7 +30,7 @@ function request(url, callback, charset) {
     }
   }
 
-  addOnload(node, callback, isCSS)
+  addOnload(node, callback, isCSS, url)
 
   if (isCSS) {
     node.rel = "stylesheet"
@@ -56,7 +54,7 @@ function request(url, callback, charset) {
   currentlyAddingScript = null
 }
 
-function addOnload(node, callback, isCSS) {
+function addOnload(node, callback, isCSS, url) {
   var supportOnload = "onload" in node
 
   // for Old WebKit and Old Firefox
@@ -68,7 +66,11 @@ function addOnload(node, callback, isCSS) {
   }
 
   if (supportOnload) {
-    node.onload = node.onerror = onload
+    node.onload = onload
+    node.onerror = function() {
+      emit("error", { uri: url, node: node })
+      onload()
+    }
   }
   else {
     node.onreadystatechange = function() {
