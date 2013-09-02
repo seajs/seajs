@@ -11,10 +11,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-uglify": "~0.2.2",
-    "node-static": "~0.6.9"
+    "seatools": "*"
   },
   "repository": {
     "type": "git",
@@ -26,5 +23,14 @@
       "type": "MIT",
       "url": "http://seajs.org/LICENSE.md"
     }
+  ],
+  "seajs-plugin": [
+    "seajs-debug",
+    "seajs-flush",
+    "seajs-style",
+    "seajs-health",
+    "seajs-log",
+    "seajs-text",
+    "seajs-combo"
   ]
 }

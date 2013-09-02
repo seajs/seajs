@@ -1,7 +1,9 @@
 
 build:
-	@grunt
-	@$(MAKE) size
+	@seatools build
+
+publish:
+	@seatools site -p
 
 test: test_node test_local test_http
 
@@ -9,13 +11,16 @@ test_node:
 	@node tests/node-runner.js
 
 test_local:
-	@phantomjs tools/phantom.js tests/runner.html?console
+	@seatools site
+	@seatools test --local
 
 test_http:
-	@node tools/server.js seajs/tests/runner.html?console
+	@seatools site
+	@seatools test --http
 
 totoro:
-	@totoro --adapter=tests/totoro-adapter.js --client-root=../
+	@seatools site
+	@seatools test --totoro
 
 size:
-	@tools/size.sh sea
+	@seatools size
