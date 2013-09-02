@@ -3,7 +3,7 @@ build:
 	@seatools build
 
 publish:
-	@seatools site -p
+	@seatools publish
 
 test: test_node test_local test_http
 
