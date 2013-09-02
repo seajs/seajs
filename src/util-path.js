@@ -29,6 +29,11 @@ function realpath(path) {
   // a//b/c  ==>  a/b/c
   path = path.replace(DOUBLE_SLASH_RE, "$1/")
 
+  // Add default protocol when path begins with "//"
+  if (path.indexOf("//") === 0) {
+    path = location.protocol + path
+  }
+
   return path
 }
 

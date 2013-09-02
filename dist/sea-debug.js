@@ -910,7 +910,16 @@ seajs.config = function(configData) {
       }
       // Make sure that `data.base` is an absolute path
       else if (key === "base") {
-        (curr.slice(-1) === "/") || (curr += "/")
+        // Make sure end with "/"
+        if (curr.slice(-1) !== "/") {
+          curr += "/"
+        }
+
+        // Add default protocol when base begin with "//"
+        if (curr.indexOf("//") === 0) {
+          curr = location.protocol + curr
+        }
+
         curr = addBase(curr)
       }
 

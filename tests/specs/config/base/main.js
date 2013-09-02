@@ -23,7 +23,7 @@ define(function(require) {
 
   // root
   seajs.config({
-    base: '/root-path/'
+    base: '/root-path'
   })
 
   function expectedPath(str) {
@@ -37,6 +37,19 @@ define(function(require) {
   test.assert(require.resolve('z') === expectedPath('z'),
       'actual = ' + require.resolve('z')
           + ' expected = ' + expectedPath('z'))
+
+
+  // DO NOT run in Node.js & file:/// environment
+  if (typeof location !== 'undefined' && location.protocol.indexOf('http') === 0) {
+    // default protocol
+    seajs.config({
+      base: '//' + location.host + '/root-path/'
+    })
+
+    test.assert(require.resolve('z') === expectedPath('z'),
+        'actual = ' + require.resolve('z')
+            + ' expected = ' + expectedPath('z'))
+  }
 
 
   /* REMOVE support for this rare case
