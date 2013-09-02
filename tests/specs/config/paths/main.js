@@ -5,7 +5,7 @@ seajs.config({
   },
   paths: {
     'biz': './path/to/biz',
-    'to': './path/to'
+    'to': './path/to/'
   }
 })
 
