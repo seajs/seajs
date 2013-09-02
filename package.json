@@ -23,5 +23,14 @@
       "type": "MIT",
       "url": "http://seajs.org/LICENSE.md"
     }
+  ],
+  "seajs-plugin": [
+    "seajs-debug",
+    "seajs-flush",
+    "seajs-style",
+    "seajs-health",
+    "seajs-log",
+    "seajs-text",
+    "seajs-combo"
   ]
 }
