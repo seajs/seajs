@@ -62,7 +62,10 @@ seajs.config = function(configData) {
       }
       // Make sure that `data.base` is an absolute path
       else if (key === "base") {
-        (curr.slice(-1) === "/") || (curr += "/")
+        // Make sure end with "/"
+        if (curr.slice(-1) !== "/") {
+          curr += "/"
+        }
         curr = addBase(curr)
       }
 
