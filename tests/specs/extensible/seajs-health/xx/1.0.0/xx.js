@@ -1,1 +1,0 @@
-define({ name: 'xx', version: '1.0.0' })
