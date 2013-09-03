@@ -226,6 +226,11 @@ function addBase(id, refUri) {
     ret = data.base + id
   }
 
+  // Add default protocol when uri begins with "//"
+  if (ret.indexOf("//") === 0) {
+    ret = location.protocol + ret
+  }
+
   return ret
 }
 
@@ -914,12 +919,6 @@ seajs.config = function(configData) {
         if (curr.slice(-1) !== "/") {
           curr += "/"
         }
-
-        // Add default protocol when base begin with "//"
-        if (curr.indexOf("//") === 0) {
-          curr = location.protocol + curr
-        }
-
         curr = addBase(curr)
       }
 

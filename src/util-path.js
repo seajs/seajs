@@ -29,11 +29,6 @@ function realpath(path) {
   // a//b/c  ==>  a/b/c
   path = path.replace(DOUBLE_SLASH_RE, "$1/")
 
-  // Add default protocol when path begins with "//"
-  if (path.indexOf("//") === 0) {
-    path = location.protocol + path
-  }
-
   return path
 }
 
@@ -131,6 +126,11 @@ function addBase(id, refUri) {
   // Top-level
   else {
     ret = data.base + id
+  }
+
+  // Add default protocol when uri begins with "//"
+  if (ret.indexOf("//") === 0) {
+    ret = location.protocol + ret
   }
 
   return ret

@@ -140,7 +140,7 @@ define(function(require) {
   assert(id2Uri() === '', 'id2Uri')
   assert(id2Uri('http://XXX.com.cn/min/index.php?g=commonCss.css') === 'http://XXX.com.cn/min/index.php?g=commonCss.css', 'id2Uri')
   assert(id2Uri('./front/jquery.x.queue.js#') === cwd + 'front/jquery.x.queue.js', 'id2Uri')
-  assert(id2Uri('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js') === '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', 'id2Uri')
+  assert(id2Uri('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js') === location.protocol + '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', 'id2Uri')
 
   var _cwd = cwd
   seajs.config({ cwd: '/User/lifesinger/path/to/root/' })
