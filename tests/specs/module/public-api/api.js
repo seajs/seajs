@@ -33,9 +33,10 @@ define(function(require, exports, mod) {
 
   assert(isFunction(seajs.Module), 'seajs.Module')
   assert(isFunction(seajs.resolve), 'seajs.resolve')
+  assert(isFunction(seajs.request), 'seajs.request')
   assert(isFunction(seajs.require), 'seajs.require')
 
-  assert(getOwnPropertyCount(seajs) === 11, getOwnPropertyCount(seajs))
+  assert(getOwnPropertyCount(seajs) === 12, getOwnPropertyCount(seajs))
 
 
   // define

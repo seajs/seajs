@@ -177,7 +177,7 @@ Module.prototype.fetch = function(requestCache) {
   }
 
   function sendRequest() {
-    request(emitData.requestUri, emitData.onRequest, emitData.charset)
+    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
   }
 
   function onRequest() {
@@ -255,7 +255,7 @@ Module.resolve = function(id, refUri) {
   var emitData = { id: id, refUri: refUri }
   emit("resolve", emitData)
 
-  return emitData.uri || id2Uri(emitData.id, refUri)
+  return emitData.uri || seajs.resolve(emitData.id, refUri)
 }
 
 // Define a module
@@ -392,7 +392,6 @@ seajs.Module = Module
 data.fetchedList = fetchedList
 data.cid = cid
 
-seajs.resolve = id2Uri
 seajs.require = function(id) {
   return (cachedMods[Module.resolve(id)] || {}).exports
 }
