@@ -854,7 +854,11 @@ data.fetchedList = fetchedList
 data.cid = cid
 
 seajs.require = function(id) {
-  return (cachedMods[Module.resolve(id)] || {}).exports
+  var mod = Module.get(Module.resolve(id))
+  if (mod.status < STATUS.EXECUTING) {
+    mod.exec()
+  }
+  return mod.exports
 }
 
 
