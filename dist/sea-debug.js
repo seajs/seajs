@@ -268,6 +268,10 @@ function getScriptAbsoluteSrc(node) {
 }
 
 
+// For Developers
+seajs.resolve = id2Uri
+
+
 /**
  * util-request.js - The utilities for requesting script and style files
  * ref: tests/research/load-js-css/test.html
@@ -427,6 +431,10 @@ function getCurrentScript() {
     }
   }
 }
+
+
+// For Developers
+seajs.request = request
 
 
 /**
@@ -630,7 +638,7 @@ Module.prototype.fetch = function(requestCache) {
   }
 
   function sendRequest() {
-    request(emitData.requestUri, emitData.onRequest, emitData.charset)
+    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
   }
 
   function onRequest() {
@@ -708,7 +716,7 @@ Module.resolve = function(id, refUri) {
   var emitData = { id: id, refUri: refUri }
   emit("resolve", emitData)
 
-  return emitData.uri || id2Uri(emitData.id, refUri)
+  return emitData.uri || seajs.resolve(emitData.id, refUri)
 }
 
 // Define a module
@@ -845,7 +853,6 @@ seajs.Module = Module
 data.fetchedList = fetchedList
 data.cid = cid
 
-seajs.resolve = id2Uri
 seajs.require = function(id) {
   return (cachedMods[Module.resolve(id)] || {}).exports
 }
