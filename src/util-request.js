@@ -158,3 +158,7 @@ function getCurrentScript() {
   }
 }
 
+
+// For Developers
+seajs.request = request
+

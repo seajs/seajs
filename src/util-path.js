@@ -169,3 +169,7 @@ function getScriptAbsoluteSrc(node) {
       node.getAttribute("src", 4)
 }
 
+
+// For Developers
+seajs.resolve = id2Uri
+
