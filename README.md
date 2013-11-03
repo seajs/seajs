@@ -25,3 +25,7 @@ What version of Sea.js is the issue reproducible in. Is it reproducible after up
 ## License
 
 Sea.js is available under the terms of the [MIT License](http://seajs.org/LICENSE.md).
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/seajs/seajs/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
