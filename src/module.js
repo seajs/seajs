@@ -234,6 +234,14 @@ Module.prototype.exec = function () {
       factory
 
   if (exports === undefined) {
+    // module factory Not Found, because module's id and path mismatch
+    // define() would fill the id when Module.save() for js files
+    // Wrong modules would not execute define() in correct uri
+    // They have mod.uri but mod.id
+    if (mod.uri && mod.id === undefined && /\.js$/.test(mod.uri)) {
+      printError(mod.uri +
+        ": ID and Path mismatch, see https://github.com/seajs/seajs/issues/930")
+    }
     exports = mod.exports
   }
 
