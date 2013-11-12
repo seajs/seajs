@@ -341,7 +341,7 @@ Module.use = function (ids, callback, uri) {
 
     for (var i = 0, len = uris.length; i < len; i++) {
       var temp = cachedMods[uris[i]].exec()
-      if (!temp) {
+      if (temp) {
         exports.push(temp)
       }
     }
