@@ -340,7 +340,10 @@ Module.use = function (ids, callback, uri) {
     var uris = mod.resolve()
 
     for (var i = 0, len = uris.length; i < len; i++) {
-      exports[i] = cachedMods[uris[i]].exec()
+      var temp = cachedMods[uris[i]].exec()
+      if (!temp) {
+        exports.push(temp)
+      }
     }
 
     if (callback) {
