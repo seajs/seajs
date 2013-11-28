@@ -133,6 +133,10 @@
     if (r) {
       r.count += 1
       r.suites && r.suites.push(currentSuite)
+
+      if (style === 'error') {
+        r.message = txt
+      }
     }
 
     consoleMode && print2Console(txt, style)

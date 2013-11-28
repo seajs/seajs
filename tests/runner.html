@@ -4,8 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Sea.js Test Suite</title>
-<link rel="stylesheet" href="style.css?v=20130216.css"/>
-<script>testSuites = ["/seajs-debug/tests/spec","/seajs-flush/tests/spec","/seajs-style/tests/spec","/seajs-health/tests/spec","/seajs-log/tests/spec","/seajs-text/tests/spec","/seajs-combo/tests/spec","research/css-order","research/derive-uri","research/doc-fragment","research/error-stack","research/load-js-css","research/parse-dependencies","specs/config","specs/extensible","specs/misc/bootstrap","specs/misc/callback-order","specs/misc/ie-cache","specs/misc/load-perf","specs/misc/on-error","specs/misc/utf8-in-gbk","specs/misc/x-ua-compatible","specs/module","specs/package","specs/util"]</script></head>
+<link rel="stylesheet" href="style.css"/>
+<script>
+// For browsers
+var testSuites = [
+  'specs/util',
+
+  'specs/config',
+  'specs/module',
+  'specs/package',
+  'specs/extensible',
+
+  'specs/misc/bootstrap',
+  'specs/misc/callback-order',
+  'specs/misc/ie-cache',
+  'specs/misc/load-perf',
+  'specs/misc/on-error',
+  'specs/misc/utf8-in-gbk',
+  'specs/misc/x-ua-compatible',
+
+  'research/derive-uri'
+]
+
+// For seajs in node
+if (typeof define === 'function') {
+  define([
+    'specs/config',
+    'specs/module',
+    'specs/package',
+    'specs/node'
+  ])
+}
+
+testSuites = testSuites.concat([
+  "/seajs-combo/tests/spec",
+  "/seajs-flush/tests/spec",
+  "/seajs-style/tests/spec",
+  "/seajs-health/tests/spec",
+  "/seajs-text/tests/spec",
+  "/seajs-debug/tests/spec",
+  "/seajs-log/tests/spec"
+]);
+</script></head>
 <body>
 <div id="container">
   <div id="header">
@@ -18,6 +58,6 @@
   <label for="hide-pass">Hide passed</label>
   <p id="info"></p>
 </div>
-<script src="page-runner.js?v=20130216.js"></script>
+<script src="page-runner.js"></script>
 </body>
 </html>
