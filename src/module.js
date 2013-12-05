@@ -382,7 +382,7 @@ seajs.use = function(ids, callback) {
   return seajs
 }
 
-Module.define.cmd = {}
+Module.define.cmd = Module.define.amd = {}
 global.define = Module.define
 
 
