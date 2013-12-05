@@ -3,7 +3,7 @@
  * ref: tests/research/load-js-css/test.html
  */
 
-var head = doc.getElementsByTagName("head")[0] || doc.documentElement
+var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
 var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
