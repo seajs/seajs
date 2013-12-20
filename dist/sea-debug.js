@@ -79,8 +79,8 @@ seajs.off = function(name, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks receive the same
 // arguments as `emit` does, apart from the event name
-var emit = seajs.emit = function(name, data) {
-  var list = events[name], fn
+var emit = seajs.emit = function() {
+  var args = [].slice.call(arguments), list = events[args.shift()], fn
 
   if (list) {
     // Copy callback lists to prevent modification
@@ -88,7 +88,7 @@ var emit = seajs.emit = function(name, data) {
 
     // Execute event callbacks
     while ((fn = list.shift())) {
-      fn(data)
+      fn.apply(fn, args)
     }
   }
 
@@ -249,7 +249,7 @@ function id2Uri(id, refUri) {
 }
 
 
-var doc = document
+var doc = global.document
 var cwd = dirname(doc.URL)
 var scripts = doc.scripts
 
@@ -277,7 +277,7 @@ seajs.resolve = id2Uri
  * ref: tests/research/load-js-css/test.html
  */
 
-var head = doc.getElementsByTagName("head")[0] || doc.documentElement
+var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
 var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
@@ -856,6 +856,7 @@ data.cid = cid
 seajs.require = function(id) {
   var mod = Module.get(Module.resolve(id))
   if (mod.status < STATUS.EXECUTING) {
+    mod.onload()
     mod.exec()
   }
   return mod.exports
