@@ -45,11 +45,16 @@ var emit = seajs.emit = function(name, data) {
 
   if (list) {
     // Copy callback lists to prevent modification
-    list = list.slice()
+   // list = list.slice()
 
     // Execute event callbacks
-    while ((fn = list.shift())) {
-      fn(data)
+   // while ((fn = list.shift())) {
+   //   fn(data)
+   // }
+   
+   // Javascript is single-thread.So the multi-modification for the lists could't happen.
+    for( fn in list ){
+        fn(data);
     }
   }
 
