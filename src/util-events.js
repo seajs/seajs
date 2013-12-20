@@ -40,8 +40,8 @@ seajs.off = function(name, callback) {
 
 // Emit event, firing all bound callbacks. Callbacks receive the same
 // arguments as `emit` does, apart from the event name
-var emit = seajs.emit = function(name, data) {
-  var list = events[name], fn
+var emit = seajs.emit = function() {
+  var args = [].slice.call(arguments), list = events[args.shift()], fn
 
   if (list) {
     // Copy callback lists to prevent modification
@@ -49,7 +49,7 @@ var emit = seajs.emit = function(name, data) {
 
     // Execute event callbacks
     while ((fn = list.shift())) {
-      fn(data)
+      fn.apply(fn, args)
     }
   }
 
