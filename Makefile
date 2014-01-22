@@ -23,4 +23,4 @@ size:
 	@seatools size
 
 pages:
-	@seatools pages
+	@seatools publish
