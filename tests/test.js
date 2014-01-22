@@ -71,7 +71,6 @@ if (typeof document !== 'undefined') {
   var queue = []
   var time
 
-  isNode || require.async && require.async('./style.css')
   handleGlobalError()
 
 
