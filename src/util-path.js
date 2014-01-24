@@ -4,9 +4,9 @@
 
 var DIRNAME_RE = /[^?#]*\//
 
-var DOT_RE = /\/\.\//g
-var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
-var DOUBLE_SLASH_RE = /([^:/])\/\//g
+var SLASH = '/'
+var DOUBLE_DOT = '..'
+var DOT = '.'
 
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
@@ -18,18 +18,24 @@ function dirname(path) {
 // Canonicalize a path
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
-  // /a/b/./c/./d ==> /a/b/c/d
-  path = path.replace(DOT_RE, "/")
-
-  // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
-  while (path.match(DOUBLE_DOT_RE)) {
-    path = path.replace(DOUBLE_DOT_RE, "/")
+  var parts = path.split(SLASH),
+      result = [],
+      ignore = 0,
+      i=parts.length - 1,
+      part;
+    while(i >= 0){
+      part = parts[i--];
+      if(part === DOUBLE_DOT){
+        ignore++;
+      }else if(part !== DOT){
+        if(ignore === 0){
+        result.unshift(part);
+      }else{
+        ignore--;
+      }
+    }
   }
-
-  // a//b/c  ==>  a/b/c
-  path = path.replace(DOUBLE_SLASH_RE, "$1/")
-
-  return path
+  return result.join(SLASH);
 }
 
 // Normalize an id
