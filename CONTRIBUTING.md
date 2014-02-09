@@ -1,4 +1,3 @@
-
 大家提问题前，请仔细阅读下这篇文章。高质量的提问，不光有助于问题的快速解决，还能赢得社区的尊重。
 
 ---
@@ -29,7 +28,7 @@
 
 ### 挖掘 Bug 宝藏
 
-开源软件一般都会有自己的 Bug 管理方案，比如 WebKit、V8、jQuery、Sea.js 等等。从它们的官网上找到 Bug 管理地址，然后通过搜索看看有无你遇到的问题。对于活跃社区来说，这一招经常很管用。比如 jQuery 的  [Bug Tracker](http://bugs.jquery.org/)，通过右上角的 Search Tickets 可以找到非常多有用的信息。一个运作良好的 Bug 库，经常是一座巨大的宝藏。Sea.js 是直接通过 [GitHub Issues](https://github.com/seajs/seajs/issues) 来管理，你可以在 Issues 中找到很多信息。
+开源软件一般都会有自己的 Bug 管理方案，比如 WebKit、V8、jQuery、Sea.js 等等。从它们的官网上找到 Bug 管理地址，然后通过搜索看看有无你遇到的问题。对于活跃社区来说，这一招经常很管用。比如 jQuery 的  [Bug Tracker](http://bugs.jquery.com/)，通过右上角的 Search Tickets 可以找到非常多有用的信息。一个运作良好的 Bug 库，经常是一座巨大的宝藏。Sea.js 是直接通过 [GitHub Issues](https://github.com/seajs/seajs/issues) 来管理，你可以在 Issues 中找到很多信息。
 
 
 ### 求助身边的朋友
