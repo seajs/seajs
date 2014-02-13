@@ -395,6 +395,7 @@ data.cid = cid
 seajs.require = function(id) {
   var mod = Module.get(Module.resolve(id))
   if (mod.status < STATUS.EXECUTING) {
+    mod.onload()
     mod.exec()
   }
   return mod.exports

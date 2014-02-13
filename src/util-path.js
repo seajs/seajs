@@ -151,7 +151,7 @@ function id2Uri(id, refUri) {
 }
 
 
-var doc = document
+var doc = global.document
 var cwd = dirname(doc.URL)
 var scripts = doc.scripts
 

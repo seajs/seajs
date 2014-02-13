@@ -2,9 +2,6 @@
 build:
 	@seatools build
 
-publish:
-	@seatools publish
-
 test: test_node test_local test_http
 
 test_node:
@@ -24,3 +21,6 @@ totoro:
 
 size:
 	@seatools size
+
+pages:
+	@seatools publish
