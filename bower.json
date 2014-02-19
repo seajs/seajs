@@ -1,21 +1,19 @@
 {
   "name": "seajs",
   "version": "2.2.0",
-  "main": ["./dist/sea.js", "./dist/sea-debug.js"],
+  "main": "./dist/sea.js",
   "ignore": [
     "**/.*",
-    "lib",
-    "test",
-    "tests",
     "docs",
+    "lib",
     "src",
-    "index.html",
-    "README.md",
-    "LICENSE.md",
-    "CONTRIBUTING.md",
+    "tests",
     "CNAME",
-    "package.json",
     "component.json",
-    "Makefile"
+    "CONTRIBUTING.md",
+    "index.html",
+    "Makefile",
+    "package.json",
+    "README.md"
   ]
 }
