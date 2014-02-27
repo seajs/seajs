@@ -15,8 +15,7 @@ define(function(require) {
   test.assert(nextElement === firstScript, 'script after compatible meta')
 
 
-  var linkElement = previousSiblingElement(baseElement)
-  var prevElement = previousSiblingElement(linkElement)
+  var prevElement = previousSiblingElement(baseElement)
   test.assert(prevElement === lastScript, 'script before base element')
 
   test.next()
