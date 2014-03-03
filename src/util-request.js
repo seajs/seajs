@@ -3,22 +3,20 @@
  * ref: tests/research/load-js-css/test.html
  */
 
-var head = doc.getElementsByTagName("head")[0] || doc.documentElement
+var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
 var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
-var READY_STATE_RE = /^(?:loaded|complete|undefined)$/
-
 var currentlyAddingScript
 var interactiveScript
 
-// `onload` event is supported in WebKit < 535.23 and Firefox < 9.0
+// `onload` event is not supported in WebKit < 535.23 and Firefox < 9.0
 // ref:
 //  - https://bugs.webkit.org/show_activity.cgi?id=38995
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
-var isOldWebKit = (navigator.userAgent
-    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) * 1 < 536
+var isOldWebKit = +navigator.userAgent
+    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1") < 536
 
 
 function request(url, callback, charset) {
@@ -32,7 +30,7 @@ function request(url, callback, charset) {
     }
   }
 
-  addOnload(node, callback, isCSS)
+  addOnload(node, callback, isCSS, url)
 
   if (isCSS) {
     node.rel = "stylesheet"
@@ -53,36 +51,48 @@ function request(url, callback, charset) {
       head.insertBefore(node, baseElement) :
       head.appendChild(node)
 
-  currentlyAddingScript = undefined
+  currentlyAddingScript = null
 }
 
-function addOnload(node, callback, isCSS) {
-  var missingOnload = isCSS && (isOldWebKit || !("onload" in node))
+function addOnload(node, callback, isCSS, url) {
+  var supportOnload = "onload" in node
 
   // for Old WebKit and Old Firefox
-  if (missingOnload) {
+  if (isCSS && (isOldWebKit || !supportOnload)) {
     setTimeout(function() {
       pollCss(node, callback)
     }, 1) // Begin after node insertion
     return
   }
 
-  node.onload = node.onerror = node.onreadystatechange = function() {
-    if (READY_STATE_RE.test(node.readyState)) {
-
-      // Ensure only run once and handle memory leak in IE
-      node.onload = node.onerror = node.onreadystatechange = null
-
-      // Remove the script to reduce memory leak
-      if (!isCSS && !configData.debug) {
-        head.removeChild(node)
-      }
-
-      // Dereference the node
-      node = undefined
-
-      callback()
+  if (supportOnload) {
+    node.onload = onload
+    node.onerror = function() {
+      emit("error", { uri: url, node: node })
+      onload()
     }
+  }
+  else {
+    node.onreadystatechange = function() {
+      if (/loaded|complete/.test(node.readyState)) {
+        onload()
+      }
+    }
+  }
+
+  function onload() {
+    // Ensure only run once and handle memory leak in IE
+    node.onload = node.onerror = node.onreadystatechange = null
+
+    // Remove the script to reduce memory leak
+    if (!isCSS && !data.debug) {
+      head.removeChild(node)
+    }
+
+    // Dereference the node
+    node = null
+
+    callback()
   }
 }
 
@@ -129,7 +139,7 @@ function getCurrentScript() {
   }
 
   // For IE6-9 browsers, the script onload event may not fire right
-  // after the the script is evaluated. Kris Zyp found that it
+  // after the script is evaluated. Kris Zyp found that it
   // could query the script nodes and the one that is in "interactive"
   // mode indicates the current script
   // ref: http://goo.gl/JHfFW
@@ -147,4 +157,8 @@ function getCurrentScript() {
     }
   }
 }
+
+
+// For Developers
+seajs.request = request
 

@@ -1,0 +1,10 @@
+{
+  "name": "seajs",
+  "repo": "seajs/seajs",
+  "description": "A Module Loader for the Web",
+  "version": "2.2.0",
+  "keywords": ["module", "loader"],
+  "main": "dist/sea.js",
+  "scripts": ["dist/sea.js", "dist/sea-debug.js"],
+  "license": "MIT"
+}

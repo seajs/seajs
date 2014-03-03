@@ -1,2 +1,0 @@
-
-global._ = { name: 'underscore' }

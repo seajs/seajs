@@ -15,7 +15,7 @@ define(function(require) {
 
     'quick-start': function() {
       var iframe = document.getElementById('quick-start-iframe')
-      iframe.src = 'http://seajs.github.com/examples/hello.html'
+      iframe.src = 'http://seajs.github.io/examples/app/hello.html'
 
       require.async('./sh', function(highlight) {
         highlight.init()

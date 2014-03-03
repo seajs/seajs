@@ -2,46 +2,52 @@
  * config.js - The configuration for the loader
  */
 
-var configData = config.data = {
-  // The root path to use for id2uri parsing
-  base: (function() {
-    var ret = loaderDir
+var BASE_RE = /^(.+?\/)(\?\?)?(seajs\/)+/
 
-    // If loaderUri is `http://test.com/libs/seajs/[seajs/1.2.3/]sea.js`, the
-    // baseUri should be `http://test.com/libs/`
-    var m = ret.match(/^(.+?\/)(?:seajs\/)+(?:\d[^/]+\/)?$/)
-    if (m) {
-      ret = m[1]
-    }
+// The root path to use for id2uri parsing
+// If loaderUri is `http://test.com/libs/seajs/[??][seajs/1.2.3/]sea.js`, the
+// baseUri should be `http://test.com/libs/`
+data.base = (loaderDir.match(BASE_RE) || ["", loaderDir])[1]
 
-    return ret
-  })(),
+// The loader directory
+data.dir = loaderDir
 
-  // The charset for requesting files
-  charset: "utf-8",
+// The current working directory
+data.cwd = cwd
 
-  // Modules that are needed to load before all other modules
-  preload: []
+// The charset for requesting files
+data.charset = "utf-8"
 
-  // debug - Debug mode. The default value is false
-  // alias - An object containing shorthands of module id
-  // paths - An object containing path shorthands in module id
-  // vars - The {xxx} variables in module id
-  // map - An array containing rules to map module uri
-  // plugins - An array containing needed plugins
-}
+// Modules that are needed to load before all other modules
+data.preload = (function() {
+  var plugins = []
 
-function config(data) {
-  for (var key in data) {
-    var curr = data[key]
+  // Convert `seajs-xxx` to `seajs-xxx=1`
+  // NOTE: use `seajs-xxx=1` flag in uri or cookie to preload `seajs-xxx`
+  var str = location.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
 
-    // Convert plugins to preload config
-    if (curr && key === "plugins") {
-      key = "preload"
-      curr = plugin2preload(curr)
-    }
+  // Add cookie string
+  str += " " + doc.cookie
 
-    var prev = configData[key]
+  // Exclude seajs-xxx=0
+  str.replace(/(seajs-\w+)=1/g, function(m, name) {
+    plugins.push(name)
+  })
+
+  return plugins
+})()
+
+// data.alias - An object containing shorthands of module id
+// data.paths - An object containing path shorthands in module id
+// data.vars - The {xxx} variables in module id
+// data.map - An array containing rules to map module uri
+// data.debug - Debug mode. The default value is false
+
+seajs.config = function(configData) {
+
+  for (var key in configData) {
+    var curr = configData[key]
+    var prev = data[key]
 
     // Merge object config such as alias, vars
     if (prev && isObject(prev)) {
@@ -54,28 +60,20 @@ function config(data) {
       if (isArray(prev)) {
         curr = prev.concat(curr)
       }
-      // Make sure that `configData.base` is an absolute directory
+      // Make sure that `data.base` is an absolute path
       else if (key === "base") {
-        curr = normalize(addBase(curr + "/"))
+        // Make sure end with "/"
+        if (curr.slice(-1) !== "/") {
+          curr += "/"
+        }
+        curr = addBase(curr)
       }
 
       // Set config
-      configData[key] = curr
+      data[key] = curr
     }
   }
 
-  emit("config", data)
+  emit("config", configData)
   return seajs
 }
-
-seajs.config = config
-
-function plugin2preload(arr) {
-  var ret = [], name
-
-  while ((name = arr.shift())) {
-    ret.push(loaderDir + "plugin-" + name)
-  }
-  return ret
-}
-

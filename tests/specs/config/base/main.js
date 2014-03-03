@@ -14,16 +14,16 @@ define(function(require) {
 
   // relative
   seajs.config({
-    base: './'
+    base: '.'
   })
 
-  var base = seajs.config.data.base
+  var base = seajs.data.base
   test.assert(/tests\/specs\/config\/$/.test(base), base)
 
 
   // root
   seajs.config({
-    base: '/root-path/'
+    base: '/root-path'
   })
 
   function expectedPath(str) {
@@ -39,17 +39,40 @@ define(function(require) {
           + ' expected = ' + expectedPath('z'))
 
 
-  // rare but allowed case
+  // DO NOT run in Node.js & file:/// environment
+  if (typeof location !== 'undefined' && location.protocol.indexOf('http') === 0) {
+    // default protocol
+    seajs.config({
+      base: '//' + location.host + '/root-path/'
+    })
+
+    test.assert(require.resolve('z') === expectedPath('z'),
+        'actual = ' + require.resolve('z')
+            + ' expected = ' + expectedPath('z'))
+  }
+
+
+  /* REMOVE support for this rare case
+  // and RECOMMEND to place config before all modules
+  // https://github.com/seajs/seajs/blob/f84c0d8ad1adf61148ac40683869906566b028ee/src/module.js
+  //
+  // base path is changed dynamically
   seajs.config({
-    base: '/'
+    base: './base/c'
   })
 
-  base = seajs.config.data.base
-  var href = (global.location || {}).href
+  define('c', ['c-1'], function(r, exports) {
+    exports.name = r('c-1').name
+  })
 
-  test.assert(!href || // For Node.js
-      href.indexOf('file://') === 0 ||
-      href.indexOf(base) === 0, base)
+  seajs.config({
+    base: './base'
+  })
+
+  seajs.use('c/c', function(c) {
+    test.assert(c.name === 'c-1', c.name)
+  })
+  */
 
 
   test.next()

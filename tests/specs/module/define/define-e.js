@@ -1,1 +1,1 @@
-define('define-e', [], { name: 'e' });
+define('define-e', { name: 'e' });

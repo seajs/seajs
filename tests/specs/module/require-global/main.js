@@ -7,19 +7,32 @@ seajs.config({
 })
 
 
-define(function(require) {
+define(function(_require) {
 
-  var test = require('../../../test')
+  var test = _require('../../../test')
 
-  require('a')
-  require('b')
-  require('biz/c')
+  _require('a')
+  _require('b')
+  _require('biz/c')
 
-  test.assert(seajs.require('a') === require('a'), 'a')
-  test.assert(seajs.require('b') === require('b'), 'b')
-  test.assert(seajs.require('biz/c') === require('biz/c'), 'c')
+  test.assert(seajs.require('a') === _require('a'), 'a')
+  test.assert(seajs.require('b') === _require('b'), 'b')
+  test.assert(seajs.require('biz/c') === _require('biz/c'), 'c')
 
-  test.next()
+
+  if (typeof require === 'function') {
+    require('./combo.js')
+    done()
+  } else {
+    seajs.request('./require-global/combo.js', done)
+  }
+
+  function done() {
+    test.assert(seajs.require('combo-a').name === 'a')
+    test.assert(seajs.require('combo-b').name === 'b')
+    test.assert(seajs.require('combo-c').name === 'c')
+    test.next()
+  }
 
 })
 

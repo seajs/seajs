@@ -22,8 +22,6 @@ define(function(require, exports) {
   test.assert(require('./j') === null, 'define(undefined)')
   test.assert(require('./k') === null, 'define()')
 
-  test.assert(require('./exact').mainExports() === exports, 'exact exports')
-
   test.next()
 
 });

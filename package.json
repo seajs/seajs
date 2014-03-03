@@ -1,7 +1,7 @@
 {
   "family": "seajs",
   "name": "seajs",
-  "version": "2.0.1",
+  "version": "2.2.0",
   "description": "A Module Loader for the Web",
   "homepage": "http://seajs.org/",
   "keywords": ["module", "loader"],
@@ -11,10 +11,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "node-static": "~0.6.9",
-    "grunt-contrib-concat": "~0.2.0",
-    "gcc": "~0.2.0"
+    "seatools": "*"
   },
   "repository": {
     "type": "git",

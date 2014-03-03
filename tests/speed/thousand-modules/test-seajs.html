@@ -7,26 +7,35 @@
 </head>
 <body>
 <div id="out"></div>
+<p>Please enable cache and REFRESH this page to see the exact result.</p>
 
 <script src="../../../dist/sea-debug.js"></script>
-<script src="thousand-cmd.js"></script>
 
 <script>
-  var start = new Date().getTime()
-
-  seajs.use('module-999', function (mod) {
-    var end = new Date().getTime()
-
-    printResults(mod.value)
-    printResults('execution time: ' + (end - start) + 'ms')
-  })
-
 
   function printResults(txt) {
     var d = document.createElement('div')
     d.innerHTML = txt
     document.getElementById('out').appendChild(d)
   }
+
+  var n = 999
+  printResults('n = ' + n)
+
+  var start = new Date().getTime()
+
+</script>
+
+<script src="thousand-cmd.js"></script>
+
+<script>
+
+  seajs.use('module-' + n, function (mod) {
+    var end = new Date().getTime()
+
+    printResults('execution time: ' + (end - start) + 'ms')
+    printResults(mod.value)
+  })
 
 </script>
 

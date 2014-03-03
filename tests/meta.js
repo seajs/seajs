@@ -7,14 +7,11 @@ var testSuites = [
   'specs/module',
   'specs/package',
   'specs/extensible',
-  'specs/extensible/plugin-debug',
-  'specs/extensible/plugin-flush',
-  'specs/extensible/plugin-style',
 
-  'specs/misc/bootstrap-async',
+  'specs/misc/bootstrap',
   'specs/misc/callback-order',
-  'specs/misc/data-api',
   'specs/misc/ie-cache',
+  'specs/misc/load-perf',
   'specs/misc/on-error',
   'specs/misc/utf8-in-gbk',
   'specs/misc/x-ua-compatible',
@@ -28,8 +25,6 @@ if (typeof define === 'function') {
     'specs/config',
     'specs/module',
     'specs/package',
-    'specs/extensible',
-
     'specs/node'
   ])
 }
