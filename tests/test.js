@@ -243,7 +243,7 @@ if (typeof document !== 'undefined') {
     if (typeof location === 'undefined') {
       return ''
     }
-    if (location.search.indexOf('__order_id') > -1) {
+    if (location.search.indexOf('__totoro_oid') > -1) {
       return ''
     }
 
