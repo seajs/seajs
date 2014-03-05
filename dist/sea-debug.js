@@ -249,7 +249,7 @@ function id2Uri(id, refUri) {
 }
 
 
-var doc = document
+var doc = global.document
 var cwd = dirname(doc.URL)
 var scripts = doc.scripts
 
@@ -277,7 +277,7 @@ seajs.resolve = id2Uri
  * ref: tests/research/load-js-css/test.html
  */
 
-var head = doc.getElementsByTagName("head")[0] || doc.documentElement
+var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
 var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
@@ -534,7 +534,7 @@ Module.prototype.load = function() {
     m = Module.get(uris[i])
 
     if (m.status < STATUS.LOADED) {
-      // Maybe duplicate
+      // Maybe duplicate: When module has dupliate dependency, it should be it's count, not 1
       m._waitings[mod.uri] = (m._waitings[mod.uri] || 0) + 1
     }
     else {
@@ -856,6 +856,7 @@ data.cid = cid
 seajs.require = function(id) {
   var mod = Module.get(Module.resolve(id))
   if (mod.status < STATUS.EXECUTING) {
+    mod.onload()
     mod.exec()
   }
   return mod.exports

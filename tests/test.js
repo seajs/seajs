@@ -243,6 +243,9 @@ if (typeof document !== 'undefined') {
     if (typeof location === 'undefined') {
       return ''
     }
+    if (location.search.indexOf('__order_id') > -1) {
+      return ''
+    }
 
     return decodeURIComponent(location.search)
         .replace(/&?t=\d+/, '').substring(1)
