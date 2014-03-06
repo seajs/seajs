@@ -249,7 +249,7 @@ function id2Uri(id, refUri) {
 }
 
 
-var doc = global.document
+var doc = document
 var cwd = dirname(doc.URL)
 var scripts = doc.scripts
 
