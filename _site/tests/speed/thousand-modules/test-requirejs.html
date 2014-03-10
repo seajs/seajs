@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Speed Test</title>
+</head>
+<body>
+<div id="out"></div>
+<p>Please enable cache and REFRESH this page to see the exact result.</p>
+
+<!--<script src="http://requirejs.org/docs/release/2.1.6/minified/require.js"></script>-->
+<!--<script src="https://raw.github.com/jrburke/almond/latest/almond.js"></script>-->
+<script src="../vendor/require.js"></script>
+
+
+<script>
+
+  function printResults(txt) {
+    var d = document.createElement('div')
+    d.innerHTML = txt
+    document.getElementById('out').appendChild(d)
+  }
+
+  var n = 999
+  printResults('n = ' + n)
+
+  var start = new Date().getTime()
+
+</script>
+
+<script src="thousand-amd.js"></script>
+
+<script>
+
+  require(['module-' + n], function (mod) {
+    var end = new Date().getTime()
+
+    printResults('execution time: ' + (end - start) + 'ms')
+    printResults(mod.value)
+  })
+
+</script>
+
+</body>
+</html>

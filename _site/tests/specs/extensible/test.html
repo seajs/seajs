@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
+<title>test</title>
+<script src="../../../dist/sea.js"></script>
+</head>
+<body>
+<div id="out"></div>
+<script>
+
+  // Clear preload
+  seajs.data.preload.length = 0
+
+  seajs.use(['../../test', './meta'], function(test, data) {
+    test.run(data)
+  })
+
+</script>
+</body>
+</html>

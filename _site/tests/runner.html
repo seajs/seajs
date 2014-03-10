@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Sea.js Test Suite</title>
+<link rel="stylesheet" href="style.css"/>
+<script>
+// For browsers
+var testSuites = [
+  'specs/util',
+
+  'specs/config',
+  'specs/module',
+  'specs/package',
+  'specs/extensible',
+
+  'specs/misc/bootstrap',
+  'specs/misc/callback-order',
+  'specs/misc/ie-cache',
+  'specs/misc/load-perf',
+  'specs/misc/on-error',
+  'specs/misc/utf8-in-gbk',
+  'specs/misc/x-ua-compatible',
+
+  'research/derive-uri'
+]
+
+// For seajs in node
+if (typeof define === 'function') {
+  define([
+    'specs/config',
+    'specs/module',
+    'specs/package',
+    'specs/node'
+  ])
+}
+
+testSuites = testSuites.concat([
+  "seajs-combo",
+  "seajs-debug",
+  "seajs-flush",
+  "seajs-health",
+  "seajs-log",
+  "seajs-style",
+  "seajs-text"
+]);
+</script></head>
+<body>
+<div id="container">
+  <div id="header">
+    <h1 id="title">Test Suite for Sea.js</h1>
+    <div id="summary"></div>
+  </div>
+  <div id="reporter"></div>
+  <button id="go" class="btn" autocomplete="off">Go</button>
+  <input id="hide-pass" type="checkbox">
+  <label for="hide-pass">Hide passed</label>
+  <p id="info"></p>
+</div>
+<script src="page-runner.js"></script>
+</body>
+</html>

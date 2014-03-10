@@ -1,0 +1,968 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Dependencies Parser</title>
+<style>
+    body {
+        font-size: .8em;
+        padding: 10px;
+        margin: 0;
+        font-family: "Consolas", "Lucida Console", Courier, monospace;
+    }
+
+    .code {
+        width: 500px;
+        height: 250px;
+        font-size: 1em;
+        padding: 10px;
+    }
+
+    #run {
+        display: block;
+        font-size: 1.4em;
+    }
+
+    #result {
+        color: white;
+        padding: 10px;
+        background: #222;
+        width: 500px;
+    }
+</style>
+</head>
+
+<body>
+<h1>Dependencies Parser</h1>
+
+<textarea id="source" class="code">
+define(function(require, exports, module) {
+
+  var test = require('../test');
+
+  var a = "They stretch'd in never-ending line.\\";
+  var bs ='\\';
+  var a = 1 / 2; //require("a2")
+
+  var a = c / b
+  require("./a")
+  //require("b2")
+
+  require('a');
+  require  ('b')
+  require(  "b"   )  ;
+  var o = {
+    require: function() {
+    },
+    f:require('f')
+  };
+  o.require('d');
+  o.require(require('e'   ));
+
+  /**
+  * require('./b')
+  */
+
+  var $require = function() {};
+  $require('$require');
+
+  var xrequire = function() {};
+  xrequire('xrequire');
+
+  test.assert(require('b').name === 'b', 'b');
+  test.assert(require('e').name === 'e', 'e');
+
+  /**
+   * @fileoverview Module authoring format.
+   */
+
+  var define = function() {
+  // some comment
+  var reg = /.*/g; // comment */
+  }
+
+  /* ok, I will disappear. */
+  var s = '// i am string'; require('x');
+  var t = 'i am string too'; // require('z');
+  exports.s = 'xx // xx' + require('s');
+
+  /* will not // be removed */ var xx = 'a';
+
+  //
+  //     var Calendar = require('calendar');
+
+  var str = " /* not a real comment */ ";
+  var regex = /\/*.*/;
+  var tt = '"\'';
+
+  var xxxx = 'require("show_me_the_money")';
+
+  var r = /\/*require('r')*/;
+  var r2 = /require("r2")/
+  var weird = / \/\/ \/b\//g;
+
+  $(element).
+    width().
+    height().
+    require("rare_ethan_zhang")
+
+  var r = /[//]no 'comment[*/]/
+  var rare=/ // /b\//g;
+
+  var rare2 = 'xxxx \
+  // xxxx\ require("rare_winter_1") \
+  '
+
+  var x =/ x /* 333
+  require("rare_winter_2")
+  /*
+  ^_^
+  */
+
+  var x =2/ x /* 333
+  require("rare_winter_3")
+  /*
+  ^_^
+  */
+
+  if(a+b)/ x /* 333
+  require("rare_winter_4")
+  /*
+  ^_^
+  */
+
+  (a+b)/ x /* 333
+  require("rare_winter_5")
+  /*
+  ^_^
+  */
+
+  });
+</textarea>
+<textarea id="prepare" class="code">
+</textarea>
+
+<button id="run">Parse Dependencies</button>
+<pre id="result"></pre>
+
+<script src="../../../dist/sea.js"></script>
+<script>
+
+function $(id) {
+  return document.getElementById(id)
+}
+
+function now() {
+  return new Date().getTime()
+}
+
+function unique(arr) {
+  var obj = {}
+  var ret = []
+
+  for (var i = 0, len = arr.length; i < len; i++) {
+    var item = arr[i]
+    if (obj[item] !== 1) {
+      obj[item] = 1
+      ret.push(item)
+    }
+  }
+
+  return ret
+}
+
+
+$('run').onclick = function() {
+  var result, t
+  if (typeof parser === 'string') parser = window[parser]
+
+  var code = $('source').value
+  $('prepare').innerHTML = parser.prepare(code)
+
+  t = now()
+  for (var i = 0; i < 100; i++) {
+    result = parser.parse(code)
+  }
+  t = now() - t
+
+  if (result.length !== EXPECTED.length ||
+      result.join('|') !== EXPECTED.join('|')) {
+    result.push('\n[FAIL] The expected result is\n' + EXPECTED.join('\n'))
+  } else {
+    result.push('\n[PASS] You are so geilivable!')
+  }
+
+  result.push('\n' + t + 'ms')
+  $('result').innerHTML = result.join('\n')
+}
+
+
+var EXPECTED = ['../test', './a', 'a', 'b', 'f', 'e', 'x', 's', 'rare_winter_2', 'rare_winter_4']
+var parser = 'parserBySeaJS'
+
+var parserBySeaJS = (function() {
+  var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    var ret = [], m
+    REQUIRE_RE.lastIndex = 0
+    code = code.replace(/\\\\/g, '')
+
+    while ((m = REQUIRE_RE.exec(code))) {
+        if(m[2]) ret.push(m[2])
+    }
+
+    return unique(ret)
+  }
+
+  return {
+    prepare: function(code) {
+      return code
+          .replace(/\\\\/g, '')
+          .replace(REQUIRE_RE, function(m, m1, m2) {
+            console.log([m, m1, m2].join(' | '))
+            console.log('---------------------')
+            return m2 ? m : ''
+          })
+    },
+    parse: parse
+  }
+})()
+
+var parserByEthanZhang = (function() {
+  var NOISE_RE = /(['"])((?:\\\1|[\s\S])+?)\1|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*/g
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+  var primatives = [], primIndex = 0
+
+  function prepare(code) {
+    return code.replace(NOISE_RE, function(m, quot, str) {
+      if(quot){
+        primatives[++primIndex] = str
+        return quot + primIndex + quot
+      }
+      return ''
+    })
+  }
+
+  function parse(code) {
+    code = prepare(code)
+    var ret = [], match
+
+    REQUIRE_RE.lastIndex = 0
+    while ((match = REQUIRE_RE.exec(code))) {
+      ret.push(primatives[match[2]])
+    }
+
+    return unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
+
+var parserByLifesinger = (function() {
+  var COMMENT_RE = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function prepare(code) {
+    return code
+        .replace(COMMENT_RE, '')
+  }
+
+  function parse(code) {
+    code = prepare(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
+
+var parserByLifesinger2 = (function() {
+  // multi-line comments
+  var COMMENT_M_RE = /^\s*\/\*[\s\S]*?\*\/\s*$/mg
+  // single-line comments
+  var COMMENT_S_RE = /^\s*\/\/.*$/mg
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function prepare(code) {
+    return code
+        .replace(COMMENT_M_RE, '')
+        .replace(COMMENT_S_RE, '')
+  }
+
+  function parse(code) {
+    code = prepare(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
+
+var parserByLifesinger3 = (function() {
+  var cache
+  var QUOTE_RE = /"(?:\\"|[^"]+)"|'(?:\\'|[^']+)'/g
+  var COMMENT_RE = /\/\*[\S\s]*?\*\/|\/\/.*/mg
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*"(\d+)"\s*\)/g
+  var ID_RE = /^[-_.:\w\d\/]+$/
+
+  function prepare(code) {
+    cache = []
+    code = code
+        .replace(QUOTE_RE, function(m) {
+          return '"' + (cache.push(m.slice(1, -1)) - 1) + '"'
+        })
+        .replace(COMMENT_RE, '')
+    return code
+  }
+
+  function parse(code) {
+    code = prepare(code)
+    var ret = []
+
+    code.replace(REQUIRE_RE, function(match, index) {
+      var str = cache[index]
+      if (ID_RE.test(str)) {
+        ret.push(str)
+      }
+    })
+
+    return unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
+
+var parserByXingrz = (function() {
+
+  var _strings = [];
+
+  var QUOTE_RE = /(['"])((?:\\\1|.)+?)\1/g
+  var BLOCK_COMMENT_RE = /\/\*[\s\S]*?\*\//mg
+  var LINE_COMMENT_RE = /\/\/.*$/mg
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*"(\d+)"\s*\)/g
+  var FILTER_RE = /^[^"'\s\)]+$/
+
+  function prepare(code) {
+    return code
+        .replace(QUOTE_RE, function(match, quote, str, index) {  // extract all strings
+          return '"' + (_strings.push(str) - 1) + '"'
+        })
+        .replace(BLOCK_COMMENT_RE, '') // remove block comments
+        .replace(LINE_COMMENT_RE, '') // remove line comments
+  }
+
+  function parse(code) {
+    var ret = []
+    code = prepare(code)
+    code.replace(REQUIRE_RE, function(match, index) {  // parse 'require()'
+      if (FILTER_RE.test(_strings[index])) {
+        ret.push(_strings[index])
+      }
+    })
+    return unique(ret)
+  }
+
+  return {
+    prepare: prepare,
+    parse: parse
+  }
+})()
+
+var parserByJames = (function() {
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  // http://james.padolsey.com/javascript/removing-comments-in-javascript/
+  function removeComments(str) {
+    str = ('__' + str + '__').split('');
+    var mode = {
+      singleQuote: false,
+      doubleQuote: false,
+      regex: false,
+      blockComment: false,
+      lineComment: false,
+      condComp: false
+    };
+    for (var i = 0, l = str.length; i < l; i++) {
+
+      if (mode.regex) {
+        if (str[i] === '/' && str[i - 1] !== '\\') {
+          mode.regex = false;
+        }
+        continue;
+      }
+
+      if (mode.singleQuote) {
+        if (str[i] === "'" && str[i - 1] !== '\\') {
+          mode.singleQuote = false;
+        }
+        continue;
+      }
+
+      if (mode.doubleQuote) {
+        if (str[i] === '"' && str[i - 1] !== '\\') {
+          mode.doubleQuote = false;
+        }
+        continue;
+      }
+
+      if (mode.blockComment) {
+        if (str[i] === '*' && str[i + 1] === '/') {
+          str[i + 1] = '';
+          mode.blockComment = false;
+        }
+        str[i] = '';
+        continue;
+      }
+
+      if (mode.lineComment) {
+        if (str[i + 1] === '\n' || str[i + 1] === '\r') {
+          mode.lineComment = false;
+        }
+        str[i] = '';
+        continue;
+      }
+
+      if (mode.condComp) {
+        if (str[i - 2] === '@' && str[i - 1] === '*' && str[i] === '/') {
+          mode.condComp = false;
+        }
+        continue;
+      }
+
+      mode.doubleQuote = str[i] === '"';
+      mode.singleQuote = str[i] === "'";
+
+      if (str[i] === '/') {
+
+        if (str[i + 1] === '*' && str[i + 2] === '@') {
+          mode.condComp = true;
+          continue;
+        }
+        if (str[i + 1] === '*') {
+          str[i] = '';
+          mode.blockComment = true;
+          continue;
+        }
+        if (str[i + 1] === '/') {
+          str[i] = '';
+          mode.lineComment = true;
+          continue;
+        }
+        mode.regex = true;
+
+      }
+
+    }
+    return str.join('').slice(2, -2);
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+var parserByJames2 = (function() {
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  // http://james.padolsey.com/javascript/javascript-comment-removal-revisted/
+  function removeComments(str) {
+    var uid = '_' + +new Date(),
+        primatives = [],
+        primIndex = 0;
+
+    return (
+        str
+          /* Remove strings */
+            .replace(/(['"])(\\\1|.)+?\1/g, function(match) {
+              primatives[primIndex] = match;
+              return (uid + '') + primIndex++;
+            })
+
+          /* Remove Regexes */
+            .replace(/([^\/])(\/(?!\*|\/)(\\\/|.)+?\/[gim]{0,3})/g, function(match, $1, $2) {
+              primatives[primIndex] = $2;
+              return $1 + (uid + '') + primIndex++;
+            })
+
+          /*
+           - Remove single-line comments that contain would-be multi-line delimiters
+           E.g. // Comment /* <--
+           - Remove multi-line comments that contain would be single-line delimiters
+           E.g. /* // <--
+           */
+            .replace(/\/\/.*?\/?\*.+?(?=\n|\r|$)|\/\*[\s\S]*?\/\/[\s\S]*?\*\//g, '')
+
+          /*
+           Remove single and multi-line comments,
+           no consideration of inner-contents
+           */
+            .replace(/\/\/.+?(?=\n|\r|$)|\/\*[\s\S]+?\*\//g, '')
+
+          /*
+           Remove multi-line comments that have a replaced ending (string/regex)
+           Greedy, so no inner strings/regexes will stop it.
+           */
+            .replace(RegExp('\\/\\*[\\s\\S]+' + uid + '\\d+', 'g'), '')
+
+          /* Bring back strings & regexes */
+            .replace(RegExp(uid + '(\\d+)', 'g'), function(match, n) {
+              return primatives[n];
+            })
+        );
+
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+var parserByArmy = (function() {
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  //http://9911489.k237.opensrs.cn/test.html
+  function removeComments(s) {
+    var index = 0, peek, length = s.length, isReg = true, removeString = false, pos = [0], res = '';
+    while (index < length) {
+      readch();
+      if (isBlank()) {
+      }
+      else if (isQuote()) {
+        dealQuote();
+        isReg = true;
+      }
+      else if (peek == '/') {
+        readch();
+        if (peek == '/') {
+          pos.push(index - 2);
+          index = s.indexOf('\n', index);
+          if (index == -1) index = s.length;
+          pos.push(index);
+          isReg = true;
+        }
+        else if (peek == '*') {
+          pos.push(index - 2);
+          index = s.indexOf('*/', index) + 2;
+          pos.push(index);
+          isReg = true;
+        }
+        else if (isReg) {
+          dealReg();
+          isReg = false;
+        }
+        else {
+          isReg = true;
+        }
+      }
+      else if (isWord()) {
+        dealWord();
+        isReg = false;
+      }
+      else {
+        isReg = true;
+      }
+    }
+    pos.push(length);
+    for (index = 0; index < pos.length; index += 2) {
+      res += s.slice(pos[index], pos[index + 1]);
+    }
+    return res;
+    function readch() {
+      peek = s.charAt(index++);
+    }
+
+    function isBlank() {
+      return /\s/.test(peek);
+    }
+
+    function isQuote() {
+      return peek == '"' || peek == "'";
+    }
+
+    function dealQuote() {
+      if (removeString) {
+        pos.push(index - 1);
+      }
+      var start = peek;
+      while (index < length) {
+        readch();
+        if (peek == '\\') {
+          index++;
+        }
+        else if (peek == start) {
+          break;
+        }
+      }
+      if (removeString) {
+        pos.push(index);
+      }
+    }
+
+    function dealReg() {
+      index--;
+      pos.push(index - 1);
+      while (index < length) {
+        readch();
+        if (peek == '\\') {
+          index++;
+        }
+        else if (peek == '/') {
+          break;
+        }
+        else if (peek == '[') {
+          for (; ;) {
+            readch();
+            if (peek == '\\') {
+              index++;
+            }
+            else if (peek == ']') {
+              break;
+            }
+          }
+        }
+      }
+      pos.push(index);
+    }
+
+    function isWord() {
+      return /[\w$.]/.test(peek);
+    }
+
+    function dealWord() {
+      var r = /^[\w$.]+/.exec(s.slice(index - 1))[0];
+      removeString = r != 'require';
+      index += r.length - 1;
+    }
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+var parserByHaxAndLuolonghao = (function() {
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  // http://hax.iteye.com/blog/181358
+  // https://github.com/seajs/seajs/issues/478#issuecomment-11492343
+  function removeComments(code) {
+    return code.replace(/"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|([^\\])([/][*][\S\s]*?(?:[*][/]|$)|[/][/].*)/g, function($0, $1) {
+      return $1 || $0;
+    });
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+var parserByLuolonghao = (function() {
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  // https://github.com/seajs/seajs/issues/478#issuecomment-11524485
+  function removeComments(code) {
+    return code.replace(/"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|[/][*][\S\s]*?(?:[*][/]|$)|[/](?:\\[/]|[^/])+[/]|[/][/].*/g, function(match) {
+      return /^([/][*]|[/][/])/.test(match) ? '' : match;
+    });
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+var parserByLuolonghao2 = (function() {
+  var COMMENT_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?(?:\*\/|$)|\/(?:\\\/|[^/])+\/|\/\/.*/g
+  var COMMENT_PREFIX_RE = /^\/(\*|\/)/
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  function removeComments(code) {
+    return code.replace(COMMENT_RE, function(match) {
+      return COMMENT_PREFIX_RE.test(match) ? '' : match
+    })
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+var parserByLuolonghaoAndLifesinger = (function() {
+  var NOISE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^/])+\/|\/\/.*/g
+  var STR_RE = /^["']/
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = clean(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      ret.push(match[2])
+    }
+
+    return unique(ret)
+  }
+
+  function clean(code) {
+    return code.replace(NOISE_RE, function(m) {
+      return STR_RE.test(m) ? m : ''
+    })
+  }
+
+  return {
+    prepare: clean,
+    parse: parse
+  }
+})()
+
+var parserByYessky = (function() {
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  // https://github.com/seajs/seajs/issues/478#issuecomment-11526333
+  function removeComments(code) {
+    // multi-line comments
+    code = code.replace(/^\s*\/\*[\s\S]*?\*\/\s*(\n|\r|\f)?/mg, '$1');
+
+    // single-line comments starts with '//'
+    code = code.replace(/^\s*\/\/[^\r\n\f]*?(\r|\n|\f|$)/mg, '');
+
+    // single-line comments not starts with '//'
+    code = code.replace(/(;|,|}|])\s*\/\/[^\r\n\f]*?(\r|\n|\f|$)/mg, '$1$2');
+
+    return code;
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+var parserByZiyunfei = (function() {
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+
+  function parse(code) {
+    code = removeComments(code)
+
+    var ret = [], match
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
+      if (match[2]) {
+        ret.push(match[2])
+      }
+    }
+
+    return unique(ret)
+  }
+
+  // https://github.com/seajs/seajs/issues/478#issuecomment-11491575
+  function removeComments(input) {
+    var i = 0;
+    var left = false;
+    var length = input.length;
+    var output = "";
+    while (i < input.length) {
+      if (input[i] === "/") {
+        if (left === true && input[i + 1] !== "/") {
+          left = false;
+          putstr(input[i++]);
+          continue;
+        }
+        if (input[++i] === "*") {
+          while (input[++i] + input[i + 1] != "*/" && i < length) {}
+          i++;
+          i++;
+        } else if (input[i] === "/") {
+          while ((input[++i] !== "\n" || input[i - 1] === "\\") && i < length) {}
+        } else if (input[i]) {
+          putstr("/" + input[i]);
+          while ((input[++i] !== "/" || input[i - 1] === "\\") && i < length) {
+            putstr(input[i]);
+          }
+          left = true;
+        }
+      } else if (input[i] === "'" || input[i] === '"') {
+        var quote = input[i];
+        putstr(quote);
+        while ((input[++i] != quote || input[i - 1] === "\\") && i < length) {
+          putstr(input[i]);
+        }
+      } else if (input[i] === "\n") {
+        left = false;
+      }
+      putstr(input[i++])
+    }
+    return output;
+
+    function putstr(c) {
+      output += c || "";
+    }
+  }
+
+  return {
+    prepare: removeComments,
+    parse: parse
+  }
+})()
+
+</script>
+
+<h3>References</h3>
+
+<ul>
+  <li><a href="https://github.com/seajs/seajs/issues/478">seajs#478</a></li>
+  <li><a href="http://jsperf.com/parse-dependencies/3">http://jsperf.com/parse-dependencies/3</a></li>
+  <li><a href="http://james.padolsey.com/javascript/removing-comments-in-javascript/">Removing comments in JavaScript</a> <a href="http://james.padolsey.com/demos/comment-removal-js.html">DEMO</a></li>
+  <li><a href="https://github.com/seajs/seajs/issues/478">https://github.com/seajs/seajs/issues/478</a></li>
+  <li><a href="http://jsperf.com/remove-comments">http://jsperf.com/remove-comments</a></li>
+  <li><a href="http://stackoverflow.com/questions/3577767/javascript-comment-stripper">http://stackoverflow.com/questions/3577767/javascript-comment-stripper</a></li>
+</ul>
+
+</body>
+</html>

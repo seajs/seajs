@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>load js and css</title>
+</head>
+<body>
+<div id="out"></div>
+
+<h2>Summary</h2>
+<pre>
+
+js:
+
+  Chrome / Firefox / Safari / Opera:
+    - 下载成功时触发 onload, 下载失败时触发 onerror
+    - 下载成功包括 200, 302, 304 等，只要下载下来了就好
+    - 下载失败指没下载下来，比如 404
+    - Opera 老版本对 empty.js 这种空文件时不会触发 onload，新版本已无问题
+
+  IE6-8:
+    - 下载成功和失败时都会触发 onreadystatechange, 无 onload / onerror
+    - 成功和失败的含义同上
+
+  IE9:
+    - 有 onload / onerror，同时也有 onreadystatechange
+
+  解决方案：
+    - 在 Firefox、Chrome、Safari、Opera、IE9 下，用 onload + onerror
+    - 在 IE6-8 下，用 onreadystatechange
+
+  不足：
+    - IE6-8 下区分不出 onerror
+
+
+css:
+
+  Chrome / Safari:
+    - WebKit &gt;= 535.23 后支持 onload / onerror
+    - 之前的版本无任何事件触发
+
+  Firefox:
+    - Firefox &gt;= 9.0 后支持 onload / onerror
+    - 之前的版本无任何事件触发
+
+  Opera:
+    - 会触发 onload
+    - 但 css 404 时，不会触发 onerror
+
+  IE6-8:
+    - 下载成功和失败时都会触发 onload 和 onreadystatechange，无 onerror
+
+  IE9:
+    - 同 IE6-8
+    - onreadystatechange 会重复触发
+
+  解决方案：
+    - Old WebKit 和 Old Firefox 下，用 poll 方法：<a href="load-css.html">load-css.html</a>
+    - 其他浏览器用 onload / onerror
+
+  不足：
+    - Opera 下如果 404，没有任何事件触发，有可能导致依赖该 css 的模块一直处于等待状态
+    - IE6-8 下区分不出 onerror
+    - poll 探测难以区分出 onerror
+
+
+注意事项：请将相关文件都下载到本地的 php 环境下再测试
+
+最后更新时间：2013-02-08
+
+
+参考文档：
+
+  - http://unixpapa.com/js/dyna.html
+  - http://seajs.org/tests/issues/load-css/test.html
+  - http://seajs.org/tests/research/load-js-css/test.html
+  - http://www.blaze.io/technical/ies-premature-execution-problem/
+
+  - http://yuilibrary.com/projects/yui3/ticket/2530047
+  - http://www.zachleat.com/web/load-css-dynamically/
+  - http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
+  - http://stackoverflow.com/questions/2635814/javascript-capturing-load-event-on-link
+  - http://yearofmoo.com/2011/03/cross-browser-stylesheet-preloading/
+  - http://www.cnblogs.com/rubylouvre/archive/2011/04/12/2011175.html
+
+</pre>
+
+<script>
+  var head = document.getElementsByTagName('head')[0]
+  var timestamp = new Date().getTime()
+
+  print(navigator.userAgent)
+
+  getScript('ok.js')
+  getScript('empty.js')
+  getScript('404.js')
+  getScript('syntax-error.js')
+
+  getStyle('ok.css')
+  getStyle('empty.css')
+  getStyle('404.css')
+  getStyle('syntax-error.css')
+
+
+  function getScript(url) {
+    var s = document.createElement('script')
+
+    s.onload = function() {
+      print('script onload is fired. ' + url)
+    }
+
+    s.onerror = function() {
+      print('script onerror is fired. ' + url)
+    }
+
+    s.onreadystatechange = function() {
+      if (s.readyState === 'loaded' || s.readyState === 'complete') {
+        print('script.readyState = ' + s.readyState + ' ' + url)
+      }
+    }
+
+    s.src = url + '?' + timestamp
+    head.appendChild(s)
+  }
+
+  function getStyle(url) {
+    var s = document.createElement('link')
+    s.rel = 'stylesheet'
+
+    s.onload = function() {
+      print('style onload is fired. ' + url)
+    }
+
+    s.onerror = function() {
+      print('style onerror is fired. ' + url)
+    }
+
+    s.onreadystatechange = function() {
+      if (s.readyState === 'loaded' || s.readyState === 'complete') {
+        print('style.readyState = ' + s.readyState + ' ' + url)
+      }
+    }
+
+    s.href = url + '?' + timestamp
+    head.appendChild(s)
+  }
+
+  function print(msg) {
+    var p = document.createElement('P')
+    p.appendChild(document.createTextNode(msg))
+    document.getElementById('out').appendChild(p)
+  }
+
+</script>
+</body>
+</html>

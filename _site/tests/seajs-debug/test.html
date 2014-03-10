@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+</head>
+<body>
+    <script src="http://assets.spmjs.org/??
+seajs/seajs/2.1.1/sea.js,
+seajs/seajs-style/1.0.0/seajs-style.js"></script>
+    <script src="../../src/store.js"></script>
+<script>
+  seajs.config({
+    alias: {
+        'seajs-debug': '../../dist/seajs-debug',
+        "seajs-log": "seajs/seajs-log/1.0.0/seajs-log",
+        "seajs-health": "seajs/seajs-health/0.1.0/seajs-health"
+    }
+  })
+  seajs.use('./main')
+</script>
+
+
+</body>
+</html>

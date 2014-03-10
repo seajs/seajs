@@ -1,0 +1,1 @@
+define("My name is {{name}}, I love {{love}}");

@@ -1,0 +1,1 @@
+define({ foo: 'bar2' });

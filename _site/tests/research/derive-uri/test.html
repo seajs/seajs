@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+<title>derive uri</title>
+<link rel="stylesheet" href="../../style.css">
+<script src="../../test.js"></script>
+<script> var print = printResult </script>
+</head>
+<body>
+<div id="out"></div>
+
+<!-- cache some scripts -->
+<script> var cacheScript = true </script>
+<script src="a.js"></script>
+<script src="b.js"></script>
+<script src="c.js"></script>
+<script src="h.js"></script>
+<script> cacheScript = false </script>
+
+<script>
+  var doc = document
+  var head = doc.getElementsByTagName('head')[0]
+
+  var UA = navigator.userAgent
+  var isOldIE = !!doc.attachEvent // IE6-9
+  var isOldWebKit = Number(navigator.userAgent
+      .replace(/.*AppleWebKit\/(\d+)\..*/, "$1")) < 533
+  print(UA)
+
+  var outEl = doc.getElementById('out')
+  var order = []
+  var cache = {}
+  var mod = null
+  var n = 0
+  var N = 9
+
+
+  fetch('a.js', printOnload('a.js'))
+
+  fetch('d.js', function() {
+    fetch('b.js', printOnload('b.js'))
+    printOnload('d.js')()
+    fetch('g.js', printOnload('g.js'))
+  })
+
+  fetch('e.js', printOnload('e.js'))
+  fetch('f.js', printOnload('f.js'))
+
+  fetch('h.js', function() {
+    fetch('i.js', printOnload('i.js'))
+    printOnload('h.js')()
+  })
+
+  function printOnload(file) {
+    return function() {
+      print(file + ' is loaded')
+      order.push(file.split('.')[0])
+
+      mod && save(file, mod)
+      mod = null
+
+      done()
+    }
+  }
+
+  function done() {
+    if (++n === N) {
+      print('----------------------------------------------------------------')
+
+      var s = order.join('')
+      var U = s.replace(/[a-z]/g, '')
+      var L = s.replace(/[A-Z]/g, '')
+
+      // 测试基本信息
+      test.assert(s.length === 2 * N, s + ' ' + U + ' ' + L)
+      test.assert(U.length === N, U.length)
+      test.assert(L.length === N, L.length)
+
+      // 测试 A < a 的可靠性
+      var chars = U.split('')
+      for (var i = 0; i < chars.length; i++) {
+        var u = chars[i]
+        var l = u.toLowerCase()
+        test.assert(s.indexOf(u) < s.indexOf(l), u + ' < ' + l)
+      }
+
+      // 测试顺序一致性
+      // 在某些低版本浏览器下不能保证，比如 iPhone 一代的 Safari 上
+      test.assert(isOldWebKit || U.toLowerCase() === L,
+          '"' + U + '".toLowerCase() === "' + L + '"')
+
+      // 校验 Aa 紧相邻假设
+      for (i = 0; i < chars.length; i++) {
+        u = chars[i]
+        l = u.toLowerCase()
+        var diff = s.indexOf(l) - s.indexOf(u)
+
+        // 1. 在 IE6-9 下不能保证 diff === 1
+        // 2. 在某些低版本浏览器下不能保证，比如 iPhone 一代的 Safari 上
+        test.assert(isOldIE || isOldWebKit || diff === 1,
+            l + ' - ' + u + ' = ' + diff)
+      }
+
+      // 检测是否正确获取到了 uri 信息
+      for(var filename in cache) {
+        if (cache.hasOwnProperty(filename)) {
+          var m = cache[filename]
+          test.assert(m.name + '.js' === m.uri, 'derived ' + m.uri)
+        }
+      }
+
+      print('EOF')
+      test.next()
+    }
+  }
+
+
+  var currentlyAddingScript
+  var interactiveScript
+
+  function fetch(src, callback) {
+    var node = document.createElement('script')
+    addOnload(node, callback)
+    node.src = src
+
+    currentlyAddingScript = node
+    head.appendChild(node)
+    currentlyAddingScript = null
+  }
+
+  function addOnload(node, callback) {
+    if (node.addEventListener) {
+      node.addEventListener('load', callback, false)
+      node.addEventListener('error', function() {
+        print('error: ' + node.src)
+        order.push(0)
+      }, false)
+    }
+    else { // for IE6-8
+      node.attachEvent('onreadystatechange', function() {
+        var rs = node.readyState
+        if (rs === 'loaded' || rs === 'complete') {
+          callback()
+        }
+      })
+    }
+  }
+
+  function getCurrentScript() {
+    print("exec getCurrentScript")
+
+    if (currentlyAddingScript) {
+      return currentlyAddingScript
+    }
+
+    // For IE6-9 browsers, the script onload event may not fire right
+    // after the the script is evaluated. Kris Zyp found that it
+    // could query the script nodes and the one that is in "interactive"
+    // mode indicates the current script
+    // ref: http://goo.gl/JHfFW
+    if (interactiveScript && interactiveScript.readyState === "interactive") {
+      return interactiveScript
+    }
+
+    var scripts = head.getElementsByTagName("script")
+
+    for (var i = scripts.length - 1; i >= 0; i--) {
+      var script = scripts[i]
+      if (script.readyState === "interactive") {
+        interactiveScript = script
+        return interactiveScript
+      }
+    }
+  }
+
+  function deriveCurrentScriptUri() {
+    var derivedUri
+
+    // For IE6-9
+    if (doc.attachEvent) {
+      var script = getCurrentScript()
+
+      if (script) {
+        derivedUri = script.src.split('/').pop()
+      } else {
+        print('Failed to derive uri', 'fail')
+      }
+    }
+
+    return derivedUri
+  }
+
+  function save(uri, meta) {
+    if (!cache[uri]) {
+      meta.uri = uri
+      cache[uri] = meta
+    }
+  }
+
+</script>
+</body>
+</html>

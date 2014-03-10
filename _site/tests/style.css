@@ -1,0 +1,108 @@
+
+body, button {
+  font: 16px/1.62 'Xin Gothic', 'PT Sans', 'Hiragino Sans GB', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+#header {
+  color: #333;
+  background-color: #F9F9F9;
+  border: 1px solid #DDD;
+  border-radius: 4px 4px 0 0;
+  padding: 5px 10px;
+  position: relative;
+  border-bottom: none;
+}
+
+#title {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0;
+  color: #555;
+}
+
+#summary {
+  position: absolute;
+  left: 300px;
+  top: 8px;
+}
+
+#summary span {
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+#container {
+  margin: 0 5px;
+}
+
+#container iframe {
+  top: 0;
+  left: 0;
+  position: absolute;
+  visibility: hidden;
+}
+
+#go {
+  width: 90px;
+  height: 30px;
+  margin:  5px 10px 5px 0;
+  font-size: 18px;
+}
+
+#reporter {
+  padding: 0 10px 0 20px;
+  margin-bottom: 10px;
+  height: 360px;
+  overflow-y: scroll;
+  border: 1px solid #ddd;
+}
+
+h2, h3 {
+  font: bold 16px Arial;
+  margin: 15px 0 5px 0;
+  color: #555;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 25px 0 15px -10px;
+}
+
+a.hash {
+  color: #999;
+  text-decoration: none;
+}
+
+.pass {
+  color: #51A351;
+}
+
+.fail,
+.error {
+  color: #DA4F49;
+}
+
+.warn {
+  color: #F89406;
+}
+
+.time {
+  color: #666;
+}
+
+.hide-pass h2,
+.hide-pass .pass,
+.hide-pass .info,
+.hide-pass .error-summary {
+  display: none;
+}
+
+
+/* for mobile device */
+@media screen and (max-width: 480px) {
+  body, button { font-size: 12px }
+  #summary { position: static }
+  #reporter { height: 200px }
+}
+

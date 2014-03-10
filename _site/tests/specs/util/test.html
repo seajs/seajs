@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>test</title>
+<script>
+  var global = this
+  var _seajs = {}
+</script>
+<script src="../../../src/sea.js"></script>
+
+<script src="../../../src/util-lang.js"></script>
+<script src="../../../src/util-events.js"></script>
+<script src="../../../src/util-path.js"></script>
+<script src="../../../src/util-request.js"></script>
+<script src="../../../src/util-deps.js"></script>
+
+<script src="../../../src/module.js"></script>
+<script src="../../../src/config.js"></script>
+</head>
+<body>
+<div id="out"></div>
+<script>
+  seajs.use('../../test', function(test) {
+    test.run([
+      'events.js',
+      'path.js',
+      'config.js'
+    ])
+  })
+</script>
+</body>
+</html>
