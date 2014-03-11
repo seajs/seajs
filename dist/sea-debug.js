@@ -1,5 +1,5 @@
 /**
- * Sea.js 2.2.0 | seajs.org/LICENSE.md
+ * Sea.js 2.2.1 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -10,7 +10,7 @@ if (global.seajs) {
 
 var seajs = global.seajs = {
   // The current version of Sea.js being used
-  version: "2.2.0"
+  version: "2.2.1"
 }
 
 var data = seajs.data = {}
@@ -277,7 +277,7 @@ seajs.resolve = id2Uri
  * ref: tests/research/load-js-css/test.html
  */
 
-var head = doc.getElementsByTagName("head")[0] || doc.documentElement
+var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
 var baseElement = head.getElementsByTagName("base")[0]
 
 var IS_CSS_RE = /\.css(?:\?|$)/i
@@ -290,7 +290,7 @@ var interactiveScript
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
 //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
 var isOldWebKit = +navigator.userAgent
-    .replace(/.*AppleWebKit\/(\d+)\..*/, "$1") < 536
+    .replace(/.*(?:AppleWebKit|AndroidWebKit)\/(\d+).*/, "$1") < 536
 
 
 function request(url, callback, charset) {
@@ -534,7 +534,7 @@ Module.prototype.load = function() {
     m = Module.get(uris[i])
 
     if (m.status < STATUS.LOADED) {
-      // Maybe duplicate
+      // Maybe duplicate: When module has dupliate dependency, it should be it's count, not 1
       m._waitings[mod.uri] = (m._waitings[mod.uri] || 0) + 1
     }
     else {
@@ -856,6 +856,7 @@ data.cid = cid
 seajs.require = function(id) {
   var mod = Module.get(Module.resolve(id))
   if (mod.status < STATUS.EXECUTING) {
+    mod.onload()
     mod.exec()
   }
   return mod.exports
