@@ -72,6 +72,14 @@ Module.prototype.load = function() {
   for (var i = 0; i < len; i++) {
     m = Module.get(uris[i])
 
+    if(data.debug) {
+
+      // parent dependent
+      isArray(m.parents) ?
+        m.parents.push(mod) :
+        (m.parents = [mod])
+    }
+
     if (m.status < STATUS.LOADED) {
       // Maybe duplicate: When module has dupliate dependency, it should be it's count, not 1
       m._waitings[mod.uri] = (m._waitings[mod.uri] || 0) + 1
