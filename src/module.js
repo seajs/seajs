@@ -63,7 +63,7 @@ Module.prototype.load = function() {
 
   // Emit `load` event for plugins such as combo plugin
   var uris = mod.resolve()
-  emit("load", uris)
+  emit("load", uris, mod)
 
   var len = mod._remain = uris.length
   var m
