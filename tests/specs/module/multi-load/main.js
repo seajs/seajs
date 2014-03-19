@@ -3,14 +3,14 @@ define(function(require) {
   var test = require('../../../test')
 
 
-  if (typeof process === 'undefined') {
-    require.async('./a.css')
-    require.async('./a.css')
-    require.async('./a.css')
-    require.async('./a.css')
-    require.async('./a.css')
-    require.async('./a.css')
-  }
+//  if (typeof process === 'undefined') {
+//    require.async('./a.css')
+//    require.async('./a.css')
+//    require.async('./a.css')
+//    require.async('./a.css')
+//    require.async('./a.css')
+//    require.async('./a.css')
+//  }
 
   require.async('./a.js')
   require.async('./a.js')

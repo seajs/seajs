@@ -13,7 +13,7 @@ define([
   'exports',
   'jsonp',
   'lazy',
-  'load-css',
+//  'load-css',
   'method',
   'multi-load',
   'multi-versions',
