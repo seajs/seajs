@@ -353,32 +353,11 @@ Module.use = function (ids, callback, uri) {
   mod.load()
 }
 
-// Load preload modules before all other modules
-Module.preload = function(callback) {
-  var preloadMods = data.preload
-  var len = preloadMods.length
-
-  if (len) {
-    Module.use(preloadMods, function() {
-      // Remove the loaded preload modules
-      preloadMods.splice(0, len)
-
-      // Allow preload modules to add new preload modules
-      Module.preload(callback)
-    }, data.cwd + "_preload_" + cid())
-  }
-  else {
-    callback()
-  }
-}
-
 
 // Public API
 
 seajs.use = function(ids, callback) {
-  Module.preload(function() {
-    Module.use(ids, callback, data.cwd + "_use_" + cid())
-  })
+  Module.use(ids, callback, data.cwd + "_use_" + cid())
   return seajs
 }
 

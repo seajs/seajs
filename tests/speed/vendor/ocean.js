@@ -12,7 +12,7 @@ var config = {
 		alias: {},
 		base: location.protocol + '//' + location.hostname + '/',
 		charset: 'utf-8',
-		preload: [],
+//		preload: [],
 		vars: {}
 	};
 
@@ -562,14 +562,16 @@ var manager = (function () {
 					ids = [ ids ];
 				}
 
-				if (config.preload.length > 0) { // Need preloading.
-					this.compile(this.define(null, config.preload, function () {
-						config.preload = [];
-						use();
-					}));
-				} else {
-					use();
-				}
+        use();
+
+//				if (config.preload.length > 0) { // Need preloading.
+//					this.compile(this.define(null, config.preload, function () {
+//						config.preload = [];
+//						use();
+//					}));
+//				} else {
+//					use();
+//				}
 			}
 		};
 

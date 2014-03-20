@@ -752,32 +752,11 @@ Module.use = function (ids, callback, uri) {
   mod.load()
 }
 
-// Load preload modules before all other modules
-Module.preload = function(callback) {
-  var preloadMods = data.preload
-  var len = preloadMods.length
-
-  if (len) {
-    Module.use(preloadMods, function() {
-      // Remove the loaded preload modules
-      preloadMods.splice(0, len)
-
-      // Allow preload modules to add new preload modules
-      Module.preload(callback)
-    }, data.cwd + "_preload_" + cid())
-  }
-  else {
-    callback()
-  }
-}
-
 
 // Public API
 
 seajs.use = function(ids, callback) {
-  Module.preload(function() {
-    Module.use(ids, callback, data.cwd + "_use_" + cid())
-  })
+  Module.use(ids, callback, data.cwd + "_use_" + cid())
   return seajs
 }
 
@@ -817,25 +796,6 @@ data.cwd = cwd
 // The charset for requesting files
 data.charset = "utf-8"
 
-// Modules that are needed to load before all other modules
-data.preload = (function() {
-  var plugins = []
-
-  // Convert `seajs-xxx` to `seajs-xxx=1`
-  // NOTE: use `seajs-xxx=1` flag in uri or cookie to preload `seajs-xxx`
-  var str = location.search.replace(/(seajs-\w+)(&|$)/g, "$1=1$2")
-
-  // Add cookie string
-  str += " " + doc.cookie
-
-  // Exclude seajs-xxx=0
-  str.replace(/(seajs-\w+)=1/g, function(m, name) {
-    plugins.push(name)
-  })
-
-  return plugins
-})()
-
 // data.alias - An object containing shorthands of module id
 // data.paths - An object containing path shorthands in module id
 // data.vars - The {xxx} variables in module id
@@ -855,7 +815,7 @@ seajs.config = function(configData) {
       }
     }
     else {
-      // Concat array config such as map, preload
+      // Concat array config such as map
       if (isArray(prev)) {
         curr = prev.concat(curr)
       }
