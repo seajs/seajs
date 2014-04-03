@@ -86,9 +86,9 @@ var emit = seajs.emit = function(name, data) {
     // Copy callback lists to prevent modification
     list = list.slice()
 
-    // Execute event callbacks
-    while ((fn = list.shift())) {
-      fn(data)
+    // Execute event callbacks, use index because it's the faster.
+    for(var i = 0, len = list.length; i < len; i++) {
+      list[i](data);
     }
   }
 
