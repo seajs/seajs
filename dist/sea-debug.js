@@ -250,7 +250,7 @@ function id2Uri(id, refUri) {
 
 
 var doc = document
-var cwd = dirname(doc.URL)
+var cwd = dirname(location.href)
 var scripts = doc.scripts
 
 // Recommend to add `seajsnode` id for the `sea.js` script element
