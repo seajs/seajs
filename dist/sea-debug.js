@@ -88,7 +88,7 @@ var emit = seajs.emit = function(name, data) {
 
     // Execute event callbacks, use index because it's the faster.
     for(var i = 0, len = list.length; i < len; i++) {
-      list[i](data);
+      list[i](data)
     }
   }
 
@@ -722,6 +722,8 @@ Module.save = function(uri, meta) {
     mod.dependencies = meta.deps || []
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
+
+    emit("save", mod)
   }
 }
 

@@ -323,6 +323,8 @@ Module.save = function(uri, meta) {
     mod.dependencies = meta.deps || []
     mod.factory = meta.factory
     mod.status = STATUS.SAVED
+
+    emit("save", mod)
   }
 }
 
