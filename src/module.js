@@ -225,6 +225,8 @@ Module.prototype.exec = function () {
     Module.use(ids, callback, uri + "_async_" + cid())
     return require
   }
+  
+  require.get = require;
 
   // Exec factory
   var factory = mod.factory
