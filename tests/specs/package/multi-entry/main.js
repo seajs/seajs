@@ -1,3 +1,9 @@
+/**
+ * imitate module a -> module b
+ * seajs.use(a) first time
+ * when a is loaded and saved, a will request b
+ * now seajs.use(a) second time
+ */
 
 seajs.config({
   base: '../'
@@ -15,10 +21,16 @@ define(function(require) {
     }
   }
 
-  seajs.use('./multi-entry/a', success)
-  seajs.on("fetch", function(mod) {
-    if(mod.uri.indexOf("b.js") > -1) {
-      seajs.use('./multi-entry/a', success)
+  seajs.use('./multi-entry/a', function(a) {
+    test.assert(a === 'b', 'module should return "b"')
+    success()
+  })
+  seajs.on("request", function(data) {
+    if(data.uri.indexOf("b.js") > -1) {
+      seajs.use('./multi-entry/a', function(a) {
+        test.assert(a === 'b', 'module should return "b"')
+        success()
+      })
     }
   })
 
