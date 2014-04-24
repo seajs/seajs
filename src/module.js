@@ -31,11 +31,7 @@ function Module(uri, deps) {
   this.exports = null
   this.status = 0
 
-  // Who depends on me
-  this._waitings = {}
-
-  // The number of unloaded dependencies
-  this._remain = 0
+  this._entry = []
 }
 
 // Resolve module.dependencies
@@ -48,6 +44,50 @@ Module.prototype.resolve = function() {
     uris[i] = Module.resolve(ids[i], mod.uri)
   }
   return uris
+}
+
+Module.prototype.pass = function() {
+  var mod = this
+
+  var uris = mod.resolve()
+  var len = uris.length
+  var len2 = mod._entry.length
+  var count = 0
+
+  // Pass entry to module.dependencies that not loaded
+  for (var i = 0; i < len; i++) {
+    var m = Module.get(uris[i])
+
+    if (m.status < STATUS.LOADED) {
+      var passes = []
+      for(var j = 0; j < len2; j++) {
+        var entry = mod._entry[j]
+        if(!entry.history.hasOwnProperty(m.uri)) {
+          passes.push(entry)
+          entry.history[m.uri] = true
+        }
+      }
+      if(passes.length) {
+        m._entry = m._entry.concat(passes)
+        if(m.status === STATUS.LOADING) {
+          m.pass()
+        }
+        count++
+      }
+    }
+  }
+
+  if (count > 1) {
+    for (i = 0, len = mod._entry.length; i < len; i++) {
+      mod._entry[i].remain += count - 1
+    }
+  }
+  // Clear entry for next passing
+  if (count > 0) {
+    mod._entry = []
+  }
+
+  return count
 }
 
 // Load module.dependencies and fire onload when all done
@@ -65,31 +105,19 @@ Module.prototype.load = function() {
   var uris = mod.resolve()
   emit("load", uris)
 
-  var len = mod._remain = uris.length
-  var m
+  var count = mod.pass()
 
-  // Initialize modules and register waitings
-  for (var i = 0; i < len; i++) {
-    m = Module.get(uris[i])
-
-    if (m.status < STATUS.LOADED) {
-      // Maybe duplicate: When module has dupliate dependency, it should be it's count, not 1
-      m._waitings[mod.uri] = (m._waitings[mod.uri] || 0) + 1
-    }
-    else {
-      mod._remain--
-    }
-  }
-
-  if (mod._remain === 0) {
+  // If module has no dependence not loaded, call onload
+  if (count === 0) {
     mod.onload()
     return
   }
 
   // Begin parallel loading
   var requestCache = {}
+  var m
 
-  for (i = 0; i < len; i++) {
+  for (var i = 0, len = uris.length; i < len; i++) {
     m = cachedMods[uris[i]]
 
     if (m.status < STATUS.FETCHING) {
@@ -113,27 +141,64 @@ Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  if (mod.callback) {
-    mod.callback()
-  }
-
-  // Notify waiting modules to fire onload
-  var waitings = mod._waitings
-  var uri, m
-
-  for (uri in waitings) {
-    if (waitings.hasOwnProperty(uri)) {
-      m = cachedMods[uri]
-      m._remain -= waitings[uri]
-      if (m._remain === 0) {
-        m.onload()
-      }
+  var entry
+  while (entry = mod._entry.shift()) {
+    if (--entry.remain === 0) {
+      entry.callback()
     }
   }
+}
 
-  // Reduce memory taken
-  delete mod._waitings
-  delete mod._remain
+// Execute a module
+Module.prototype.exec = function () {
+  var mod = this
+
+  // When module is executed, DO NOT execute it again. When module
+  // is being executed, just return `module.exports` too, for avoiding
+  // circularly calling
+  if (mod.status >= STATUS.EXECUTING) {
+    return mod.exports
+  }
+
+  mod.status = STATUS.EXECUTING
+
+  // Create require
+  var uri = mod.uri
+
+  function require(id) {
+    return Module.get(require.resolve(id)).exec()
+  }
+
+  require.resolve = function(id) {
+    return Module.resolve(id, uri)
+  }
+
+  require.async = function(ids, callback) {
+    Module.use(ids, callback, uri + "_async_" + cid())
+    return require
+  }
+
+  // Exec factory
+  var factory = mod.factory
+
+  var exports = isFunction(factory) ?
+    factory(require, mod.exports = {}, mod) :
+    factory
+
+  if (exports === undefined) {
+    exports = mod.exports
+  }
+
+  // Reduce memory leak
+  delete mod.factory
+
+  mod.exports = exports
+  mod.status = STATUS.EXECUTED
+
+  // Emit `exec` event
+  emit("exec", mod)
+
+  return exports
 }
 
 // Fetch a module
@@ -195,58 +260,6 @@ Module.prototype.fetch = function(requestCache) {
     delete callbackList[requestUri]
     while ((m = mods.shift())) m.load()
   }
-}
-
-// Execute a module
-Module.prototype.exec = function () {
-  var mod = this
-
-  // When module is executed, DO NOT execute it again. When module
-  // is being executed, just return `module.exports` too, for avoiding
-  // circularly calling
-  if (mod.status >= STATUS.EXECUTING) {
-    return mod.exports
-  }
-
-  mod.status = STATUS.EXECUTING
-
-  // Create require
-  var uri = mod.uri
-
-  function require(id) {
-    return Module.get(require.resolve(id)).exec()
-  }
-
-  require.resolve = function(id) {
-    return Module.resolve(id, uri)
-  }
-
-  require.async = function(ids, callback) {
-    Module.use(ids, callback, uri + "_async_" + cid())
-    return require
-  }
-
-  // Exec factory
-  var factory = mod.factory
-
-  var exports = isFunction(factory) ?
-      factory(require, mod.exports = {}, mod) :
-      factory
-
-  if (exports === undefined) {
-    exports = mod.exports
-  }
-
-  // Reduce memory leak
-  delete mod.factory
-
-  mod.exports = exports
-  mod.status = STATUS.EXECUTED
-
-  // Emit `exec` event
-  emit("exec", mod)
-
-  return exports
 }
 
 // Resolve id to uri
@@ -337,6 +350,10 @@ Module.get = function(uri, deps) {
 Module.use = function (ids, callback, uri) {
   var mod = Module.get(uri, isArray(ids) ? ids : [ids])
 
+  mod._entry.push(mod)
+  mod.history = {}
+  mod.remain = 1
+
   mod.callback = function() {
     var exports = []
     var uris = mod.resolve()
@@ -350,6 +367,8 @@ Module.use = function (ids, callback, uri) {
     }
 
     delete mod.callback
+    delete mod.history
+    delete mod.remain
   }
 
   mod.load()
