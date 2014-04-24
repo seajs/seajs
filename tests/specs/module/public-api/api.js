@@ -64,7 +64,7 @@ define(function(require, exports, mod) {
   assert(isFunction(Module.prototype.exec), 'Module.prototype.exec')
 
   assert(getOwnPropertyCount(Module) === 6, getOwnPropertyCount(Module))
-  assert(getOwnPropertyCount(Module.prototype) === 5, getOwnPropertyCount(Module.prototype))
+  assert(getOwnPropertyCount(Module.prototype) === 6, getOwnPropertyCount(Module.prototype))
 
   
   // require
@@ -88,17 +88,18 @@ define(function(require, exports, mod) {
   assert(isFunction(mod.factory), 'module.factory')
   assert(mod.status === 5, 'module.status')
 
-  assert(typeof mod._waitings === 'object', 'module._waitings')
-  assert(typeof mod._remain === 'number', 'module._remain')
+//  assert(typeof mod._waitings === 'object', 'module._waitings')
+//  assert(typeof mod._remain === 'number', 'module._remain')
 //  assert(typeof mod._resolveCache === 'object', 'module._resolveCache')
 //  assert(typeof mod._callback === 'object', 'module._callback')
+  assert(typeof mod._entry === 'object', 'module._waitings')
 
   //assert(typeof mod.options === 'object', 'module.options')
   //assert(mod.parent instanceof Module, 'module.parent')
   //assert(mod.parent.parent === undefined, 'module.parent.parent')
   //assert(isFunction(mod.load), 'module.load')
 
-  assert(getOwnPropertyCount(mod) === 8, getOwnPropertyCount(mod))
+  assert(getOwnPropertyCount(mod) === 7, getOwnPropertyCount(mod))
 
 
   test.next()
