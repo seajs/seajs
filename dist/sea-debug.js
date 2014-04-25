@@ -526,13 +526,20 @@ Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  var entry
-  while (entry = mod._entry.shift()) {
+//  var entry
+//  while (entry = mod._entry.shift()) {
+//    if (--entry.remain === 0) {
+//      entry.callback()
+//      if (entry !== mod) {
+//        delete entry._entry
+//      }
+//    }
+//  }
+
+  for (var i = 0, len = mod._entry.length; i < len; i++) {
+    var entry = mod._entry[i]
     if (--entry.remain === 0) {
       entry.callback()
-      if (entry !== mod) {
-        delete entry._entry
-      }
     }
   }
 
