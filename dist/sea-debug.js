@@ -530,8 +530,13 @@ Module.prototype.onload = function() {
   while (entry = mod._entry.shift()) {
     if (--entry.remain === 0) {
       entry.callback()
+      if (entry !== mod) {
+        delete entry._entry
+      }
     }
   }
+
+  delete mod._entry
 }
 
 // Execute a module
@@ -740,6 +745,8 @@ Module.use = function (ids, callback, uri) {
   mod.remain = 1
 
   mod.callback = function() {
+    mod.status = STATUS.LOADED
+
     var exports = []
     var uris = mod.resolve()
 
