@@ -445,48 +445,33 @@ Module.prototype.resolve = function() {
   return uris
 }
 
-Module.prototype.pass = function() {
+Module.prototype.pass = function(uris) {
   var mod = this
 
-  var uris = mod.resolve()
+  uris = uris || mod.resolve()
   var len = uris.length
-  var len2 = mod._entry.length
-  var count = 0
 
-  // Pass entry to module.dependencies that not loaded
-  for (var i = 0; i < len; i++) {
-    var m = Module.get(uris[i])
-
-    if (m.status < STATUS.LOADED) {
-      var passes = []
-      for(var j = 0; j < len2; j++) {
-        var entry = mod._entry[j]
-        if(!entry.history.hasOwnProperty(m.uri)) {
-          passes.push(entry)
-          entry.history[m.uri] = true
-        }
-      }
-      if(passes.length) {
-        m._entry = m._entry.concat(passes)
+  for (var i = 0; i < mod._entry.length; i++) {
+    var entry = mod._entry[i]
+    var count = 0
+    for (var j = 0; j < len; j++) {
+      var m = Module.get(uris[j])
+      // If the module is unload and unused in the entry, pass entry to it
+      if (m.status < STATUS.LOADED && !entry.history.hasOwnProperty(m.uri)) {
+        entry.history[m.uri] = true
+        count++
+        m._entry.push(entry)
         if(m.status === STATUS.LOADING) {
           m.pass()
         }
-        count++
       }
     }
-  }
-
-  if (count > 1) {
-    for (i = 0, len = mod._entry.length; i < len; i++) {
-      mod._entry[i].remain += count - 1
+    // If has passed the entry to it's dependencies, modify the entry's count and del it in the module
+    if (count > 0) {
+      entry.remain += count - 1
+      mod._entry.shift()
     }
   }
-  // Clear entry for next passing
-  if (count > 0) {
-    mod._entry = []
-  }
-
-  return count
 }
 
 // Load module.dependencies and fire onload when all done
@@ -504,12 +489,12 @@ Module.prototype.load = function() {
   var uris = mod.resolve()
   emit("load", uris)
 
-  var count = mod.pass()
+  // Pass entry to it's dependencies
+  mod.pass(uris)
 
-  // If module has no dependence not loaded, call onload
-  if (count === 0) {
+  // If module has entries not be passed, call onload
+  if (mod._entry.length) {
     mod.onload()
-    return
   }
 
   // Begin parallel loading
@@ -636,8 +621,8 @@ Module.prototype.fetch = function(requestCache) {
 
   if (!emitData.requested) {
     requestCache ?
-        requestCache[emitData.requestUri] = sendRequest :
-        sendRequest()
+      requestCache[emitData.requestUri] = sendRequest :
+      sendRequest()
   }
 
   function sendRequest() {
@@ -721,8 +706,8 @@ Module.define = function (id, deps, factory) {
   emit("define", meta)
 
   meta.uri ? Module.save(meta.uri, meta) :
-      // Save information for "saving" work in the script onload event
-      anonymousMeta = meta
+    // Save information for "saving" work in the script onload event
+    anonymousMeta = meta
 }
 
 // Save meta data to cachedMods
