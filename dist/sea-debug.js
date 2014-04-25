@@ -470,6 +470,7 @@ Module.prototype.pass = function(uris) {
     if (count > 0) {
       entry.remain += count - 1
       mod._entry.shift()
+      i--
     }
   }
 }
