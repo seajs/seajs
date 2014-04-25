@@ -200,12 +200,12 @@ Module.prototype.fetch = function(requestCache) {
   var requestUri = emitData.requestUri || uri
 
   // Empty uri or a non-CMD module
-  if (!requestUri || fetchedList[requestUri]) {
+  if (!requestUri || fetchedList.hasOwnProperty(requestUri)) {
     mod.load()
     return
   }
 
-  if (fetchingList[requestUri]) {
+  if (fetchingList.hasOwnProperty(requestUri)) {
     callbackList[requestUri].push(mod)
     return
   }
