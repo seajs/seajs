@@ -526,16 +526,6 @@ Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-//  var entry
-//  while (entry = mod._entry.shift()) {
-//    if (--entry.remain === 0) {
-//      entry.callback()
-//      if (entry !== mod) {
-//        delete entry._entry
-//      }
-//    }
-//  }
-
   for (var i = 0, len = mod._entry.length; i < len; i++) {
     var entry = mod._entry[i]
     if (--entry.remain === 0) {
@@ -588,6 +578,9 @@ Module.prototype.exec = function () {
 
   // Reduce memory leak
   delete mod.factory
+  if (mod._entry && !mod._entry.length) {
+    delete mod._entry
+  }
 
   mod.exports = exports
   mod.status = STATUS.EXECUTED
@@ -768,6 +761,7 @@ Module.use = function (ids, callback, uri) {
     delete mod.callback
     delete mod.history
     delete mod.remain
+    delete mod._entry
   }
 
   mod.load()

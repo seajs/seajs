@@ -179,6 +179,9 @@ Module.prototype.exec = function () {
 
   // Reduce memory leak
   delete mod.factory
+  if (mod._entry && !mod._entry.length) {
+    delete mod._entry
+  }
 
   mod.exports = exports
   mod.status = STATUS.EXECUTED
@@ -359,6 +362,7 @@ Module.use = function (ids, callback, uri) {
     delete mod.callback
     delete mod.history
     delete mod.remain
+    delete mod._entry
   }
 
   mod.load()
