@@ -745,8 +745,6 @@ Module.use = function (ids, callback, uri) {
   mod.remain = 1
 
   mod.callback = function() {
-    mod.status = STATUS.LOADED
-
     var exports = []
     var uris = mod.resolve()
 
