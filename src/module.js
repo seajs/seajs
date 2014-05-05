@@ -97,6 +97,7 @@ Module.prototype.load = function() {
   // If module has entries not be passed, call onload
   if (mod._entry.length) {
     mod.onload()
+    return
   }
 
   // Begin parallel loading
