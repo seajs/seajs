@@ -21,13 +21,18 @@ function realpath(path) {
   // /a/b/./c/./d ==> /a/b/c/d
   path = path.replace(DOT_RE, "/")
 
+  // Modified by @wh1100717
+  // DOUBLE_DOT_RE matches a/b/c//../d path correctly only if replace // with / first
+  // a//b/c  ==>  a/b/c
+  // a///b/c ==> a//b/c ==> a/b/c
+  while (path.match(DOUBLE_SLASH_RE)) {
+    path = path.replace(DOUBLE_SLASH_RE, "$1/")
+  }
+
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
   while (path.match(DOUBLE_DOT_RE)) {
     path = path.replace(DOUBLE_DOT_RE, "/")
   }
-
-  // a//b/c  ==>  a/b/c
-  path = path.replace(DOUBLE_SLASH_RE, "$1/")
 
   return path
 }
