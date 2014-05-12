@@ -23,8 +23,10 @@ define(function(require) {
   //assert(realpath('http://test.com/./a//b/../c') === 'http://test.com/a/c', 'realpath')
   assert(realpath('http://test.com/a/b/c/d/e/f/g/h/../../../../../../i') === 'http://test.com/a/b/i', 'realpath')
   assert(realpath('https://test.com/a/b/../../c') === 'https://test.com/c', 'realpath')
-  //assert(realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
-  //assert(realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
+  assert(realpath('file:///a//b/c') === 'file:///a/b/c', 'realpath')
+  assert(realpath('http://a//b/c') === 'http://a/b/c', 'realpath')
+  assert(realpath('http://a/b/c//../d') === 'http://a/b/d', 'realpath')
+  assert(realpath('http://a///b/c') === 'http://a/b/c', 'realpath')
 
 
   assert(normalize('a/b/c') === 'a/b/c.js', 'normalize')
