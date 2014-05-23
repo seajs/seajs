@@ -18,6 +18,9 @@
     "url": "git://github.com/seajs/seajs.git"
   },
   "main": "./lib/sea.js",
+  "spm": {
+    "main": "./lib/sea.js"
+  },
   "licenses": [
     {
       "type": "MIT",
