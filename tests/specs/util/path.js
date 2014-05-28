@@ -31,7 +31,7 @@ define(function(require) {
 
   assert(normalize('a/b/c') === 'a/b/c.js', 'normalize')
   assert(normalize('a/b/c.js') === 'a/b/c.js', 'normalize')
-  assert(normalize('a/b/c.css') === 'a/b/c.css', 'normalize')
+  assert(normalize('a/b/c.css') === 'a/b/c.css.js', 'normalize')
   assert(normalize('a/b/c.d') === 'a/b/c.d.js', 'normalize')
   assert(normalize('a/b/c.json#') === 'a/b/c.json', 'normalize')
   assert(normalize('a/b/c.json') === 'a/b/c.json.js', 'normalize')
