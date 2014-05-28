@@ -51,7 +51,6 @@ function normalize(path) {
 
   return (path.substring(last - 2) === ".js" ||
       path.indexOf("?") > 0 ||
-      path.substring(last - 3) === ".css" ||
       lastC === "/") ? path : path + ".js"
 }
 
