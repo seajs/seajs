@@ -536,13 +536,13 @@ function parseDependencies(s) {
     var s2 = s.slice(index - 1)
     var r
     if(peek == '.') {
-      r = /^\.\d+(?:E[+-]?\d*)?/i.exec(s2)[0]
+      r = /^\.\d+(?:E[+-]?\d*)?\s*/i.exec(s2)[0]
     }
     else if(/^0x[\da-f]*/i.test(s2)) {
-      r = /^0x[\da-f]*/i.exec(s2)[0]
+      r = /^0x[\da-f]*\s*/i.exec(s2)[0]
     }
     else {
-      r = /^\d+\.?\d*(?:E[+-]?\d*)?/i.exec(s2)[0]
+      r = /^\d+\.?\d*(?:E[+-]?\d*)?\s*/i.exec(s2)[0]
     }
     index += r.length - 1
     isReg = false
