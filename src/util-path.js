@@ -42,16 +42,16 @@ function realpath(path) {
 // NOTICE: substring is faster than negative slice and RegExp
 function normalize(path) {
   var last = path.length - 1
-  var lastC = path.charAt(last)
+  var lastC = path.charCodeAt(last)
 
   // If the uri ends with `#`, just return it without '#'
-  if (lastC === "#") {
+  if (lastC === 35 /* "#" */) {
     return path.substring(0, last)
   }
 
   return (path.substring(last - 2) === ".js" ||
       path.indexOf("?") > 0 ||
-      lastC === "/") ? path : path + ".js"
+      lastC === 47 /* "/" */) ? path : path + ".js"
 }
 
 
@@ -112,18 +112,18 @@ var ROOT_DIR_RE = /^.*?\/\/.*?\//
 
 function addBase(id, refUri) {
   var ret
-  var first = id.charAt(0)
+  var first = id.charCodeAt(0)
 
   // Absolute
   if (ABSOLUTE_RE.test(id)) {
     ret = id
   }
   // Relative
-  else if (first === ".") {
+  else if (first === 46 /* "." */) {
     ret = realpath((refUri ? dirname(refUri) : data.cwd) + id)
   }
   // Root
-  else if (first === "/") {
+  else if (first === 47 /* "/" */) {
     var m = data.cwd.match(ROOT_DIR_RE)
     ret = m ? m[0] + id.substring(1) : id
   }
