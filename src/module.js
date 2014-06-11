@@ -31,11 +31,7 @@ function Module(uri, deps) {
   this.exports = null
   this.status = 0
 
-  // Who depends on me
-  this._waitings = {}
-
-  // The number of unloaded dependencies
-  this._remain = 0
+  this._entry = []
 }
 
 // Resolve module.dependencies
@@ -48,6 +44,36 @@ Module.prototype.resolve = function() {
     uris[i] = Module.resolve(ids[i], mod.uri)
   }
   return uris
+}
+
+Module.prototype.pass = function(uris) {
+  var mod = this
+
+  uris = uris || mod.resolve()
+  var len = uris.length
+
+  for (var i = 0; i < mod._entry.length; i++) {
+    var entry = mod._entry[i]
+    var count = 0
+    for (var j = 0; j < len; j++) {
+      var m = Module.get(uris[j])
+      // If the module is unload and unused in the entry, pass entry to it
+      if (m.status < STATUS.LOADED && !entry.history.hasOwnProperty(m.uri)) {
+        entry.history[m.uri] = true
+        count++
+        m._entry.push(entry)
+        if(m.status === STATUS.LOADING) {
+          m.pass()
+        }
+      }
+    }
+    // If has passed the entry to it's dependencies, modify the entry's count and del it in the module
+    if (count > 0) {
+      entry.remain += count - 1
+      mod._entry.shift()
+      i--
+    }
+  }
 }
 
 // Load module.dependencies and fire onload when all done
@@ -65,31 +91,20 @@ Module.prototype.load = function() {
   var uris = mod.resolve()
   emit("load", uris)
 
-  var len = mod._remain = uris.length
-  var m
+  // Pass entry to it's dependencies
+  mod.pass(uris)
 
-  // Initialize modules and register waitings
-  for (var i = 0; i < len; i++) {
-    m = Module.get(uris[i])
-
-    if (m.status < STATUS.LOADED) {
-      // Maybe duplicate: When module has dupliate dependency, it should be it's count, not 1
-      m._waitings[mod.uri] = (m._waitings[mod.uri] || 0) + 1
-    }
-    else {
-      mod._remain--
-    }
-  }
-
-  if (mod._remain === 0) {
+  // If module has entries not be passed, call onload
+  if (mod._entry.length) {
     mod.onload()
     return
   }
 
   // Begin parallel loading
   var requestCache = {}
+  var m
 
-  for (i = 0; i < len; i++) {
+  for (var i = 0, len = uris.length; i < len; i++) {
     m = cachedMods[uris[i]]
 
     if (m.status < STATUS.FETCHING) {
@@ -113,88 +128,14 @@ Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  if (mod.callback) {
-    mod.callback()
-  }
-
-  // Notify waiting modules to fire onload
-  var waitings = mod._waitings
-  var uri, m
-
-  for (uri in waitings) {
-    if (waitings.hasOwnProperty(uri)) {
-      m = cachedMods[uri]
-      m._remain -= waitings[uri]
-      if (m._remain === 0) {
-        m.onload()
-      }
+  for (var i = 0, len = mod._entry.length; i < len; i++) {
+    var entry = mod._entry[i]
+    if (--entry.remain === 0) {
+      entry.callback()
     }
   }
 
-  // Reduce memory taken
-  delete mod._waitings
-  delete mod._remain
-}
-
-// Fetch a module
-Module.prototype.fetch = function(requestCache) {
-  var mod = this
-  var uri = mod.uri
-
-  mod.status = STATUS.FETCHING
-
-  // Emit `fetch` event for plugins such as combo plugin
-  var emitData = { uri: uri }
-  emit("fetch", emitData)
-  var requestUri = emitData.requestUri || uri
-
-  // Empty uri or a non-CMD module
-  if (!requestUri || fetchedList[requestUri]) {
-    mod.load()
-    return
-  }
-
-  if (fetchingList[requestUri]) {
-    callbackList[requestUri].push(mod)
-    return
-  }
-
-  fetchingList[requestUri] = true
-  callbackList[requestUri] = [mod]
-
-  // Emit `request` event for plugins such as text plugin
-  emit("request", emitData = {
-    uri: uri,
-    requestUri: requestUri,
-    onRequest: onRequest,
-    charset: data.charset
-  })
-
-  if (!emitData.requested) {
-    requestCache ?
-        requestCache[emitData.requestUri] = sendRequest :
-        sendRequest()
-  }
-
-  function sendRequest() {
-    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
-  }
-
-  function onRequest() {
-    delete fetchingList[requestUri]
-    fetchedList[requestUri] = true
-
-    // Save meta data of anonymous module
-    if (anonymousMeta) {
-      Module.save(uri, anonymousMeta)
-      anonymousMeta = null
-    }
-
-    // Call callbacks
-    var m, mods = callbackList[requestUri]
-    delete callbackList[requestUri]
-    while ((m = mods.shift())) m.load()
-  }
+  delete mod._entry
 }
 
 // Execute a module
@@ -230,8 +171,8 @@ Module.prototype.exec = function () {
   var factory = mod.factory
 
   var exports = isFunction(factory) ?
-      factory(require, mod.exports = {}, mod) :
-      factory
+    factory(require, mod.exports = {}, mod) :
+    factory
 
   if (exports === undefined) {
     exports = mod.exports
@@ -239,6 +180,9 @@ Module.prototype.exec = function () {
 
   // Reduce memory leak
   delete mod.factory
+  if (mod._entry && !mod._entry.length) {
+    delete mod._entry
+  }
 
   mod.exports = exports
   mod.status = STATUS.EXECUTED
@@ -247,6 +191,67 @@ Module.prototype.exec = function () {
   emit("exec", mod)
 
   return exports
+}
+
+// Fetch a module
+Module.prototype.fetch = function(requestCache) {
+  var mod = this
+  var uri = mod.uri
+
+  mod.status = STATUS.FETCHING
+
+  // Emit `fetch` event for plugins such as combo plugin
+  var emitData = { uri: uri }
+  emit("fetch", emitData)
+  var requestUri = emitData.requestUri || uri
+
+  // Empty uri or a non-CMD module
+  if (!requestUri || fetchedList.hasOwnProperty(requestUri)) {
+    mod.load()
+    return
+  }
+
+  if (fetchingList.hasOwnProperty(requestUri)) {
+    callbackList[requestUri].push(mod)
+    return
+  }
+
+  fetchingList[requestUri] = true
+  callbackList[requestUri] = [mod]
+
+  // Emit `request` event for plugins such as text plugin
+  emit("request", emitData = {
+    uri: uri,
+    requestUri: requestUri,
+    onRequest: onRequest,
+    charset: data.charset
+  })
+
+  if (!emitData.requested) {
+    requestCache ?
+      requestCache[emitData.requestUri] = sendRequest :
+      sendRequest()
+  }
+
+  function sendRequest() {
+    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
+  }
+
+  function onRequest() {
+    delete fetchingList[requestUri]
+    fetchedList[requestUri] = true
+
+    // Save meta data of anonymous module
+    if (anonymousMeta) {
+      Module.save(uri, anonymousMeta)
+      anonymousMeta = null
+    }
+
+    // Call callbacks
+    var m, mods = callbackList[requestUri]
+    delete callbackList[requestUri]
+    while ((m = mods.shift())) m.load()
+  }
 }
 
 // Resolve id to uri
@@ -309,8 +314,8 @@ Module.define = function (id, deps, factory) {
   emit("define", meta)
 
   meta.uri ? Module.save(meta.uri, meta) :
-      // Save information for "saving" work in the script onload event
-      anonymousMeta = meta
+    // Save information for "saving" work in the script onload event
+    anonymousMeta = meta
 }
 
 // Save meta data to cachedMods
@@ -337,6 +342,10 @@ Module.get = function(uri, deps) {
 Module.use = function (ids, callback, uri) {
   var mod = Module.get(uri, isArray(ids) ? ids : [ids])
 
+  mod._entry.push(mod)
+  mod.history = {}
+  mod.remain = 1
+
   mod.callback = function() {
     var exports = []
     var uris = mod.resolve()
@@ -350,6 +359,9 @@ Module.use = function (ids, callback, uri) {
     }
 
     delete mod.callback
+    delete mod.history
+    delete mod.remain
+    delete mod._entry
   }
 
   mod.load()

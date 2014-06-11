@@ -1,6 +1,6 @@
 define([
-//  'circular',
-//  'multi-circular',
+  'circular',
+  'multi-circular',
   'multi-entry',
   'inline',
   'math',

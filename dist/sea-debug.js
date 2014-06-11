@@ -140,16 +140,16 @@ function realpath(path) {
 // NOTICE: substring is faster than negative slice and RegExp
 function normalize(path) {
   var last = path.length - 1
-  var lastC = path.charAt(last)
+  var lastC = path.charCodeAt(last)
 
   // If the uri ends with `#`, just return it without '#'
-  if (lastC === "#") {
+  if (lastC === 35 /* "#" */) {
     return path.substring(0, last)
   }
 
   return (path.substring(last - 2) === ".js" ||
       path.indexOf("?") > 0 ||
-      lastC === "/") ? path : path + ".js"
+      lastC === 47 /* "/" */) ? path : path + ".js"
 }
 
 
@@ -210,18 +210,18 @@ var ROOT_DIR_RE = /^.*?\/\/.*?\//
 
 function addBase(id, refUri) {
   var ret
-  var first = id.charAt(0)
+  var first = id.charCodeAt(0)
 
   // Absolute
   if (ABSOLUTE_RE.test(id)) {
     ret = id
   }
   // Relative
-  else if (first === ".") {
+  else if (first === 46 /* "." */) {
     ret = realpath((refUri ? dirname(refUri) : data.cwd) + id)
   }
   // Root
-  else if (first === "/") {
+  else if (first === 47 /* "/" */) {
     var m = data.cwd.match(ROOT_DIR_RE)
     ret = m ? m[0] + id.substring(1) : id
   }
@@ -384,23 +384,174 @@ seajs.request = request
  * ref: tests/research/parse-dependencies/test.html
  */
 
-var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^\/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
-var SLASH_RE = /\\\\/g
-
-function parseDependencies(code) {
-  var ret = []
-
-  code.replace(SLASH_RE, "")
-      .replace(REQUIRE_RE, function(m, m1, m2) {
-        if (m2) {
-          ret.push(m2)
+function parseDependencies(s) {
+  if(s.indexOf('require') == -1) {
+    return []
+  }
+  var index = 0, peek, length = s.length, isReg = true, modName = false, parentheseState = false, parentheseStack = [], res = [];
+  while(index < length) {
+    readch()
+    if(isBlank()) {
+    }
+    else if(isQuote()) {
+      dealQuote()
+      isReg = true
+    }
+    else if(peek == '/') {
+      readch()
+      if(peek == '/') {
+        index = s.indexOf('\n', index)
+        if(index == -1) {
+          index = s.length
         }
-      })
-
-  return ret
+        isReg = true
+      }
+      else if(peek == '*') {
+        index = s.indexOf('*/', index) + 2
+        isReg = true
+      }
+      else if(isReg) {
+        dealReg()
+        isReg = false
+      }
+      else {
+        index--
+        isReg = true
+      }
+    }
+    else if(isWord()) {
+      dealWord()
+    }
+    else if(isNumber()) {
+      dealNumber()
+    }
+    else if(peek == '(') {
+      parentheseStack.push(parentheseState)
+      isReg = true
+    }
+    else if(peek == ')') {
+      isReg = parentheseStack.pop()
+    }
+    else {
+      isReg = peek != ']'
+      modName = false
+    }
+  }
+  return res
+  function readch() {
+    peek = s.charAt(index++)
+  }
+  function isBlank() {
+    return /\s/.test(peek)
+  }
+  function isQuote() {
+    return peek == '"' || peek == "'"
+  }
+  function dealQuote() {
+    var start = index
+    var c = peek
+    var end = s.indexOf(c, start)
+    if(s.charAt(end - 1) != '\\') {
+      index = end + 1
+    }
+    else {
+      while(index < length) {
+        readch()
+        if(peek == '\\') {
+          index++
+        }
+        else if(peek == c) {
+          break
+        }
+      }
+    }
+    if(modName) {
+      res.push(s.slice(start, index - 1))
+      modName = false
+    }
+  }
+  function dealReg() {
+    index--
+    while(index < length) {
+      readch()
+      if(peek == '\\') {
+        index++
+      }
+      else if(peek == '/') {
+        break
+      }
+      else if(peek == '[') {
+        while(index < length) {
+          readch()
+          if(peek == '\\') {
+            index++
+          }
+          else if(peek == ']') {
+            break
+          }
+        }
+      }
+    }
+  }
+  function isWord() {
+    return /[a-z_$]/i.test(peek)
+  }
+  function dealWord() {
+    var s2 = s.slice(index - 1)
+    var r = /^[\w$]+/.exec(s2)[0]
+    parentheseState = {
+      'if': 1,
+      'for': 1,
+      'while': 1
+    }[r]
+    isReg = {
+      'break': 1,
+      'case': 1,
+      'continue': 1,
+      'debugger': 1,
+      'delete': 1,
+      'do': 1,
+      'else': 1,
+      'false': 1,
+      'if': 1,
+      'in': 1,
+      'instanceof': 1,
+      'null': 1,
+      'return': 1,
+      'typeof': 1,
+      'void': 1,
+      'while': 1,
+      'with': 1
+    }[r]
+    modName = /^require\s*\(\s*['"]/.test(s2)
+    if(modName) {
+      r = /^require\s*\(\s*['"]/.exec(s2)[0]
+      index += r.length - 2
+    }
+    else {
+      index += /^[\w$.\s]+/.exec(s2)[0].length - 1
+    }
+  }
+  function isNumber() {
+    return /\d/.test(peek)
+      || peek == '.' && /\d/.test(s.charAt(index))
+  }
+  function dealNumber() {
+    var s2 = s.slice(index - 1)
+    var r
+    if(peek == '.') {
+      r = /^\.\d+(?:E[+-]?\d*)?\s*/i.exec(s2)[0]
+    }
+    else if(/^0x[\da-f]*/i.test(s2)) {
+      r = /^0x[\da-f]*\s*/i.exec(s2)[0]
+    }
+    else {
+      r = /^\d+\.?\d*(?:E[+-]?\d*)?\s*/i.exec(s2)[0]
+    }
+    index += r.length - 1
+    isReg = false
+  }
 }
-
-
 /**
  * module.js - The core of module loader
  */
@@ -434,11 +585,7 @@ function Module(uri, deps) {
   this.exports = null
   this.status = 0
 
-  // Who depends on me
-  this._waitings = {}
-
-  // The number of unloaded dependencies
-  this._remain = 0
+  this._entry = []
 }
 
 // Resolve module.dependencies
@@ -451,6 +598,36 @@ Module.prototype.resolve = function() {
     uris[i] = Module.resolve(ids[i], mod.uri)
   }
   return uris
+}
+
+Module.prototype.pass = function(uris) {
+  var mod = this
+
+  uris = uris || mod.resolve()
+  var len = uris.length
+
+  for (var i = 0; i < mod._entry.length; i++) {
+    var entry = mod._entry[i]
+    var count = 0
+    for (var j = 0; j < len; j++) {
+      var m = Module.get(uris[j])
+      // If the module is unload and unused in the entry, pass entry to it
+      if (m.status < STATUS.LOADED && !entry.history.hasOwnProperty(m.uri)) {
+        entry.history[m.uri] = true
+        count++
+        m._entry.push(entry)
+        if(m.status === STATUS.LOADING) {
+          m.pass()
+        }
+      }
+    }
+    // If has passed the entry to it's dependencies, modify the entry's count and del it in the module
+    if (count > 0) {
+      entry.remain += count - 1
+      mod._entry.shift()
+      i--
+    }
+  }
 }
 
 // Load module.dependencies and fire onload when all done
@@ -468,31 +645,20 @@ Module.prototype.load = function() {
   var uris = mod.resolve()
   emit("load", uris)
 
-  var len = mod._remain = uris.length
-  var m
+  // Pass entry to it's dependencies
+  mod.pass(uris)
 
-  // Initialize modules and register waitings
-  for (var i = 0; i < len; i++) {
-    m = Module.get(uris[i])
-
-    if (m.status < STATUS.LOADED) {
-      // Maybe duplicate: When module has dupliate dependency, it should be it's count, not 1
-      m._waitings[mod.uri] = (m._waitings[mod.uri] || 0) + 1
-    }
-    else {
-      mod._remain--
-    }
-  }
-
-  if (mod._remain === 0) {
+  // If module has entries not be passed, call onload
+  if (mod._entry.length) {
     mod.onload()
     return
   }
 
   // Begin parallel loading
   var requestCache = {}
+  var m
 
-  for (i = 0; i < len; i++) {
+  for (var i = 0, len = uris.length; i < len; i++) {
     m = cachedMods[uris[i]]
 
     if (m.status < STATUS.FETCHING) {
@@ -516,88 +682,14 @@ Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  if (mod.callback) {
-    mod.callback()
-  }
-
-  // Notify waiting modules to fire onload
-  var waitings = mod._waitings
-  var uri, m
-
-  for (uri in waitings) {
-    if (waitings.hasOwnProperty(uri)) {
-      m = cachedMods[uri]
-      m._remain -= waitings[uri]
-      if (m._remain === 0) {
-        m.onload()
-      }
+  for (var i = 0, len = mod._entry.length; i < len; i++) {
+    var entry = mod._entry[i]
+    if (--entry.remain === 0) {
+      entry.callback()
     }
   }
 
-  // Reduce memory taken
-  delete mod._waitings
-  delete mod._remain
-}
-
-// Fetch a module
-Module.prototype.fetch = function(requestCache) {
-  var mod = this
-  var uri = mod.uri
-
-  mod.status = STATUS.FETCHING
-
-  // Emit `fetch` event for plugins such as combo plugin
-  var emitData = { uri: uri }
-  emit("fetch", emitData)
-  var requestUri = emitData.requestUri || uri
-
-  // Empty uri or a non-CMD module
-  if (!requestUri || fetchedList[requestUri]) {
-    mod.load()
-    return
-  }
-
-  if (fetchingList[requestUri]) {
-    callbackList[requestUri].push(mod)
-    return
-  }
-
-  fetchingList[requestUri] = true
-  callbackList[requestUri] = [mod]
-
-  // Emit `request` event for plugins such as text plugin
-  emit("request", emitData = {
-    uri: uri,
-    requestUri: requestUri,
-    onRequest: onRequest,
-    charset: data.charset
-  })
-
-  if (!emitData.requested) {
-    requestCache ?
-        requestCache[emitData.requestUri] = sendRequest :
-        sendRequest()
-  }
-
-  function sendRequest() {
-    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
-  }
-
-  function onRequest() {
-    delete fetchingList[requestUri]
-    fetchedList[requestUri] = true
-
-    // Save meta data of anonymous module
-    if (anonymousMeta) {
-      Module.save(uri, anonymousMeta)
-      anonymousMeta = null
-    }
-
-    // Call callbacks
-    var m, mods = callbackList[requestUri]
-    delete callbackList[requestUri]
-    while ((m = mods.shift())) m.load()
-  }
+  delete mod._entry
 }
 
 // Execute a module
@@ -633,8 +725,8 @@ Module.prototype.exec = function () {
   var factory = mod.factory
 
   var exports = isFunction(factory) ?
-      factory(require, mod.exports = {}, mod) :
-      factory
+    factory(require, mod.exports = {}, mod) :
+    factory
 
   if (exports === undefined) {
     exports = mod.exports
@@ -642,6 +734,9 @@ Module.prototype.exec = function () {
 
   // Reduce memory leak
   delete mod.factory
+  if (mod._entry && !mod._entry.length) {
+    delete mod._entry
+  }
 
   mod.exports = exports
   mod.status = STATUS.EXECUTED
@@ -650,6 +745,67 @@ Module.prototype.exec = function () {
   emit("exec", mod)
 
   return exports
+}
+
+// Fetch a module
+Module.prototype.fetch = function(requestCache) {
+  var mod = this
+  var uri = mod.uri
+
+  mod.status = STATUS.FETCHING
+
+  // Emit `fetch` event for plugins such as combo plugin
+  var emitData = { uri: uri }
+  emit("fetch", emitData)
+  var requestUri = emitData.requestUri || uri
+
+  // Empty uri or a non-CMD module
+  if (!requestUri || fetchedList.hasOwnProperty(requestUri)) {
+    mod.load()
+    return
+  }
+
+  if (fetchingList.hasOwnProperty(requestUri)) {
+    callbackList[requestUri].push(mod)
+    return
+  }
+
+  fetchingList[requestUri] = true
+  callbackList[requestUri] = [mod]
+
+  // Emit `request` event for plugins such as text plugin
+  emit("request", emitData = {
+    uri: uri,
+    requestUri: requestUri,
+    onRequest: onRequest,
+    charset: data.charset
+  })
+
+  if (!emitData.requested) {
+    requestCache ?
+      requestCache[emitData.requestUri] = sendRequest :
+      sendRequest()
+  }
+
+  function sendRequest() {
+    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
+  }
+
+  function onRequest() {
+    delete fetchingList[requestUri]
+    fetchedList[requestUri] = true
+
+    // Save meta data of anonymous module
+    if (anonymousMeta) {
+      Module.save(uri, anonymousMeta)
+      anonymousMeta = null
+    }
+
+    // Call callbacks
+    var m, mods = callbackList[requestUri]
+    delete callbackList[requestUri]
+    while ((m = mods.shift())) m.load()
+  }
 }
 
 // Resolve id to uri
@@ -712,8 +868,8 @@ Module.define = function (id, deps, factory) {
   emit("define", meta)
 
   meta.uri ? Module.save(meta.uri, meta) :
-      // Save information for "saving" work in the script onload event
-      anonymousMeta = meta
+    // Save information for "saving" work in the script onload event
+    anonymousMeta = meta
 }
 
 // Save meta data to cachedMods
@@ -740,6 +896,10 @@ Module.get = function(uri, deps) {
 Module.use = function (ids, callback, uri) {
   var mod = Module.get(uri, isArray(ids) ? ids : [ids])
 
+  mod._entry.push(mod)
+  mod.history = {}
+  mod.remain = 1
+
   mod.callback = function() {
     var exports = []
     var uris = mod.resolve()
@@ -753,6 +913,9 @@ Module.use = function (ids, callback, uri) {
     }
 
     delete mod.callback
+    delete mod.history
+    delete mod.remain
+    delete mod._entry
   }
 
   mod.load()
