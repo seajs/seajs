@@ -7,7 +7,7 @@ function parseDependencies(s) {
   if(s.indexOf('require') == -1) {
     return []
   }
-  var index = 0, peek, length = s.length, isReg = true, modName = false, parentheseState = false, parentheseStack = [], res = [];
+  var index = 0, peek, length = s.length, isReg = 1, modName = 0, parentheseState = 0, parentheseStack = [], res = [];
   while(index < length) {
     readch()
     if(isBlank()) {
@@ -23,19 +23,19 @@ function parseDependencies(s) {
         if(index == -1) {
           index = s.length
         }
-        isReg = true
+        isReg = 1
       }
       else if(peek == '*') {
         index = s.indexOf('*/', index) + 2
-        isReg = true
+        isReg = 1
       }
       else if(isReg) {
         dealReg()
-        isReg = false
+        isReg = 0
       }
       else {
         index--
-        isReg = true
+        isReg = 1
       }
     }
     else if(isWord()) {
@@ -46,14 +46,14 @@ function parseDependencies(s) {
     }
     else if(peek == '(') {
       parentheseStack.push(parentheseState)
-      isReg = true
+      isReg = 1
     }
     else if(peek == ')') {
       isReg = parentheseStack.pop()
     }
     else {
       isReg = peek != ']'
-      modName = false
+      modName = 0
     }
   }
   return res
@@ -86,7 +86,7 @@ function parseDependencies(s) {
     }
     if(modName) {
       res.push(s.slice(start, index - 1))
-      modName = false
+      modName = 0
     }
   }
   function dealReg() {
@@ -121,7 +121,8 @@ function parseDependencies(s) {
     parentheseState = {
       'if': 1,
       'for': 1,
-      'while': 1
+      'while': 1,
+      'with': 1
     }[r]
     isReg = {
       'break': 1,
@@ -135,12 +136,10 @@ function parseDependencies(s) {
       'if': 1,
       'in': 1,
       'instanceof': 1,
-      'null': 1,
       'return': 1,
       'typeof': 1,
       'void': 1,
-      'while': 1,
-      'with': 1
+      'while': 1
     }[r]
     modName = /^require\s*\(\s*['"]/.test(s2)
     if(modName) {
@@ -168,6 +167,6 @@ function parseDependencies(s) {
       r = /^\d+\.?\d*(?:E[+-]?\d*)?\s*/i.exec(s2)[0]
     }
     index += r.length - 1
-    isReg = false
+    isReg = 0
   }
 }
