@@ -1,6 +1,7 @@
 /**
  * util-deps.js - The parser for dependencies
  * ref: tests/research/parse-dependencies/test.html
+ * ref: https://github.com/seajs/searequire
  */
 
 function parseDependencies(s) {
@@ -138,8 +139,7 @@ function parseDependencies(s) {
       'instanceof': 1,
       'return': 1,
       'typeof': 1,
-      'void': 1,
-      'while': 1
+      'void': 1
     }[r]
     modName = /^require\s*\(\s*['"]/.test(s2)
     if(modName) {
