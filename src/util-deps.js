@@ -8,7 +8,7 @@ function parseDependencies(s) {
   if(s.indexOf('require') == -1) {
     return []
   }
-  var index = 0, peek, length = s.length, isReg = 1, modName = 0, parentheseState = 0, parentheseStack = [], res = [];
+  var index = 0, peek, length = s.length, isReg = 1, modName = 0, parentheseState = 0, parentheseStack = [], res = []
   while(index < length) {
     readch()
     if(isBlank()) {
