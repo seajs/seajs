@@ -23,6 +23,7 @@ define([
   'require-global',
   'singleton',
   'transitive',
+  'use-index',
 
   // Place `path-resolve` at last because 404 case in it, otherwise it will
   // affect the following spec in old browsers such as Firefox 5.0
