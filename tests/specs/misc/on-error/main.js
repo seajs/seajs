@@ -5,8 +5,13 @@ define(function(require) {
 
 
   // 404
-  var a = require('./a')
-  test.assert(a === null, '404 a')
+  var a
+  try {
+    a = require('./a')
+  } catch (e) {
+    test.assert(e.toString().indexOf('module was broken:') > -1, '404 error msg ' + e)
+  }
+  test.assert(a === void 0, '404 a')
 
   // exec error
   setTimeout(function() {
@@ -15,17 +20,17 @@ define(function(require) {
 
 
   require.async('./c', function(c) {
-    test.assert(c === null, '404 c')
+    test.assert(c === void 0, '404 c')
     done()
   })
 
   require.async('./e', function(e) {
-    test.assert(e === null, 'exec error e')
+    test.assert(e === void 0, 'exec error e')
     done()
   })
 
   seajs.use('./d', function(d) {
-    test.assert(d === null, '404 d')
+    test.assert(d === void 0, '404 d')
     done()
   })
 

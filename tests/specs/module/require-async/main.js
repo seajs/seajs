@@ -26,8 +26,8 @@ define(function(require) {
     test.assert(a.name === 'a', a.name)
     test.assert(c1.name === 'c1', c1.name)
     test.assert(a2.name === 'a', a2.name)
-    test.assert(e1 === null, 'null')
-    test.assert(e2 === null, 'null')
+    test.assert(e1 === void 0, 'null')
+    test.assert(e2 === void 0, 'null')
     done()
   })
 

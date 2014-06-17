@@ -28,10 +28,10 @@ define(function(require) {
   
   // issues#824
   var lang = 'not-existed'
-  test.assert(require(lang) === null, 'i18n')
+  test.assert(require(lang) === void 0, 'i18n')
 
   require.async('./missing/missing', function(missing) {
-    test.assert(missing.bogus === null, 'return null when module file is 404')
+    test.assert(missing.bogus === void 0, 'return undefined when module file is 404')
     test.next()
   })
 

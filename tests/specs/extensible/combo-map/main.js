@@ -17,7 +17,7 @@ define(function(require) {
 
   test.assert(a.name == 'a', a.name)
   test.assert(b.name == 'b', b.name)
-  test.assert(c === null, 'return null when c is not found')
+  test.assert(c === void 0, 'return undefined when c is not found')
 
   test.next()
 

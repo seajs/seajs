@@ -322,7 +322,7 @@ function addOnload(node, callback, url) {
     node.onload = onload
     node.onerror = function() {
       emit("error", { uri: url, node: node })
-      onload()
+      onload(true)
     }
   }
   else {
@@ -333,7 +333,7 @@ function addOnload(node, callback, url) {
     }
   }
 
-  function onload() {
+  function onload(error) {
     // Ensure only run once and handle memory leak in IE
     node.onload = node.onerror = node.onreadystatechange = null
 
@@ -345,7 +345,7 @@ function addOnload(node, callback, url) {
     // Dereference the node
     node = null
 
-    callback()
+    callback(error)
   }
 }
 
@@ -574,14 +574,15 @@ var STATUS = Module.STATUS = {
   // 5 - The module is being executed
   EXECUTING: 5,
   // 6 - The `module.exports` is available
-  EXECUTED: 6
+  EXECUTED: 6,
+  // 7 - 404
+  ERROR: 7
 }
 
 
 function Module(uri, deps) {
   this.uri = uri
   this.dependencies = deps || []
-  this.exports = null
   this.status = 0
 
   this._entry = []
@@ -691,6 +692,13 @@ Module.prototype.onload = function() {
   delete mod._entry
 }
 
+// Call this method when module is 404
+Module.prototype.error = function() {
+  var mod = this
+  mod.onload()
+  mod.status = STATUS.ERROR
+}
+
 // Execute a module
 Module.prototype.exec = function () {
   var mod = this
@@ -704,11 +712,25 @@ Module.prototype.exec = function () {
 
   mod.status = STATUS.EXECUTING
 
+  if (mod._entry && !mod._entry.length) {
+    delete mod._entry
+  }
+
+  //non-cmd module has no property factory and exports
+  if (!mod.hasOwnProperty('factory')) {
+    mod.non = true
+    return
+  }
+
   // Create require
   var uri = mod.uri
 
   function require(id) {
-    return Module.get(require.resolve(id)).exec()
+    var m = Module.get(require.resolve(id))
+    if (m.status == STATUS.ERROR) {
+      throw new Error('module was broken: ' + m.uri);
+    }
+    return m.exec()
   }
 
   require.resolve = function(id) {
@@ -733,9 +755,6 @@ Module.prototype.exec = function () {
 
   // Reduce memory leak
   delete mod.factory
-  if (mod._entry && !mod._entry.length) {
-    delete mod._entry
-  }
 
   mod.exports = exports
   mod.status = STATUS.EXECUTED
@@ -790,7 +809,7 @@ Module.prototype.fetch = function(requestCache) {
     seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
   }
 
-  function onRequest() {
+  function onRequest(error) {
     delete fetchingList[requestUri]
     fetchedList[requestUri] = true
 
@@ -803,7 +822,17 @@ Module.prototype.fetch = function(requestCache) {
     // Call callbacks
     var m, mods = callbackList[requestUri]
     delete callbackList[requestUri]
-    while ((m = mods.shift())) m.load()
+    while ((m = mods.shift())) {
+      // When 404 occurs, the params error will be true
+      // When a combo-js has syntax error, use status < STATUS.SAVED to get the error module
+      // because may be the syntax right module has saved by Module.define
+      if(error === true && m.status < STATUS.SAVED) {
+        m.error()
+      }
+      else {
+        m.load()
+      }
+    }
   }
 }
 

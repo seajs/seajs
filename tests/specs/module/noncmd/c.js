@@ -1,0 +1,3 @@
+define(function() {
+  //non return
+});

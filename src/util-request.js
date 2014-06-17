@@ -44,7 +44,7 @@ function addOnload(node, callback, url) {
     node.onload = onload
     node.onerror = function() {
       emit("error", { uri: url, node: node })
-      onload()
+      onload(true)
     }
   }
   else {
@@ -55,7 +55,7 @@ function addOnload(node, callback, url) {
     }
   }
 
-  function onload() {
+  function onload(error) {
     // Ensure only run once and handle memory leak in IE
     node.onload = node.onerror = node.onreadystatechange = null
 
@@ -67,7 +67,7 @@ function addOnload(node, callback, url) {
     // Dereference the node
     node = null
 
-    callback()
+    callback(error)
   }
 }
 

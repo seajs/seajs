@@ -64,7 +64,7 @@ define(function(require, exports, mod) {
   assert(isFunction(Module.prototype.exec), 'Module.prototype.exec')
 
   assert(getOwnPropertyCount(Module) === 6, getOwnPropertyCount(Module))
-  assert(getOwnPropertyCount(Module.prototype) === 6, getOwnPropertyCount(Module.prototype))
+  assert(getOwnPropertyCount(Module.prototype) === 7, getOwnPropertyCount(Module.prototype))
 
   
   // require
