@@ -155,9 +155,6 @@ Module.prototype.exec = function () {
   var uri = mod.uri
 
   function require(id) {
-    if(typeof id === 'number') {
-      id = mod.dependencies[id]
-    }
     return Module.get(require.resolve(id)).exec()
   }
 
