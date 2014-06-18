@@ -271,9 +271,7 @@ Module.prototype.fetch = function(requestCache) {
     delete callbackList[requestUri]
     while ((m = mods.shift())) {
       // When 404 occurs, the params error will be true
-      // When a combo-js has syntax error, use status < STATUS.SAVED to get the error module
-      // because may be the syntax right module has saved by Module.define
-      if(error === true && m.status < STATUS.SAVED) {
+      if(error === true) {
         m.error()
       }
       else {

@@ -10,6 +10,7 @@ define(function(require) {
     a = require('./a')
   } catch (e) {
     test.assert(e.toString().indexOf('module was broken:') > -1, '404 error msg ' + e)
+    n++
   }
   test.assert(a === void 0, '404 a')
 
@@ -38,7 +39,7 @@ define(function(require) {
   //require('./f.css')
 
   function done() {
-    if (++n === 3) {
+    if (++n === 4) {
       test.assert(w_errors.length > 0, w_errors.length)
 
       // 0 for IE6-8
