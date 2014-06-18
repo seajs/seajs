@@ -11,7 +11,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "seatools": "*"
+    "seatools": "0.5.8"
   },
   "repository": {
     "type": "git",
