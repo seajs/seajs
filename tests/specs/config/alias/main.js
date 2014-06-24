@@ -2,7 +2,10 @@
 seajs.config({
   alias: {
     'a': './path/to/a.js',
-    'biz/b': './path/to/biz/b'
+    'biz/b': './path/to/biz/b',
+    'd': './path/to/d.js',
+    'e.js': './path/to/e.js',
+    'f': './path/to/f.js'
   }
 })
 
@@ -13,9 +16,15 @@ define(function(require) {
 
   var a = require('a')
   var b = require('biz/b')
+  var d = require('d')
+  var e = require('e')
+  var f = require('f')
 
   test.assert(a.name === 'a', a.name)
   test.assert(b.name === 'b', b.name)
+  test.assert(d.name === 'd', d.name)
+  test.assert(e.name === 'e', e.name)
+  test.assert(f.name === 'f', f.name)
 
 
   seajs.config({

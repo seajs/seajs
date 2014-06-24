@@ -1,0 +1,1 @@
+define(seajs.data.base + 'alias/path/to/f.js', { name: 'f' })

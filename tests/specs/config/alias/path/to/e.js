@@ -1,0 +1,1 @@
+define('alias/path/to/e.js', { name: 'e' })

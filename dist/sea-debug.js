@@ -243,10 +243,14 @@ function id2Uri(id, refUri) {
 
   id = parseAlias(id)
   id = parsePaths(id)
+  id = parseAlias(id)
   id = parseVars(id)
+  id = parseAlias(id)
   id = normalize(id)
+  id = parseAlias(id)
 
   var uri = addBase(id, refUri)
+  uri = parseAlias(uri)
   uri = parseMap(uri)
 
   return uri
