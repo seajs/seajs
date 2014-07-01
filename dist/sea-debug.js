@@ -686,7 +686,8 @@ Module.prototype.onload = function() {
   var mod = this
   mod.status = STATUS.LOADED
 
-  for (var i = 0, len = mod._entry.length; i < len; i++) {
+  // When sometimes cached in IE, exec will occur before onload, make sure len is an number
+  for (var i = 0, len = (mod._entry || []).length; i < len; i++) {
     var entry = mod._entry[i]
     if (--entry.remain === 0) {
       entry.callback()
