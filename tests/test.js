@@ -53,7 +53,7 @@ if (typeof document !== 'undefined') {
 (function(factory) {
 
   if (typeof define === 'function') {
-    define('test', factory)
+    define(factory)
   }
   else if (typeof require === 'function') {
     factory(require, exports)
