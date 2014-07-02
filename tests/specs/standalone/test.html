@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
+  <title>test</title>
+  <script src="../../../dist/sea.js"></script>
+  <script src="../../../dist/standalone.js"></script>
+  <script src="../../test-standalone.js"></script>
+</head>
+<body>
+<div id="out"></div>
+<script>
+  var seajs = {}
+  seajs.off = function(){}
+  seajs.config = function(){}
+
+  define('a', [], function() { return 'a' })
+  define('b', ['c'], function(require) { var c = require('c'); return c })
+  define('c', [], {})
+
+  var test = require('test')
+
+  var a = require('a')
+  test.assert(a === 'a', 'a is a')
+
+  var b = require('b')
+  test.assert(JSON.stringify(b) == '{}', 'b is {}')
+
+  var c = require('c')
+  test.assert(JSON.stringify(c) == '{}', 'c is {}')
+
+  test.assert(b === c, 'b is return c')
+
+  define('e', [], function(require, exports, module) {
+    module.exports = 'e'
+  })
+
+  var e = require('e')
+  test.assert(e === 'e', 'e is e')
+
+  define('f', [], function(require) {
+    test.assert(true, 'f is test.next() call')
+    test.next()
+  })
+
+  require('f')
+</script>
+</body>
+</html>

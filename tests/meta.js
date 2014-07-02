@@ -16,7 +16,9 @@ var testSuites = [
   'specs/misc/utf8-in-gbk',
   'specs/misc/x-ua-compatible',
 
-  'research/derive-uri'
+  'research/derive-uri',
+
+  'specs/standalone'
 ]
 
 // For seajs in node
