@@ -1,0 +1,4 @@
+define('./meta', [
+  'multi-circular'
+])
+

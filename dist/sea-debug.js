@@ -353,6 +353,11 @@ function addOnload(node, callback, url) {
   }
 }
 
+
+// For Developers
+seajs.request = request
+
+
 function getCurrentScript() {
   if (currentlyAddingScript) {
     return currentlyAddingScript
@@ -377,10 +382,6 @@ function getCurrentScript() {
     }
   }
 }
-
-
-// For Developers
-seajs.request = request
 
 
 /**
@@ -884,7 +885,7 @@ Module.define = function (id, deps, factory) {
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
-  if (!meta.uri && doc.attachEvent) {
+  if (!meta.uri && doc.attachEvent && typeof getCurrentScript != "undefined") {
     var script = getCurrentScript()
 
     if (script) {

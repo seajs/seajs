@@ -18,7 +18,8 @@ var testSuites = [
 
   'research/derive-uri',
 
-  'specs/standalone'
+  'specs/standalone',
+  'specs/runtime'
 ]
 
 // For seajs in node
