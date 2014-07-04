@@ -874,7 +874,7 @@ Module.define = function (id, deps, factory) {
 
   // Parse dependencies according to the module factory code
   if (!isArray(deps) && isFunction(factory)) {
-    deps = parseDependencies(factory.toString())
+    deps = typeof parseDependencies === "undefined" ? [] : parseDependencies(factory.toString())
   }
 
   var meta = {
@@ -885,7 +885,7 @@ Module.define = function (id, deps, factory) {
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
-  if (!meta.uri && doc.attachEvent && typeof getCurrentScript != "undefined") {
+  if (!meta.uri && doc.attachEvent && typeof getCurrentScript !== "undefined") {
     var script = getCurrentScript()
 
     if (script) {
