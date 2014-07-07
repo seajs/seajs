@@ -6,6 +6,7 @@ define([
   'map',
   'paths',
 //  'preload',
-  'vars'
+  'vars',
+  'beforeExec'
 ])
 
