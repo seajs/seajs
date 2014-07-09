@@ -15,7 +15,7 @@ function parseDependencies(s) {
     }
     else if(isQuote()) {
       dealQuote()
-      isReg = true
+      isReg = 1
     }
     else if(peek == '/') {
       readch()
@@ -24,11 +24,15 @@ function parseDependencies(s) {
         if(index == -1) {
           index = s.length
         }
-        isReg = 1
       }
       else if(peek == '*') {
-        index = s.indexOf('*/', index) + 2
-        isReg = 1
+        index = s.indexOf('*/', index)
+        if(index == -1) {
+          index = length
+        }
+        else {
+          index += 2
+        }
       }
       else if(isReg) {
         dealReg()
