@@ -30,6 +30,7 @@ var STATUS = Module.STATUS = {
 function Module(uri, deps) {
   this.uri = uri
   this.dependencies = deps || []
+  this.deps = {} // Ref the dependence modules
   this.status = 0
 
   this._entry = []
@@ -50,13 +51,13 @@ Module.prototype.resolve = function() {
 Module.prototype.pass = function() {
   var mod = this
 
-  var len = mod.deps.length
+  var len = mod.dependencies.length
 
   for (var i = 0; i < mod._entry.length; i++) {
     var entry = mod._entry[i]
     var count = 0
     for (var j = 0; j < len; j++) {
-      var m = mod.deps[j]
+      var m = mod.deps[mod.dependencies[j]]
       // If the module is unload and unused in the entry, pass entry to it
       if (m.status < STATUS.LOADED && !entry.history.hasOwnProperty(m.uri)) {
         entry.history[m.uri] = true
@@ -91,10 +92,8 @@ Module.prototype.load = function() {
   var uris = mod.resolve()
   emit("load", uris)
 
-  mod.deps = [] // Ref the dependence modules
-
   for (var i = 0, len = uris.length; i < len; i++) {
-    mod.deps.push(Module.get(uris[i]))
+    mod.deps[mod.dependencies[i]] = Module.get(uris[i])
   }
 
   // Pass entry to it's dependencies
@@ -111,7 +110,7 @@ Module.prototype.load = function() {
   var m
 
   for (i = 0; i < len; i++) {
-    m = mod.deps[i]
+    m = cachedMods[uris[i]]
 
     if (m.status < STATUS.FETCHING) {
       m.fetch(requestCache)
@@ -179,12 +178,7 @@ Module.prototype.exec = function () {
   var uri = mod.uri
 
   function require(id) {
-    for (var i = 0, len = (mod.deps || []).length; i < len; i++) {
-      if (id === mod.dependencies[i]) {
-        break;
-      }
-    }
-    var m = i < len ? mod.deps[i] : Module.get(require.resolve(id))
+    var m = mod.deps[id] || Module.get(require.resolve(id))
     if (m.status == STATUS.ERROR) {
       throw new Error('module was broken: ' + m.uri);
     }

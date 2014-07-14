@@ -93,7 +93,7 @@ define(function(require, exports, mod) {
 //  assert(typeof mod._resolveCache === 'object', 'module._resolveCache')
 //  assert(typeof mod._callback === 'object', 'module._callback')
   assert(isArray(mod._entry), 'module._entry')
-  assert(isArray(mod.deps), 'module.deps')
+  assert(typeof mod.deps === 'object', 'module.deps')
 
   //assert(typeof mod.options === 'object', 'module.options')
   //assert(mod.parent instanceof Module, 'module.parent')
