@@ -19,7 +19,7 @@
   },
   "main": "./lib/sea.js",
   "spm": {
-    "main": "./lib/sea.js"
+    "main": "./dist/sea.js"
   },
   "licenses": [
     {
