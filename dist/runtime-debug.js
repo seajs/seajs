@@ -602,13 +602,14 @@ Module.prototype.fetch = function(requestCache) {
 
   fetchingList[requestUri] = true
   callbackList[requestUri] = [mod]
+  console.log(data.charset)
 
   // Emit `request` event for plugins such as text plugin
   emit("request", emitData = {
     uri: uri,
     requestUri: requestUri,
     onRequest: onRequest,
-    charset: data.charset
+    charset: isFunction(data.charset) ? data.charset(requestUri) || 'utf-8' : data.charset
   })
 
   if (!emitData.requested) {

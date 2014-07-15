@@ -248,7 +248,7 @@ Module.prototype.fetch = function(requestCache) {
     uri: uri,
     requestUri: requestUri,
     onRequest: onRequest,
-    charset: data.charset
+    charset: isFunction(data.charset) ? data.charset(requestUri) || 'utf-8' : data.charset
   })
 
   if (!emitData.requested) {
