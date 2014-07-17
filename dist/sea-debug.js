@@ -777,7 +777,7 @@ Module.prototype.exec = function () {
   mod.status = STATUS.EXECUTED
 
   // Emit `exec` event
-  emit("exec", mod)
+  emit("exec", mod.exports)
 
   return exports
 }
@@ -807,7 +807,6 @@ Module.prototype.fetch = function(requestCache) {
 
   fetchingList[requestUri] = true
   callbackList[requestUri] = [mod]
-  console.log(data.charset)
 
   // Emit `request` event for plugins such as text plugin
   emit("request", emitData = {
