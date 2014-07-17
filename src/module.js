@@ -212,9 +212,9 @@ Module.prototype.exec = function () {
   mod.status = STATUS.EXECUTED
 
   // Emit `exec` event
-  emit("exec", mod.exports)
+  emit("exec", mod)
 
-  return exports
+  return mod.exports
 }
 
 // Fetch a module
@@ -425,4 +425,3 @@ seajs.require = function(id) {
   }
   return mod.exports
 }
-
