@@ -120,7 +120,7 @@ function addBase(id, refUri) {
   }
   // Relative
   else if (first === 46 /* "." */) {
-    ret = realpath((refUri ? dirname(refUri) : data.cwd) + id)
+    ret = (refUri ? dirname(refUri) : data.cwd) + id
   }
   // Root
   else if (first === 47 /* "/" */) {
@@ -137,7 +137,7 @@ function addBase(id, refUri) {
     ret = location.protocol + ret
   }
 
-  return ret
+  return realpath(ret)
 }
 
 function id2Uri(id, refUri) {
