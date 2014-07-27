@@ -158,6 +158,12 @@ function id2Uri(id, refUri) {
   return uri
 }
 
+// For Developers
+seajs.resolve = id2Uri;
+
+// Check environment
+var isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
+var isWebWorker = !isBrowser && typeof importScripts !== 'undefined';
 
 var doc = document
 var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href)
@@ -176,8 +182,3 @@ function getScriptAbsoluteSrc(node) {
     // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
       node.getAttribute("src", 4)
 }
-
-
-// For Developers
-seajs.resolve = id2Uri
-
