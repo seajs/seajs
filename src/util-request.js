@@ -73,7 +73,7 @@ if (isBrowser) {
   }
 
   // Note: originally in util-cs.js
-  //       it referenced several temp varialbe from util-request.js (this file)
+  //       it referenced several temp variable from util-request.js (this file)
   //       don't see why not putting them together
   function getCurrentScript() {
     if (currentlyAddingScript) {
