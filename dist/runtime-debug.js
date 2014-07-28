@@ -287,27 +287,48 @@ if (isBrowser) {
 else if (isWebWorker) {
   // Web worker doesn't create DOM object when loading scripts
   // Get sea.js's path by stack trace.
-  var stack = '';
+  var stack;
   try {
     var up = new Error();
     throw up;
   } catch (e) {
     // IE won't set Error.stack until thrown
-    stack = e.stack;
+    stack = e.stack.split('\n');
   }
+  // First line is 'Error'
+  stack.shift();
+
+  var m;
+  // Try match `url:row:col` from stack trace line. Known formats:
   // Chrome:  '    at http://localhost:8000/script/sea-worker-debug.js:294:25'
   // FireFox: '@http://localhost:8000/script/sea-worker-debug.js:1082:1'
   // IE11:    '   at Anonymous function (http://localhost:8000/script/sea-worker-debug.js:295:5)'
   // Don't care about older browsers since web worker is an HTML5 feature
-  var loaderTrace = stack.split('\n')[1];
-  // Match URL:line_number:col_number first
   var reTrace = /.*?((?:http|https|file)(?::\/{2}[\w]+)(?:[\/|\.]?)(?:[^\s"]*)).*?/i
-  var m = reTrace.exec(loaderTrace);
-  // Remove line number and column number (Note: in IE there will be a tailing ')')
+  // Try match `url` (Note: in IE there will be a tailing ')')
   var reUrl = /(.*?):\d+:\d+\)?$/;
-  var url = reUrl.exec(m[1]);
+  // Find url of from stack trace.
+  // Cannot simply read the first one because sometimes we will get:
+  // Error
+  //  at Error (native) <- Here's your problem
+  //  at http://localhost:8000/_site/dist/sea.js:2:4334 <- What we want
+  //  at http://localhost:8000/_site/dist/sea.js:2:8386
+  //  at http://localhost:8000/_site/tests/specs/web-worker/worker.js:3:1
+  while (stack.length > 0) {
+    var top = stack.shift();
+    m = reTrace.exec(top);
+    if (m != null) {
+      break;
+    }
+  }
+  var url;
+  if (m != null) {
+    // Remove line number and column number
+    // No need to check, can't be wrong at this point
+    var url = reUrl.exec(m[1])[1];
+  }
   // Set loaderDir
-  loaderDir = dirname(url[1] || cwd);
+  loaderDir = dirname(url || cwd);
 
 }
 
