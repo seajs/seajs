@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0">
+  <title>test</title>
+  <script src="../../../dist/sea-debug.js"></script>
+  <script src="../../../dist/standalone.js"></script>
+  <script src="../../test-standalone.js"></script>
+
+</head>
+<body>
+<div id="out"></div>
+<script>
+  var test = require('test')
+  var worker = new Worker('worker.js');
+  worker.addEventListener('message', function (e){
+    var message = e.data.message;
+    var result = e.data.result;
+    test.assert(result, message);
+  });
+  worker.postMessage("start");
+</script>
+</body>
+</html>
