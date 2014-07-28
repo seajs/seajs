@@ -104,7 +104,7 @@ if (isBrowser) {
   seajs.request = request
 
 } else if (isWebWorker) {
-  function request(url, callback, charset) {
+  function requestFromWebWorker(url, callback, charset) {
     // Load with importScripts
     var error;
     try {
@@ -115,5 +115,5 @@ if (isBrowser) {
     callback(error);
   }
   // For Developers
-  seajs.request = request
+  seajs.request = requestFromWebWorker;
 }
