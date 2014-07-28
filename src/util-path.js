@@ -165,20 +165,28 @@ seajs.resolve = id2Uri;
 var isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
 var isWebWorker = !isBrowser && typeof importScripts !== 'undefined';
 
-var doc = document
-var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href)
-var scripts = doc.scripts
+var loaderDir;
+// Location is read-only from web worker, should be ok though
+var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href);
 
-// Recommend to add `seajsnode` id for the `sea.js` script element
-var loaderScript = doc.getElementById("seajsnode") ||
-    scripts[scripts.length - 1]
+if (isBrowser) {
+  var doc = document
+  var scripts = doc.scripts
 
-// When `sea.js` is inline, set loaderDir to current working directory
-var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
+  // Recommend to add `seajsnode` id for the `sea.js` script element
+  var loaderScript = doc.getElementById("seajsnode") ||
+      scripts[scripts.length - 1]
 
-function getScriptAbsoluteSrc(node) {
-  return node.hasAttribute ? // non-IE6/7
-      node.src :
-    // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-      node.getAttribute("src", 4)
+  // When `sea.js` is inline, set loaderDir to current working directory
+  loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
+
+  function getScriptAbsoluteSrc(node) {
+    return node.hasAttribute ? // non-IE6/7
+        node.src :
+      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+        node.getAttribute("src", 4)
+  }
+}
+else if (isWebWorker) {
+  // TODO: calculate loadDir
 }

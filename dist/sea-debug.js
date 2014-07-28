@@ -80,7 +80,7 @@ seajs.off = function(name, callback) {
 // Emit event, firing all bound callbacks. Callbacks receive the same
 // arguments as `emit` does, apart from the event name
 var emit = seajs.emit = function(name, data) {
-  var list = events[name], fn
+  var list = events[name]
 
   if (list) {
     // Copy callback lists to prevent modification
@@ -94,7 +94,6 @@ var emit = seajs.emit = function(name, data) {
 
   return seajs
 }
-
 
 /**
  * util-path.js - The utilities for operating path such as id, uri
@@ -256,131 +255,150 @@ function id2Uri(id, refUri) {
   return uri
 }
 
-
-var doc = document
-var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href)
-var scripts = doc.scripts
-
-// Recommend to add `seajsnode` id for the `sea.js` script element
-var loaderScript = doc.getElementById("seajsnode") ||
-    scripts[scripts.length - 1]
-
-// When `sea.js` is inline, set loaderDir to current working directory
-var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
-
-function getScriptAbsoluteSrc(node) {
-  return node.hasAttribute ? // non-IE6/7
-      node.src :
-    // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-      node.getAttribute("src", 4)
-}
-
-
 // For Developers
-seajs.resolve = id2Uri
+seajs.resolve = id2Uri;
 
+// Check environment
+var isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
+var isWebWorker = !isBrowser && typeof importScripts !== 'undefined';
+
+var loaderDir;
+// Location is read-only from web worker, should be ok though
+var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href);
+
+if (isBrowser) {
+  var doc = document
+  var scripts = doc.scripts
+
+  // Recommend to add `seajsnode` id for the `sea.js` script element
+  var loaderScript = doc.getElementById("seajsnode") ||
+      scripts[scripts.length - 1]
+
+  // When `sea.js` is inline, set loaderDir to current working directory
+  loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
+
+  function getScriptAbsoluteSrc(node) {
+    return node.hasAttribute ? // non-IE6/7
+        node.src :
+      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+        node.getAttribute("src", 4)
+  }
+}
+else if (isWebWorker) {
+  // TODO: calculate loadDir
+}
 
 /**
  * util-request.js - The utilities for requesting script and style files
  * ref: tests/research/load-js-css/test.html
  */
+if (isBrowser) {
+  var doc = document
+  var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
+  var baseElement = head.getElementsByTagName("base")[0]
 
-var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
-var baseElement = head.getElementsByTagName("base")[0]
+  var currentlyAddingScript
+  var interactiveScript
 
-var currentlyAddingScript
-var interactiveScript
+  function request(url, callback, charset) {
+    var node = doc.createElement("script")
 
-function request(url, callback, charset) {
-  var node = doc.createElement("script")
+    if (charset) {
+      var cs = isFunction(charset) ? charset(url) : charset
+      if (cs) {
+        node.charset = cs
+      }
+    }
 
-  if (charset) {
-    var cs = isFunction(charset) ? charset(url) : charset
-    if (cs) {
-      node.charset = cs
+    addOnload(node, callback, url)
+
+    node.async = true
+    node.src = url
+
+    // For some cache cases in IE 6-8, the script executes IMMEDIATELY after
+    // the end of the insert execution, so use `currentlyAddingScript` to
+    // hold current node, for deriving url in `define` call
+    currentlyAddingScript = node
+
+    // ref: #185 & http://dev.jquery.com/ticket/2709
+    baseElement ?
+        head.insertBefore(node, baseElement) :
+        head.appendChild(node)
+
+    currentlyAddingScript = null
+  }
+
+  function addOnload(node, callback, url) {
+    var supportOnload = "onload" in node
+
+    if (supportOnload) {
+      node.onload = onload
+      node.onerror = function() {
+        emit("error", { uri: url, node: node })
+        onload(true)
+      }
+    }
+    else {
+      node.onreadystatechange = function() {
+        if (/loaded|complete/.test(node.readyState)) {
+          onload()
+        }
+      }
+    }
+
+    function onload(error) {
+      // Ensure only run once and handle memory leak in IE
+      node.onload = node.onerror = node.onreadystatechange = null
+
+      // Remove the script to reduce memory leak
+      if (!data.debug) {
+        head.removeChild(node)
+      }
+
+      // Dereference the node
+      node = null
+
+      callback(error)
     }
   }
 
-  addOnload(node, callback, url)
-
-  node.async = true
-  node.src = url
-
-  // For some cache cases in IE 6-8, the script executes IMMEDIATELY after
-  // the end of the insert execution, so use `currentlyAddingScript` to
-  // hold current node, for deriving url in `define` call
-  currentlyAddingScript = node
-
-  // ref: #185 & http://dev.jquery.com/ticket/2709
-  baseElement ?
-      head.insertBefore(node, baseElement) :
-      head.appendChild(node)
-
-  currentlyAddingScript = null
-}
-
-function addOnload(node, callback, url) {
-  var supportOnload = "onload" in node
-
-  if (supportOnload) {
-    node.onload = onload
-    node.onerror = function() {
-      emit("error", { uri: url, node: node })
-      onload(true)
+  // Note: originally in util-cs.js
+  //       it referenced several temp varialbe from util-request.js (this file)
+  //       don't see why not putting them together
+  function getCurrentScript() {
+    if (currentlyAddingScript) {
+      return currentlyAddingScript
     }
-  }
-  else {
-    node.onreadystatechange = function() {
-      if (/loaded|complete/.test(node.readyState)) {
-        onload()
+
+    // For IE6-9 browsers, the script onload event may not fire right
+    // after the script is evaluated. Kris Zyp found that it
+    // could query the script nodes and the one that is in "interactive"
+    // mode indicates the current script
+    // ref: http://goo.gl/JHfFW
+    if (interactiveScript && interactiveScript.readyState === "interactive") {
+      return interactiveScript
+    }
+
+    var scripts = head.getElementsByTagName("script")
+
+    for (var i = scripts.length - 1; i >= 0; i--) {
+      var script = scripts[i]
+      if (script.readyState === "interactive") {
+        interactiveScript = script
+        return interactiveScript
       }
     }
   }
 
-  function onload(error) {
-    // Ensure only run once and handle memory leak in IE
-    node.onload = node.onerror = node.onreadystatechange = null
+  // For Developers
+  seajs.request = request
 
-    // Remove the script to reduce memory leak
-    if (!data.debug) {
-      head.removeChild(node)
-    }
-
-    // Dereference the node
-    node = null
-
-    callback(error)
+} else if (isWebWorker) {
+  function request(url, callback, charset) {
+    // TODO: load with importScripts
   }
-}
-
-
-// For Developers
-seajs.request = request
-
-
-function getCurrentScript() {
-  if (currentlyAddingScript) {
-    return currentlyAddingScript
-  }
-
-  // For IE6-9 browsers, the script onload event may not fire right
-  // after the script is evaluated. Kris Zyp found that it
-  // could query the script nodes and the one that is in "interactive"
-  // mode indicates the current script
-  // ref: http://goo.gl/JHfFW
-  if (interactiveScript && interactiveScript.readyState === "interactive") {
-    return interactiveScript
-  }
-
-  var scripts = head.getElementsByTagName("script")
-
-  for (var i = scripts.length - 1; i >= 0; i--) {
-    var script = scripts[i]
-    if (script.readyState === "interactive") {
-      interactiveScript = script
-      return interactiveScript
-    }
-  }
+  // For Developers
+  seajs.request = request
 }
 
 
@@ -777,9 +795,9 @@ Module.prototype.exec = function () {
   mod.status = STATUS.EXECUTED
 
   // Emit `exec` event
-  emit("exec", mod.exports)
+  emit("exec", mod)
 
-  return exports
+  return mod.exports
 }
 
 // Fetch a module
@@ -990,7 +1008,6 @@ seajs.require = function(id) {
   }
   return mod.exports
 }
-
 
 /**
  * config.js - The configuration for the loader
