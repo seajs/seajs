@@ -285,7 +285,30 @@ if (isBrowser) {
   }
 }
 else if (isWebWorker) {
-  // TODO: calculate loadDir
+  // Web worker doesn't create DOM object when loading scripts
+  // Get sea.js's path by stack trace.
+  var stack = '';
+  try {
+    var up = new Error();
+    throw up;
+  } catch (e) {
+    // IE won't set Error.stack until thrown
+    stack = e.stack;
+  }
+  // Chrome:  '    at http://localhost:8000/script/sea-worker-debug.js:294:25'
+  // FireFox: '@http://localhost:8000/script/sea-worker-debug.js:1082:1'
+  // IE11:    '   at Anonymous function (http://localhost:8000/script/sea-worker-debug.js:295:5)'
+  // Don't care about older browsers since web worker is an HTML5 feature
+  var loaderTrace = stack.split('\n')[1];
+  // Match URL:line_number:col_number first
+  var reTrace = /.*?((?:http|https|file)(?::\/{2}[\w]+)(?:[\/|\.]?)(?:[^\s"]*)).*?/i
+  var m = reTrace.exec(loaderTrace);
+  // Remove line number and column number (Note: in IE there will be a tailing ')')
+  var reUrl = /(.*?):\d+:\d+\)?$/;
+  var url = reUrl.exec(m[1]);
+  // Set loaderDir
+  loaderDir = dirname(url[1] || cwd);
+
 }
 
 /**
@@ -395,7 +418,14 @@ if (isBrowser) {
 
 } else if (isWebWorker) {
   function request(url, callback, charset) {
-    // TODO: load with importScripts
+    // Load with importScripts
+    var error;
+    try {
+      importScripts(url);
+    } catch (e) {
+      error = e;
+    }
+    callback(error);
   }
   // For Developers
   seajs.request = request
@@ -914,7 +944,7 @@ Module.define = function (id, deps, factory) {
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
-  if (!meta.uri && doc.attachEvent && typeof getCurrentScript !== "undefined") {
+  if (isBrowser && !meta.uri && doc.attachEvent && typeof getCurrentScript !== "undefined") {
     var script = getCurrentScript()
 
     if (script) {

@@ -105,7 +105,14 @@ if (isBrowser) {
 
 } else if (isWebWorker) {
   function request(url, callback, charset) {
-    // TODO: load with importScripts
+    // Load with importScripts
+    var error;
+    try {
+      importScripts(url);
+    } catch (e) {
+      error = e;
+    }
+    callback(error);
   }
   // For Developers
   seajs.request = request
