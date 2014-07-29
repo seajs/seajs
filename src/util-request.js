@@ -2,76 +2,118 @@
  * util-request.js - The utilities for requesting script and style files
  * ref: tests/research/load-js-css/test.html
  */
+if (isBrowser) {
+  var doc = document
+  var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
+  var baseElement = head.getElementsByTagName("base")[0]
 
-var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
-var baseElement = head.getElementsByTagName("base")[0]
+  var currentlyAddingScript
+  var interactiveScript
 
-var currentlyAddingScript
-var interactiveScript
+  function request(url, callback, charset) {
+    var node = doc.createElement("script")
 
-function request(url, callback, charset) {
-  var node = doc.createElement("script")
+    if (charset) {
+      var cs = isFunction(charset) ? charset(url) : charset
+      if (cs) {
+        node.charset = cs
+      }
+    }
 
-  if (charset) {
-    var cs = isFunction(charset) ? charset(url) : charset
-    if (cs) {
-      node.charset = cs
+    addOnload(node, callback, url)
+
+    node.async = true
+    node.src = url
+
+    // For some cache cases in IE 6-8, the script executes IMMEDIATELY after
+    // the end of the insert execution, so use `currentlyAddingScript` to
+    // hold current node, for deriving url in `define` call
+    currentlyAddingScript = node
+
+    // ref: #185 & http://dev.jquery.com/ticket/2709
+    baseElement ?
+        head.insertBefore(node, baseElement) :
+        head.appendChild(node)
+
+    currentlyAddingScript = null
+  }
+
+  function addOnload(node, callback, url) {
+    var supportOnload = "onload" in node
+
+    if (supportOnload) {
+      node.onload = onload
+      node.onerror = function() {
+        emit("error", { uri: url, node: node })
+        onload(true)
+      }
+    }
+    else {
+      node.onreadystatechange = function() {
+        if (/loaded|complete/.test(node.readyState)) {
+          onload()
+        }
+      }
+    }
+
+    function onload(error) {
+      // Ensure only run once and handle memory leak in IE
+      node.onload = node.onerror = node.onreadystatechange = null
+
+      // Remove the script to reduce memory leak
+      if (!data.debug) {
+        head.removeChild(node)
+      }
+
+      // Dereference the node
+      node = null
+
+      callback(error)
     }
   }
 
-  addOnload(node, callback, url)
-
-  node.async = true
-  node.src = url
-
-  // For some cache cases in IE 6-8, the script executes IMMEDIATELY after
-  // the end of the insert execution, so use `currentlyAddingScript` to
-  // hold current node, for deriving url in `define` call
-  currentlyAddingScript = node
-
-  // ref: #185 & http://dev.jquery.com/ticket/2709
-  baseElement ?
-      head.insertBefore(node, baseElement) :
-      head.appendChild(node)
-
-  currentlyAddingScript = null
-}
-
-function addOnload(node, callback, url) {
-  var supportOnload = "onload" in node
-
-  if (supportOnload) {
-    node.onload = onload
-    node.onerror = function() {
-      emit("error", { uri: url, node: node })
-      onload(true)
+  // Note: originally in util-cs.js
+  //       it referenced several temp variable from util-request.js (this file)
+  //       don't see why not putting them together
+  function getCurrentScript() {
+    if (currentlyAddingScript) {
+      return currentlyAddingScript
     }
-  }
-  else {
-    node.onreadystatechange = function() {
-      if (/loaded|complete/.test(node.readyState)) {
-        onload()
+
+    // For IE6-9 browsers, the script onload event may not fire right
+    // after the script is evaluated. Kris Zyp found that it
+    // could query the script nodes and the one that is in "interactive"
+    // mode indicates the current script
+    // ref: http://goo.gl/JHfFW
+    if (interactiveScript && interactiveScript.readyState === "interactive") {
+      return interactiveScript
+    }
+
+    var scripts = head.getElementsByTagName("script")
+
+    for (var i = scripts.length - 1; i >= 0; i--) {
+      var script = scripts[i]
+      if (script.readyState === "interactive") {
+        interactiveScript = script
+        return interactiveScript
       }
     }
   }
 
-  function onload(error) {
-    // Ensure only run once and handle memory leak in IE
-    node.onload = node.onerror = node.onreadystatechange = null
+  // For Developers
+  seajs.request = request
 
-    // Remove the script to reduce memory leak
-    if (!data.debug) {
-      head.removeChild(node)
+} else if (isWebWorker) {
+  function requestFromWebWorker(url, callback, charset) {
+    // Load with importScripts
+    var error;
+    try {
+      importScripts(url);
+    } catch (e) {
+      error = e;
     }
-
-    // Dereference the node
-    node = null
-
-    callback(error)
+    callback(error);
   }
+  // For Developers
+  seajs.request = requestFromWebWorker;
 }
-
-
-// For Developers
-seajs.request = request
-

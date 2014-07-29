@@ -158,26 +158,79 @@ function id2Uri(id, refUri) {
   return uri
 }
 
-
-var doc = document
-var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href)
-var scripts = doc.scripts
-
-// Recommend to add `seajsnode` id for the `sea.js` script element
-var loaderScript = doc.getElementById("seajsnode") ||
-    scripts[scripts.length - 1]
-
-// When `sea.js` is inline, set loaderDir to current working directory
-var loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
-
-function getScriptAbsoluteSrc(node) {
-  return node.hasAttribute ? // non-IE6/7
-      node.src :
-    // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-      node.getAttribute("src", 4)
-}
-
-
 // For Developers
-seajs.resolve = id2Uri
+seajs.resolve = id2Uri;
 
+// Check environment
+var isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
+var isWebWorker = !isBrowser && typeof importScripts !== 'undefined';
+
+var loaderDir;
+// Location is read-only from web worker, should be ok though
+var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href);
+
+if (isBrowser) {
+  var doc = document
+  var scripts = doc.scripts
+
+  // Recommend to add `seajsnode` id for the `sea.js` script element
+  var loaderScript = doc.getElementById("seajsnode") ||
+      scripts[scripts.length - 1]
+
+  // When `sea.js` is inline, set loaderDir to current working directory
+  loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
+
+  function getScriptAbsoluteSrc(node) {
+    return node.hasAttribute ? // non-IE6/7
+        node.src :
+      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+        node.getAttribute("src", 4)
+  }
+}
+else if (isWebWorker) {
+  // Web worker doesn't create DOM object when loading scripts
+  // Get sea.js's path by stack trace.
+  var stack;
+  try {
+    var up = new Error();
+    throw up;
+  } catch (e) {
+    // IE won't set Error.stack until thrown
+    stack = e.stack.split('\n');
+  }
+  // First line is 'Error'
+  stack.shift();
+
+  var m;
+  // Try match `url:row:col` from stack trace line. Known formats:
+  // Chrome:  '    at http://localhost:8000/script/sea-worker-debug.js:294:25'
+  // FireFox: '@http://localhost:8000/script/sea-worker-debug.js:1082:1'
+  // IE11:    '   at Anonymous function (http://localhost:8000/script/sea-worker-debug.js:295:5)'
+  // Don't care about older browsers since web worker is an HTML5 feature
+  var reTrace = /.*?((?:http|https|file)(?::\/{2}[\w]+)(?:[\/|\.]?)(?:[^\s"]*)).*?/i
+  // Try match `url` (Note: in IE there will be a tailing ')')
+  var reUrl = /(.*?):\d+:\d+\)?$/;
+  // Find url of from stack trace.
+  // Cannot simply read the first one because sometimes we will get:
+  // Error
+  //  at Error (native) <- Here's your problem
+  //  at http://localhost:8000/_site/dist/sea.js:2:4334 <- What we want
+  //  at http://localhost:8000/_site/dist/sea.js:2:8386
+  //  at http://localhost:8000/_site/tests/specs/web-worker/worker.js:3:1
+  while (stack.length > 0) {
+    var top = stack.shift();
+    m = reTrace.exec(top);
+    if (m != null) {
+      break;
+    }
+  }
+  var url;
+  if (m != null) {
+    // Remove line number and column number
+    // No need to check, can't be wrong at this point
+    var url = reUrl.exec(m[1])[1];
+  }
+  // Set loaderDir
+  loaderDir = dirname(url || cwd);
+
+}
