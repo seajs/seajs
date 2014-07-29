@@ -259,32 +259,13 @@ function id2Uri(id, refUri) {
 seajs.resolve = id2Uri;
 
 // Check environment
-var isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
-var isWebWorker = !isBrowser && typeof importScripts !== 'undefined';
+var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined';
 
 var loaderDir;
 // Location is read-only from web worker, should be ok though
 var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href);
 
-if (isBrowser) {
-  var doc = document
-  var scripts = doc.scripts
-
-  // Recommend to add `seajsnode` id for the `sea.js` script element
-  var loaderScript = doc.getElementById("seajsnode") ||
-      scripts[scripts.length - 1]
-
-  // When `sea.js` is inline, set loaderDir to current working directory
-  loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
-
-  function getScriptAbsoluteSrc(node) {
-    return node.hasAttribute ? // non-IE6/7
-        node.src :
-      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-        node.getAttribute("src", 4)
-  }
-}
-else if (isWebWorker) {
+if (isWebWorker) {
   // Web worker doesn't create DOM object when loading scripts
   // Get sea.js's path by stack trace.
   var stack;
@@ -331,12 +312,44 @@ else if (isWebWorker) {
   loaderDir = dirname(url || cwd);
 
 }
+else {
+  var doc = document
+  var scripts = doc.scripts
+
+  // Recommend to add `seajsnode` id for the `sea.js` script element
+  var loaderScript = doc.getElementById("seajsnode") ||
+    scripts[scripts.length - 1]
+
+  // When `sea.js` is inline, set loaderDir to current working directory
+  loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
+
+  function getScriptAbsoluteSrc(node) {
+    return node.hasAttribute ? // non-IE6/7
+      node.src :
+      // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
+      node.getAttribute("src", 4)
+  }
+}
 
 /**
  * util-request.js - The utilities for requesting script and style files
  * ref: tests/research/load-js-css/test.html
  */
-if (isBrowser) {
+if (isWebWorker) {
+  function requestFromWebWorker(url, callback, charset) {
+    // Load with importScripts
+    var error;
+    try {
+      importScripts(url);
+    } catch (e) {
+      error = e;
+    }
+    callback(error);
+  }
+  // For Developers
+  seajs.request = requestFromWebWorker;
+}
+else {
   var doc = document
   var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
   var baseElement = head.getElementsByTagName("base")[0]
@@ -408,21 +421,7 @@ if (isBrowser) {
   // For Developers
   seajs.request = request
 
-} else if (isWebWorker) {
-  function requestFromWebWorker(url, callback, charset) {
-    // Load with importScripts
-    var error;
-    try {
-      importScripts(url);
-    } catch (e) {
-      error = e;
-    }
-    callback(error);
-  }
-  // For Developers
-  seajs.request = requestFromWebWorker;
 }
-
 var interactiveScript
 
 function getCurrentScript() {
@@ -962,7 +961,7 @@ Module.define = function (id, deps, factory) {
   }
 
   // Try to derive uri in IE6-9 for anonymous modules
-  if (isBrowser && !meta.uri && doc.attachEvent && typeof getCurrentScript !== "undefined") {
+  if (!isWebWorker && !meta.uri && doc.attachEvent && typeof getCurrentScript !== "undefined") {
     var script = getCurrentScript()
 
     if (script) {

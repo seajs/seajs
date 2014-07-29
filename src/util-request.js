@@ -2,7 +2,21 @@
  * util-request.js - The utilities for requesting script and style files
  * ref: tests/research/load-js-css/test.html
  */
-if (isBrowser) {
+if (isWebWorker) {
+  function requestFromWebWorker(url, callback, charset) {
+    // Load with importScripts
+    var error;
+    try {
+      importScripts(url);
+    } catch (e) {
+      error = e;
+    }
+    callback(error);
+  }
+  // For Developers
+  seajs.request = requestFromWebWorker;
+}
+else {
   var doc = document
   var head = doc.head || doc.getElementsByTagName("head")[0] || doc.documentElement
   var baseElement = head.getElementsByTagName("base")[0]
@@ -74,17 +88,4 @@ if (isBrowser) {
   // For Developers
   seajs.request = request
 
-} else if (isWebWorker) {
-  function requestFromWebWorker(url, callback, charset) {
-    // Load with importScripts
-    var error;
-    try {
-      importScripts(url);
-    } catch (e) {
-      error = e;
-    }
-    callback(error);
-  }
-  // For Developers
-  seajs.request = requestFromWebWorker;
 }
