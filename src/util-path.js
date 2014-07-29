@@ -162,7 +162,7 @@ function id2Uri(id, refUri) {
 seajs.resolve = id2Uri;
 
 // Check environment
-var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined';
+var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined' && isFunction(importScripts);
 
 var loaderDir;
 // Location is read-only from web worker, should be ok though
