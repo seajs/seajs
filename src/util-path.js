@@ -219,7 +219,13 @@ if (isWebWorker) {
   loaderPath = url
   // Set loaderDir
   loaderDir = dirname(url || cwd);
-
+  // This happens with inline worker.
+  // When entrance script's location.href is a blob url,
+  // cwd will not be available.
+  // Fall back to loaderDir.
+  if (cwd === '') {
+    cwd = loaderDir;
+  }
 }
 else {
   var doc = document
