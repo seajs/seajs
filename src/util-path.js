@@ -167,6 +167,8 @@ var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'und
 // Ignore about:xxx and blob:xxx
 var IGNORE_LOCATION_RE = /^(about:|blob:).*?/;
 var loaderDir;
+// Sea.js's full path
+var loaderPath;
 // Location is read-only from web worker, should be ok though
 var cwd = (!location.href || location.href.match(IGNORE_LOCATION_RE)) ? '' : dirname(location.href);
 
@@ -213,6 +215,8 @@ if (isWebWorker) {
     // No need to check, can't be wrong at this point
     var url = URL_RE.exec(m[1])[1];
   }
+  // Set
+  loaderPath = url
   // Set loaderDir
   loaderDir = dirname(url || cwd);
 
@@ -231,7 +235,7 @@ else {
       // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
       node.getAttribute("src", 4)
   }
-
+  loaderPath = getScriptAbsoluteSrc(loaderScript)
   // When `sea.js` is inline, set loaderDir to current working directory
-  loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
+  loaderDir = dirname(loaderPath || cwd)
 }
