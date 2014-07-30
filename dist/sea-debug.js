@@ -262,12 +262,12 @@ seajs.resolve = id2Uri;
 var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined' && isFunction(importScripts);
 
 // Ignore about:xxx and blob:xxx
-var IGNORE_LOCATION_RE = /^(about:|blob:).*?/;
+var IGNORE_LOCATION_RE = /^(about|blob):.*?/;
 var loaderDir;
 // Sea.js's full path
 var loaderPath;
 // Location is read-only from web worker, should be ok though
-var cwd = (!location.href || location.href.match(IGNORE_LOCATION_RE)) ? '' : dirname(location.href);
+var cwd = (!location.href || IGNORE_LOCATION_RE.test(location.href)) ? '' : dirname(location.href);
 
 if (isWebWorker) {
   // Web worker doesn't create DOM object when loading scripts
