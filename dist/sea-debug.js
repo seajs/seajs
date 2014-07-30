@@ -261,9 +261,11 @@ seajs.resolve = id2Uri;
 // Check environment
 var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined' && isFunction(importScripts);
 
+// Ignore about:xxx and blob:xxx
+var IGNORE_LOCATION_RE = /^(about:|blob:).*?/;
 var loaderDir;
 // Location is read-only from web worker, should be ok though
-var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href);
+var cwd = (!location.href || location.href.match(IGNORE_LOCATION_RE)) ? '' : dirname(location.href);
 
 if (isWebWorker) {
   // Web worker doesn't create DOM object when loading scripts
