@@ -1,3 +1,11 @@
+define('a', [], function() { return 'a' })
+define('b', ['c'], function(require) { var c = require('c'); return c })
+define('c', [], {})
+define('e', [], function(require, exports, module) {
+  module.exports = 'e'
+  console.log('huh?')
+})
+
 define(function(require) {
   function assert(value, message) {
     self.postMessage({message: message, result: value});

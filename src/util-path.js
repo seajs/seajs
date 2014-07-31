@@ -164,9 +164,13 @@ seajs.resolve = id2Uri;
 // Check environment
 var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined' && isFunction(importScripts);
 
+// Ignore about:xxx and blob:xxx
+var IGNORE_LOCATION_RE = /^(about|blob):.*?/;
 var loaderDir;
+// Sea.js's full path
+var loaderPath;
 // Location is read-only from web worker, should be ok though
-var cwd = (!location.href || location.href.indexOf('about:') === 0) ? '' : dirname(location.href);
+var cwd = (!location.href || IGNORE_LOCATION_RE.test(location.href)) ? '' : dirname(location.href);
 
 if (isWebWorker) {
   // Web worker doesn't create DOM object when loading scripts
@@ -188,9 +192,9 @@ if (isWebWorker) {
   // FireFox: '@http://localhost:8000/script/sea-worker-debug.js:1082:1'
   // IE11:    '   at Anonymous function (http://localhost:8000/script/sea-worker-debug.js:295:5)'
   // Don't care about older browsers since web worker is an HTML5 feature
-  var reTrace = /.*?((?:http|https|file)(?::\/{2}[\w]+)(?:[\/|\.]?)(?:[^\s"]*)).*?/i
+  var TRACE_RE = /.*?((?:http|https|file)(?::\/{2}[\w]+)(?:[\/|\.]?)(?:[^\s"]*)).*?/i
   // Try match `url` (Note: in IE there will be a tailing ')')
-  var reUrl = /(.*?):\d+:\d+\)?$/;
+  var URL_RE = /(.*?):\d+:\d+\)?$/;
   // Find url of from stack trace.
   // Cannot simply read the first one because sometimes we will get:
   // Error
@@ -200,7 +204,7 @@ if (isWebWorker) {
   //  at http://localhost:8000/_site/tests/specs/web-worker/worker.js:3:1
   while (stack.length > 0) {
     var top = stack.shift();
-    m = reTrace.exec(top);
+    m = TRACE_RE.exec(top);
     if (m != null) {
       break;
     }
@@ -209,11 +213,19 @@ if (isWebWorker) {
   if (m != null) {
     // Remove line number and column number
     // No need to check, can't be wrong at this point
-    var url = reUrl.exec(m[1])[1];
+    var url = URL_RE.exec(m[1])[1];
   }
+  // Set
+  loaderPath = url
   // Set loaderDir
   loaderDir = dirname(url || cwd);
-
+  // This happens with inline worker.
+  // When entrance script's location.href is a blob url,
+  // cwd will not be available.
+  // Fall back to loaderDir.
+  if (cwd === '') {
+    cwd = loaderDir;
+  }
 }
 else {
   var doc = document
@@ -223,13 +235,13 @@ else {
   var loaderScript = doc.getElementById("seajsnode") ||
     scripts[scripts.length - 1]
 
-  // When `sea.js` is inline, set loaderDir to current working directory
-  loaderDir = dirname(getScriptAbsoluteSrc(loaderScript) || cwd)
-
   function getScriptAbsoluteSrc(node) {
     return node.hasAttribute ? // non-IE6/7
       node.src :
       // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
       node.getAttribute("src", 4)
   }
+  loaderPath = getScriptAbsoluteSrc(loaderScript)
+  // When `sea.js` is inline, set loaderDir to current working directory
+  loaderDir = dirname(loaderPath || cwd)
 }

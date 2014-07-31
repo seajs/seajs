@@ -12,14 +12,33 @@
 <body>
 <div id="out"></div>
 <script>
+  console.log(seajs.data.loader);
   var test = require('test')
+  // Test worker from script file
   var worker = new Worker('worker.js');
-  worker.addEventListener('message', function (e){
+  function assertWorkerMessage(e) {
     var message = e.data.message;
     var result = e.data.result;
     test.assert(result, message);
-  });
+  }
+  worker.onmessage = assertWorkerMessage;
   worker.postMessage("start");
+
+  // Test inline worker
+  // Note: this won't run on IE
+  // See: http://connect.microsoft.com/IE/feedback/details/801810/web-workers-from-blob-urls-in-ie-10-and-11
+  var src = "console.log('Inline worker Up!');\n" +
+    "importScripts('" + seajs.data.loader + "');\n" +
+    "console.log(JSON.stringify(seajs.data, null, 4));\n" +
+    // Inline worker's cwd is loaderDir, use path relative to loader
+    // Or absolute path
+    "seajs.use('../tests/specs/web-worker/tests');";
+  console.log(src);
+  var blob = new Blob([src]);
+  var blobUrl = window.URL.createObjectURL(blob);
+  var inlineWorker = new Worker(blobUrl);
+  inlineWorker.onmessage = assertWorkerMessage;
+  inlineWorker.postMessage("start");
 </script>
 </body>
 </html>

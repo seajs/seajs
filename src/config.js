@@ -8,6 +8,9 @@ data.base = loaderDir
 // The loader directory
 data.dir = loaderDir
 
+// The loader's full path
+data.loader = loaderPath
+
 // The current working directory
 data.cwd = cwd
 
