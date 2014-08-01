@@ -165,7 +165,7 @@ seajs.resolve = id2Uri;
 var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined' && isFunction(importScripts);
 
 // Ignore about:xxx and blob:xxx
-var IGNORE_LOCATION_RE = /^(about|blob):.*?/;
+var IGNORE_LOCATION_RE = /^(about|blob):/;
 var loaderDir;
 // Sea.js's full path
 var loaderPath;
