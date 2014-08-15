@@ -617,7 +617,7 @@ function parseDependencies(s) {
       index += r.length - 2
     }
     else {
-      index += /^[\w$.\s]+/.exec(s2)[0].length - 1
+      index += /^[\w$]+(?:\s*\.\s*[\w$]+)*/.exec(s2)[0].length - 1
     }
   }
   function isNumber() {
