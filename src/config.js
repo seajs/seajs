@@ -17,6 +17,9 @@ data.cwd = cwd
 // The charset for requesting files
 data.charset = "utf-8"
 
+// The CORS options, Do't set CORS on default.
+data.crossorigin = false
+
 // data.alias - An object containing shorthands of module id
 // data.paths - An object containing path shorthands in module id
 // data.vars - The {xxx} variables in module id

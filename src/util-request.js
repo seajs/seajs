@@ -3,7 +3,7 @@
  * ref: tests/research/load-js-css/test.html
  */
 if (isWebWorker) {
-  function requestFromWebWorker(url, callback, charset) {
+  function requestFromWebWorker(url, callback, charset, crossorigin) {
     // Load with importScripts
     var error;
     try {
@@ -23,7 +23,7 @@ else {
 
   var currentlyAddingScript
 
-  function request(url, callback, charset) {
+  function request(url, callback, charset, crossorigin) {
     var node = doc.createElement("script")
 
     if (charset) {
@@ -31,6 +31,12 @@ else {
       if (cs) {
         node.charset = cs
       }
+    }
+
+    // crossorigin default value is `false`.
+    var cors = isFunction(crossorigin) ? crossorigin(url) : crossorigin
+    if (cors !== false) {
+      node.crossorigin = cors
     }
 
     addOnload(node, callback, url)

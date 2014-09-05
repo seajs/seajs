@@ -248,7 +248,8 @@ Module.prototype.fetch = function(requestCache) {
     uri: uri,
     requestUri: requestUri,
     onRequest: onRequest,
-    charset: isFunction(data.charset) ? data.charset(requestUri) || 'utf-8' : data.charset
+    charset: isFunction(data.charset) ? data.charset(requestUri) || 'utf-8' : data.charset,
+    crossorigin: isFunction(data.crossorigin) ? data.crossorigin(requestUri) : data.crossorigin
   })
 
   if (!emitData.requested) {
@@ -258,7 +259,7 @@ Module.prototype.fetch = function(requestCache) {
   }
 
   function sendRequest() {
-    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
+    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset, emitData.crossorigin)
   }
 
   function onRequest(error) {
