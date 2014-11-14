@@ -2,11 +2,9 @@
  * util-lang.js - The minimal language enhancement
  */
 
-var _object = {}
-
 function isType(type) {
   return function(obj) {
-    return _object.toString.call(obj) == "[object " + type + "]"
+    return {}.toString.call(obj) == "[object " + type + "]"
   }
 }
 
