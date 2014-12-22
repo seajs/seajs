@@ -19,7 +19,7 @@ var isOldWebKit = +navigator.userAgent
     .replace(/.*(?:AppleWebKit|AndroidWebKit)\/(\d+).*/, "$1") < 536
 
 
-function request(url, callback, charset) {
+function request(url, callback, charset, crossorigin) {
   var isCSS = IS_CSS_RE.test(url)
   var node = doc.createElement(isCSS ? "link" : "script")
 
@@ -29,6 +29,13 @@ function request(url, callback, charset) {
       node.charset = cs
     }
   }
+
+  // crossorigin default value is `false`.
+  var cors = isFunction(crossorigin) ? crossorigin(url) : crossorigin
+  if (cors !== false) {
+    node.crossorigin = cors
+  }
+
 
   addOnload(node, callback, isCSS, url)
 

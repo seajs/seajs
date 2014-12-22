@@ -18,6 +18,9 @@ data.cwd = cwd
 // The charset for requesting files
 data.charset = "utf-8"
 
+// The CORS options, Do't set CORS on default.
+data.crossorigin = false
+
 // Modules that are needed to load before all other modules
 data.preload = (function() {
   var plugins = []
