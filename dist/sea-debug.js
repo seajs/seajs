@@ -1,5 +1,5 @@
 /**
- * Sea.js 2.2.1 | seajs.org/LICENSE.md
+ * Sea.js 2.2.2 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -10,7 +10,7 @@ if (global.seajs) {
 
 var seajs = global.seajs = {
   // The current version of Sea.js being used
-  version: "2.2.1"
+  version: "2.2.2"
 }
 
 var data = seajs.data = {}
@@ -293,7 +293,7 @@ var isOldWebKit = +navigator.userAgent
     .replace(/.*(?:AppleWebKit|AndroidWebKit)\/(\d+).*/, "$1") < 536
 
 
-function request(url, callback, charset) {
+function request(url, callback, charset, crossorigin) {
   var isCSS = IS_CSS_RE.test(url)
   var node = doc.createElement(isCSS ? "link" : "script")
 
@@ -303,6 +303,13 @@ function request(url, callback, charset) {
       node.charset = cs
     }
   }
+
+  // crossorigin default value is `false`.
+  var cors = isFunction(crossorigin) ? crossorigin(url) : crossorigin
+  if (cors !== false) {
+    node.crossorigin = cors
+  }
+
 
   addOnload(node, callback, isCSS, url)
 
@@ -628,7 +635,8 @@ Module.prototype.fetch = function(requestCache) {
     uri: uri,
     requestUri: requestUri,
     onRequest: onRequest,
-    charset: data.charset
+    charset: isFunction(data.charset) ? data.charset(requestUri): data.charset,
+    crossorigin: isFunction(data.crossorigin) ? data.crossorigin(requestUri) : data.crossorigin
   })
 
   if (!emitData.requested) {
@@ -638,7 +646,7 @@ Module.prototype.fetch = function(requestCache) {
   }
 
   function sendRequest() {
-    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset)
+    seajs.request(emitData.requestUri, emitData.onRequest, emitData.charset, emitData.crossorigin)
   }
 
   function onRequest() {
@@ -882,6 +890,9 @@ data.cwd = cwd
 
 // The charset for requesting files
 data.charset = "utf-8"
+
+// The CORS options, Do't set CORS on default.
+data.crossorigin = false
 
 // Modules that are needed to load before all other modules
 data.preload = (function() {
