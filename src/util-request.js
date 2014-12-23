@@ -5,16 +5,16 @@
 if (isWebWorker) {
   function requestFromWebWorker(url, callback, charset, crossorigin) {
     // Load with importScripts
-    var error;
+    var error
     try {
-      importScripts(url);
+      importScripts(url)
     } catch (e) {
-      error = e;
+      error = e
     }
-    callback(error);
+    callback(error)
   }
   // For Developers
-  seajs.request = requestFromWebWorker;
+  seajs.request = requestFromWebWorker
 }
 else {
   var doc = document
