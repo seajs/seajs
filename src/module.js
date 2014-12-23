@@ -180,7 +180,7 @@ Module.prototype.exec = function () {
   function require(id) {
     var m = mod.deps[id] || Module.get(require.resolve(id))
     if (m.status == STATUS.ERROR) {
-      throw new Error('module was broken: ' + m.uri);
+      throw new Error('module was broken: ' + m.uri)
     }
     return m.exec()
   }
