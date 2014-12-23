@@ -159,34 +159,34 @@ function id2Uri(id, refUri) {
 }
 
 // For Developers
-seajs.resolve = id2Uri;
+seajs.resolve = id2Uri
 
 // Check environment
-var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined' && isFunction(importScripts);
+var isWebWorker = typeof window === 'undefined' && typeof importScripts !== 'undefined' && isFunction(importScripts)
 
 // Ignore about:xxx and blob:xxx
-var IGNORE_LOCATION_RE = /^(about|blob):/;
-var loaderDir;
+var IGNORE_LOCATION_RE = /^(about|blob):/
+var loaderDir
 // Sea.js's full path
-var loaderPath;
+var loaderPath
 // Location is read-only from web worker, should be ok though
-var cwd = (!location.href || IGNORE_LOCATION_RE.test(location.href)) ? '' : dirname(location.href);
+var cwd = (!location.href || IGNORE_LOCATION_RE.test(location.href)) ? '' : dirname(location.href)
 
 if (isWebWorker) {
   // Web worker doesn't create DOM object when loading scripts
   // Get sea.js's path by stack trace.
-  var stack;
+  var stack
   try {
-    var up = new Error();
-    throw up;
+    var up = new Error()
+    throw up
   } catch (e) {
     // IE won't set Error.stack until thrown
-    stack = e.stack.split('\n');
+    stack = e.stack.split('\n')
   }
   // First line is 'Error'
-  stack.shift();
+  stack.shift()
 
-  var m;
+  var m
   // Try match `url:row:col` from stack trace line. Known formats:
   // Chrome:  '    at http://localhost:8000/script/sea-worker-debug.js:294:25'
   // FireFox: '@http://localhost:8000/script/sea-worker-debug.js:1082:1'
@@ -194,7 +194,7 @@ if (isWebWorker) {
   // Don't care about older browsers since web worker is an HTML5 feature
   var TRACE_RE = /.*?((?:http|https|file)(?::\/{2}[\w]+)(?:[\/|\.]?)(?:[^\s"]*)).*?/i
   // Try match `url` (Note: in IE there will be a tailing ')')
-  var URL_RE = /(.*?):\d+:\d+\)?$/;
+  var URL_RE = /(.*?):\d+:\d+\)?$/
   // Find url of from stack trace.
   // Cannot simply read the first one because sometimes we will get:
   // Error
@@ -203,28 +203,28 @@ if (isWebWorker) {
   //  at http://localhost:8000/_site/dist/sea.js:2:8386
   //  at http://localhost:8000/_site/tests/specs/web-worker/worker.js:3:1
   while (stack.length > 0) {
-    var top = stack.shift();
-    m = TRACE_RE.exec(top);
+    var top = stack.shift()
+    m = TRACE_RE.exec(top)
     if (m != null) {
-      break;
+      break
     }
   }
-  var url;
+  var url
   if (m != null) {
     // Remove line number and column number
     // No need to check, can't be wrong at this point
-    var url = URL_RE.exec(m[1])[1];
+    var url = URL_RE.exec(m[1])[1]
   }
   // Set
   loaderPath = url
   // Set loaderDir
-  loaderDir = dirname(url || cwd);
+  loaderDir = dirname(url || cwd)
   // This happens with inline worker.
   // When entrance script's location.href is a blob url,
   // cwd will not be available.
   // Fall back to loaderDir.
   if (cwd === '') {
-    cwd = loaderDir;
+    cwd = loaderDir
   }
 }
 else {
