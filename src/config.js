@@ -19,7 +19,7 @@ data.cwd = cwd
 data.charset = "utf-8"
 
 // The CORS options, Do't set CORS on default.
-data.crossorigin = false
+//data.crossorigin = undefined
 
 // Modules that are needed to load before all other modules
 data.preload = (function() {

@@ -24,16 +24,12 @@ function request(url, callback, charset, crossorigin) {
   var node = doc.createElement(isCSS ? "link" : "script")
 
   if (charset) {
-    var cs = isFunction(charset) ? charset(url) : charset
-    if (cs) {
-      node.charset = cs
-    }
+    node.charset = charset
   }
 
   // crossorigin default value is `false`.
-  var cors = isFunction(crossorigin) ? crossorigin(url) : crossorigin
-  if (cors !== false) {
-    node.crossorigin = cors
+  if (!isUndefined(crossorigin)) {
+    node.setAttribute("crossorigin", crossorigin)
   }
 
 
@@ -168,4 +164,3 @@ function getCurrentScript() {
 
 // For Developers
 seajs.request = request
-
