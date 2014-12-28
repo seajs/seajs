@@ -30,7 +30,7 @@ else {
       node.charset = charset
     }
 
-    if (isUndefined(crossorigin)) {
+    if (!isUndefined(crossorigin)) {
       node.setAttribute("crossorigin", crossorigin)
     }
 
