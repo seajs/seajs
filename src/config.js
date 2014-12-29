@@ -17,7 +17,9 @@ data.cwd = cwd
 // The charset for requesting files
 data.charset = "utf-8"
 
+// @Retention(RetentionPolicy.SOURCE)
 // The CORS options, Do't set CORS on default.
+//
 //data.crossorigin = undefined
 
 // data.alias - An object containing shorthands of module id
