@@ -16,3 +16,5 @@ Thumbs.db
 .settings/
 node_modules/
 _site/
+dist/seajs.zip
+npm-debug.log
