@@ -1,5 +1,5 @@
 /**
- * Sea.js 2.2.2 | seajs.org/LICENSE.md
+ * Sea.js 2.2.3 | seajs.org/LICENSE.md
  */
 (function(global, undefined) {
 
@@ -10,7 +10,7 @@ if (global.seajs) {
 
 var seajs = global.seajs = {
   // The current version of Sea.js being used
-  version: "2.2.2"
+  version: "2.2.3"
 }
 
 var data = seajs.data = {}
@@ -30,12 +30,12 @@ var isObject = isType("Object")
 var isString = isType("String")
 var isArray = Array.isArray || isType("Array")
 var isFunction = isType("Function")
+var isUndefined = isType("Undefined")
 
 var _cid = 0
 function cid() {
   return _cid++
 }
-
 
 /**
  * util-events.js - The minimal events support
@@ -298,16 +298,12 @@ function request(url, callback, charset, crossorigin) {
   var node = doc.createElement(isCSS ? "link" : "script")
 
   if (charset) {
-    var cs = isFunction(charset) ? charset(url) : charset
-    if (cs) {
-      node.charset = cs
-    }
+    node.charset = charset
   }
 
   // crossorigin default value is `false`.
-  var cors = isFunction(crossorigin) ? crossorigin(url) : crossorigin
-  if (cors !== false) {
-    node.crossorigin = cors
+  if (!isUndefined(crossorigin)) {
+    node.setAttribute("crossorigin", crossorigin)
   }
 
 
@@ -442,7 +438,6 @@ function getCurrentScript() {
 
 // For Developers
 seajs.request = request
-
 
 /**
  * util-deps.js - The parser for dependencies
@@ -892,7 +887,7 @@ data.cwd = cwd
 data.charset = "utf-8"
 
 // The CORS options, Do't set CORS on default.
-data.crossorigin = false
+//data.crossorigin = undefined
 
 // Modules that are needed to load before all other modules
 data.preload = (function() {
