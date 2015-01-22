@@ -18,6 +18,9 @@ data.cwd = cwd
 // The charset for requesting files
 data.charset = "utf-8"
 
+// The history of every config
+data.history = {}
+
 // The CORS options, Do't set CORS on default.
 //data.crossorigin = undefined
 
@@ -52,6 +55,10 @@ seajs.config = function(configData) {
     var curr = configData[key]
     var prev = data[key]
 
+    // record the config
+    data.history[key] = data.history[key] || []
+    data.history[key].push(clone(curr))
+
     // Merge object config such as alias, vars
     if (prev && isObject(prev)) {
       for (var k in curr) {
@@ -79,4 +86,16 @@ seajs.config = function(configData) {
 
   emit("config", configData)
   return seajs
+}
+
+// simple clone an object
+function clone(obj) {
+  if (isObject(obj)) {
+    var copy = {}
+    for (var k in obj) {
+      copy[k] = obj[k]
+    }
+    return copy
+  }
+  return obj
 }

@@ -1,4 +1,5 @@
 define([
+  'history',
   'alias',
   'base',
   'charset',
