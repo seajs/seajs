@@ -117,6 +117,8 @@ Module.prototype.onload = function() {
     mod.callback()
   }
 
+  mod.exec();
+
   // Notify waiting modules to fire onload
   var waitings = mod._waitings
   var uri, m

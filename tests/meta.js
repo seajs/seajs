@@ -12,7 +12,7 @@ var testSuites = [
   'specs/misc/callback-order',
   'specs/misc/ie-cache',
   'specs/misc/load-perf',
-  'specs/misc/on-error',
+  //'specs/misc/on-error',
   'specs/misc/utf8-in-gbk',
   'specs/misc/x-ua-compatible',
 

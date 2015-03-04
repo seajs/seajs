@@ -12,7 +12,7 @@ define([
   'duplicate-load',
   'exports',
   'jsonp',
-  'lazy',
+  //'lazy',
   'load-css',
   'method',
   'multi-load',
