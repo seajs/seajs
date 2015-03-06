@@ -8,6 +8,10 @@ var DOT_RE = /\/\.\//g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
 var MULTI_SLASH_RE = /([^:/])\/+\//g
 
+//  match http://XXXX/../../ in http://XXXX/../../a/b/c/d
+var DOUBLE_DOT_LEGAL_RE = new RegExp(location.protocol+"\\/\\/[^/]+\\/(\\.\\.\\/)+" , 'g');
+var DOUBLE_DOT_LINE_RE = /\.\.\//g;
+
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
 // ref: http://jsperf.com/regex-vs-split/2
@@ -31,6 +35,13 @@ function realpath(path) {
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
   while (path.match(DOUBLE_DOT_RE)) {
+    /*
+      http://localhost:8080/../../a/b/c/d ==> http://localhost:8080/a/b/c/d
+      http://localhost:8080/a/../../b/c/d ==> http://localhost:8080/b/c/d
+    */
+    path = path.replace(DOUBLE_DOT_LEGAL_RE, function(p){
+      return p.replace(DOUBLE_DOT_LINE_RE , '');
+    });
     path = path.replace(DOUBLE_DOT_RE, "/")
   }
 
