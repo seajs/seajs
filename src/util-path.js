@@ -13,7 +13,7 @@ var MULTI_SLASH_RE = /([^:/])\/+\//g
 // ref: http://jsperf.com/regex-vs-split/15
 function dirname(path) {
   var i = path.lastIndexOf("/"); 
-  return i > -1 ? path.substring(0, i) : "./";
+  return i > -1 ? path.substring(0, i) : null[0];
 }
 
 // Canonicalize a path
