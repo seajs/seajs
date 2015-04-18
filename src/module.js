@@ -198,7 +198,7 @@ Module.prototype.exec = function () {
   var factory = mod.factory
 
   var exports = isFunction(factory) ?
-    factory(require, mod.exports = {}, mod) :
+    factory.call(mod.exports = {}, require, mod.exports, mod) :
     factory
 
   if (exports === undefined) {

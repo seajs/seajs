@@ -1,7 +1,5 @@
 define(function(require, exports) {
 
-  var global = this
-
   exports.foo = function () {
     return this
   }
@@ -16,10 +14,6 @@ define(function(require, exports) {
 
   exports.getXFromExports = function () {
     return exports.x
-  }
-
-  exports.getThis = function() {
-    return global
   }
 
 });

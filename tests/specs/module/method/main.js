@@ -14,8 +14,6 @@ define(function(require) {
   test.assert(a.getX() === 10, 'get and set')
   test.assert(a.getXFromExports() === a.getX(), 'get from exports')
 
-  test.assert(a.getThis() === this, '`this` is global object')
-
   test.next()
 
 });
