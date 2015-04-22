@@ -1,21 +1,29 @@
 /**
  * util-deps.js - The parser for dependencies
  * ref: tests/research/parse-dependencies/test.html
- * ref: https://github.com/seajs/searequire
+ * ref: https://github.com/seajs/crequire
  */
 
 function parseDependencies(s) {
   if(s.indexOf('require') == -1) {
     return []
   }
-  var index = 0, peek, length = s.length, isReg = 1, modName = 0, parentheseState = 0, parentheseStack = [], res = []
+  var index = 0, peek, length = s.length, isReg = 1, modName = 0, res = []
+  var parentheseState = 0, parentheseStack = []
+  var braceState, braceStack = [], isReturn
   while(index < length) {
     readch()
     if(isBlank()) {
+      if(isReturn && (peek == '\n' || peek == '\r')) {
+        braceState = 0
+        isReturn = 0
+      }
     }
     else if(isQuote()) {
       dealQuote()
       isReg = 1
+      isReturn = 0
+      braceState = 0
     }
     else if(peek == '/') {
       readch()
@@ -26,6 +34,7 @@ function parseDependencies(s) {
         }
       }
       else if(peek == '*') {
+        var i = s.indexOf('\n', index)
         index = s.indexOf('*/', index)
         if(index == -1) {
           index = length
@@ -33,14 +42,22 @@ function parseDependencies(s) {
         else {
           index += 2
         }
+        if(isReturn && i != -1 && i < index) {
+          braceState = 0
+          isReturn = 0
+        }
       }
       else if(isReg) {
         dealReg()
         isReg = 0
+        isReturn = 0
+        braceState = 0
       }
       else {
         index--
         isReg = 1
+        isReturn = 0
+        braceState = 1
       }
     }
     else if(isWord()) {
@@ -48,17 +65,49 @@ function parseDependencies(s) {
     }
     else if(isNumber()) {
       dealNumber()
+      isReturn = 0
+      braceState = 0
     }
     else if(peek == '(') {
       parentheseStack.push(parentheseState)
       isReg = 1
+      isReturn = 0
+      braceState = 1
     }
     else if(peek == ')') {
       isReg = parentheseStack.pop()
+      isReturn = 0
+      braceState = 0
+    }
+    else if(peek == '{') {
+      if(isReturn) {
+        braceState = 1
+      }
+      braceStack.push(braceState)
+      isReturn = 0
+      isReg = 1
+    }
+    else if(peek == '}') {
+      braceState = braceStack.pop();
+      isReg = !braceState
+      isReturn = 0
     }
     else {
+      var next = s.charAt(index)
+      if(peek == ';') {
+        braceState = 0
+      }
+      else if(peek == '-' && next == '-'
+        || peek == '+' && next == '+'
+        || peek == '=' && next == '>') {
+        braceState = 0
+        index++
+      }
+      else {
+        braceState = 1
+      }
       isReg = peek != ']'
-      modName = 0
+      isReturn = 0
     }
   }
   return res
@@ -148,6 +197,14 @@ function parseDependencies(s) {
       'typeof': 1,
       'void': 1
     }[r]
+    isReturn = r == 'return'
+    braceState = {
+      'instanceof': 1,
+      'delete': 1,
+      'void': 1,
+      'typeof': 1,
+      'return': 1
+    }.hasOwnProperty(r);
     modName = /^require\s*\(\s*(['"]).+?\1\s*\)/.test(s2)
     if(modName) {
       r = /^require\s*\(\s*['"]/.exec(s2)[0]
