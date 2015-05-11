@@ -142,7 +142,8 @@ function parseDependencies(s) {
       }
     }
     if(modName) {
-      res.push(s.slice(start, index - 1))
+      //maybe substring is faster  than slice .
+      res.push(s.substring(start, index - 1))
       modName = 0
     }
   }
