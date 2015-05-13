@@ -7,3 +7,4 @@
 if (global.seajs) {
   return
 }
+});
