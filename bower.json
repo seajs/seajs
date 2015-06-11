@@ -1,6 +1,5 @@
 {
   "name": "seajs",
-  "version": "2.3.0",
   "main": "./dist/sea.js",
   "ignore": [
     "**/.*",
