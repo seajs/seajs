@@ -205,7 +205,7 @@ function parseDependencies(s) {
       'void': 1,
       'typeof': 1,
       'return': 1
-    }.hasOwnProperty(r);
+    }.hasOwnProperty(r)
     modName = /^require\s*\(\s*(['"]).+?\1\s*\)/.test(s2)
     if(modName) {
       r = /^require\s*\(\s*['"]/.exec(s2)[0]
