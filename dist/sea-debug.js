@@ -607,7 +607,8 @@ function parseDependencies(s) {
       }
     }
     if(modName) {
-      res.push(s.slice(start, index - 1))
+      //maybe substring is faster  than slice .
+      res.push(s.substring(start, index - 1))
       modName = 0
     }
   }
@@ -669,7 +670,7 @@ function parseDependencies(s) {
       'void': 1,
       'typeof': 1,
       'return': 1
-    }.hasOwnProperty(r);
+    }.hasOwnProperty(r)
     modName = /^require\s*\(\s*(['"]).+?\1\s*\)/.test(s2)
     if(modName) {
       r = /^require\s*\(\s*['"]/.exec(s2)[0]
@@ -699,6 +700,7 @@ function parseDependencies(s) {
     isReg = 0
   }
 }
+
 /**
  * module.js - The core of module loader
  */
@@ -1148,7 +1150,7 @@ data.cwd = cwd
 data.charset = "utf-8"
 
 // @Retention(RetentionPolicy.SOURCE)
-// The CORS options, Do't set CORS on default.
+// The CORS options, Don't set CORS on default.
 //
 //data.crossorigin = undefined
 

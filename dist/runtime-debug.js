@@ -885,7 +885,7 @@ data.cwd = cwd
 data.charset = "utf-8"
 
 // @Retention(RetentionPolicy.SOURCE)
-// The CORS options, Do't set CORS on default.
+// The CORS options, Don't set CORS on default.
 //
 //data.crossorigin = undefined
 
