@@ -88,7 +88,7 @@ function parseDependencies(s) {
       isReg = 1
     }
     else if(peek == '}') {
-      braceState = braceStack.pop();
+      braceState = braceStack.pop()
       isReg = !braceState
       isReturn = 0
     }
