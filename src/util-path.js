@@ -31,7 +31,7 @@ function realpath(path) {
 
   // a/b/c/../../d  ==>  a/b/../d  ==>  a/d
   while (path.match(DOUBLE_DOT_RE)) {
-    path = path.replace(DOUBLE_DOT_RE, "/")
+    path = path.replace(RegExp['$&'], "/")
   }
 
   return path
@@ -213,7 +213,7 @@ if (isWebWorker) {
   if (m != null) {
     // Remove line number and column number
     // No need to check, can't be wrong at this point
-    var url = URL_RE.exec(m[1])[1];
+    url = URL_RE.exec(m[1])[1];
   }
   // Set
   loaderPath = url
