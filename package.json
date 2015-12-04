@@ -1,13 +1,13 @@
 {
   "family": "seajs",
   "name": "seajs",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A Module Loader for the Web",
   "homepage": "http://seajs.org/",
   "keywords": ["module", "loader"],
   "author": "Frank Wang <lifesinger@gmail.com>",
   "engines": {
-    "node": ">= 0.6.0"
+    "node": ">= 0.12.0"
   },
   "dependencies": {},
   "devDependencies": {

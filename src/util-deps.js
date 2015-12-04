@@ -206,9 +206,9 @@ function parseDependencies(s) {
       'typeof': 1,
       'return': 1
     }.hasOwnProperty(r)
-    modName = /^require\s*\(\s*(['"]).+?\1\s*\)/.test(s2)
+    modName = /^require\s*(?:\/\*[\s\S]*?\*\/\s*)?\(\s*(['"]).+?\1\s*[),]/.test(s2)
     if(modName) {
-      r = /^require\s*\(\s*['"]/.exec(s2)[0]
+      r = /^require\s*(?:\/\*[\s\S]*?\*\/\s*)?\(\s*['"]/.exec(s2)[0]
       index += r.length - 2
     }
     else {
