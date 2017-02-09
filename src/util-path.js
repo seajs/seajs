@@ -4,7 +4,7 @@
 
 var DIRNAME_RE = /[^?#]*\//
 
-var DOT_RE = /\/\.\//g
+var DOT_RE = /\/\.\//
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
 var MULTI_SLASH_RE = /([^:/])\/+\//g
 
@@ -19,7 +19,9 @@ function dirname(path) {
 // realpath("http://test.com/a//./b/../c") ==> "http://test.com/a/c"
 function realpath(path) {
   // /a/b/./c/./d ==> /a/b/c/d
-  path = path.replace(DOT_RE, "/")
+  while (path.match(DOT_RE)) {
+    path = path.replace(DOT_RE, "/")
+  }
 
   /*
     @author wh1100717
