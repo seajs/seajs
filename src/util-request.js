@@ -64,7 +64,7 @@ else {
     }
     else {
       node.onreadystatechange = function() {
-        if (/loaded|complete/.test(node.readyState)) {
+        if (/de|co/.test(node.readyState)) {
           onload()
         }
       }
