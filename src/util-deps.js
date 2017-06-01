@@ -3,10 +3,14 @@
  * ref: tests/research/parse-dependencies/test.html
  * ref: https://github.com/seajs/crequire
  */
-
+var ARGS_REG=/function\W+\(([^\)]+)\)/;
 function parseDependencies(s) {
-  if(s.indexOf('require') == -1) {
-    return []
+  // 获取回调函数的形式参数require
+  var require=ARGS_REG.exec(s) ? 
+              ARGS_REG.exec(s)[1].split(",")[0] : "";
+
+  if(!require){
+    return [];
   }
   var index = 0, peek, length = s.length, isReg = 1, modName = 0, res = []
   var parentheseState = 0, parentheseStack = []
@@ -206,9 +210,9 @@ function parseDependencies(s) {
       'typeof': 1,
       'return': 1
     }.hasOwnProperty(r)
-    modName = /^require\s*(?:\/\*[\s\S]*?\*\/\s*)?\(\s*(['"]).+?\1\s*[),]/.test(s2)
+    modName=(new RegExp("^"+require+"\\s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?\\(\\s*([\'\"]).+?\\1\\s*[),]")).test(s2)
     if(modName) {
-      r = /^require\s*(?:\/\*[\s\S]*?\*\/\s*)?\(\s*['"]/.exec(s2)[0]
+      r=(new RegExp("^"+require+"\\s*(?:\\/\\*[\\s\\S]*?\\*\\/\\s*)?\\(\\s*[\'\"]")).exec(s2)[0]
       index += r.length - 2
     }
     else {
