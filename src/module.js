@@ -293,7 +293,7 @@ Module.resolve = function(id, refUri) {
   var emitData = { id: id, refUri: refUri }
   emit("resolve", emitData)
 
-  return emitData.uri || seajs.resolve(emitData.id, refUri)
+  return seajs.resolve(emitData.id, refUri)
 }
 
 // Define a module
