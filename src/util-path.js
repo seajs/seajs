@@ -2,7 +2,7 @@
  * util-path.js - The utilities for operating path such as id, uri
  */
 
-var DIRNAME_RE = /[^?#]*\//
+//var DIRNAME_RE = /[^?#]*\//
 
 var DOT_RE = /\/\.\//g
 var DOUBLE_DOT_RE = /\/[^/]+\/\.\.\//
@@ -10,9 +10,10 @@ var MULTI_SLASH_RE = /([^:/])\/+\//g
 
 // Extract the directory portion of a path
 // dirname("a/b/c.js?t=123#xx/zz") ==> "a/b/"
-// ref: http://jsperf.com/regex-vs-split/2
+// ref: http://jsperf.com/regex-vs-split/15
 function dirname(path) {
-  return path.match(DIRNAME_RE)[0]
+  var i = path.lastIndexOf("/"); 
+  return i > -1 ? path.substring(0, i) : null[0];
 }
 
 // Canonicalize a path
