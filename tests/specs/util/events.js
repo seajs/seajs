@@ -82,7 +82,7 @@ define(function(require) {
   assert(obj.counter === 1, obj.counter)
 
 
-  // two binds that unbind themeselves
+  // two binds that unbind themselves
   obj.off()
   obj.counterA = 0
   obj.counterB = 0
